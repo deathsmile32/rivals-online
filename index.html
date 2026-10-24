@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="zh-Hant"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>競技對決 ARENA</title>
 <style>
 :root{color-scheme:dark;--bg:#0f1424;--fg:#eef1ff;--ac:#4aa3ff;--pn:#171d36;--ln:#2c3558;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;overflow:hidden;user-select:none}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;overflow:hidden;user-select:none;touch-action:none}
 #c{position:fixed;inset:0;width:100%;height:100%}
 .ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(8,10,20,.8);z-index:5}
 .card{background:var(--pn);border:1px solid var(--ln);border-radius:14px;padding:20px 24px;width:min(560px,92%);max-height:92%;overflow:auto}
@@ -58,9 +58,70 @@ input{background:#0e1330;color:var(--fg);border:1px solid var(--ln);border-radiu
 #scope i{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:#ff2020;box-shadow:0 0 4px #ff2020}
 #scope::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#000}
 #scope::after{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:#000}
+/* ===== touch controls ===== */
+#touchUI{position:fixed;inset:0;z-index:1;display:none;touch-action:none}
+#touchUI>*{position:fixed}
+#tlook{inset:0;touch-action:none}
+#tjoyBase{left:18px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:116px;height:116px;border-radius:50%;background:#ffffff14;border:2px solid #ffffff40;touch-action:none}
+#tjoyStick{left:50%;top:50%;width:50px;height:50px;margin:-25px;border-radius:50%;background:#ffffff55;border:1px solid #fff8;pointer-events:none}
+#tbtnCluster{right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));width:252px;height:234px;pointer-events:none}
+#tbtnCluster button{position:absolute;pointer-events:auto;border-radius:50%;background:#ffffff22;border:2px solid #ffffff4a;color:#fff;font:700 13px system-ui;display:flex;align-items:center;justify-content:center;padding:0;text-shadow:0 0 3px #000}
+#tbtnCluster button.press{background:#ffffff66}
+#tbFire{right:0;bottom:0;width:82px;height:82px;font-size:26px;background:#ff404030!important;border-color:#ff6060a0!important}
+#tbFire.press{background:#ff4040b0!important}
+#tbJump{right:4px;bottom:98px;width:56px;height:56px;font-size:16px}
+#tbAlt{right:94px;bottom:14px;width:62px;height:62px;font-size:20px;background:#4aa3ff30!important;border-color:#4aa3ffa0!important}
+#tbAlt.press{background:#4aa3ffb0!important}
+#tbCrouch{right:174px;bottom:0;width:48px;height:48px;font-size:14px}
+#tbReload{right:96px;bottom:94px;width:44px;height:44px;font-size:14px}
+#tbMelee{right:166px;bottom:80px;width:40px;height:40px;font-size:13px}
+#tbUtil{right:174px;bottom:140px;width:40px;height:40px;font-size:13px}
+#tOrient{inset:0;display:none;background:#05070fe6;z-index:60;color:#fff;align-items:center;justify-content:center;flex-direction:column;gap:6px;text-align:center;font-size:19px;line-height:1.5;padding:20px}
+body.mobile #hp{bottom:calc(168px + env(safe-area-inset-bottom,0px));left:16px;width:155px;height:14px}
+body.mobile #eye{bottom:calc(168px + env(safe-area-inset-bottom,0px));left:16px}
+body.mobile #altc,body.mobile #am,body.mobile #bar,body.mobile #wn{left:16px;right:auto;text-align:left}
+body.mobile #wn{bottom:calc(186px + env(safe-area-inset-bottom,0px));font-size:14px}
+body.mobile #bar{bottom:calc(210px + env(safe-area-inset-bottom,0px));width:120px}
+body.mobile #am{bottom:calc(216px + env(safe-area-inset-bottom,0px));font-size:18px}
+body.mobile #altc{bottom:calc(248px + env(safe-area-inset-bottom,0px));font-size:10px}
+body.mobile #wl{right:8px;bottom:calc(248px + env(safe-area-inset-bottom,0px));gap:3px;pointer-events:auto!important}
+body.mobile #wl span{width:44px;height:28px;pointer-events:auto}
+body.mobile #wl span img{max-width:38px;max-height:22px}
+body.mobile #wl span i{font-size:8px}
+body.mobile #swp{bottom:calc(200px + env(safe-area-inset-bottom,0px));font-size:13px;padding:6px 12px;pointer-events:auto}
+body.mobile #kc{right:8px;bottom:calc(280px + env(safe-area-inset-bottom,0px));min-width:170px;font-size:11px}
+body.mobile #chat{left:14px;bottom:calc(140px + env(safe-area-inset-bottom,0px));width:56vw;font-size:11px}
+body.mobile #cin{left:14px;bottom:calc(100px + env(safe-area-inset-bottom,0px));width:56vw}
+body.mobile #spi{bottom:calc(190px + env(safe-area-inset-bottom,0px));min-width:0;width:68vw;font-size:12px}
+body.mobile #tab{min-width:0;width:90vw;font-size:11px;padding:6px 8px}
+body.mobile #dead{bottom:calc(260px + env(safe-area-inset-bottom,0px));font-size:14px}
+@media (max-width:760px){
+ .card{padding:14px 16px}
+ h1{font-size:20px}
+ button{padding:9px 12px;font-size:14px}
+ #lo .row button{width:92px;padding:6px 3px;font-size:12px}
+ #feed{font-size:11px;top:8px;right:10px}
+ #sc{font-size:17px;top:8px}
+ #sc b{min-width:34px;padding:2px 7px;margin:0 2px}
+}
 </style></head><body>
 <canvas id="c"></canvas>
 <div id="hud"><div id="paint"></div><div id="frz"></div><div id="brn"></div><div id="flash"></div><div id="fl"></div><div id="cross"></div><div id="hm">✕</div><div id="hp"><div id="hpb"></div></div><div id="altc"></div><div id="bar"><i></i></div><div id="am"></div><div id="wn"></div><div id="wl"></div><div id="sc"></div><div id="msg"></div><div id="feed"></div><div id="dead"></div><div id="kc"></div><div id="scope"><i></i></div><div id="tab"></div><div id="da">▲</div><div id="rb"></div><div id="elim"></div><div id="eye">👁 <b></b></div><div id="spi"></div><div id="chat"></div><input id="cin" maxlength="120" placeholder="輸入訊息，Enter 送出，Esc 取消" autocomplete="off"><div id="bs"></div><div id="swp">Switch Weapons <b>M</b></div></div>
+
+<div id="touchUI">
+ <div id="tlook"></div>
+ <div id="tjoyBase"><div id="tjoyStick"></div></div>
+ <div id="tbtnCluster">
+  <button id="tbCrouch" title="蹲下/滑行">蹲</button>
+  <button id="tbMelee" title="快速近戰">F</button>
+  <button id="tbUtil" title="快速道具">G</button>
+  <button id="tbReload" title="換彈">R</button>
+  <button id="tbJump" title="跳躍">跳</button>
+  <button id="tbAlt" title="特殊技能/開鏡">⚡</button>
+  <button id="tbFire" title="攻擊">🔫</button>
+ </div>
+ <div id="tOrient">📱↔️<br>請將裝置橫向以獲得最佳體驗<br><span style="font-size:13px;opacity:.75">Rotate to landscape for best experience</span></div>
+</div>
 
 <div id="menu" class="ov"><div class="card">
 <h1>競技對決 <small>ARENA</small></h1>
@@ -71,7 +132,7 @@ input{background:#0e1330;color:var(--fg);border:1px solid var(--ln);border-radiu
 <h3>難度</h3><div class="row" id="difs"><button data-d="0">簡單</button><button data-d="1" class="on">普通</button><button data-d="2">困難</button></div>
 <h3>地圖</h3><div class="row" id="maps"></div>
 <button class="big" id="go">開始對戰（單機）</button><button class="big" id="online" style="background:#4aa3ff;color:#06101f;margin-top:8px">🌐 線上對戰</button>
-<details><summary>操作說明</summary>WASD 移動 · C 移動中滑行、站著不動蹲下 · 空白鍵跳躍（拿 Bow、Daggers 可二段跳；Bow 按住左鍵蓄力）· Shift 衝刺 · C 滑行（再按一次停止，滑行中按空白可滑行跳）· F 快速近戰 · G 快速使用戰術道具 · V 展示武器 · 按住 Tab 看計分板 · 滑鼠瞄準 · 左鍵攻擊 · 右鍵：開鏡或武器特殊技能 · R 換彈 · 1–4 或滾輪換武器 · Esc 暫停。<br>開局先選四個欄位的武器，之後每回合開始的 3 秒倒數內按 M 可重新換裝，不按則沿用上一回合；每個欄位都可以選 Random。先贏 5 回合獲勝，每回合 90 秒，時間到時血量總和較高的一隊獲勝。死亡後可觀戰隊友，點擊滑鼠切換。若滑鼠無法鎖定，請用新分頁開啟。僅支援桌機鍵鼠。</details>
+<details><summary>操作說明</summary>WASD 移動 · C 移動中滑行、站著不動蹲下 · 空白鍵跳躍（拿 Bow、Daggers 可二段跳；Bow 按住左鍵蓄力）· Shift 衝刺 · C 滑行（再按一次停止，滑行中按空白可滑行跳）· F 快速近戰 · G 快速使用戰術道具 · V 展示武器 · 按住 Tab 看計分板 · 滑鼠瞄準 · 左鍵攻擊 · 右鍵：開鏡或武器特殊技能 · R 換彈 · 1–4 或滾輪換武器 · Esc 暫停。<br>開局先選四個欄位的武器，之後每回合開始的 3 秒倒數內按 M 可重新換裝，不按則沿用上一回合；每個欄位都可以選 Random。先贏 5 回合獲勝，每回合 90 秒，時間到時血量總和較高的一隊獲勝。死亡後可觀戰隊友，點擊滑鼠切換。若滑鼠無法鎖定，請用新分頁開啟。支援桌機鍵鼠，亦支援手機／平板觸控操作（左下搖桿移動、右半邊拖曳瞄準、右下按鈕射擊/跳躍/蹲下/換彈/技能，點武器圖示切換）。</details>
 </div></div>
 <div id="lo" class="ov" style="display:none"><div class="card"><h1>選擇武器</h1><div class="note" id="lot"></div>
 <h3>主武器 Primary</h3><div class="row" id="prim"></div>
@@ -656,7 +717,7 @@ function ready(){if(st!='lo'&&!(NET&&NET.midLo))return;$('#lo').style.display='n
 [...$('#wl').children].forEach((c,i)=>c.innerHTML='<i>'+(i+1)+'</i><img src="'+icon(P.L[i])+'">');
 if(NET){if(NET.midLo){NET.midLo=0;P.S=P.L.map(w=>({a:w.mag||0,c:w.lim||0,rl:0,h:0,ov:0,q:0,qt:0,qs:0,sp:0,ch:0,acd:0,out:0,lf:0,rc:0,r:w.res||0}));P.cur=0;setVM();lock();return}st='wait';E.forEach(e=>e.mesh.visible=false);netSend({t:'rdy',id:NET.me});if(NET.host)NET.rdy.add(NET.me);lock();return}
 begin();lock();
-setTimeout(()=>{if(document.pointerLockElement!==cv&&!fb&&st!='menu'){paused=true;$('#pause').style.display='flex'}},300)}
+setTimeout(()=>{if(!MOBILE&&document.pointerLockElement!==cv&&!fb&&st!='menu'){paused=true;$('#pause').style.display='flex'}},300)}
 function startMatch(){score=[0,0];curMap=resolveMap();buildMap(curMap);setup();openLo()}
 function tick(dt){
 if(st=='lo'){tm-=dt;$('#lot').textContent='請選擇裝備，'+Math.ceil(tm)+' 秒後自動開始';if(tm<=0)ready();return}
@@ -702,16 +763,17 @@ pickB('#modes','n',v=>{cfg.n=v;party()});pickB('#difs','d',v=>cfg.d=v);party();
 cfg.map=0;{const mb=$('#maps');MAPLIST.forEach((k,i)=>{const b=document.createElement('button');b.textContent=MAPNAME[k];b.dataset.m=i;if(i===0)b.className='on';mb.appendChild(b)});const rb2=document.createElement('button');rb2.textContent='🎲 Random';rb2.dataset.m=-1;mb.appendChild(rb2)}
 pickB('#maps','m',v=>cfg.map=v);
 function resolveMap(){return MAPLIST[cfg.map<0||cfg.map==null?Math.floor(rnd()*MAPLIST.length):cfg.map]}
-function lock(){try{cv.requestPointerLock&&cv.requestPointerLock()}catch(e){}}
+function lock(){if(MOBILE)return;try{cv.requestPointerLock&&cv.requestPointerLock()}catch(e){}}
 $('#go').onclick=()=>{$('#menu').style.display='none';$('#hud').style.display='block';paused=false;startMatch()};
 $('#rdy').onclick=ready;
 $('#again').onclick=()=>{$('#over').style.display='none';if(NET){backToRoom();return}paused=false;startMatch()};
 $('#tomenu').onclick=()=>{$('#over').style.display='none';if(NET)netLeave();$('#hud').style.display='none';$('#menu').style.display='flex';st='menu'};
 $('#pause').onclick=e=>{if(e.target.id=='pleave'){netLeave();$('#pause').style.display='none';$('#hud').style.display='none';$('#menu').style.display='flex';st='menu';return}paused=false;$('#pause').style.display='none';lock()};
-document.addEventListener('pointerlockchange',()=>{if(document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end')&&!chatOn&&!(NET&&NET.midLo)){paused=true;mL=mR=false;keys={};$('#pzt').textContent=NET?'線上對戰進行中（遊戲不會暫停）':'已暫停';$('#pleave').style.display=NET?'inline-block':'none';$('#pause').style.display='flex'}});
+document.addEventListener('pointerlockchange',()=>{if(!MOBILE&&document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end')&&!chatOn&&!(NET&&NET.midLo)){paused=true;mL=mR=false;keys={};$('#pzt').textContent=NET?'線上對戰進行中（遊戲不會暫停）':'已暫停';$('#pleave').style.display=NET?'inline-block':'none';$('#pause').style.display='flex'}});
 document.addEventListener('pointerlockerror',()=>{fb=true;paused=false;$('#pause').style.display='none'});
 const live=()=>P&&!paused&&(st=='play'||st=='count'||st=='end');
-addEventListener('mousemove',e=>{if(!live()||!P.alive||P.frz>0)return;const k=P.zoom?.0009:.0022;P.yaw-=e.movementX*k;if(P.sl){const a=-e.movementX*k*.4,c=Math.cos(a),sn=Math.sin(a),x=P.sdx;P.sdx=x*c+P.sdz*sn;P.sdz=-x*sn+P.sdz*c}P.pitch=Math.max(-1.5,Math.min(1.5,P.pitch-e.movementY*k))});
+function applyLook(dx,dy){if(!live()||!P.alive||P.frz>0)return;const k=P.zoom?.0009:.0022;P.yaw-=dx*k;if(P.sl){const a=-dx*k*.4,c=Math.cos(a),sn=Math.sin(a),x=P.sdx;P.sdx=x*c+P.sdz*sn;P.sdz=-x*sn+P.sdz*c}P.pitch=Math.max(-1.5,Math.min(1.5,P.pitch-dy*k))}
+addEventListener('mousemove',e=>applyLook(e.movementX,e.movementY));
 addEventListener('mousedown',e=>{if(!live())return;if(!P.alive){sp++;return}if(e.button==0)mL=true;if(e.button==2)mR=true});
 addEventListener('mouseup',e=>{if(e.button==0)mL=false;if(e.button==2)mR=false});
 addEventListener('contextmenu',e=>e.preventDefault());
@@ -724,6 +786,42 @@ function qutil(){if((st!='play'&&st!='end')||!P.alive||(P.qu||0)>performance.now
 addEventListener('keydown',e=>{if(chatKey(e))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyV'&&!e.repeat&&P.alive)P.insp=2.4;const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P)});
 addEventListener('keyup',e=>keys[e.code]=0);
 addEventListener('wheel',e=>{if(live())swE(P,(P.cur+(e.deltaY>0?1:3))%4)});
+// ===== touch / mobile controls =====
+const isTouch=(('ontouchstart' in window)||navigator.maxTouchPoints>0)&&(matchMedia('(pointer:coarse)').matches||/Android|iPhone|iPad|iPod|Mobile|Silk/i.test(navigator.userAgent)||innerWidth<880);
+const MOBILE=isTouch;
+if(MOBILE){
+ document.body.classList.add('mobile');
+ const tui=$('#touchUI');
+ const wl=$('#wl');if(wl){wl.style.pointerEvents='auto';[...wl.children].forEach((span,i)=>{span.style.pointerEvents='auto';span.addEventListener('touchstart',e=>{e.preventDefault();if(live())swE(P,i)},{passive:false})})}
+ const swpEl=$('#swp');if(swpEl){swpEl.innerHTML='點一下重新選裝備';swpEl.addEventListener('touchstart',e=>{e.preventDefault();if(st=='count'&&!(NET&&NET.midLo))openLo()},{passive:false})}
+ // ---- virtual joystick (movement) ----
+ const joyBase=$('#tjoyBase'),joyStick=$('#tjoyStick');let joyId=null;const JR=48;
+ function joySet(dx,dy){joyStick.style.transform='translate('+(dx*JR)+'px,'+(dy*JR)+'px)';const dead=.28;keys.KeyW=dy<-dead;keys.KeyS=dy>dead;keys.KeyA=dx<-dead;keys.KeyD=dx>dead;keys.ShiftLeft=Math.hypot(dx,dy)>.85}
+ function joyFromTouch(t){const r=joyBase.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=(t.clientX-cx)/JR,dy=(t.clientY-cy)/JR;const d=Math.hypot(dx,dy);if(d>1){dx/=d;dy/=d}joySet(dx,dy)}
+ joyBase.addEventListener('touchstart',e=>{e.preventDefault();if(joyId==null){const t=e.changedTouches[0];joyId=t.identifier;joyFromTouch(t)}},{passive:false});
+ joyBase.addEventListener('touchmove',e=>{for(const t of e.changedTouches)if(t.identifier===joyId){joyFromTouch(t);e.preventDefault()}},{passive:false});
+ function joyRelease(e){for(const t of e.changedTouches)if(t.identifier===joyId){joyId=null;joySet(0,0)}}
+ joyBase.addEventListener('touchend',joyRelease);joyBase.addEventListener('touchcancel',joyRelease);
+ // ---- touch-look (camera) ----
+ const lookLayer=$('#tlook');let lookId=null,lookX=0,lookY=0;
+ lookLayer.addEventListener('touchstart',e=>{for(const t of e.changedTouches){if(lookId==null){lookId=t.identifier;lookX=t.clientX;lookY=t.clientY;if(live()&&!P.alive)sp++;break}}e.preventDefault()},{passive:false});
+ lookLayer.addEventListener('touchmove',e=>{for(const t of e.changedTouches)if(t.identifier===lookId){const dx=t.clientX-lookX,dy=t.clientY-lookY;lookX=t.clientX;lookY=t.clientY;applyLook(dx*2.2,dy*2.2);e.preventDefault()}},{passive:false});
+ function lookRelease(e){for(const t of e.changedTouches)if(t.identifier===lookId)lookId=null}
+ lookLayer.addEventListener('touchend',lookRelease);lookLayer.addEventListener('touchcancel',lookRelease);
+ // ---- action buttons ----
+ function btnTouch(el,down,up){if(!el)return;el.addEventListener('touchstart',e=>{e.preventDefault();el.classList.add('press');down&&down()},{passive:false});const end=e=>{e&&e.preventDefault();el.classList.remove('press');up&&up()};el.addEventListener('touchend',end);el.addEventListener('touchcancel',end)}
+ btnTouch($('#tbFire'),()=>{if(live())mL=true},()=>{mL=false});
+ btnTouch($('#tbAlt'),()=>{if(live())mR=true},()=>{mR=false});
+ btnTouch($('#tbJump'),()=>{if(live()){keys.Space=true;dblJump()}},()=>{keys.Space=false});
+ btnTouch($('#tbCrouch'),()=>{if(live())slideKey()});
+ btnTouch($('#tbReload'),()=>{if(live())rel(P)});
+ btnTouch($('#tbMelee'),()=>{if(live())qmelee()});
+ btnTouch($('#tbUtil'),()=>{if(live())qutil()});
+ // ---- show touch UI only during actual gameplay; orientation hint ----
+ const orEl=$('#tOrient');let tuiShown=null;
+ function syncTouchUI(){const active=(st=='play'||st=='count'||st=='end');if(active!==tuiShown){tuiShown=active;if(tui)tui.style.display=active?'block':'none'}if(orEl)orEl.style.display=(active&&innerHeight>innerWidth)?'flex':'none'}
+ addEventListener('resize',syncTouchUI);addEventListener('orientationchange',syncTouchUI);setInterval(syncTouchUI,250);
+}
 // ===== chat =====
 let chatOn=false;const CH=[];
 function chatAdd(name,team,text,sys){const el=document.createElement('div');const b=document.createElement('b');b.textContent=sys?'':name+'：';b.style.color=sys?'#ffd23f':(P&&team===P.team?'#6db0ff':'#ff7b7b');if(!P||team==null)b.style.color=team===1?'#ff7b7b':'#6db0ff';el.appendChild(b);el.appendChild(document.createTextNode(text));if(sys)el.style.color='#ffd23f';$('#chat').appendChild(el);CH.push({el,t:performance.now()});while($('#chat').children.length>8)$('#chat').firstChild.remove();
