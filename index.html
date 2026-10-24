@@ -187,7 +187,7 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
  #lbar button{width:52px;height:52px;font-size:9px;border-radius:11px}#lbar button b{font-size:21px;line-height:25px}#lbar{gap:4px}
  #lplay{bottom:calc(66px + env(safe-area-inset-bottom,0px))}#playBtn{font-size:21px;padding:4px 30px}#avBtn{width:44px;height:44px;font-size:22px}
  #ltasks{top:70px;width:178px;padding:6px 8px}#ltasks .tk{margin:4px 0;font-size:11px}#ltasks h4{font-size:13px}#toDuels{padding:5px;font-size:12px}
- #llv{min-width:140px;padding:4px 8px}#lkeys{font-size:16px}#lplist{font-size:11px;min-width:110px}#lonline{display:none}
+ #llv{min-width:140px;padding:4px 8px}#lkeys{font-size:16px}#lplist{font-size:11px;min-width:110px}#lonline{font-size:11px;padding:6px 8px}
  .wgrid{grid-template-columns:150px 1fr 1.1fr;gap:8px}.wit img{width:36px;height:22px}.wit{font-size:11.5px}.winfo h2{font-size:19px}.ptitle{font-size:19px;margin-bottom:4px}.xbtn{width:36px;height:36px}
  .pbox{padding:8px 10px}.mcard{height:84px;font-size:30px}.pt{width:80px}.pt .cell{height:74px}.strk div{width:64px;height:64px}
 }
@@ -225,7 +225,7 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
 <h1>競技對決 <small>ARENA</small></h1>
 <button id="backLobby" style="float:right;background:#2fbf71;color:#04170d;border:0">🏠 返回大廳</button>
 <div class="sub">3D 第一人稱射擊 · 單機對戰機器人，或建立房間和朋友線上對戰</div>
-<h3>模式</h3><div class="row" id="modes"><button data-n="1" class="on">1v1</button><button data-n="2">2v2 組隊</button><button data-n="3">3v3 組隊</button><button data-n="4">4v4 組隊</button></div>
+<h3>模式</h3><div class="row" id="modes"><button data-n="1" class="on">1v1</button><button data-n="2">2v2 組隊</button><button data-n="3">3v3 組隊</button><button data-n="4">4v4 組隊</button><button data-n="5">5v5 組隊</button></div>
 <h3>隊伍（Party）</h3><div class="row" id="party"></div>
 <div class="note" id="code"></div>
 <h3>難度</h3><div class="row" id="difs"><button data-d="0">簡單</button><button data-d="1" class="on">普通</button><button data-d="2">困難</button></div>
@@ -249,7 +249,7 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
 <div class="row" style="margin-top:10px"><div class="tcol" id="tA"><h3 style="color:#6db0ff;margin-top:0">藍隊</h3><div class="pls"></div><button data-t="0">加入藍隊</button></div><div class="tcol" id="tB"><h3 style="color:#ff7b7b;margin-top:0">紅隊</h3><div class="pls"></div><button data-t="1">加入紅隊</button></div></div>
 <h3>先贏幾回合</h3><div class="row" id="wins"><button data-w="3">3</button><button data-w="5" class="on">5</button><button data-w="7">7</button></div>
 <div class="lchat" id="lchat"></div><input id="lcin" maxlength="120" placeholder="聊天：輸入後按 Enter" style="width:100%;box-sizing:border-box">
-<button class="big" id="ostart">開始對戰</button><p class="note" id="onMsg2"></p><button id="leave">離開房間</button></div>
+<button class="big" id="ostart">開始對戰（依上方分隊）</button><p class="note" id="onMsg2"></p><div class="row"><button id="onLobby" class="gbtn">🏠 回到 3D 大廳（保持連線）</button><button id="leave">離開房間</button></div><p class="note">在大廳裡：房主按 <b>Play</b> 帶隊伍打機器人；或兩邊玩家分別站上 Duels 配對墊（房主要在其中一邊），空位由機器人補上。</p></div>
 </div></div>
 <div id="auth" class="ov" style="display:none"><div class="card">
 <h1>RIVALS <small style="font-size:14px;color:#9fb0e0">競技對決 · 帳號</small></h1>
@@ -320,6 +320,7 @@ const fl0=new T.Mesh(new T.PlaneGeometry(64,64),new T.MeshLambertMaterial({color
 const gr=new T.GridHelper(64,32,0xb8c0d0,0xc8d0de);gr.position.y=.01;sc.add(gr);
 const Wh=0xf2f4f8,Or=0xe8903a,Rd=0xd04545,Bl=0x3f6fd0,Yl=0xf0c020,Gy=0xd5dae4;
 const BND=[[0,-31,64,2,8],[0,31,64,2,8],[-31,0,2,64,8],[31,0,2,64,8]];
+const LB_PILLARS=[[23,6],[27,14],[23,22],[27,28],[27,0]];
 const MAPLIST=['arena','backroom','crossroad','splash','battleground'];
 const MAPNAME={arena:'Arena',backroom:'Backroom',crossroad:'Cross Road',splash:'Splash',battleground:'Battle Ground'};
 const MAPDATA={
@@ -358,14 +359,19 @@ const MAPDATA={
   [0,-4,6,3,1,0x8a8f98],[0,0,6,3,2,0x8a8f98],[0,4,6,3,3,0x8a8f98],
   [-8,0,2,2,1.5,0x6b4fa0],[8,0,2,2,1.5,0xc7a86a],[0,-18,3,3,2,0x6b4fa0],[0,18,3,3,2,0xc7a86a],
   [-22,0,2,6,2,0xc7a86a],[22,0,2,6,2,0x6b4fa0]]},
- lobby:{floor:0xcfd6e6,grid:1,wallColor:Wh,bx:[[25,0,1.5,20,3,Gy]],decor:g=>mkLobbyDecor(g)}
+ lobby:{floor:0x1a1828,grid:0,wallColor:0x221e36,bg:0x0a0914,fogc:0x100d1c,fogn:30,fogf:100,bx:(()=>{const LW=0x2b2642,H=999,RW=0xf4f6fa,a=[
+  [-14.5,19.5,1,23,8,LW,H],[14.5,12,1,8,8,LW,H],[14.5,25.5,1,11,8,LW,H],[-8.75,7.5,11.5,1,8,LW,H],[8.75,7.5,11.5,1,8,LW,H],
+  [-3.5,2,1,11,8,LW,H],[3.5,2,1,11,8,LW,H],[-17.25,-3.5,28.5,1,8,LW,H],[17.25,-3.5,28.5,1,8,LW,H],
+  [16,15.5,2,1,8,RW,H],[16,20.5,2,1,8,RW,H],[17.5,6.25,1,18.5,8,RW,H],[17.5,25.75,1,10.5,8,RW,H],
+  [-11.5,28.5,1.6,1.6,1.6,0x7a4a24],[-9.8,29.2,1.2,1.2,1.2,0x8a5530],[11.5,9.6,1.6,1.6,1.6,0x7a4a24],[-28,-28,2,2,2,0x7a4a24],[-25.8,-28.5,1.4,1.4,1.4,0x8a5530],[28,-28,2,2,2,0x7a4a24],[28.2,-25.8,1.4,1.4,1.4,0x8a5530]];
+  for(const[x,z]of LB_PILLARS)a.push([x,z,1.4,1.4,8,0xffffff,H]);return a})(),decor:g=>mkLobbyDecor(g)}
 };
-const boxes=[],walls=[],solid=[];let decor=[];
+const boxes=[],walls=[],solid=[];let decor=[];var LB_CEIL=[];
 function clearMapGeo(){for(const m of walls){sc.remove(m);m.geometry.dispose()}walls.length=0;boxes.length=0;solid.length=0;for(const m of decor){sc.remove(m);if(m.geometry)m.geometry.dispose();if(m.material&&m.material.dispose)m.material.dispose()}decor=[]}
 function buildMap(key){clearMapGeo();const M=MAPDATA[key]||MAPDATA.arena;
- fl0.material.color.setHex(M.floor);gr.visible=!!M.grid;
+ fl0.material.color.setHex(M.floor);gr.visible=!!M.grid;sc.background.setHex(M.bg||0x9fd0ff);sc.fog.color.setHex(M.fogc||0xcfe6ff);sc.fog.near=M.fogn||35;sc.fog.far=M.fogf||110;
  const full=BND.map(b=>b.concat([M.wallColor||Wh])).concat(M.bx);
- for(const[x,z,w,d,h,c]of full){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:c}));m.position.set(x,h/2,z);sc.add(m);walls.push(m);boxes.push({x,z,w,d,h})}
+ for(const[x,z,w,d,h,c,hc]of full){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:c}));m.position.set(x,h/2,z);sc.add(m);walls.push(m);boxes.push({x,z,w,d,h:hc||h})}
  for(const[x,z,w,d]of BND)boxes.push({x,z,w,d,h:999});
  solid.push(...walls,fl0);
  if(M.decor)decor=M.decor(sc)||[];
@@ -588,18 +594,18 @@ P.eh=1.75;setVM();sc.updateMatrixWorld(true)}
 // ===== combat =====
 function hurt(t,dmg,by,wn,o={}){if(!t.alive||st!='play'||!(dmg>0)||by===t)return 0;
 const noShd=wn==='Exogun'||wn==='Spray',noDfl=wn==='Paintball Gun'||wn==='Distortion'||wn==='Slingshot'||wn==='Spray';
-if(NET){if(t.net){if(o.vs||!by.isP||GH)return 0;const fr=o.from||V(by.x,by.y+1,by.z);netSend({t:'h',to:t.nid,dmg:+dmg.toFixed(2),wn,hs:o.hs?1:0,ray:o.ray?1:0,prc:o.prc?1:0,f:[+fr.x.toFixed(2),+fr.y.toFixed(2),+fr.z.toFixed(2)],r:NET.round});const blk=!o.prc&&!o.dot&&((t.shd&&!noShd)||(t.dfl&&o.ray&&!noDfl))&&front(t,fr),d=blk?0:Math.min(dmg*(t.frz>0?.5:1),Math.max(1,t.hp));if(!o.dot){hm=.15;snd(blk?1100:900,.05,.05)}if(d>0)dmgNum(Math.round(d),o.hs);return d}
+if(NET){if(t.net){if(o.vs||!(by.isP||by.bot)||GH)return 0;if(by.bot)dmg*=DF[cfg.d].dm;const fr=o.from||V(by.x,by.y+1,by.z);netSend({t:'h',to:t.nid,by:by.bot?by.nid:undefined,dmg:+dmg.toFixed(2),wn,hs:o.hs?1:0,ray:o.ray?1:0,prc:o.prc?1:0,f:[+fr.x.toFixed(2),+fr.y.toFixed(2),+fr.z.toFixed(2)],r:NET.round});const blk=!o.prc&&!o.dot&&((t.shd&&!noShd)||(t.dfl&&o.ray&&!noDfl))&&front(t,fr),d=blk?0:Math.min(dmg*(t.frz>0?.5:1),Math.max(1,t.hp));if(by.isP){if(!o.dot){hm=.15;snd(blk?1100:900,.05,.05)}if(d>0)dmgNum(Math.round(d),o.hs)}return d}
  if(by.net&&!o.vs&&!o.net&&!o.dot)return 0}
 if(!o.prc&&!o.dot){const fr=o.from||by;if(t.dfl&&o.ray&&!noDfl&&front(t,fr)){if(by.alive)hurt(by,dmg*.8,t,'Katana',{prc:1});snd(1500,.08,.05);return 0}if(t.shd&&!noShd&&front(t,fr)){t.shp-=dmg;if(t.shp<=0){t.shp=0;t.shd=false;snd(300,.3,.1,'sawtooth');if(t.isP)feed('你的盾牌破了，下個比分才會恢復')}else snd(1100,.05,.04);return 0}}
 if(!by.isP&&!by.net)dmg*=DF[cfg.d].dm;const hp0=t.hp;
 if(t.frz>0){dmg*=.5;t.frz=0;t.slow=2.5}t.hp-=dmg;if(t.isP){fl=Math.max(fl,o.dot?.2:.5);if(!o.dot){t.shk=Math.max(t.shk||0,Math.min(.6,.2+dmg/80));snd(150,.1,.08);t.hx=by.x;t.hz=by.z;da=1}}if(by.isP&&!o.dot){hm=.15;snd(900,.05,.05)}if(by.isP)dmgNum(Math.round(Math.min(dmg,t.hp+dmg)),o.hs);
 const dealt=Math.max(0,Math.min(dmg,hp0));if(by.net){if(dealt>0)netSend({t:'cr',to:by.nid,d:+dealt.toFixed(1)})}else by.td=(by.td||0)+dealt;
 if(t.hp<=0){t.alive=false;t.sl=false;t.killer=by;t.kw=wn;t.dth++;if(!by.net)by.k++;feed(by.name+'  ['+wn+(o.hs?' · HS':'')+']  '+t.name);if(by.isP){elim(t.name);creditKill(wn,o.hs)}
- if(NET){if(t.isP)netSend({t:'k',v:P.nid,by:by.nid||'',wn,hs:o.hs?1:0,r:NET.round})}else{const a=[0,0];E.forEach(x=>x.alive&&a[x.team]++);if(!a[0]||!a[1])endRound(a[0]?0:1)}}
+ if(NET){if(t.isP||t.bot)netSend({t:'k',v:t.nid,by:by.nid||'',wn,hs:o.hs?1:0,r:NET.round})}else{const a=[0,0];E.forEach(x=>x.alive&&a[x.team]++);if(!a[0]||!a[1])endRound(a[0]?0:1)}}
 return dmg}
 function fxT(t,o){if(NET&&t.net){if(!GH&&!o.vs)netSend(Object.assign({t:'fx',to:t.nid,r:NET.round},o));return true}return false}
 function applyPush(t,p){t.vx+=p.ax||0;t.vz+=p.az||0;if(p.vy!=null)t.vy=Math.max(t.vy,p.vy);if(p.vb!=null)t.vy=Math.max(t.vy,0)+p.vb;t.sl=false}
-function push(src,t,p){if(NET){if(t.net){if(src&&src.isP&&!GH)netSend({t:'fx',to:t.nid,push:p,r:NET.round});return}if(GH||(src&&src.net))return}applyPush(t,p)}
+function push(src,t,p){if(NET){if(t.net){if(src&&(src.isP||src.bot)&&!GH)netSend({t:'fx',to:t.nid,push:p,r:NET.round});return}if(GH||(src&&src.net))return}applyPush(t,p)}
 function burn(t,tot,by,wn){if(fxT(t,{burn:tot,wn}))return;t.burn=Math.max(t.burn,tot);t.bby=by;t.bwn=wn}
 function frost(t,a){if(fxT(t,{frost:a}))return;t.frost+=a;t.slow=Math.max(t.slow,1.2);if(t.frost>=1){t.frost=0;t.frz=1.5;t.sl=false}}
 function knock(e,p,k,src){const d=V(e.x,e.y+1,e.z).sub(p);if(d.lengthSq()<1e-4)d.set(0,1,0);d.normalize();d.y+=.5;d.normalize().multiplyScalar(18*k);push(src||null,e,{ax:d.x,az:d.z,vb:d.y})}
@@ -610,7 +616,7 @@ function boom(p,o,by,wn){const m=new T.Mesh(PG,new T.MeshBasicMaterial({color:o.
 for(const e of E)if(e.alive&&e!==o.skip&&!e.net){const d=Math.hypot(e.x-p.x,e.y+1-p.y,e.z-p.z);if(d<o.r){const k=o.flat?1:1-d/o.r;if(e.team!==by.team)hurt(e,o.dmg*k,by,wn,{prc:1,vs:1});if(o.kb!==0)applyPush(e,(()=>{const q=V(e.x,e.y+1,e.z).sub(p);if(q.lengthSq()<1e-4)q.set(0,1,0);q.normalize();q.y+=.5;q.normalize().multiplyScalar(18*k*(o.kb||1));return{ax:q.x,az:q.z,vb:q.y}})())}}}
 function hitscan(e,o,d,dmg,op){let from=muz(e),range=120,hitEnt=null;const bn=op.bnc||0,list=targets(e);
 for(let k=0;k<=bn;k++){const hs=ray(o,d,range,list);let end=o.clone().addScaledVector(d,range),wh=null;
- for(const h of hs){end=h.point;const t=h.object.userData.ent;if(t&&!op.aoe){const hd=!!h.object.userData.head;let bd=dmg;if(op.dd){const[dn,df,fd]=op.dd,ds=h.distance;bd=ds<=dn?dmg:ds>=df?fd:dmg+(fd-dmg)*(ds-dn)/(df-dn)}const dm=hurt(t,bd*(hd?(op.hsm||2):1),e,e.wnm,{hs:hd,ray:1,prc:op.prc,from:o});hitEnt=t;if((dm>0||dmg==0)&&op.frost&&!(t.shd&&front(t,o)))frost(t,op.frost)}else if(!t){wh=h;if(h.object.userData.dummy)dummyFlash(h.object)}break}
+ for(const h of hs){end=h.point;const t=h.object.userData.ent;if(t&&!op.aoe){const hd=!!h.object.userData.head;let bd=dmg;if(op.dd){const[dn,df,fd]=op.dd,ds=h.distance;bd=ds<=dn?dmg:ds>=df?fd:dmg+(fd-dmg)*(ds-dn)/(df-dn)}const dm=hurt(t,bd*(hd?(op.hsm||2):1),e,e.wnm,{hs:hd,ray:1,prc:op.prc,from:o});hitEnt=t;if((dm>0||dmg==0)&&op.frost&&!(t.shd&&front(t,o)))frost(t,op.frost)}else if(!t){wh=h;if(h.object.userData.dummy){dummyFlash(h.object);if(e.isP){const hd2=!!h.object.userData.head;dmgNum(Math.round(dmg*(hd2?(op.hsm||2):1)),hd2);hm=.15;snd(900,.05,.05)}}}break}
  tracer(from,end,op.col||(e.isP?0xffd060:0xff7070));
  if(op.aoe)boom(end,{r:op.aoe.r,dmg:op.aoe.dmg,kb:0,flat:1,col:0x46f0e0,sz:.5},e,e.wnm);
  if(wh&&k<bn){const n=wh.face.normal.clone().transformDirection(wh.object.matrixWorld);d=d.clone().reflect(n);o=end.clone().addScaledVector(n,.02);from=end.clone();range-=wh.distance}else break}
@@ -688,7 +694,7 @@ function buildWall(e){const fx=-Math.sin(e.yaw),fz=-Math.cos(e.yaw),x=e.x+fx*2.2
  const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:0xc9a27a}));m.position.set(x,h/2,z);sc.add(m);m.updateMatrixWorld(true);const b={x,z,w,d,h};boxes.push(b);walls.push(m);solid.push(m);TW.push({b,m,t:30});snd(220,.2,.08)}
 function rmWall(w,i){sc.remove(w.m);w.m.geometry.dispose();boxes.splice(boxes.indexOf(w.b),1);walls.splice(walls.indexOf(w.m),1);solid.splice(solid.indexOf(w.m),1);TW.splice(i,1)}
 function updTW(dt){for(let i=TW.length-1;i>=0;i--){TW[i].t-=dt;if(TW[i].t<=0)rmWall(TW[i],i)}}
-function botUtil(b,t,d){const u=b.L[3],s=b.S[3];if(s.c<=0&&u.n!='Satchel')return;const L=b.los;let used=1;b.wnm=u.n;
+function botUtil(b,t,d){if(NET)return;const u=b.L[3],s=b.S[3];if(s.c<=0&&u.n!='Satchel')return;const L=b.los;let used=1;b.wnm=u.n;
 switch(u.n){
 case 'Grenade':if(L&&d>7&&d<26){lob(b,t,{g:20,r:.12,col:0x2c6a2c,bnc:99,fuse:.8+d*.03,boom:{r:16,dmg:75}});s.c--}else used=0;break;
 case 'Molotov':if(L&&d>5&&d<22){lob(b,t,{g:18,r:.1,col:0x2e6a3a,land:(q,x)=>{boom(x,{r:16,dmg:10,kb:0},q.by,'Molotov');fireArea(x,q.by,16,7,'Molotov',25)}});s.c--}else used=0;break;
@@ -705,7 +711,7 @@ if(used)b.gcd=3+rnd()*4}
 
 // ===== generic weapon use (player + bots) =====
 function rel(e){const w=e.L[e.cur],s=e.S[e.cur];if(w.norl||(w.res!=null&&!(s.r>0)))return;if(w.mag&&!w.inf&&s.rl<=0&&s.a<w.mag&&s.q<=0)s.rl=w.rl}
-function fireW(e,w,s,x){if(GHA)return;if(NET&&e.isP&&!GH)netFire('w',e.L.indexOf(w),x);if(w.lim&&!w.selfLim)s.c--;if(w.mag&&!w.inf&&!s.bm)s.a--;if(w.heat){s.h+=w.heat;if(s.h>=1){s.h=1;s.ov=1}}
+function fireW(e,w,s,x){if(GHA)return;if(NET&&!GH)nf(e,'w',e.L.indexOf(w),x);if(w.lim&&!w.selfLim)s.c--;if(w.mag&&!w.inf&&!s.bm)s.a--;if(w.heat){s.h+=w.heat;if(s.h>=1){s.h=1;s.ov=1}}
 s.lf=e.age;e.wnm=w.n;if(e.isP){P.rk=(rnd()-.5)*2;P.insp=0;if(w.k=='M'&&!w.au){P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk=w.n=='Riot Shield'?'s':w.n=='Maul'?'h':'n';if(w.n=='Maul')P.sw=P.swT=.6}if(w.k=='U'&&w.lim&&w.n!='Medkit')P.thr=.45}(w.fire||(w.pj?fProj:fGun))(e,w,s,x||{});e.cd=w.rate*(e.isP?1:DF[cfg.d].rm*(1+rnd()*.3));e.kick=1;if(w.f)snd(w.f,.08,.05);
 if(w.burst){s.q=w.burst-1;s.qt=w.qi||.07;s.qs=0}if(w.mag&&!w.inf&&s.a<=0)rel(e)}
 function tryF(e,w,s,x){if(e.cd>0||s.rl>0||s.ov||e.frz>0||s.q>0||s.out>0)return;if(w.spin&&s.sp<1)return;if(w.mag&&!w.inf&&!s.bm&&s.a<1){rel(e);return}
@@ -713,10 +719,10 @@ if(w.can?!w.can(e,s):(w.lim&&s.c<=0))return;fireW(e,w,s,x)}
 function useW(e,dt,trig,alt){const w=e.L[e.cur],s=e.S[e.cur];e.cd-=dt;e.altH=alt&&e.frz<=0;if(w.n=='Chainsaw'&&e.altH){melee(e,180*dt,2.8,0);if(e.isP){P.revS=(P.revS||0)-dt;if(P.revS<=0){P.revS=.12;snd(95+rnd()*20,.12,.03,'sawtooth')}}}
 if(s.rl>0){s.rl-=dt;if(s.rl<=0){s.rl=0;if(w.res!=null){const n=Math.min(w.mag-s.a,s.r||0);s.a+=n;s.r=(s.r||0)-n}else s.a=w.mag}}
 if(w.spin)s.sp=trig&&s.rl<=0&&e.frz<=0?Math.min(1,s.sp+dt/w.spin):Math.max(0,s.sp-dt*3);
-if(s.q>0){s.qt-=dt;if(s.qt<=0){if(w.mag&&s.a<=0)s.q=0;else{s.q--;s.qt=w.qi||.07;if(w.mag)s.a--;if(NET&&e.isP)netFire('q',e.cur,{sp:s.qs});(w.fire||fGun)(e,w,s,{sp:s.qs});e.kick=1;if(w.f)snd(w.f,.06,.04);if(w.mag&&s.a<=0){s.q=0;rel(e)}}}}
+if(s.q>0){s.qt-=dt;if(s.qt<=0){if(w.mag&&s.a<=0)s.q=0;else{s.q--;s.qt=w.qi||.07;if(w.mag)s.a--;if(NET&&!GH)nf(e,'q',e.cur,{sp:s.qs});(w.fire||fGun)(e,w,s,{sp:s.qs});e.kick=1;if(w.f)snd(w.f,.06,.04);if(w.mag&&s.a<=0){s.q=0;rel(e)}}}}
 if(w.charge){if(trig&&e.cd<=0&&e.frz<=0)s.ch=Math.min(1,s.ch+dt/w.charge);else if(!trig&&s.ch>0){fireW(e,w,s,{c:s.ch});s.ch=0}}
 else if(trig&&(w.au||!e.isP||!e.ptg))tryF(e,w,s);
-if(w.achg&&alt&&s.chg&&e.frz<=0)s.ch=Math.min(1,s.ch+dt/w.achg);if(w.alt){if(alt&&!e.pal){w.alt(e,w,s,true);if(NET&&e.isP&&w.alt!==ZOOM)netFire('a',e.cur,null,1)}else if(!alt&&e.pal){w.alt(e,w,s,false);if(NET&&e.isP&&w.alt!==ZOOM)netFire('a',e.cur,null,0)}}
+if(w.achg&&alt&&s.chg&&e.frz<=0)s.ch=Math.min(1,s.ch+dt/w.achg);if(w.alt){if(alt&&!e.pal){w.alt(e,w,s,true);if(NET&&!GH&&w.alt!==ZOOM)nf(e,'a',e.cur,null,1)}else if(!alt&&e.pal){w.alt(e,w,s,false);if(NET&&!GH&&w.alt!==ZOOM)nf(e,'a',e.cur,null,0)}}
 e.ptg=trig;e.pal=alt}
 function swE(e,i){if(i===e.cur||!e.alive||e.frz>0)return;const o=e.S[e.cur];o.rl=0;o.q=0;o.ch=0;o.bm=0;if(e.L[e.cur].alt&&e.pal)e.L[e.cur].alt(e,e.L[e.cur],o,false);e.pal=false;e.cur=i;e.zoom=false;e.dfl=false;e.shd=false;e.cd=Math.max(e.cd,e.L[i].eq||(i==0?1:.25));if(e.isP)setVM();else setHold(e)}
 function spdMul(e){const w=e.L[e.cur];return(e.frz>0?0:1)*(e.slow>0?.5:1)*(w.n=='Chainsaw'&&e.altH?1.85:w.mv||(w.k=='M'?1.15:1))*(e.buff>0?1.25:1)*(e.shd?.8:1)}
@@ -868,7 +874,7 @@ function paintFx(){const p=$('#paint');p.innerHTML='';for(let i=0;i<6;i++){const
 
 // ===== round flow =====
 function endRound(w,sc){st='end';tm=2.5;rndW=w;if(sc)score=sc.slice();else score[w]++;if(NET&&NET.host)netSend({t:'re',w,sc:score,r:NET.round});const won=w===P.team,rb=$('#rb');rb.className=won?'won':'lost';rb.innerHTML='ROUND<b>'+(won?'WON':'LOST')+'</b>';rb.style.display='block'}
-function showOver(w,why){let aw=null;if(P&&w>=0){SESSTATS.matches++;if(w===P.team)SESSTATS.wins++;else SESSTATS.losses++;SESSTATS.kills+=P.k||0;aw=awardMatch(w===P.team)}$('#orew').innerHTML=rewardHTML(aw);st='over';document.exitPointerLock&&document.exitPointerLock();$('#pause').style.display='none';$('#lo').style.display='none';$('#ot').textContent=w<0||!P?(why||'對戰結束'):(w===P.team?'🏆 你的隊伍獲勝！':'💀 敵方獲勝')+(why?'（'+why+'）':'');$('#again').textContent=NET?'回到房間':'再來一場';$('#tomenu').textContent=NET?'離開房間':'回到大廳';$('#over').style.display='flex';if(NET)NET.inGame=false}
+function showOver(w,why){let aw=null;if(P&&w>=0){SESSTATS.matches++;if(w===P.team)SESSTATS.wins++;else SESSTATS.losses++;SESSTATS.kills+=P.k||0;aw=awardMatch(w===P.team)}$('#orew').innerHTML=rewardHTML(aw);st='over';document.exitPointerLock&&document.exitPointerLock();$('#pause').style.display='none';$('#lo').style.display='none';$('#ot').textContent=w<0||!P?(why||'對戰結束'):(w===P.team?'🏆 你的隊伍獲勝！':'💀 敵方獲勝')+(why?'（'+why+'）':'');$('#again').textContent=NET?'回到大廳':'再來一場';$('#tomenu').textContent=NET?'離開房間':'回到大廳';$('#over').style.display='flex';if(NET)NET.inGame=false}
 function begin(){respawn();st='count';tm=3;rt=90;msg('');sp=0;$('#rb').style.display='none'}
 function openLo(){if(NET&&st=='count'){NET.midLo=1;mL=mR=false;showLo();$('#lo').style.display='flex';$('#lot').textContent='倒數結束前選好，按「準備完成」';document.exitPointerLock&&document.exitPointerLock();return}E.forEach(e=>e.mesh.visible=false);st='lo';tm=10;mL=mR=false;if(P)P.zoom=false;showLo();document.exitPointerLock&&document.exitPointerLock()}
 function showLo(){$('#lo').style.display='flex';GP.forEach(([id,arr],k)=>{const box=$('#'+id);box.innerHTML='';if(LS[k]>=0&&!isUnl(arr[LS[k]].n))LS[k]=0;
@@ -882,8 +888,9 @@ begin();lock();
 setTimeout(()=>{if(!MOBILE&&document.pointerLockElement!==cv&&!fb&&st!='menu'){paused=true;$('#pause').style.display='flex'}},300)}
 function startMatch(){score=[0,0];curMap=resolveMap();buildMap(curMap);setup();openLo()}
 
-// ===== walkable 3D lobby =====
-let LB_PADS=[],LB_TARGETS=[],LB_SHOP={x:0,z:0,r:0},SESSTATS={matches:0,wins:0,losses:0,kills:0},wasNearShop=false;
+// ===== walkable 3D lobby (hub → corridor → duel room; shooting range east) =====
+let LB_PADS=[],LB_TARGETS=[],LB_SHOP={x:999,z:999,r:0},SESSTATS={matches:0,wins:0,losses:0,kills:0},wasNearShop=false;
+var LB={inRange:false,pad:null,padT:0,padKey:'',holo:null,spin:[],prompt:''};
 function Lbl(g,text,x,y,z,w,h,bg,fg){const cw=512,ch=Math.max(64,Math.round(cw*(h/w)));
  const cvs=document.createElement('canvas');cvs.width=cw;cvs.height=ch;const cx=cvs.getContext('2d');
  cx.fillStyle=bg||'rgba(10,14,30,.8)';cx.fillRect(0,0,cw,ch);cx.strokeStyle='rgba(255,255,255,.3)';cx.lineWidth=4;cx.strokeRect(2,2,cw-4,ch-4);
@@ -892,43 +899,104 @@ function Lbl(g,text,x,y,z,w,h,bg,fg){const cw=512,ch=Math.max(64,Math.round(cw*(
  lines.forEach((ln,i)=>cx.fillText(ln,cw/2,ch/2+(i-(lines.length-1)/2)*fs*1.15));
  const tex=new T.CanvasTexture(cvs);tex.needsUpdate=true;const mat=new T.SpriteMaterial({map:tex,transparent:true,depthTest:true});
  const spr=new T.Sprite(mat);spr.scale.set(w,h,1);spr.position.set(x,y,z);g.add(spr);return spr}
-function mkLobbyDecor(g){const a=[];LB_PADS.length=0;LB_TARGETS.length=0;
- const padDefs=[[-9,-4,1,0x35d07f,'🟢 1v1 單挑'],[-3,-4,2,0x4aa3ff,'🔵 2v2 組隊'],[3,-4,3,0xf0c020,'🟡 3v3 組隊'],[9,-4,4,0xe04848,'🔴 4v4 組隊']];
- for(const[x,z,n,col,label] of padDefs){a.push(Cy(g,1.6,.08,x,.05,z,col,{e:1}));a.push(Lbl(g,label+'\n走上傳送墊開始配對',x,2.6,z,2.8,1.15));LB_PADS.push({x,z,r:1.7,n})}
- a.push(Lbl(g,'🎯 練槍靶場',20,3.4,0,3.2,1.1));
- for(const z of[-6,0,6]){const m=new T.Mesh(new T.BoxGeometry(.6,1.6,.35),new T.MeshLambertMaterial({color:0xcf3a3a}));m.position.set(20,.8,z);m.userData.dummy=true;g.add(m);a.push(m);solid.push(m);
-  LB_TARGETS.push({mesh:m,baseX:20,phase:rnd()*6.28,speed:.5+rnd()*.3,range:2.4,flash:0,baseCol:0xcf3a3a})}
- {const s=SESSTATS,txt='🏆 排行榜（本機記錄）\n場次 '+s.matches+'　勝 '+s.wins+'　敗 '+s.losses+'\n擊殺 '+s.kills+'\n（尚無跨裝置排行榜，敬請期待）';
-  a.push(Lbl(g,txt,-14,2.6,2,6,3.4))}
- a.push(B(g,2.4,1.1,1.2,14,.55,10,0x8a5530));a.push(B(g,2.8,.18,1.6,14,1.95,10,0x5a3a1e));
- a.push(B(g,.18,1.4,.18,12.9,1.1,9.3,0x5a3a1e));a.push(B(g,.18,1.4,.18,15.1,1.1,9.3,0x5a3a1e));
- a.push(Lbl(g,'🎁 開箱商人\n（敬請期待）',14,2.9,10,3,1.3));
- LB_SHOP.x=14;LB_SHOP.z=10;LB_SHOP.r=2.4;
+const FNT='system-ui,"Noto Sans TC","Microsoft JhengHei",sans-serif';
+function cvTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getContext('2d');draw(cx,w,h);const t=new T.CanvasTexture(c);t.userData={c,cx};return t}
+function plane(g,w,h,x,y,z,ry,mat){const m=new T.Mesh(new T.PlaneGeometry(w,h),mat);m.position.set(x,y,z);m.rotation.y=ry||0;g.add(m);return m}
+function rr(cx,x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.arcTo(x+w,y,x+w,y+h,r);cx.arcTo(x+w,y+h,x,y+h,r);cx.arcTo(x,y+h,x,y,r);cx.arcTo(x,y,x+w,y,r);cx.closePath()}
+function neonSign(g,text,x,y,z,w,h,ry,col,col2){const tex=cvTex(1024,Math.round(1024*h/w),(cx,W,H)=>{cx.fillStyle='rgba(10,6,24,.88)';rr(cx,6,6,W-12,H-12,H*.18);cx.fill();cx.lineWidth=H*.05;cx.strokeStyle=col2||col;cx.shadowColor=col2||col;cx.shadowBlur=H*.15;rr(cx,H*.06,H*.06,W-H*.12,H-H*.12,H*.16);cx.stroke();
+ cx.font='900 '+Math.floor(H*.6)+'px '+FNT;cx.textAlign='center';cx.textBaseline='middle';cx.shadowColor=col;cx.shadowBlur=H*.2;cx.fillStyle=col;cx.fillText(text,W/2,H*.53);cx.shadowBlur=0;cx.fillStyle='#fff';cx.globalAlpha=.55;cx.fillText(text,W/2,H*.53)});
+ return plane(g,w,h,x,y,z,ry,new T.MeshBasicMaterial({map:tex,transparent:true,side:T.DoubleSide}))}
+function strip(g,w,d,x,z,c,y){return B(g,w,.03,d,x,y==null?.02:y,z,c,{e:1})}
+function pumpkin(g,x,z,s){const a=[];const p=Sp(g,.5*s,x,.42*s,z,0xff7a1a);p.scale.y=.8;a.push(p);a.push(B(g,.08*s,.25*s,.08*s,x,.88*s,z,0x2f7a2a));const f=Sp(g,.12*s,x,.5*s,z-.42*s,0xffe060,1);f.scale.set(1.6,.6,.4);a.push(f);return a}
+function drawCounter(pd){const t=pd.tex,cx=t.userData.cx,W=256,H=128,txt=pd.cnt+'/'+pd.n;if(pd.last===txt)return;pd.last=txt;cx.clearRect(0,0,W,H);cx.fillStyle='rgba(8,10,24,.92)';rr(cx,4,4,W-8,H-8,18);cx.fill();cx.lineWidth=6;cx.strokeStyle=pd.cnt>=pd.n?'#35d07f':pd.s?'#b06bff':'#ffd23f';rr(cx,4,4,W-8,H-8,18);cx.stroke();
+ cx.font='900 70px '+FNT;cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle=pd.cnt?'#fff':'#9aa3c8';cx.fillText(txt,W/2,H/2+4);t.needsUpdate=true}
+function drawStreakBoard(t){const cx=t.userData.cx,W=1024,H=576;cx.fillStyle='#0b0a1c';cx.fillRect(0,0,W,H);cx.strokeStyle='#9b4dff';cx.lineWidth=10;cx.strokeRect(5,5,W-10,H-10);
+ cx.font='900 58px '+FNT;cx.textBaseline='middle';cx.fillStyle='#fff';cx.textAlign='left';cx.fillText('Win Streaks',40,62);cx.fillStyle='#ff3b3b';cx.beginPath();cx.arc(W-190,62,14,0,7);cx.fill();cx.fillText('LIVE',W-165,62);
+ let us=[];try{accLoad();us=Object.values(ACCDB.users).map(u=>({n:u.name,b:(u.prof&&u.prof.st&&u.prof.st.best)||0,w:(u.prof&&u.prof.st&&u.prof.st.w)||0,lv:(u.prof&&u.prof.lv)||1}))}catch(_){}
+ us.sort((a,b)=>b.b-a.b||b.w-a.w);cx.font='800 38px '+FNT;
+ if(!us.length){cx.fillStyle='#9aa3c8';cx.fillText('尚無紀錄 — 贏下對戰來上榜！',40,200)}
+ us.slice(0,7).forEach((u,i)=>{const y=140+i*60;cx.fillStyle=i==0?'#ffd23f':i==1?'#d6dbe8':i==2?'#e0975a':'#c9cfee';cx.fillText('#'+(i+1),40,y);cx.fillStyle='#fff';cx.fillText(u.n.slice(0,14),130,y);cx.fillStyle='#ff9a3c';cx.textAlign='right';cx.fillText('🔥 '+u.b+'   Lv '+u.lv,W-40,y);cx.textAlign='left'});
+ cx.font='600 24px '+FNT;cx.fillStyle='#8088aa';cx.fillText('本機帳號排行（只計算這台裝置上的帳號）',40,H-30);t.needsUpdate=true}
+function mkLobbyDecor(g){const a=[];LB_PADS.length=0;LB_TARGETS.length=0;LB.spin=[];LB_CEIL=[];const add=m=>{a.push(m);return m};const PU=0xa64dff,YE=0xffd23f,GR=0x3dff7a,CY=0x4ff0ff;
+ // ceilings (dark everywhere, white over the range)
+ const ce=add(new T.Mesh(new T.PlaneGeometry(64,64),new T.MeshLambertMaterial({color:0x16131f})));ce.rotation.x=PI/2;ce.position.y=8.02;g.add(ce);LB_CEIL.push(ce);
+ const rc2=add(new T.Mesh(new T.PlaneGeometry(12,33),new T.MeshLambertMaterial({color:0xffffff,emissive:0xbfc4cc})));rc2.rotation.x=PI/2;rc2.position.set(24,7.99,13.5);g.add(rc2);LB_CEIL.push(rc2);
+ // hub neon trim
+ for(const[w,d,x,z,c]of[[28,.18,0,30.6,PU],[.18,22.6,-13.8,19.5,PU],[.18,7.6,13.8,12,PU],[.18,10.6,13.8,25.5,PU],[10.8,.18,-8.6,8.2,YE],[10.8,.18,8.6,8.2,YE],[.14,13,-2.4,14.5,YE],[.14,13,2.4,14.5,YE],[.14,11,-2.8,2.2,PU],[.14,11,2.8,2.2,PU],
+  [62,.18,0,-6,PU],[62,.18,0,-26,YE],[.18,20,-30.6,-16,PU],[.18,20,30.6,-16,PU]])add(strip(g,w,d,x,z,c));
+ for(const[x,z]of[[-13.9,8.1],[13.9,8.1],[-13.9,30.9],[13.9,30.9]])add(B(g,.12,8,.12,x,4,z,PU,{e:1}));
+ for(const x of[-30.8,-15,15,30.8])add(B(g,.12,8,.12,x,4,-30.8,YE,{e:1}));
+ // spawn floor logo
+ {const t=cvTex(512,512,(cx,W)=>{const c=W/2;cx.shadowColor='#3dff7a';cx.shadowBlur=30;cx.strokeStyle='#3dff7a';cx.lineWidth=18;cx.beginPath();cx.arc(c,c,200,0,7);cx.stroke();cx.lineWidth=8;cx.beginPath();cx.arc(c,c,160,0,7);cx.stroke();
+  cx.fillStyle='#3dff7a';cx.font='900 210px '+FNT;cx.textAlign='center';cx.textBaseline='middle';cx.fillText('R',c,c+10);cx.font='800 40px '+FNT;cx.fillText('RIVALS',c,c+130)});
+  const m=add(new T.Mesh(new T.PlaneGeometry(7,7),new T.MeshBasicMaterial({map:t,transparent:true,depthWrite:false})));m.rotation.x=-PI/2;m.position.set(0,.03,22);g.add(m)}
+ // DUELS sign + corridor arrow
+ add(neonSign(g,'DUELS',0,6.1,8.05,7,1.9,0,'#ff5adc','#ffd23f'));add(neonSign(g,'⚔ 1v1 · 2v2 · 3v3 · 4v4 · 5v5',0,4.6,8.05,6,.7,0,'#ffd23f'));
+ add(neonSign(g,'DUELS ↓',0,6,-3.05,5,1.3,PI,'#ff5adc','#ffd23f'));
+ // shooting range sign over the east door + rainbow hall
+ add(neonSign(g,'SHOOTING RANGE',13.95,5.4,18,6.4,1.3,-PI/2,'#4ff0ff','#ff5adc'));
+ {const t=cvTex(512,64,(cx,W,H)=>{const C=['#ff4040','#ff9a3c','#ffd23f','#3dff7a','#4aa3ff','#9b4dff'];C.forEach((c,i)=>{cx.fillStyle=c;cx.fillRect(i*W/6,0,W/6,H)})});t.wrapS=T.RepeatWrapping;t.repeat.set(2,1);
+  const mt2=new T.MeshBasicMaterial({map:t});add(plane(g,2,8,16,4,16.02,0,mt2));add(plane(g,2,8,16,4,19.98,PI,mt2));const f=add(new T.Mesh(new T.PlaneGeometry(2.2,4),mt2));f.rotation.x=-PI/2;f.rotation.z=PI/2;f.position.set(16,.02,18);g.add(f)}
+ // Win Streaks LIVE board (west wall) + Mega Key Bundle ad (east wall)
+ {const t=cvTex(1024,576,()=>{});drawStreakBoard(t);add(plane(g,8,4.5,-13.95,4,18,PI/2,new T.MeshBasicMaterial({map:t})));LB.board=t}
+ {const t=cvTex(768,448,(cx,W,H)=>{const gd=cx.createLinearGradient(0,0,W,H);gd.addColorStop(0,'#ffcf3a');gd.addColorStop(1,'#a8530a');cx.fillStyle=gd;cx.fillRect(0,0,W,H);cx.font='900 150px '+FNT;cx.textAlign='center';cx.textBaseline='middle';cx.fillText('🔑',W/2,H*.36);
+  cx.fillStyle='#fff';cx.strokeStyle='#5a2a00';cx.lineWidth=10;cx.font='900 64px '+FNT;cx.strokeText('MEGA KEY BUNDLE',W/2,H*.72);cx.fillText('MEGA KEY BUNDLE',W/2,H*.72);cx.font='800 36px '+FNT;cx.fillText('敬請期待 · Coming soon',W/2,H*.88)});
+  add(plane(g,6,3.5,13.95,4.2,26,-PI/2,new T.MeshBasicMaterial({map:t})))}
+ // hologram trophy
+ {const h=new T.Group();h.position.set(-9,0,13);g.add(h);add(h);Cy(h,1,.5,0,.25,0,0x2b2642);Cy(h,1.05,.06,0,.52,0,CY,1);const hm=new T.MeshBasicMaterial({color:CY,transparent:true,opacity:.45,depthWrite:false});
+  const tr=new T.Group();tr.position.y=1.6;h.add(tr);const cup=new T.Mesh(new T.CylinderGeometry(.55,.22,.8,16,1,true),hm);cup.position.y=.4;tr.add(cup);const st2=new T.Mesh(new T.CylinderGeometry(.08,.08,.5,8),hm);st2.position.y=-.2;tr.add(st2);const bs=new T.Mesh(new T.BoxGeometry(.6,.14,.6),hm);bs.position.y=-.5;tr.add(bs);
+  for(const s2 of[-1,1]){const hd=new T.Mesh(new T.TorusGeometry(.2,.04,6,12),hm);hd.position.set(s2*.62,.45,0);tr.add(hd)}LB.holo=tr;add(Lbl(g,'🏆 Win Streak 冠軍',-9,3.7,13,2.8,.6,'rgba(10,20,40,.7)','#4ff0ff'))}
+ // Halloween decor
+ for(const[x,z,s2]of[[-12.6,26.5,1.2],[12.4,27,1],[-6,30,.9],[8.5,10.4,1.1],[-12.6,10,1],[-29,-7,1.2],[29,-7,1.2],[-29.5,-29.5,1],[24.5,-29.5,1.3],[-1,-29.5,1]])for(const m of pumpkin(g,x,z,s2))add(m);
+ // duel pads: 5 modes × 2 sides, hanging cyan signs, occupancy counters
+ for(let i=0;i<5;i++){const n=i+1,x=-22+i*11,z=-16;
+  add(neonSign(g,n+'v'+n,x,5.5,z,3.2,1.3,0,'#4ff0ff','#4ff0ff'));for(const s2 of[-1,1])add(B(g,.05,2,.05,x+s2*1.3,7.1,z,0x8890a8));
+  for(const s of[0,1]){const px=x+(s?2.4:-2.4),col=s?PU:YE;
+   const disc=add(new T.Mesh(new T.CircleGeometry(1.5,40),new T.MeshBasicMaterial({color:0x14121f})));disc.rotation.x=-PI/2;disc.position.set(px,.025,z);g.add(disc);
+   for(const[r1,r2,c]of[[1.32,1.5,col],[.95,1.06,0xffffff],[.55,.66,col]]){const m=add(new T.Mesh(new T.RingGeometry(r1,r2,40),new T.MeshBasicMaterial({color:c})));m.rotation.x=-PI/2;m.position.set(px,.035,z);g.add(m)}
+   add(B(g,.1,2.2,.1,px,1.1,z-2.05,0x3a3550));const tex=cvTex(256,128,()=>{});const pd={x:px,z,r:1.5,n,s,tex,cnt:0,last:''};drawCounter(pd);
+   add(plane(g,1.5,.75,px,2.55,z-2,0,new T.MeshBasicMaterial({map:tex,transparent:true,side:T.DoubleSide})));LB_PADS.push(pd)}
+  add(Lbl(g,'站上任一邊開始配對',x,.9,z+2.2,2.2,.32,'rgba(0,0,0,.55)','#cfd6ff'))}
+ // shooting range: white tiles, white walls, bullseyes, red dummies
+ {const t=cvTex(128,128,(cx,W)=>{cx.fillStyle='#f4f5f8';cx.fillRect(0,0,W,W);cx.strokeStyle='#c9ced8';cx.lineWidth=3;cx.strokeRect(0,0,W,W)});t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(6,17);
+  const f=add(new T.Mesh(new T.PlaneGeometry(12,34),new T.MeshLambertMaterial({map:t})));f.rotation.x=-PI/2;f.position.set(24,.015,13.5);g.add(f);
+  const wm=new T.MeshLambertMaterial({color:0xf2f4f8});add(plane(g,34,8,29.97,4,13.5,-PI/2,wm));add(plane(g,12,8,24,4,29.97,PI,wm));add(plane(g,12,8,24,4,-2.97,0,wm))}
+ {const bt=cvTex(256,256,(cx,W)=>{const c=W/2;for(let k=5;k>0;k--){cx.fillStyle=k%2?'#e02424':'#ffffff';cx.beginPath();cx.arc(c,c,k*W/10-1,0,7);cx.fill()}});
+  for(const[x,y,z,ry,r]of[[29.95,1.6,4,-PI/2,.7],[29.95,3.4,10,-PI/2,.9],[29.95,5.3,17,-PI/2,.8],[29.95,2.3,24,-PI/2,.7],[29.95,4.6,29,-PI/2,.6],[22.28,2.2,6,-PI/2,.55],[26.28,4,14,-PI/2,.55],[22.28,1.4,22,-PI/2,.55],[26.28,3,28,-PI/2,.55],[26.28,2.5,0,-PI/2,.55],[21,3,29.95,PI,.7],[26,5,29.95,PI,.6],[21,2.5,-2.95,0,.7],[26,4.5,-2.95,0,.6]]){
+   const m=add(new T.Mesh(new T.CircleGeometry(r,32),new T.MeshBasicMaterial({map:bt})));m.position.set(x,y,z);m.rotation.y=ry;g.add(m);const rec={mesh:m,kind:'bull',flash:0};m.userData.dummy=true;m.userData.drec=rec;solid.push(m);LB_TARGETS.push(rec)}}
+ for(const[z,ph]of[[3,0],[10,1.7],[19,3.1],[25.5,4.4]]){const d=mkBody(1);d.position.set(28.6,0,z);d.rotation.y=PI/2;g.add(d);add(d);const rec={mesh:d,kind:'bot',baseZ:z,phase:ph,speed:.6+rnd()*.3,range:2.2,flash:0,mat:d.userData.mat};d.traverse(o=>{o.userData.dummy=true;o.userData.drec=rec});solid.push(d);LB_TARGETS.push(rec)}
+ add(Lbl(g,'🎯 SHOOTING RANGE · 按 M 離開',24,6.6,-1.8,4.6,.6,'rgba(200,30,30,.85)','#fff'));
  return a}
-function updLobbyDummies(dt){for(const t of LB_TARGETS){t.phase+=dt*t.speed;t.mesh.position.x=t.baseX+Math.sin(t.phase)*t.range;
- if(t.flash>0){t.flash=Math.max(0,t.flash-dt*2.2);t.mesh.material.color.setHex(t.flash>0?0xffe060:t.baseCol);if(t.mesh.material.emissive)t.mesh.material.emissive.setHex(t.flash>0?0xffcf40:0x000000)}}}
-function dummyFlash(obj){const rec=LB_TARGETS.find(t=>t.mesh===obj);if(rec)rec.flash=1}
-function checkLobbyProx(){if(!P)return;for(const pad of LB_PADS)if(Math.hypot(P.x-pad.x,P.z-pad.z)<pad.r){enterPadMatch(pad.n);return}
- const nearShop=Math.hypot(P.x-LB_SHOP.x,P.z-LB_SHOP.z)<LB_SHOP.r;
- if(nearShop&&!wasNearShop)msg('按 E 查看（開箱系統敬請期待）');else if(!nearShop&&wasNearShop)msg('');
- wasNearShop=nearShop}
-function enterPadMatch(n){cfg.n=n;const mb=$('#modes');if(mb)[...mb.children].forEach(b=>b.className=(+b.dataset.n===n)?'on':'');party();
- $('#lobbyMenuBtn').style.display='none';msg('');feed('🚩 進入 '+n+'v'+n+' 比賽媒合中…');startMatch()}
+function updLobbyDummies(dt){for(const t of LB_TARGETS){if(t.kind=='bot'){t.phase+=dt*t.speed;t.mesh.position.z=t.baseZ+Math.sin(t.phase)*t.range;const u=t.mesh.userData;u.lL.rotation.x=Math.sin(t.phase*6)*.4;u.lR.rotation.x=-Math.sin(t.phase*6)*.4}
+ if(t.flash>0){t.flash=Math.max(0,t.flash-dt*2.2);if(t.kind=='bull')t.mesh.material.color.setHex(t.flash>0?0xffe060:0xffffff);else t.mat.emissive.setHex(t.flash>0?0xffcf40:0)}}
+ if(LB.holo)LB.holo.rotation.y+=dt*1.2}
+function dummyFlash(obj){const rec=obj.userData.drec||LB_TARGETS.find(t=>t.mesh===obj);if(rec)rec.flash=1}
+function padAt(x,z){for(const p of LB_PADS)if(Math.hypot(x-p.x,z-p.z)<p.r)return p;return null}
+function padOcc(){const o={};const put=(k,id)=>(o[k]=o[k]||[]).push(id);if(P&&LB.pad)put(LB.pad.n+'_'+LB.pad.s,NET?NET.me:'me');if(NET)for(const id in LPX){const q=LPX[id];if(q.pad)put(q.pad[0]+'_'+q.pad[1],id)}return o}
+function lobbyPrompt(t){if(LB.prompt!==t){LB.prompt=t;const el=$('#lprompt');if(el)el.innerHTML=t}}
+function checkLobbyProx(dt){if(!P)return;const inR=P.x>17.9&&P.z>-3&&P.z<30.5;if(inR!==LB.inRange){LB.inRange=inR;if(typeof onRangeChange=='function')onRangeChange(inR)}
+ const pad=padAt(P.x,P.z);if(pad!==LB.pad){LB.pad=pad;LB.padT=3;LB.padKey=''}
+ const occ=padOcc();for(const pd of LB_PADS){pd.cnt=(occ[pd.n+'_'+pd.s]||[]).length;drawCounter(pd)}
+ if(!pad){lobbyPrompt('');return}
+ if(!NET){LB.padT-=dt;lobbyPrompt('⚔️ '+pad.n+'v'+pad.n+' 配對中… '+Math.max(1,Math.ceil(LB.padT))+'<br><span style="font-size:14px">離開配對墊即可取消 · 對手與隊友為機器人</span>');if(LB.padT<=0){LB.pad=null;lobbyPrompt('');cfg.n=pad.n;goMatch()}return}
+ if(typeof netPadCheck=='function')netPadCheck(pad,occ,dt)}
+function toDuels(){if(st!=='lobby'||!P)return;closePanels();P.x=0;P.z=-7;P.y=0;P.vx=P.vz=P.vy=0;P.yaw=0;P.pitch=0;if(typeof LBC!=='undefined'){LBC.yaw=0;LBC.pitch=-.3}snd(700,.15,.05,'sine');toast('⚔️ 已傳送到 Duels — 站上配對墊開始對戰')}
+function leaveRange(){if(st!=='lobby'||!P)return;P.x=12;P.z=18;P.y=0;P.vx=P.vz=P.vy=0;P.yaw=PI/2;P.pitch=0;if(typeof LBC!=='undefined'){LBC.yaw=PI/2;LBC.pitch=-.25}if(document.pointerLockElement)document.exitPointerLock();snd(500,.12,.05,'sine')}
 function mkLobbyPlayer(){const pk=(a,k)=>{const w=a[LS[k]<0?0:LS[k]];return w&&isUnl(w.n)?w:a[0]};
  const e={team:0,i:0,isP:true,name:'你',k:0,dth:0,td:0};e.mesh=mkBody(0);e.mesh.traverse(o=>o.userData.ent=e);sc.add(e.mesh);e.mesh.visible=false;
- Object.assign(e,{x:0,y:0,z:14,vy:0,vx:0,vz:0,yaw:0,pitch:0,hp:150,alive:true,cd:.3,sl:false,sv:0,scd:0,djd:0,pin:null,hl:0,dfl:false,shd:false,zoom:false,kick:0,
-  burn:0,bacc:0,flash:0,grap:null,shp:500,hr:25,cr:false,slT:0,djs:new Set(),dash:null,lag:0,qmT:0,slow:0,frz:0,frost:0,paint:0,buff:0,ptg:false,pal:false,lastIn:null,seen:0,tt:0,sw:0,sd:1,wn:0,wd:0,tg:null,chg:.7,gcd:3,age:0,ao:V(),ad:V(0,0,-1),er:0,wnm:'',killer:null});
+ Object.assign(e,{x:0,y:0,z:24,vy:0,vx:0,vz:0,yaw:0,pitch:0,hp:150,alive:true,cd:.3,sl:false,sv:0,scd:0,djd:0,pin:null,hl:0,dfl:false,shd:false,zoom:false,kick:0,
+  burn:0,bacc:0,flash:0,grap:null,shp:500,hr:25,cr:false,slT:0,djs:new Set(),dash:null,lag:0,qmT:0,slow:0,frz:0,frost:0,paint:0,buff:0,ptg:false,pal:false,lastIn:null,seen:0,tt:0,sw:0,sd:1,wn:0,wd:0,tg:null,chg:.7,gcd:3,age:0,ao:V(),ad:V(0,0,-1),er:0,wnm:'',killer:null,myaw:0});
  e.L=[pk(PRI,0),pk(SEC,1),pk(MEL,2),pk(UTL,3)];e.S=mkS(e.L);e.cur=0;e.eh=1.75;e.tx=e.x;e.ty=e.y;e.tz=e.z;e.tyaw=e.yaw;
  E=[e];P=e;[...document.querySelectorAll('#wl span')].forEach((c,i)=>c.innerHTML='<i>'+(i+1)+'</i><img src="'+icon(e.L[i])+'">');
- setVM();sc.updateMatrixWorld(true)}
-function enterLobby(){for(const e of E)if(e&&e.mesh)sc.remove(e.mesh);E=[];clearWorldSafe();curMap='lobby';buildMap('lobby');mkLobbyPlayer();
- st='lobby';tm=0;rt=0;paused=false;document.exitPointerLock&&document.exitPointerLock();
- $('#menu').style.display='none';$('#onl').style.display='none';$('#over').style.display='none';$('#pause').style.display='none';$('#lo').style.display='none';
- $('#hud').style.display='block';$('#lobbyMenuBtn').style.display='none';msg('');wasNearShop=false;closePanels();renderLUI()}
+ setVM();setHold(e);sc.updateMatrixWorld(true)}
+function enterLobby(){for(const e of E)if(e&&e.mesh)sc.remove(e.mesh);E=[];clearWorldSafe();curMap='lobby';buildMap('lobby');mkLobbyPlayer();LB.inRange=false;LB.pad=null;lobbyPrompt('');
+ st='lobby';tm=0;rt=0;paused=false;if(NET)NET.inGame=false;document.exitPointerLock&&document.exitPointerLock();if(typeof LBC!=='undefined'){LBC.yaw=0;LBC.pitch=-.25}
+ $('#menu').style.display='none';$('#onl').style.display='none';$('#over').style.display='none';$('#pause').style.display='none';$('#lo').style.display='none';$('#rb').style.display='none';
+ $('#hud').style.display='block';$('#lobbyMenuBtn').style.display='none';msg('');wasNearShop=false;closePanels();renderLUI();if(typeof onRangeChange=='function')onRangeChange(false)}
 function tick(dt){
-if(st=='lobby'){updLobbyDummies(dt);checkLobbyProx()}
+if(st=='lobby'){updLobbyDummies(dt);checkLobbyProx(dt);lpxTick(dt)}
 if(st=='lo'){tm-=dt;$('#lot').textContent='請選擇裝備，'+Math.ceil(tm)+' 秒後自動開始';if(tm<=0)ready();return}
-if(st=='wait'){msg('等待其他玩家準備…');if(NET&&NET.host){NET.wt-=dt;if(NET.wt<=0||NET.lb.players.every(p=>NET.rdy.has(p.id)))hostRound()}return}
+if(st=='wait'){msg('等待其他玩家準備…');if(NET&&NET.host){NET.wt-=dt;if(NET.wt<=0||(NET.roster||NET.lb.players).filter(p=>!p.bot).every(p=>NET.rdy.has(p.id)))hostRound()}return}
 if(st=='count'){tm-=dt;msg(Math.ceil(tm));if(tm<=0){if(NET&&NET.midLo)ready();st='play';msg('開始！');setTimeout(()=>st=='play'&&msg(''),900)}}
 else if(st=='play'){rt-=dt;if(!NET||NET.host){const a=[0,0];if(NET){E.forEach(x=>x.alive&&a[x.team]++);if(!a[0]||!a[1])endRound(a[0]?0:1)}if(st=='play'&&rt<=0){const h=[0,0];E.forEach(e=>e.alive&&(h[e.team]+=e.hp));endRound(h[0]>=h[1]?0:1)}}}
 else if(st=='end'){tm-=dt;if(tm<=0&&(!NET||NET.host)){const W=cfg.win||5;if(score[0]>=W||score[1]>=W){const w=score[0]>=W?0:1;if(NET)netSend({t:'ov',w});showOver(w)}else if(NET)hostRound();else begin()}}
@@ -971,12 +1039,12 @@ pickB('#modes','n',v=>{cfg.n=v;party()});pickB('#difs','d',v=>cfg.d=v);party();
 cfg.map=0;{const mb=$('#maps');MAPLIST.forEach((k,i)=>{const b=document.createElement('button');b.textContent=MAPNAME[k];b.dataset.m=i;if(i===0)b.className='on';mb.appendChild(b)});const rb2=document.createElement('button');rb2.textContent='🎲 Random';rb2.dataset.m=-1;mb.appendChild(rb2)}
 pickB('#maps','m',v=>cfg.map=v);
 function resolveMap(){return MAPLIST[cfg.map<0||cfg.map==null?Math.floor(rnd()*MAPLIST.length):cfg.map]}
-function lock(){if(MOBILE)return;try{cv.requestPointerLock&&cv.requestPointerLock()}catch(e){}}
+function lock(){if(MOBILE)return;try{const r=cv.requestPointerLock&&cv.requestPointerLock();if(r&&r.catch)r.catch(()=>{})}catch(e){}}
 $('#go').onclick=()=>{$('#menu').style.display='none';$('#hud').style.display='block';$('#lobbyMenuBtn').style.display='none';paused=false;startMatch()};
 $('#lobbyMenuBtn').onclick=()=>{document.exitPointerLock&&document.exitPointerLock();mL=mR=false;$('#lobbyMenuBtn').style.display='none';$('#menu').style.display='flex';st='menu'};
 $('#backLobby').onclick=()=>{enterLobby()};
 $('#rdy').onclick=ready;
-$('#again').onclick=()=>{$('#over').style.display='none';if(NET){backToRoom();return}paused=false;startMatch()};
+$('#again').onclick=()=>{$('#over').style.display='none';if(NET){enterLobby();return}paused=false;startMatch()};
 $('#tomenu').onclick=()=>{$('#over').style.display='none';if(NET)netLeave();enterLobby()};
 $('#pause').onclick=e=>{if(e.target.id=='pleave'){netLeave();$('#pause').style.display='none';enterLobby();return}paused=false;$('#pause').style.display='none';lock()};
 document.addEventListener('pointerlockchange',()=>{if(!MOBILE&&document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end'||(st=='lobby'&&lobbyFP()))&&!chatOn&&!PANEL&&!(NET&&NET.midLo)){paused=true;mL=mR=false;keys={};$('#pzt').textContent=NET?'線上對戰進行中（遊戲不會暫停）':'已暫停';$('#pleave').style.display=NET?'inline-block':'none';$('#pause').style.display='flex'}});
@@ -993,7 +1061,7 @@ const x=s*Math.cos(P.yaw)-f*Math.sin(P.yaw),z=-s*Math.sin(P.yaw)-f*Math.cos(P.ya
 function dblJump(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||P.sl)return;let w=P.L[P.cur];if(P.qmT>0&&P.L[2].dj&&!P.djs.has(P.L[2].n))w=P.L[2];if(!w.dj||onGround(P)||P.djs.has(w.n))return;P.djs.add(w.n);P.vy=7.5;puff(V(P.x,P.y,P.z),V(0,-1,0),0xffffff,.3,1);snd(600,.08,.04)}
 function qmelee(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qm||0)>performance.now()||P.cur==2)return;const w=P.L[2];if(w.can&&!w.can(P,P.S[2]))return;P.qm=performance.now()+500;P.wnm=w.n;if(NET)netFire('m',2);w.fire(P,w,P.S[2],{});P.kick=1;P.qmT=.4;setVM(w);P.eq=0;P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk='n';snd(800,.09,.06)}
 function qutil(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qu||0)>performance.now())return;const w=P.L[3],s=P.S[3];if(w.can?!w.can(P,s):(w.lim&&s.c<=0))return;if(w.lim&&!w.selfLim)s.c--;P.qu=performance.now()+400;P.wnm=w.n;if(NET)netFire('u',3);w.fire(P,w,s,{});if(w.f)snd(w.f,.08,.05)}
-addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyV'&&!e.repeat&&P.alive)P.insp=2.4;const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！')});
+addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyM'&&st=='lobby'&&LB.inRange&&!e.repeat)leaveRange();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyV'&&!e.repeat&&P.alive)P.insp=2.4;const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！')});
 addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('button,input,.pnl,#lui,.ov,#leaveRange'))return;if(PANEL)return;if(!MOBILE&&!paused&&!chatOn&&document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end'||(st=='lobby'&&lobbyFP())))lock()});
 addEventListener('keyup',e=>keys[e.code]=0);
 addEventListener('wheel',e=>{if(live())swE(P,(P.cur+(e.deltaY>0?1:3))%4)});
@@ -1053,6 +1121,8 @@ const QP=Object.fromEntries(new URLSearchParams(location.search)),NETP='rvlweb-'
 function rid(n){const c='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<n;i++)s+=c[Math.floor(rnd()*c.length)];return s}
 function r2(v){return Math.round(v*100)/100}
 function netSend(m){if(!NET||!NET.tr)return;if((m.t==='h'||m.t==='fx')&&m.by==null)m.by=NET.me;NET.tr.send(m)}
+function nf(e,k,slot,x,dn){if(!NET)return;if(e.isP)netFire(k,slot,x,dn);else if(e.bot&&NET.host&&NET.inGame&&slot>=0){const o=e.ao,d=e.ad;netSend({t:'f',id:e.nid,k,s:slot,o:[r2(o.x),r2(o.y),r2(o.z)],d:[+d.x.toFixed(4),+d.y.toFixed(4),+d.z.toFixed(4)],x:x||null,dn:dn?1:0,r:NET.round})}}
+function botE(id){return E.find(e=>e.bot&&e.nid===id)}
 function netFire(k,slot,x,dn){if(!NET||!NET.inGame||slot<0)return;const o=cam.position,d=V(0,0,-1).applyEuler(cam.rotation);netSend({t:'f',id:NET.me,k,s:slot,o:[r2(o.x),r2(o.y),r2(o.z)],d:[+d.x.toFixed(4),+d.y.toFixed(4),+d.z.toFixed(4)],x:x||null,dn:dn?1:0,r:NET.round})}
 function byId(id){return E.find(e=>e.nid===id)}
 function mkS(L){return L.map(w=>({a:w.mag||0,c:w.lim||0,rl:0,h:0,ov:0,q:0,qt:0,qs:0,sp:0,ch:0,acd:0,out:0,lf:0,rc:0,r:w.res||0}))}
@@ -1077,14 +1147,14 @@ const ERRS={'peer-unavailable':'找不到這個房間，請確認房號','timeou
 function onMsgUI(t,b){if(/伺服器|網路|元件/.test(t))t+='（如果你是在 Claude 裡開啟這個遊戲，線上對戰要改用你架好的網站版）';$('#onMsg').textContent=t;$('#onMsg2').textContent=b||''}
 function nickName(){let n=($('#nick').value||'').trim().slice(0,14);if(!n){n='Player'+rid(3);$('#nick').value=n}try{localStorage.setItem('rvl_nick',n)}catch(_){}return n}
 async function netCreate(){const name=nickName();onMsgUI('正在建立房間…');try{if(QP.net!=='bc')await loadPeer()}catch(_){onMsgUI(ERRS.lib);return}
- const code=QP.code||rid(5);NET={host:true,me:'h'+rid(5),name,code,lb:{players:[],win:5},cid:{},seen:{},round:0,inGame:false,rdy:new Set(),wt:0};NET.lb.players.push({id:NET.me,name,team:0});
+ const code=QP.code||rid(5);NET={host:true,me:'h'+rid(5),name,code,lb:{players:[],win:5},cid:{},seen:{},round:0,inGame:false,rdy:new Set(),wt:0};NET.lb.players.push({id:NET.me,name,team:0,lv:PF?PF.lv:1});NET.lb.party=[];
  const h={open(){roomUI()},msg:(cid,m)=>hostMsg(cid,m),leave:cid=>hostLeave(cid),err:t=>{if(t==='unavailable-id'&&!QP.code){NET.tr.close();NET=null;netCreate();return}onMsgUI(ERRS[t]||('連線錯誤：'+t))}};
  NET.tr=QP.net==='bc'?trBcHost(code,h):trPeerHost(code,h)}
 async function netJoin(){const name=nickName(),code=($('#jc').value||'').trim().toUpperCase();if(!code){onMsgUI('請輸入房號');return}onMsgUI('正在連線到房間 '+code+'…');try{if(QP.net!=='bc')await loadPeer()}catch(_){onMsgUI(ERRS.lib);return}
  NET={host:false,me:'c'+rid(6),name,code,lb:null,round:0,inGame:false,last:performance.now()};
- const h={open(){netSend({t:'hello',id:NET.me,name})},msg:(cid,m)=>{NET.last=performance.now();clientMsg(m)},leave:()=>hostGone(),err:t=>{onMsgUI(ERRS[t]||('連線錯誤：'+t));if(NET&&!NET.lb){NET.tr.close();NET=null}}};
+ const h={open(){netSend({t:'hello',id:NET.me,name,lv:PF?PF.lv:1})},msg:(cid,m)=>{NET.last=performance.now();clientMsg(m)},leave:()=>hostGone(),err:t=>{onMsgUI(ERRS[t]||('連線錯誤：'+t));if(NET&&!NET.lb){NET.tr.close();NET=null}}};
  NET.tr=QP.net==='bc'?trBcJoin(code,h):trPeerJoin(code,h)}
-function netLeave(){if(!NET)return;try{if(!NET.host)netSend({t:'bye',id:NET.me})}catch(_){}try{NET.tr.close()}catch(_){}NET=null;cleanGame();$('#onl').style.display='none'}
+function netLeave(){if(!NET)return;const wasG=NET.inGame;try{if(!NET.host)netSend({t:'bye',id:NET.me})}catch(_){}try{NET.tr.close()}catch(_){}NET=null;clearLPX();if(wasG)cleanGame();$('#onl').style.display='none';const pv=$('#pinv');if(pv)pv.style.display='none';if(PF)renderLUI()}
 function cleanGame(){for(const e of E)sc.remove(e.mesh);E=[];P=null;clearWorldSafe();st='menu';$('#lo').style.display='none';$('#rb').style.display='none'}
 function clearWorldSafe(){try{for(const q of Pr)sc.remove(q.m);Pr=[];for(const p of JP)sc.remove(p.m);JP=[];for(const n of MN)sc.remove(n.m);MN=[];for(const f of FA)sc.remove(f.m);FA=[];for(const s2 of SM)for(const m of s2.ms)sc.remove(m);SM=[];while(TW.length)rmWall(TW[0],0);for(const q of SPR){sc.remove(q.m);boxes.splice(boxes.indexOf(q.bb),1)}SPR=[];for(const v of VX)sc.remove(v.m);VX=[]}catch(_){}}
 // ---- lobby UI ----
@@ -1092,55 +1162,60 @@ function roomUI(){$('#onA').style.display='none';$('#onB').style.display='block'
 function renderLobby(){if(!NET||!NET.lb)return;const L=NET.lb;for(const [t,id] of[[0,'#tA'],[1,'#tB']]){const box=$(id+' .pls');box.innerHTML='';for(const p of L.players.filter(p=>p.team===t)){const d=document.createElement('div');d.className='pl'+(NET.host&&p.id!==NET.me?' mv':'');d.textContent=(p.id===(L.hostId||(NET.host?NET.me:''))?'👑 ':'')+p.name+(p.id===NET.me?'（你）':'');if(NET.host&&p.id!==NET.me){d.title='點一下把他換到另一隊';d.onclick=()=>{p.team=1-p.team;hostLb()}}box.appendChild(d)}}
  [...$('#wins').children].forEach(b=>b.className=+b.dataset.w===L.win?'on':'');const a=L.players.filter(p=>p.team===0).length,b=L.players.length-a;
  $('#ostart').style.display=NET.host?'block':'none';$('#ostart').disabled=!(a&&b);$('#ostart').style.opacity=a&&b?1:.5;$('#onMsg2').textContent=NET.host?(a&&b?'藍 '+a+' 人 vs 紅 '+b+' 人':'兩隊都至少要有 1 個人才能開始'):'等待房主開始對戰…（藍 '+a+' vs 紅 '+b+'）'}
-function hostLb(){NET.lb.hostId=NET.me;netSend({t:'lb',lb:NET.lb});renderLobby()}
+function hostLb(){NET.lb.hostId=NET.me;netSend({t:'lb',lb:NET.lb});renderLobby();if(PANEL=='Party')renderParty()}
 // ---- host side ----
 function hostMsg(cid,m){if(!m||typeof m!=='object')return;NET.seen[cid]=performance.now();
- if(m.t==='hello'){if(NET.inGame){NET.tr.to(cid,{t:'full'});return}const name=String(m.name||'Player').slice(0,14),a=NET.lb.players.filter(p=>p.team===0).length,b=NET.lb.players.length-a;NET.cid[cid]=m.id;NET.lb.players.push({id:m.id,name,team:a<=b?0:1});NET.tr.to(cid,{t:'hi',code:NET.code});hostLb();chatAdd('',null,name+' 加入了房間',1);netSend({t:'c',n:'',x:name+' 加入了房間',sys:1});return}
+ if(m.t==='hello'){if(NET.inGame){NET.tr.to(cid,{t:'full'});return}const name=String(m.name||'Player').slice(0,14),a=NET.lb.players.filter(p=>p.team===0).length,b=NET.lb.players.length-a;NET.cid[cid]=m.id;NET.lb.players.push({id:m.id,name,team:a<=b?0:1,lv:Math.max(1,Math.min(999,m.lv|0))});NET.tr.to(cid,{t:'hi',code:NET.code});hostLb();chatAdd('',null,name+' 加入了房間',1);netSend({t:'c',n:'',x:name+' 加入了房間',sys:1});return}
  const id=NET.cid[cid];if(!id)return;if((m.id&&m.id!==id&&m.t!=='c')||((m.t==='h'||m.t==='fx')&&m.by!==id)||(m.t==='k'&&m.v!==id))return; // no spoofing other players
  if(m.t==='tm'){const p=NET.lb.players.find(p=>p.id===id);if(p&&!NET.inGame){p.team=m.team?1:0;hostLb()}return}
  if(m.t==='bye'){hostLeave(cid);return}
  if(m.t==='rdy'){NET.rdy.add(id);return}
  if(m.t==='pg')return;
- if(m.to&&m.to!==NET.me){for(const c in NET.cid)if(NET.cid[c]===m.to){NET.tr.to(c,m);return}return}
+ if(m.t==='pacc'){const pa=NET.lb.party||(NET.lb.party=[]);if(!pa.includes(id)&&pa.length<4){pa.push(id);hostLb();const pl=NET.lb.players.find(p=>p.id===id);chatAdd('',null,(pl?pl.name:'玩家')+' 加入了隊伍',1);toast('👥 '+(pl?pl.name:'玩家')+' 加入了你的隊伍','#4aa3ff')}return}
+ if(m.t==='pleave'){NET.lb.party=(NET.lb.party||[]).filter(x=>x!==id);hostLb();return}
+ if(m.to&&m.to!==NET.me){if(botE(m.to)){handleGame(m);return}for(const c in NET.cid)if(NET.cid[c]===m.to){NET.tr.to(c,m);return}return}
  if(!m.to)NET.tr.send(m,cid);handleGame(m)}
 function hostLeave(cid){const id=NET.cid[cid];if(!id)return;delete NET.cid[cid];delete NET.seen[cid];try{NET.tr.drop(cid)}catch(_){}const pl=NET.lb.players.find(p=>p.id===id);NET.lb.players=NET.lb.players.filter(p=>p.id!==id);
- const nm=pl?pl.name:'玩家';chatAdd('',null,nm+' 離開了',1);netSend({t:'c',n:'',x:nm+' 離開了',sys:1});netSend({t:'lv',id});removeProxy(id);hostLb();
- if(NET.inGame&&st!=='over'){const a=NET.lb.players.filter(p=>p.team===0).length,b=NET.lb.players.length-a;if(!a||!b){const w=a?0:1;netSend({t:'ov',w,why:'對手離開了'});showOver(w,'對手離開了')}}}
-function hostStart(){const L=NET.lb,a=L.players.filter(p=>p.team===0).length;if(!a||a===L.players.length)return;const roster=L.players.map(p=>({id:p.id,name:p.name,team:p.team}));NET.rdy=new Set();NET.wt=16;netSend({t:'st',roster,win:L.win});enterGame(roster,L.win)}
+ NET.lb.party=(NET.lb.party||[]).filter(x=>x!==id);const nm=pl?pl.name:'玩家';chatAdd('',null,nm+' 離開了',1);netSend({t:'c',n:'',x:nm+' 離開了',sys:1});netSend({t:'lv',id});removeProxy(id);hostLb();
+ if(NET.inGame&&st!=='over'&&NET.roster&&NET.roster.some(r=>r.id===id)){NET.roster=NET.roster.filter(r=>r.id!==id);const a=NET.roster.filter(p=>p.team===0).length,b=NET.roster.length-a;if(!a||!b){const w=a?0:1;netSend({t:'ov',w,why:'對手離開了'});showOver(w,'對手離開了')}}}
+function hostStart(){const L=NET.lb,a=L.players.filter(p=>p.team===0).length;if(!a||a===L.players.length)return;const roster=L.players.map(p=>({id:p.id,name:p.name,team:p.team,lv:p.id===NET.me?(PF?PF.lv:1):(p.lv||1)}));NET.rdy=new Set();NET.wt=16;netSend({t:'st',roster,win:L.win});enterGame(roster,L.win)}
 function hostRound(){NET.round++;NET.rdy=new Set(NET.lb.players.map(p=>p.id));netSend({t:'rd',sc:score,r:NET.round});startRound()}
 // ---- client side ----
 function clientMsg(m){if(!m||typeof m!=='object')return;
  if(m.t==='hi'){onMsgUI('');return}
  if(m.t==='full'){onMsgUI('這個房間正在對戰中，請等這場打完再加入');NET.tr.close();NET=null;return}
- if(m.t==='lb'){NET.lb=m.lb;if($('#onB').style.display!=='block'&&!NET.inGame)roomUI();else renderLobby();return}
+ if(m.t==='lb'){NET.lb=m.lb;if($('#onB').style.display!=='block'&&!NET.inGame)roomUI();else renderLobby();if(PANEL=='Party')renderParty();return}
+ if(m.t==='pinv'){showInvite(String(m.from||'房主').slice(0,14));return}
  if(m.t==='st'){enterGame(m.roster,m.win);return}
- if(m.t==='rd'){NET.round=m.r;score=m.sc.slice();if(st=='lo'||NET.midLo){NET.midLo=0;ready()}startRound();return}
+ if(m.t==='rd'){if(!NET.inGame)return;NET.round=m.r;score=m.sc.slice();if(st=='lo'||NET.midLo){NET.midLo=0;ready()}startRound();return}
  handleGame(m)}
 function hostGone(){if(!NET)return;const wasGame=NET.inGame&&st!=='over'&&P;let hostTeam=null;if(wasGame){const hp=E.find(e=>e.nid&&e.nid[0]==='h');hostTeam=hp?hp.team:null}
  try{NET.tr.close()}catch(_){}
  if(wasGame&&hostTeam!=null&&hostTeam!==P.team){NET=null;showOver(P.team,'對手離開了');return}
- const inG=wasGame;NET=null;if(inG){showOver(-1,'房主離線，對戰結束')}else if(st!=='menu'&&!$('#hud').style.display.includes('none')){backToRoom()}else{$('#onB').style.display='none';$('#onA').style.display='block';onMsgUI('房主離開了，房間已關閉')}}
+ clearLPX();const inG=wasGame;NET=null;if(inG){showOver(-1,'房主離線，對戰結束')}else{toast('房主離開了，房間已關閉');$('#onB').style.display='none';$('#onA').style.display='block';onMsgUI('房主離開了，房間已關閉');if(PF)renderLUI()}}
 // ---- shared game messages ----
 function handleGame(m){if(!NET)return;const t=m.t;
  if(t==='c'){chatAdd(m.sys?'':String(m.n||'').slice(0,14),m.tm,String(m.x||'').slice(0,120),m.sys);return}
  if(t==='lv'){removeProxy(m.id);return}
- if(t==='re'){if(!NET.host)endRound(m.w,m.sc);return}
- if(t==='ov'){if(!NET.host||m.why)showOver(m.w,m.why);return}
+ if(t==='ls'){lpxUpd(m);return}
+ if(t==='re'){if(!NET.host&&NET.inGame)endRound(m.w,m.sc);return}
+ if(t==='ov'){if(NET.inGame&&(!NET.host||m.why))showOver(m.w,m.why);return}
  if(!NET.inGame||!P)return;
  if(t==='s'){const e=byId(m.id);if(e)applyState(e,m);return}
  if(m.r!=null&&m.r!==NET.round)return;
  if(t==='f'){ghostFire(m);return}
- if(t==='h'&&m.to===NET.me){const by=byId(m.by||m.from);const src=by||byIdFromFire(m);if(!src||!P.alive)return;hurt(P,+m.dmg||0,src,String(m.wn||''),{hs:!!m.hs,ray:!!m.ray,prc:!!m.prc,from:V(m.f[0],m.f[1],m.f[2]),net:1});return}
- if(t==='fx'&&m.to===NET.me){if(!P.alive)return;const src=byId(m.by);if(m.burn){P.burn=Math.max(P.burn,m.burn);P.bby=src||P;P.bwn=m.wn||''}if(m.frost){P.frost+=m.frost;P.slow=Math.max(P.slow,1.2);if(P.frost>=1){P.frost=0;P.frz=1.5;P.sl=false}}if(m.paint)P.paint=m.paint;if(m.push)applyPush(P,m.push);if(m.grap)P.grap={p:V(m.grap[0],m.grap[1],m.grap[2]),t:.9},P.frz=0;return}
- if(t==='cr'&&m.to===NET.me){P.td=(P.td||0)+(+m.d||0);return}
+ if(t==='h'){const tg=m.to===NET.me?P:(NET.host?botE(m.to):null);if(!tg)return;const src=byId(m.by||m.from);if(!src||!tg.alive)return;hurt(tg,+m.dmg||0,src,String(m.wn||''),{hs:!!m.hs,ray:!!m.ray,prc:!!m.prc,from:V(m.f[0],m.f[1],m.f[2]),net:1});return}
+ if(t==='fx'){const tg=m.to===NET.me?P:(NET.host?botE(m.to):null);if(!tg||!tg.alive)return;const src=byId(m.by);if(m.burn){tg.burn=Math.max(tg.burn,m.burn);tg.bby=src||tg;tg.bwn=m.wn||''}if(m.frost){tg.frost+=m.frost;tg.slow=Math.max(tg.slow,1.2);if(tg.frost>=1){tg.frost=0;tg.frz=1.5;tg.sl=false}}if(m.paint)tg.paint=m.paint;if(m.push)applyPush(tg,m.push);if(m.grap)tg.grap={p:V(m.grap[0],m.grap[1],m.grap[2]),t:.9},tg.frz=0;return}
+ if(t==='cr'){const tg=m.to===NET.me?P:(NET.host?botE(m.to):null);if(tg)tg.td=(tg.td||0)+(+m.d||0);return}
  if(t==='k'){const v=byId(m.v),k=byId(m.by);if(v&&v.net){v.alive=false;v.hp=0}const kn=k?k.name:(v?v.name:'?');if(v&&v.net)feed(kn+'  ['+(m.wn||'')+(m.hs?' · HS':'')+']  '+v.name);if(m.by===NET.me&&v){P.k++;elim(v.name);creditKill(m.wn,m.hs)}return}}
 function byIdFromFire(m){return null}
 function removeProxy(id){const i=E.findIndex(e=>e.nid===id&&e.net);if(i<0)return;sc.remove(E[i].mesh);E.splice(i,1)}
 // ---- entering game ----
-function enterGame(roster,win){NET.inGame=true;NET.round=0;NET.midLo=0;cfg.win=win||5;$('#onl').style.display='none';$('#over').style.display='none';$('#menu').style.display='none';$('#hud').style.display='block';paused=false;score=[0,0];
- for(const e of E)sc.remove(e.mesh);E=[];clearWorldSafe();curMap=resolveMap();buildMap(curMap);const me=roster.find(r=>r.id===NET.me);if(!me){netLeave();return}const idx=[0,0];let mx=1;
- for(const r of roster){const i=idx[r.team]++;mx=Math.max(mx,idx[r.team]);const isP=r.id===NET.me,e={team:r.team,i,isP,net:!isP,nid:r.id,name:isP?NET.name:r.name,k:0,dth:0,td:0,hsk:0,lv:r.lv||1};e.mesh=mkBody(r.team===me.team?0:1);e.mesh.traverse(o=>o.userData.ent=e);sc.add(e.mesh);if(!isP){e.L=[PRI[0],SEC[0],MEL[0],UTL[0]];e.S=mkS(e.L);e.cur=0}E.push(e);if(isP)P=e}
- cfg.n=mx;P.L=P.L||[PRI[0],SEC[0],MEL[0],UTL[0]];respawn();openLo()}
+function enterGame(roster,win){const me=roster.find(r=>r.id===NET.me);if(!me){NET.busy=1;if(st==='lobby')toast('⚔️ 房主開始了一場線上對戰（你沒有在這場）');return}
+ NET.busy=0;NET.roster=roster;NET.inGame=true;NET.round=0;NET.midLo=0;cfg.win=win||5;clearLPX();closePanels();$('#onl').style.display='none';$('#over').style.display='none';$('#menu').style.display='none';$('#hud').style.display='block';paused=false;score=[0,0];
+ for(const e of E)sc.remove(e.mesh);E=[];clearWorldSafe();curMap=resolveMap();buildMap(curMap);const idx=[0,0];let mx=1;
+ for(const r of roster){const i=idx[r.team]++;mx=Math.max(mx,idx[r.team]);const isP=r.id===NET.me,isB=!!r.bot&&NET.host,e={team:r.team,i,isP,net:!isP&&!isB,bot:isB?1:0,nid:r.id,name:isP?NET.name:r.name,k:0,dth:0,td:0,hsk:0,lv:r.lv||1};e.mesh=mkBody(r.team===me.team?0:1);e.mesh.traverse(o=>o.userData.ent=e);sc.add(e.mesh);if(!isP&&!isB){e.L=[PRI[0],SEC[0],MEL[0],UTL[0]];e.S=mkS(e.L);e.cur=0}E.push(e);if(isP)P=e}
+ cfg.n=mx;P.L=P.L||[PRI[0],SEC[0],MEL[0],UTL[0]];if(NET.host)assignPersonalities();respawn();openLo()}
 function startRound(){$('#over').style.display='none';NET.midLo=0;$('#lo').style.display='none';begin();lock()}
 function backToRoom(){cleanGame();$('#hud').style.display='none';if(!NET){$('#menu').style.display='flex';return}$('#onl').style.display='flex';roomUI();if(NET.host)hostLb()}
 // ---- state sync ----
@@ -1152,10 +1227,12 @@ function applyState(e,m){const p=m.p;if(!p)return;e.tx=p[0];e.ty=p[1];e.tz=p[2];
  if(m.r===NET.round){e.hp=m.hp;if(!m.a&&e.alive){e.alive=false}}}
 function netUpd(e,dt){if(!e.alive)return;const k=Math.min(1,dt*14),ox=e.x,oz=e.z;e.x+=(e.tx-e.x)*k;e.y+=(e.ty-e.y)*k;e.z+=(e.tz-e.z)*k;if(Math.hypot(e.tx-e.x,e.tz-e.z)>6){e.x=e.tx;e.y=e.ty;e.z=e.tz}let a=e.tyaw-e.yaw;a=Math.atan2(Math.sin(a),Math.cos(a));e.yaw+=a*k;animBody(e,dt,Math.hypot(e.x-ox,e.z-oz))}
 let sendK=0;
-setInterval(()=>{if(!NET||!NET.tr)return;if(!NET.inGame||!P||st==='over'){if(sendK++%10==0)netSend({t:'pg',id:NET.me});hbCheck();return}
+setInterval(()=>{if(!NET||!NET.tr)return;if(st==='lobby'&&P&&!NET.inGame){if(sendK++%2==0)netSend({t:'ls',id:NET.me,nm:NET.name,lv:PF?PF.lv:1,p:[r2(P.x),r2(P.y),r2(P.z),+((LB.inRange||P.myaw==null)?P.yaw:P.myaw).toFixed(2)],pad:LB.pad?[LB.pad.n,LB.pad.s]:0});hbCheck();return}if(!NET.inGame||!P||st==='over'){if(sendK++%10==0)netSend({t:'pg',id:NET.me});hbCheck();return}
  if(st==='lo'||st==='wait'){if(sendK++%10==0)netSend({t:'pg',id:NET.me});hbCheck();return}
  sendK++;const f=(P.sl?1:0)|(P.cr?2:0)|(P.frz>0?4:0)|(P.burn>0?8:0)|(P.shd?16:0)|(P.dfl>0?32:0)|(P.zoom?64:0)|(P.kick>.7?128:0);const sg=P.alive?null:spec();
- netSend({t:'s',id:NET.me,p:[r2(P.x),r2(P.y),r2(P.z),+P.yaw.toFixed(3),+P.pitch.toFixed(3)],c:P.cur,L:P.L.map(w=>w.n),hp:Math.round(P.hp*10)/10,a:P.alive?1:0,f,k:P.k,d:P.dth,td:Math.round(P.td||0),sp:sg?sg.nid:'',r:NET.round});hbCheck()},50);
+ netSend({t:'s',id:NET.me,p:[r2(P.x),r2(P.y),r2(P.z),+P.yaw.toFixed(3),+P.pitch.toFixed(3)],c:P.cur,L:P.L.map(w=>w.n),hp:Math.round(P.hp*10)/10,a:P.alive?1:0,f,k:P.k,d:P.dth,td:Math.round(P.td||0),sp:sg?sg.nid:'',r:NET.round});
+ if(NET.host)for(const b of E)if(b.bot){const g=(b.sl?1:0)|(b.cr?2:0)|(b.frz>0?4:0)|(b.burn>0?8:0)|(b.shd?16:0)|(b.dfl>0?32:0)|(b.zoom?64:0)|(b.kick>.7?128:0);netSend({t:'s',id:b.nid,p:[r2(b.x),r2(b.y),r2(b.z),+b.yaw.toFixed(3),+(b.pitch||0).toFixed(3)],c:b.cur,L:b.L.map(w=>w.n),hp:Math.round(b.hp*10)/10,a:b.alive?1:0,f:g,k:b.k,d:b.dth,td:Math.round(b.td||0),sp:'',r:NET.round})}
+ hbCheck()},50);
 function hbCheck(){if(!NET)return;const now=performance.now();if(NET.host){for(const c in NET.seen)if(now-NET.seen[c]>9000)hostLeave(c)}else if(NET.lb&&now-NET.last>9000)hostGone()}
 // ---- ghost replay of another player's action ----
 function ghostFire(m){const e=byId(m.id);if(!e||!e.net||!e.alive)return;const w=e.L[m.s];if(!w)return;const s=e.S[m.s];if(e.cur!==m.s){e.cur=m.s;setHold(e)}
@@ -1229,6 +1306,8 @@ function awardMatch(won){if(!PF||!P)return null;const k=P.k||0,hs=P.hsk||0,xp=(w
  for(const w of P.L||[])if(w&&w.n)PF.wu[w.n]=(PF.wu[w.n]||0)+1;dailyReset();PF.daily.pd++;PF.daily.el+=k;if(won)PF.daily.wd++;const keys=won?1:0;PF.keys+=keys;const lv0=PF.lv,up=addXP(xp);saveP();return{xp,keys,lv0,up,k,hs}}
 function rewardHTML(a){if(!a)return'';const r=xpReq(PF.lv);return'<b style="color:#9b8cff">+'+a.xp+' XP</b>（'+(a.k?'擊殺 '+a.k+' ×10':'無擊殺')+(a.hs?'、爆頭擊殺 '+a.hs+' ×5':'')+'）'+(a.keys?'　<b style="color:#ffd23f">+'+a.keys+' 🔑</b>':'')+(a.up?'<br><b style="color:#ffc93c">⬆️ 升級到 Lv '+PF.lv+'！</b>':'')+'<br>Lv '+PF.lv+'　'+PF.xp+' / '+r+' XP<div class="xpb"><i style="width:'+Math.min(100,PF.xp/r*100)+'%"></i></div>'}
 function lobbyFP(){return true}
+function onRangeChange(inR){$('#leaveRange').style.display=inR&&st=='lobby'?'block':'none';if(!inR&&document.pointerLockElement&&!lobbyFP())document.exitPointerLock();if(P&&P.L)setVM();if(inR)toast('🎯 Shooting Range — 按 M 離開');syncLUI()}
+$('#leaveRange').onclick=e=>{e.stopPropagation();leaveRange()};
 // ===== lobby panels (menus) =====
 var PANEL=null;const PRENDER={};
 function openPanel(id){closePanels();const el=$('#p'+id);if(!el)return;PANEL=id;el.style.display='flex';mL=mR=false;keys={};if(document.pointerLockElement)document.exitPointerLock();try{(PRENDER[id]||(()=>{}))()}catch(err){console.error(err)}}
@@ -1274,7 +1353,7 @@ $('#codeGo').onclick=redeem;$('#codeIn').addEventListener('keydown',e=>{if(e.cod
 PRENDER.Code=()=>{$('#codeIn').value='';$('#codeMsg').textContent='';setTimeout(()=>$('#codeIn').focus(),30)};
 // ---- lobby HUD ----
 var LUIt=0;
-function syncLUI(){const on=st=='lobby'&&!!PF&&!(typeof LB!=='undefined'&&LB.inRange);const el=$('#lui');if(el.style.display!==(on?'block':'none')){el.style.display=on?'block':'none';if(on)renderLUI()}document.body.classList.toggle('lbhub',on)}
+function syncLUI(){{const lr=st=='lobby'&&LB.inRange&&!PANEL?'block':'none',el2=$('#leaveRange');if(el2.style.display!==lr)el2.style.display=lr}const on=st=='lobby'&&!!PF&&!(typeof LB!=='undefined'&&LB.inRange);const el=$('#lui');if(el.style.display!==(on?'block':'none')){el.style.display=on?'block':'none';if(on)renderLUI()}document.body.classList.toggle('lbhub',on)}
 function claimable(){if(!PF)return{t:0,p:0};dailyReset();let t=0;for(const d of DAILY)if(PF.daily[d.k]>=d.g&&!PF.daily.cl.includes(d.k))t++;if(PF.login.cl!==today())t++;for(const c of CONTRACTS){const s=ctState(c);if(s.p>=s.g)t++}let p=0;for(let l=1;l<=Math.min(PF.lv,PASS_MAX);l++)if(!PF.pass.includes(l))p++;return{t,p}}
 function renderLUI(){if(!PF)return;const r=xpReq(PF.lv);$('#llvn').textContent=PF.lv;$('#llname').textContent=accName();$('#llxp').style.width=Math.min(100,PF.xp/r*100)+'%';$('#llxpt').textContent='Lv '+PF.lv+' · '+PF.xp+' / '+r+' XP';$('#lkeyn').textContent=PF.keys;
  dailyReset();$('#ltlist').innerHTML=DAILY.map(d=>{const v=Math.min(d.g,PF.daily[d.k]),dn=v>=d.g;return'<div class="tk'+(dn?' done':'')+'">'+d.n+' <b>'+v+'/'+d.g+'</b><span class="r">'+(PF.daily.cl.includes(d.k)?'✔':d.r+' 🔑')+'</span><div class="pb"><i style="width:'+v/d.g*100+'%"></i></div></div>'}).join('');
@@ -1356,5 +1435,44 @@ PRENDER.Set=()=>{const s=PF.set,sl=(k,lab,mn,mx,stp)=>'<div class="setrow"><labe
  for(const r of $('#setBody').querySelectorAll('[data-sk]'))r.oninput=()=>{s[r.dataset.sk]=+r.value;r.nextElementSibling.textContent=r.value;applySettings();if(r.dataset.sk=='cz'){const pv=$('#xprev');pv.style.width=pv.style.height=r.value+'px';pv.style.margin=(-r.value/2)+'px'}saveP()};
  for(const b of $('#setBody').querySelectorAll('[data-cc]'))b.onclick=()=>{s.cc=b.dataset.cc;applySettings();saveP();PRENDER.Set()};
  $('#shk').onclick=()=>{s.shake=s.shake?0:1;saveP();PRENDER.Set()};$('#logout').onclick=()=>{closePanels();accLogout()}};
+// ===== online lobby presence, duel pads, party =====
+var LPX={},PTAB='all';
+function lpxUpd(m){if(st!=='lobby'||!NET||!Array.isArray(m.p)||m.id===NET.me)return;let q=LPX[m.id];
+ if(!q){q={id:m.id,name:String(m.nm||'Player').slice(0,14),lv:Math.max(1,m.lv|0),x:+m.p[0]||0,y:+m.p[1]||0,z:+m.p[2]||0,yaw:+m.p[3]||0,L:[PRI[0],SEC[0],MEL[0],UTL[0]],cur:0,ph:0,kick:0,pitch:0};q.mesh=mkBody(0);Lbl(q.mesh,'Lv '+q.lv+' · '+q.name,0,2.75,0,2.4,.42,'rgba(0,0,0,.55)','#fff');sc.add(q.mesh);LPX[m.id]=q;renderPList();if(PANEL=='Party')renderParty()}
+ q.tx=+m.p[0]||0;q.ty=+m.p[1]||0;q.tz=+m.p[2]||0;q.tyaw=+m.p[3]||0;q.pad=Array.isArray(m.pad)?[m.pad[0]|0,m.pad[1]?1:0]:0;q.t=performance.now()}
+function lpxTick(dt){const now=performance.now();for(const id in LPX){const q=LPX[id];if(now-q.t>3000||!NET){sc.remove(q.mesh);delete LPX[id];renderPList();continue}
+ const k=Math.min(1,dt*12),ox=q.x,oz=q.z;q.x+=(q.tx-q.x)*k;q.y+=(q.ty-q.y)*k;q.z+=(q.tz-q.z)*k;let a=q.tyaw-q.yaw;a=Math.atan2(Math.sin(a),Math.cos(a));q.yaw+=a*k;q.mesh.position.set(q.x,q.y,q.z);q.mesh.rotation.set(0,q.yaw,0);animBody(q,dt,Math.hypot(q.x-ox,q.z-oz))}}
+function clearLPX(){for(const id in LPX)sc.remove(LPX[id].mesh);LPX={}}
+function partyIds(){if(!NET||!NET.lb)return[];const hid=NET.lb.hostId||(NET.host?NET.me:null),ids=[hid].concat(NET.lb.party||[]);return ids.filter((id,i)=>id&&ids.indexOf(id)===i&&NET.lb.players.some(p=>p.id===id))}
+function netPadCheck(pad,occ,dt){const n=pad.n,s=pad.s;
+ if(!NET.host){lobbyPrompt('⏳ '+n+'v'+n+' 排隊中…<br><span style="font-size:14px">線上房間：房主也要站上配對墊（對面或同一邊）才會開始</span>');return}
+ const mine=new Set(occ[n+'_'+s]||[]);for(const id of partyIds())if(id===NET.me||LPX[id])mine.add(id);
+ const opp=(occ[n+'_'+(1-s)]||[]).filter(id=>!mine.has(id));
+ if(mine.size>n||opp.length>n){lobbyPrompt('⚠️ 人數超過 '+n+'v'+n+' 上限');LB.padKey='';return}
+ if(!opp.length){lobbyPrompt('⏳ 等待對手站上另一邊的配對墊…<br><span style="font-size:14px">隊伍成員會自動跟你同隊 · 想打機器人請按 Play</span>');LB.padKey='';return}
+ const key=[...mine].sort().join()+'|'+opp.slice().sort().join();if(LB.padKey!==key){LB.padKey=key;LB.padT=3}LB.padT-=dt;
+ lobbyPrompt('⚔️ '+n+'v'+n+' 即將開始… '+Math.max(1,Math.ceil(LB.padT))+'<br><span style="font-size:14px">空位由機器人補上</span>');
+ if(LB.padT<=0){LB.pad=null;LB.padKey='';lobbyPrompt('');startOnlineMatch(n,[...mine],opp)}}
+function startOnlineMatch(n,A,B){if(!NET||!NET.host)return;const pool=NM.slice().sort(()=>rnd()-.5),pl=id=>NET.lb.players.find(p=>p.id===id)||{name:'Player',lv:1},roster=[];let bi=0;
+ for(const[t,ids]of[[0,A],[1,B]]){const hs=ids.slice(0,n);for(const id of hs){const p=pl(id);roster.push({id,name:p.name,team:t,lv:id===NET.me?(PF?PF.lv:1):(p.lv||1)})}for(let k=hs.length;k<n;k++)roster.push({id:'b'+(bi++)+rid(3),name:pool.pop(),team:t,lv:1+Math.floor(rnd()*60),bot:1})}
+ NET.rdy=new Set();NET.wt=16;netSend({t:'st',roster,win:NET.lb.win||5});enterGame(roster,NET.lb.win||5)}
+function onlinePlay(n){if(!NET.host){toast('👑 線上房間由房主（隊長）開始對戰，請等房主按 Play 或站上配對墊');return}const party=partyIds().filter(id=>id===NET.me||LPX[id]);if(party.length>n){toast('⚠️ 隊伍有 '+party.length+' 人，請選 '+party.length+'v'+party.length+' 以上');return}startOnlineMatch(n,party,[])}
+function hostInvite(id){for(const c in NET.cid)if(NET.cid[c]===id)NET.tr.to(c,{t:'pinv',from:NET.name})}
+function showInvite(from){let d=$('#pinv');if(!d){d=document.createElement('div');d.id='pinv';d.style.cssText='position:fixed;left:50%;top:96px;transform:translateX(-50%);z-index:60;background:#1c2036f5;border:2px solid #4aa3ff;border-radius:12px;padding:12px 18px;color:#fff;font:800 15px system-ui;text-align:center;box-shadow:0 8px 30px #000a';document.body.appendChild(d)}
+ d.innerHTML='👥 <b>'+esc(from)+'</b> 邀請你加入隊伍<br><button class="gbtn" id="pinvY" style="margin:8px 4px 0">接受 Accept</button><button id="pinvN" style="margin:8px 4px 0">拒絕</button>';d.style.display='block';snd(880,.12,.05,'sine');
+ $('#pinvY').onclick=()=>{if(NET)netSend({t:'pacc',id:NET.me});d.style.display='none'};$('#pinvN').onclick=()=>d.style.display='none';clearTimeout(showInvite.t);showInvite.t=setTimeout(()=>d.style.display='none',20000)}
+function renderParty(){const mem=NET?partyIds():[],nm=id=>id===NET.me?accName()+'（你）':((NET.lb.players.find(p=>p.id===id)||{}).name||'?');let h='';
+ for(let i=0;i<5;i++){const id=NET?mem[i]:(i?null:'me');h+='<div class="pslot'+(id?' fill':'')+'">'+(id?(i==0?'👑 ':'👤 ')+esc(NET?nm(id):accName()+'（你）'):'<span style="color:#7f88aa">空位 Empty</span>')+'</div>'}$('#pslots').innerHTML=h;
+ $('#partyLeave').style.display=NET&&!NET.host&&mem.includes(NET.me)?'block':'none';$('#partyNote').textContent=NET?'　房間 '+NET.code+(NET.host?' · 你是隊長':''):'';
+ [...$('#ptabs').children].forEach(b=>b.className=b.dataset.t==PTAB?'on':'');const pl=$('#plistP');
+ if(!NET){pl.innerHTML='<div class="cd"><h4>還沒有加入線上房間</h4><div class="sub2" style="line-height:1.6">建立或加入房間後，同一個房間的玩家會出現在這裡（也會出現在 3D 大廳裡）。房主（隊長）可以邀請最多 4 位玩家組成 5 人隊伍：按 Play 一起打機器人，或站上 Duels 配對墊對戰其他玩家，空位由機器人補上。</div><button class="bbtn" id="pOnl" style="margin-top:10px">🌐 建立 / 加入房間</button></div>';$('#pOnl').onclick=()=>{closePanels();$('#lonline').click()};return}
+ if(PTAB=='fr'){pl.innerHTML='<div class="cd"><h4>Friends 好友</h4><div class="soon">好友系統 敬請期待</div></div>';return}
+ const q=($('#psearch').value||'').trim().toLowerCase();let rows=NET.lb.players.filter(p=>p.id!==NET.me&&(!q||p.name.toLowerCase().includes(q)));if(PTAB=='lb')rows=rows.filter(p=>LPX[p.id]);
+ pl.innerHTML=rows.length?rows.map(p=>{const inP=mem.includes(p.id);return'<div class="pcard">👤 <span class="lvb">'+(p.lv||1)+'</span>'+esc(p.name)+(LPX[p.id]?' <span style="color:#35d07f;font-size:12px">● 大廳</span>':' <span style="color:#9fb0e0;font-size:12px">對戰中/選單</span>')+(NET.host?(inP?'<button data-pk="'+p.id+'">移除</button>':'<button class="bbtn" data-pi="'+p.id+'"'+(mem.length>=5?' disabled':'')+'>Invite</button>'):(inP?'<span style="margin-left:auto;color:#35d07f">隊友</span>':'<span style="margin-left:auto;color:#9fb0e0;font-size:12px">只有房主能邀請</span>'))+'</div>'}).join(''):'<div class="note">房間裡目前沒有其他玩家。把房號 <b>'+NET.code+'</b> 傳給朋友！</div>';
+ for(const b of pl.querySelectorAll('[data-pi]'))b.onclick=()=>{hostInvite(b.dataset.pi);b.disabled=true;b.textContent='已邀請'};
+ for(const b of pl.querySelectorAll('[data-pk]'))b.onclick=()=>{NET.lb.party=(NET.lb.party||[]).filter(x=>x!==b.dataset.pk);hostLb()}}
+PRENDER.Party=renderParty;$('#avBtn').onclick=()=>openPanel('Party');$('#psearch').oninput=renderParty;$('#ptabs').onclick=e=>{const b=e.target.closest('button');if(b){PTAB=b.dataset.t;renderParty()}};
+$('#partyLeave').onclick=()=>{if(NET&&!NET.host){netSend({t:'pleave',id:NET.me});toast('已離開隊伍')}};
+$('#onLobby').onclick=()=>{$('#onl').style.display='none';if(st!=='lobby')enterLobby();toast(NET?'🏠 回到大廳 · 房號 '+NET.code+'（同房間的玩家會出現在大廳）':'🏠 回到大廳')};
 bootAuth();
 </script></body></html>
