@@ -95,6 +95,13 @@ body.mobile #cin{left:14px;bottom:calc(100px + env(safe-area-inset-bottom,0px));
 body.mobile #spi{bottom:calc(190px + env(safe-area-inset-bottom,0px));min-width:0;width:68vw;font-size:12px}
 body.mobile #tab{min-width:0;width:90vw;font-size:11px;padding:6px 8px}
 body.mobile #dead{bottom:calc(260px + env(safe-area-inset-bottom,0px));font-size:14px}
+/* ===== accounts / toasts ===== */
+#auth{z-index:50;background:radial-gradient(circle at 50% 30%,#2a1a4acc,#05060ef2)}
+#auth .card{width:min(430px,92%)}#auth input[type=text],#auth input[type=password]{width:100%;box-sizing:border-box}
+#alist button{margin:4px 4px 0 0;padding:5px 10px;font-size:13px}
+#toasts{position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:80;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
+#toasts div{background:#111a;border:2px solid #fff4;color:#fff;font:800 16px system-ui;padding:8px 18px;border-radius:10px;text-shadow:0 1px 0 #000;animation:tin .25s;backdrop-filter:blur(4px)}@keyframes tin{from{transform:translateY(-12px);opacity:0}}
+#orew{margin:10px 0;font-size:15px;line-height:1.7}#orew .xpb{height:10px;background:#0006;border-radius:5px;overflow:hidden;margin-top:4px}#orew .xpb i{display:block;height:100%;background:linear-gradient(90deg,#4aa3ff,#9b5cff)}
 @media (max-width:760px){
  .card{padding:14px 16px}
  h1{font-size:20px}
@@ -154,7 +161,20 @@ body.mobile #dead{bottom:calc(260px + env(safe-area-inset-bottom,0px));font-size
 <div class="lchat" id="lchat"></div><input id="lcin" maxlength="120" placeholder="聊天：輸入後按 Enter" style="width:100%;box-sizing:border-box">
 <button class="big" id="ostart">開始對戰</button><p class="note" id="onMsg2"></p><button id="leave">離開房間</button></div>
 </div></div>
-<div id="over" class="ov" style="display:none"><div class="card"><h1 id="ot"></h1><div class="row"><button class="on" id="again">再來一場</button><button id="tomenu">回到選單</button></div></div></div>
+<div id="auth" class="ov" style="display:none"><div class="card">
+<h1>RIVALS <small style="font-size:14px;color:#9fb0e0">競技對決 · 帳號</small></h1>
+<div class="row" id="authTabs" style="margin-top:8px"><button data-m="in" class="on">登入 Sign in</button><button data-m="up">註冊 Sign up</button></div>
+<h3>使用者名稱 Username</h3><input id="au" type="text" maxlength="16" autocomplete="username" placeholder="3–16 字：英數、底線或中文">
+<h3>密碼 Password</h3><input id="ap" type="password" maxlength="64" autocomplete="current-password" placeholder="至少 4 個字元">
+<div id="ap2w" style="display:none"><h3>確認密碼 Confirm</h3><input id="ap2" type="password" maxlength="64" autocomplete="new-password"></div>
+<label class="note" style="display:block;margin-top:10px"><input type="checkbox" id="arem" checked style="width:auto;padding:0;vertical-align:middle"> 記住我（下次自動登入）Remember me</label>
+<button class="big" id="ago">登入 Sign in</button>
+<p class="note" id="amsg" style="color:#ff8a8a;min-height:18px;margin:8px 0 0"></p>
+<div id="alistw" style="display:none"><h3>這台裝置上的帳號</h3><div id="alist"></div></div>
+<p class="note" style="font-size:11px;line-height:1.5;margin-top:12px">⚠️ 帳號和遊戲進度（等級、鑰匙、解鎖武器、任務）<b>只儲存在這台裝置的這個瀏覽器</b>（localStorage），不會上傳到任何伺服器；清除瀏覽器資料、用無痕視窗或換裝置就看不到。密碼會先用 SHA-256 雜湊再存，但這不是真正安全的線上帳號，請不要用你在其他網站使用的密碼。</p>
+</div></div>
+<div id="toasts"></div>
+<div id="over" class="ov" style="display:none"><div class="card"><h1 id="ot"></h1><div id="orew"></div><div class="row"><button class="on" id="again">再來一場</button><button id="tomenu">回到選單</button></div></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -425,7 +445,7 @@ u.aR.add(e.hold);e.hold.traverse(o=>o.userData.ent=e)}
 
 function pick(a){return a[Math.floor(rnd()*a.length)]}
 function setup(){for(const e of E)sc.remove(e.mesh);E=[];const n=cfg.n,pool=NM.slice().sort(()=>rnd()-.5);
-for(let t=0;t<2;t++)for(let i=0;i<n;i++){const e={team:t,i,isP:!t&&!i,name:'你',k:0,dth:0,td:0};if(!e.isP)e.name=pool.pop();e.mesh=mkBody(t);e.mesh.traverse(o=>o.userData.ent=e);sc.add(e.mesh);E.push(e);if(e.isP)P=e}
+for(let t=0;t<2;t++)for(let i=0;i<n;i++){const e={team:t,i,isP:!t&&!i,name:'你',k:0,dth:0,td:0,hsk:0,lv:1+Math.floor(rnd()*60)};if(!e.isP)e.name=pool.pop();e.mesh=mkBody(t);e.mesh.traverse(o=>o.userData.ent=e);sc.add(e.mesh);E.push(e);if(e.isP)P=e}
 assignPersonalities()}
 const PERS=['aggr','def','hide'];
 function assignPersonalities(){const bots=E.filter(e=>!e.isP&&!e.net);const list=[];for(let i=0;i<bots.length;i++)list.push(PERS[i%PERS.length]);for(let i=list.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));const tmp=list[i];list[i]=list[j];list[j]=tmp}bots.forEach((b,i)=>b.pers=list[i])}
@@ -446,7 +466,7 @@ if(!o.prc&&!o.dot){const fr=o.from||by;if(t.dfl&&o.ray&&!noDfl&&front(t,fr)){if(
 if(!by.isP&&!by.net)dmg*=DF[cfg.d].dm;const hp0=t.hp;
 if(t.frz>0){dmg*=.5;t.frz=0;t.slow=2.5}t.hp-=dmg;if(t.isP){fl=Math.max(fl,o.dot?.2:.5);if(!o.dot){snd(150,.1,.08);t.hx=by.x;t.hz=by.z;da=1}}if(by.isP&&!o.dot){hm=.15;snd(900,.05,.05)}if(by.isP)dmgNum(Math.round(Math.min(dmg,t.hp+dmg)),o.hs);
 const dealt=Math.max(0,Math.min(dmg,hp0));if(by.net){if(dealt>0)netSend({t:'cr',to:by.nid,d:+dealt.toFixed(1)})}else by.td=(by.td||0)+dealt;
-if(t.hp<=0){t.alive=false;t.sl=false;t.killer=by;t.kw=wn;t.dth++;if(!by.net)by.k++;feed(by.name+'  ['+wn+(o.hs?' · HS':'')+']  '+t.name);if(by.isP)elim(t.name);
+if(t.hp<=0){t.alive=false;t.sl=false;t.killer=by;t.kw=wn;t.dth++;if(!by.net)by.k++;feed(by.name+'  ['+wn+(o.hs?' · HS':'')+']  '+t.name);if(by.isP){elim(t.name);creditKill(wn,o.hs)}
  if(NET){if(t.isP)netSend({t:'k',v:P.nid,by:by.nid||'',wn,hs:o.hs?1:0,r:NET.round})}else{const a=[0,0];E.forEach(x=>x.alive&&a[x.team]++);if(!a[0]||!a[1])endRound(a[0]?0:1)}}
 return dmg}
 function fxT(t,o){if(NET&&t.net){if(!GH&&!o.vs)netSend(Object.assign({t:'fx',to:t.nid,r:NET.round},o));return true}return false}
@@ -720,7 +740,7 @@ function paintFx(){const p=$('#paint');p.innerHTML='';for(let i=0;i<6;i++){const
 
 // ===== round flow =====
 function endRound(w,sc){st='end';tm=2.5;rndW=w;if(sc)score=sc.slice();else score[w]++;if(NET&&NET.host)netSend({t:'re',w,sc:score,r:NET.round});const won=w===P.team,rb=$('#rb');rb.className=won?'won':'lost';rb.innerHTML='ROUND<b>'+(won?'WON':'LOST')+'</b>';rb.style.display='block'}
-function showOver(w,why){if(P&&w>=0){SESSTATS.matches++;if(w===P.team)SESSTATS.wins++;else SESSTATS.losses++;SESSTATS.kills+=P.k||0}st='over';document.exitPointerLock&&document.exitPointerLock();$('#pause').style.display='none';$('#lo').style.display='none';$('#ot').textContent=w<0||!P?(why||'對戰結束'):(w===P.team?'🏆 你的隊伍獲勝！':'💀 敵方獲勝')+(why?'（'+why+'）':'');$('#again').textContent=NET?'回到房間':'再來一場';$('#tomenu').textContent=NET?'離開房間':'回到選單';$('#over').style.display='flex';if(NET)NET.inGame=false}
+function showOver(w,why){let aw=null;if(P&&w>=0){SESSTATS.matches++;if(w===P.team)SESSTATS.wins++;else SESSTATS.losses++;SESSTATS.kills+=P.k||0;aw=awardMatch(w===P.team)}$('#orew').innerHTML=rewardHTML(aw);st='over';document.exitPointerLock&&document.exitPointerLock();$('#pause').style.display='none';$('#lo').style.display='none';$('#ot').textContent=w<0||!P?(why||'對戰結束'):(w===P.team?'🏆 你的隊伍獲勝！':'💀 敵方獲勝')+(why?'（'+why+'）':'');$('#again').textContent=NET?'回到房間':'再來一場';$('#tomenu').textContent=NET?'離開房間':'回到選單';$('#over').style.display='flex';if(NET)NET.inGame=false}
 function begin(){respawn();st='count';tm=3;rt=90;msg('');sp=0;$('#rb').style.display='none'}
 function openLo(){if(NET&&st=='count'){NET.midLo=1;mL=mR=false;showLo();$('#lo').style.display='flex';$('#lot').textContent='倒數結束前選好，按「準備完成」';document.exitPointerLock&&document.exitPointerLock();return}E.forEach(e=>e.mesh.visible=false);st='lo';tm=10;mL=mR=false;if(P)P.zoom=false;showLo();document.exitPointerLock&&document.exitPointerLock()}
 function showLo(){$('#lo').style.display='flex';GP.forEach(([id,arr],k)=>{const box=$('#'+id);box.innerHTML='';[{n:'Random',d:'隨機',rq:1}].concat(arr).forEach((w,j)=>{const i=j-1,b=document.createElement('button');b.innerHTML=(w.rq?'<span class="rq">?</span>':'<img src="'+icon(w)+'">')+w.n+'<small>'+w.d+'</small>';b.className=i==LS[k]?'on':'';b.onclick=()=>{LS[k]=i;[...box.children].forEach((c,q)=>c.className=q-1==i?'on':'')};box.appendChild(b)})})}
@@ -790,7 +810,7 @@ $('#wn').textContent=w.n;chatTick();$('#swp').style.display=st=='count'?'block':
 let t;if(P.pin!=null)t='Pin '+Math.max(0,P.pin).toFixed(1);else if(s.rl>0)t='Reloading…';else if(w.heat)t=s.ov?'過熱！':Math.round(s.h*100)+'%';else if(w.charge)t=s.ch>0?'蓄力 '+Math.round(s.ch*100)+'%':'按住蓄力';else if(w.n=='Riot Shield')t=P.shp>0?'盾 '+Math.ceil(P.shp)+' / 500':'盾牌破損';else if(w.lim)t=s.c>0?'× '+s.c:(w.cdr?'冷卻 '+Math.ceil(w.cdr-s.rc)+'s':'× 0');else if(w.mag&&!w.inf)t=Math.floor(s.a)+' / '+(w.res!=null?s.r:w.mag);else t='∞';$('#am').textContent=t;
 const bar=$('#bar'),hb=w.heat||w.charge||w.spin||w.achg;if(hb){bar.style.display='block';const v=w.heat?s.h:(w.charge||w.achg)?s.ch:s.sp;bar.firstChild.style.width=v*100+'%';bar.firstChild.style.background=w.heat&&s.ov?'#ff4040':'#ffb020'}else bar.style.display='none';
 $('#altc').textContent=w.an?((s.acd>0||s.out>0)?w.an+' '+Math.max(s.acd,s.out).toFixed(1)+'s':'右鍵 '+w.an):'';$('#altc').style.bottom=hb?'140px':'132px';
-if(st=='lobby'){$('#sc').innerHTML='<b style="background:#2c3558cc">🏠 大廳 · 走上傳送墊開始配對</b>'}else{const m=Math.max(0,Math.ceil(rt));$('#sc').innerHTML='<b style="background:#3d8bffcc">'+score[P.team]+'</b><b>'+Math.floor(m/60)+':'+String(m%60).padStart(2,'0')+'</b><b style="background:#ff4d4dcc">'+score[1-P.team]+'</b>'}
+if(st=='lobby'){$('#sc').innerHTML=PF?'<b style="background:#2c3558cc;font-size:16px">'+esc(accName())+' · Lv '+PF.lv+' · '+PF.xp+'/'+xpReq(PF.lv)+' XP · 🔑 '+PF.keys+'</b>':'<b style="background:#2c3558cc">🏠 大廳</b>'}else{const m=Math.max(0,Math.ceil(rt));$('#sc').innerHTML='<b style="background:#3d8bffcc">'+score[P.team]+'</b><b>'+Math.floor(m/60)+':'+String(m%60).padStart(2,'0')+'</b><b style="background:#ff4d4dcc">'+score[1-P.team]+'</b>'}
 {const si=$('#spi');if(stg){const tw=stg.L&&stg.L[stg.cur];si.style.display='block';si.innerHTML='觀戰 <span style="color:'+(stg.team===P.team?'#6db0ff':'#ff7b7b')+'">'+esc(stg.name)+'</span> · '+esc(tw?tw.n:'')+' · ♥ '+Math.ceil(Math.max(0,stg.hp))+'<div class="hb"><i style="width:'+Math.max(0,stg.hp/1.5)+'%"></i></div>'}else si.style.display='none';
  let nw=0;if(NET){for(const e of E)if(e.net&&!e.alive&&e.spec===P.nid)nw++}else for(const e of E)if(!e.isP&&!e.alive&&specOf(e)===P)nw++;const ey=$('#eye');ey.style.display=nw>0&&P.alive?'block':'none';ey.lastChild.textContent=nw}
 [...$('#wl').children].forEach((c,i)=>c.className=i==P.cur?'on':'');
@@ -799,7 +819,7 @@ da=Math.max(0,da-dt);{const ar=$('#da');ar.style.opacity=Math.min(1,da*1.5);if(d
 fl=Math.max(0,fl-dt);hm=Math.max(0,hm-dt);$('#fl').style.opacity=Math.max(fl,P.alive&&P.hp<45?.3+Math.sin(performance.now()/200)*.1:0);$('#hm').style.opacity=hm>0?1:0;
 if(P.paint>0&&!hud.pt)paintFx();hud.pt=P.paint>0;$('#paint').style.opacity=Math.min(1,P.paint);$('#frz').style.opacity=P.frz>0?.9:P.slow>0?.35:0;$('#brn').style.opacity=P.burn>0?.55:0;$('#flash').style.opacity=Math.min(1,P.flash);
 const za=P.zoom&&P.alive,z=za&&w.scope,tf=za?(w.zf||75):P.sl?85:75;if(cam.fov!=tf){cam.fov=tf;cam.updateProjectionMatrix()}$('#scope').style.display=z?'block':'none';$('#cross').style.display=z?'none':'block';
-const tb=$('#tab');if(keys.Tab){tb.style.display='block';let h='';for(const q of[P.team,1-P.team]){const en=q!==P.team;h+='<table><tr><th style="color:'+(en?'#ff7b7b':'#6db0ff')+'">'+(en?'敵方':'我方')+' '+score[q]+'</th><th>擊殺</th><th>死亡</th><th>總傷害</th><th></th></tr>';for(const e of E.filter(x=>x.team==q).sort((a,b)=>(b.td||0)-(a.td||0)))h+='<tr'+(e.isP?' style="color:#ffd23f"':'')+'><td>'+esc(e.name)+'</td><td>'+e.k+'</td><td>'+e.dth+'</td><td>'+Math.round(e.td||0)+'</td><td>'+(e.alive?'':'💀')+'</td></tr>';h+='</table>'}tb.innerHTML=h}else tb.style.display='none';
+const tb=$('#tab');if(keys.Tab){tb.style.display='block';let h='';for(const q of[P.team,1-P.team]){const en=q!==P.team;h+='<table><tr><th style="color:'+(en?'#ff7b7b':'#6db0ff')+'">'+(en?'敵方':'我方')+' '+score[q]+'</th><th>擊殺</th><th>死亡</th><th>總傷害</th><th></th></tr>';for(const e of E.filter(x=>x.team==q).sort((a,b)=>(b.td||0)-(a.td||0)))h+='<tr'+(e.isP?' style="color:#ffd23f"':'')+'><td><span style="background:#4a3cff;border-radius:4px;padding:0 4px;font-size:11px;margin-right:5px">'+(e.isP&&PF?PF.lv:(e.lv||1))+'</span>'+esc(e.name)+'</td><td>'+e.k+'</td><td>'+e.dth+'</td><td>'+Math.round(e.td||0)+'</td><td>'+(e.alive?'':'💀')+'</td></tr>';h+='</table>'}tb.innerHTML=h}else tb.style.display='none';
 animVM(dt)}
 const clk=new T.Clock();
 function frame(){const dt=Math.min(clk.getDelta(),.05);
@@ -841,7 +861,7 @@ const x=s*Math.cos(P.yaw)-f*Math.sin(P.yaw),z=-s*Math.sin(P.yaw)-f*Math.cos(P.ya
 function dblJump(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||P.sl)return;let w=P.L[P.cur];if(P.qmT>0&&P.L[2].dj&&!P.djs.has(P.L[2].n))w=P.L[2];if(!w.dj||onGround(P)||P.djs.has(w.n))return;P.djs.add(w.n);P.vy=7.5;puff(V(P.x,P.y,P.z),V(0,-1,0),0xffffff,.3,1);snd(600,.08,.04)}
 function qmelee(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qm||0)>performance.now()||P.cur==2)return;const w=P.L[2];if(w.can&&!w.can(P,P.S[2]))return;P.qm=performance.now()+500;P.wnm=w.n;if(NET)netFire('m',2);w.fire(P,w,P.S[2],{});P.kick=1;P.qmT=.4;setVM(w);P.eq=0;P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk='n';snd(800,.09,.06)}
 function qutil(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qu||0)>performance.now())return;const w=P.L[3],s=P.S[3];if(w.can?!w.can(P,s):(w.lim&&s.c<=0))return;if(w.lim&&!w.selfLim)s.c--;P.qu=performance.now()+400;P.wnm=w.n;if(NET)netFire('u',3);w.fire(P,w,s,{});if(w.f)snd(w.f,.08,.05)}
-addEventListener('keydown',e=>{if(chatKey(e))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyV'&&!e.repeat&&P.alive)P.insp=2.4;const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！')});
+addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyV'&&!e.repeat&&P.alive)P.insp=2.4;const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！')});
 addEventListener('click',()=>{if(!MOBILE&&!paused&&!chatOn&&document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end'||st=='lobby'))lock()});
 addEventListener('keyup',e=>keys[e.code]=0);
 addEventListener('wheel',e=>{if(live())swE(P,(P.cur+(e.deltaY>0?1:3))%4)});
@@ -981,13 +1001,13 @@ function handleGame(m){if(!NET)return;const t=m.t;
  if(t==='h'&&m.to===NET.me){const by=byId(m.by||m.from);const src=by||byIdFromFire(m);if(!src||!P.alive)return;hurt(P,+m.dmg||0,src,String(m.wn||''),{hs:!!m.hs,ray:!!m.ray,prc:!!m.prc,from:V(m.f[0],m.f[1],m.f[2]),net:1});return}
  if(t==='fx'&&m.to===NET.me){if(!P.alive)return;const src=byId(m.by);if(m.burn){P.burn=Math.max(P.burn,m.burn);P.bby=src||P;P.bwn=m.wn||''}if(m.frost){P.frost+=m.frost;P.slow=Math.max(P.slow,1.2);if(P.frost>=1){P.frost=0;P.frz=1.5;P.sl=false}}if(m.paint)P.paint=m.paint;if(m.push)applyPush(P,m.push);if(m.grap)P.grap={p:V(m.grap[0],m.grap[1],m.grap[2]),t:.9},P.frz=0;return}
  if(t==='cr'&&m.to===NET.me){P.td=(P.td||0)+(+m.d||0);return}
- if(t==='k'){const v=byId(m.v),k=byId(m.by);if(v&&v.net){v.alive=false;v.hp=0}const kn=k?k.name:(v?v.name:'?');if(v&&v.net)feed(kn+'  ['+(m.wn||'')+(m.hs?' · HS':'')+']  '+v.name);if(m.by===NET.me&&v){P.k++;elim(v.name)}return}}
+ if(t==='k'){const v=byId(m.v),k=byId(m.by);if(v&&v.net){v.alive=false;v.hp=0}const kn=k?k.name:(v?v.name:'?');if(v&&v.net)feed(kn+'  ['+(m.wn||'')+(m.hs?' · HS':'')+']  '+v.name);if(m.by===NET.me&&v){P.k++;elim(v.name);creditKill(m.wn,m.hs)}return}}
 function byIdFromFire(m){return null}
 function removeProxy(id){const i=E.findIndex(e=>e.nid===id&&e.net);if(i<0)return;sc.remove(E[i].mesh);E.splice(i,1)}
 // ---- entering game ----
 function enterGame(roster,win){NET.inGame=true;NET.round=0;NET.midLo=0;cfg.win=win||5;$('#onl').style.display='none';$('#over').style.display='none';$('#menu').style.display='none';$('#hud').style.display='block';paused=false;score=[0,0];
  for(const e of E)sc.remove(e.mesh);E=[];clearWorldSafe();curMap=resolveMap();buildMap(curMap);const me=roster.find(r=>r.id===NET.me);if(!me){netLeave();return}const idx=[0,0];let mx=1;
- for(const r of roster){const i=idx[r.team]++;mx=Math.max(mx,idx[r.team]);const isP=r.id===NET.me,e={team:r.team,i,isP,net:!isP,nid:r.id,name:isP?NET.name:r.name,k:0,dth:0,td:0};e.mesh=mkBody(r.team===me.team?0:1);e.mesh.traverse(o=>o.userData.ent=e);sc.add(e.mesh);if(!isP){e.L=[PRI[0],SEC[0],MEL[0],UTL[0]];e.S=mkS(e.L);e.cur=0}E.push(e);if(isP)P=e}
+ for(const r of roster){const i=idx[r.team]++;mx=Math.max(mx,idx[r.team]);const isP=r.id===NET.me,e={team:r.team,i,isP,net:!isP,nid:r.id,name:isP?NET.name:r.name,k:0,dth:0,td:0,hsk:0,lv:r.lv||1};e.mesh=mkBody(r.team===me.team?0:1);e.mesh.traverse(o=>o.userData.ent=e);sc.add(e.mesh);if(!isP){e.L=[PRI[0],SEC[0],MEL[0],UTL[0]];e.S=mkS(e.L);e.cur=0}E.push(e);if(isP)P=e}
  cfg.n=mx;P.L=P.L||[PRI[0],SEC[0],MEL[0],UTL[0]];respawn();openLo()}
 function startRound(){$('#over').style.display='none';NET.midLo=0;$('#lo').style.display='none';begin();lock()}
 function backToRoom(){cleanGame();$('#hud').style.display='none';if(!NET){$('#menu').style.display='flex';return}$('#onl').style.display='flex';roomUI();if(NET.host)hostLb()}
@@ -1020,5 +1040,61 @@ $('#ostart').onclick=()=>{if(NET&&NET.host)hostStart()};
 $('#wins').onclick=e=>{const b=e.target.closest('button');if(!b||!NET||!NET.host)return;NET.lb.win=+b.dataset.w;hostLb()};
 for(const b of document.querySelectorAll('.tcol button'))b.onclick=()=>{if(!NET||!NET.lb)return;const t=+b.dataset.t;if(NET.host){const p=NET.lb.players.find(p=>p.id===NET.me);p.team=t;hostLb()}else netSend({t:'tm',id:NET.me,team:t})};
 $('#lcin').addEventListener('keydown',e=>{if(e.code=='Enter'){chatSend(e.target.value);e.target.value=''}});
-enterLobby();
+
+// ===== accounts / profile (browser-local: localStorage only, no backend) =====
+var ACCT=null,PF=null,ACCDB=null;
+const START_W=['Assault Rifle','Handgun','Fists','Grenade'];
+// key costs: first block from the wiki screenshots; second block = estimates (not captured)
+const COST={'Daggers':30,'Flare Gun':10,'Revolver':25,'Shorty':20,'Spray':5,'Uzi':20,'Trowel':200,'Battle Axe':50,'Chainsaw':15,'Katana':45,'Knife':20,'Riot Shield':45,'Scythe':40,'Maul':550,'Medkit':300,'Subspace Tripmine':250,'Warpstone':400,'Flashbang':15,'Freeze Ray':45,'Jump Pad':9,'Molotov':25,'Satchel':35,'Smoke Grenade':10,'War Horn':30,'Gunblade':45};
+const COST_EST={'Burst Rifle':20,'Bow':20,'Crossbow':25,'RPG':25,'Shotgun':15,'Sniper':25,'Wildcat':35,'Flamethrower':30,'Energy Rifle':45,'Grenade Launcher':30,'Minigun':45,'Paintball Gun':30,'Distortion':60,'Permafrost':60,'Energy Pistols':45,'Exogun':45,'Warper':60,'Slingshot':15,'Spear':50,'Grappler':60};
+function wCost(n){return COST[n]!=null?COST[n]:COST_EST[n]!=null?COST_EST[n]:30}
+function isUnl(n){return !PF||START_W.includes(n)||PF.unl.includes(n)}
+const xpReq=l=>Math.round(100*Math.pow(l,1.2));
+function today(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(_){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(_){return false}}
+// SHA-256 fallback for contexts without crypto.subtle (constants derived from primes, per FIPS 180-4)
+const SHA_K=(()=>{const p=[];for(let n=2;p.length<64;n++)if(p.every(q=>n%q))p.push(n);const f=x=>((x-Math.floor(x))*4294967296)>>>0;return{K:p.map(q=>f(Math.cbrt(q))),H:p.slice(0,8).map(q=>f(Math.sqrt(q)))}})();
+function sha256js(str){const K=SHA_K.K,by=new TextEncoder().encode(str),l=by.length,n=((l+9+63)>>6)<<4,W=new Uint32Array(n),w=new Uint32Array(64),r=(x,y)=>(x>>>y)|(x<<(32-y));
+ for(let i=0;i<l;i++)W[i>>2]|=by[i]<<(24-(i&3)*8);W[l>>2]|=0x80<<(24-(l&3)*8);W[n-1]=l*8;let H=SHA_K.H.slice();
+ for(let i=0;i<n;i+=16){for(let t=0;t<64;t++){if(t<16)w[t]=W[i+t];else{const a=w[t-15],b=w[t-2];w[t]=(w[t-16]+(r(a,7)^r(a,18)^(a>>>3))+w[t-7]+(r(b,17)^r(b,19)^(b>>>10)))|0}}
+  let[a,b,c,d,e,f,g,h]=H;for(let t=0;t<64;t++){const t1=(h+(r(e,6)^r(e,11)^r(e,25))+((e&f)^(~e&g))+K[t]+w[t])|0,t2=((r(a,2)^r(a,13)^r(a,22))+((a&b)^(a&c)^(b&c)))|0;h=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0}
+  H=[a,b,c,d,e,f,g,h].map((v,j)=>(v+H[j])|0)}
+ return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('')}
+async function pwHash(u,pw,salt){const s=salt+'|'+u+'|'+pw;try{if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}}catch(_){}return sha256js(s)}
+function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_W.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1}}}
+function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_W.slice();return p}
+function accLoad(){ACCDB=lsGet('rvl_accounts',null);if(!ACCDB||typeof ACCDB!=='object'||!ACCDB.users)ACCDB={v:1,users:{}};return ACCDB}
+function saveP(){if(!ACCT||!PF||!ACCDB||!ACCDB.users[ACCT])return false;ACCDB.users[ACCT].prof=PF;return lsSet('rvl_accounts',ACCDB)}
+function accName(){return ACCT&&ACCDB&&ACCDB.users[ACCT]?ACCDB.users[ACCT].name:'Player'}
+async function accSignUp(name,pw,rem){name=String(name||'').trim();if(!/^[A-Za-z0-9_㐀-鿿]{3,16}$/.test(name))throw'使用者名稱需 3–16 字（英數、底線或中文）';if(String(pw).length<4)throw'密碼至少要 4 個字元';
+ accLoad();const k=name.toLowerCase();if(ACCDB.users[k])throw'這個名稱已在這台裝置上註冊過，請直接登入';const salt=rid(12);ACCDB.users[k]={name,salt,hash:await pwHash(k,pw,salt),created:Date.now(),prof:newProf()};if(!lsSet('rvl_accounts',ACCDB)){delete ACCDB.users[k];throw'無法儲存帳號（瀏覽器封鎖了 localStorage？）'}accStart(k,rem,1)}
+async function accSignIn(name,pw,rem){accLoad();const k=String(name||'').trim().toLowerCase(),u=ACCDB.users[k];if(!u)throw'找不到這個帳號（只能登入在這台裝置/瀏覽器上註冊的帳號）';if(await pwHash(k,pw,u.salt)!==u.hash)throw'密碼錯誤';accStart(k,rem)}
+function accStart(k,rem,isNew){ACCT=k;PF=fixProf(ACCDB.users[k].prof);ACCDB.users[k].prof=PF;
+ try{if(rem)localStorage.setItem('rvl_session',k);else localStorage.removeItem('rvl_session');sessionStorage.setItem('rvl_session',k)}catch(_){}
+ dailyReset();loginStreak();applyProfile();saveP();$('#auth').style.display='none';enterLobby();toast((isNew?'🎉 帳號建立成功，':'👋 歡迎回來，')+accName()+'！','#2fbf71')}
+function accLogout(){saveP();if(NET)netLeave();ACCT=null;PF=null;try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}if(typeof closePanels=='function')closePanels();showAuth()}
+function showAuth(){st='menu';paused=false;document.exitPointerLock&&document.exitPointerLock();for(const id of['#hud','#menu','#onl','#over','#pause','#lo'])$(id).style.display='none';$('#lobbyMenuBtn').style.display='none';if(typeof syncLUI=='function')syncLUI();
+ $('#auth').style.display='flex';$('#amsg').textContent='';$('#ap').value='';$('#ap2').value='';accLoad();const us=Object.values(ACCDB.users);$('#alistw').style.display=us.length?'block':'none';$('#alist').innerHTML='';
+ for(const u of us){const b=document.createElement('button');b.textContent='👤 '+u.name+' · Lv '+((u.prof&&u.prof.lv)||1);b.onclick=()=>{authMode('in');$('#au').value=u.name;$('#ap').focus()};$('#alist').appendChild(b)}
+ authMode(us.length?'in':'up');setTimeout(()=>($('#au').value?$('#ap'):$('#au')).focus(),50)}
+function authMode(m){authMode.m=m;[...$('#authTabs').children].forEach(b=>b.className=b.dataset.m==m?'on':'');$('#ap2w').style.display=m=='up'?'block':'none';$('#ago').textContent=m=='up'?'註冊並開始 Sign up':'登入 Sign in';$('#ap').autocomplete=m=='up'?'new-password':'current-password';$('#amsg').textContent=''}
+async function authGo(){const u=$('#au').value,p=$('#ap').value,rem=$('#arem').checked;$('#amsg').textContent='';try{if(authMode.m=='up'){if(p!==$('#ap2').value)throw'兩次輸入的密碼不一樣';await accSignUp(u,p,rem)}else await accSignIn(u,p,rem)}catch(e){$('#amsg').textContent=typeof e=='string'?e:('發生錯誤：'+(e&&e.message||e))}}
+$('#authTabs').onclick=e=>{const b=e.target.closest('button');if(b)authMode(b.dataset.m)};$('#ago').onclick=authGo;
+for(const id of['#au','#ap','#ap2'])$(id).addEventListener('keydown',e=>{if(e.code=='Enter'||e.code=='NumpadEnter')authGo()});
+function bootAuth(){accLoad();let k=null,rem=false;try{const a=localStorage.getItem('rvl_session'),b=sessionStorage.getItem('rvl_session');k=a||b;rem=!!a}catch(_){}
+ if(k&&ACCDB.users[k]){accStart(k,rem);return}enterLobby();showAuth()}
+function toast(t,c){const d=document.createElement('div');d.textContent=t;if(c)d.style.borderColor=c;$('#toasts').appendChild(d);setTimeout(()=>{d.style.transition='opacity .4s';d.style.opacity=0;setTimeout(()=>d.remove(),450)},2600)}
+function applyProfile(){LS=PF.lo.map((n,k)=>{if(n=='Random')return -1;const i=GP[k][1].findIndex(w=>w.n==n);return i>=0&&isUnl(n)?i:0});try{$('#nick').value=accName()}catch(_){}if(typeof applySettings=='function')applySettings()}
+function saveLoadout(){if(!PF)return;PF.lo=LS.map((i,k)=>i<0?'Random':GP[k][1][i].n);saveP()}
+// ---- XP / levels / rewards ----
+function addXP(n){PF.xp+=Math.max(0,Math.round(n));let up=0;while(PF.xp>=xpReq(PF.lv)){PF.xp-=xpReq(PF.lv);PF.lv++;up++}if(up){const lv=PF.lv;setTimeout(()=>{toast('⬆️ LEVEL UP！等級 '+lv,'#ffc93c');snd(660,.15,.06,'sine');setTimeout(()=>snd(990,.2,.06,'sine'),150)},500)}return up}
+function dailyReset(){if(!PF)return;const d=today();if(PF.daily.day!==d)PF.daily={day:d,pd:0,el:0,wd:0,cl:[]}}
+function loginStreak(){const L=PF.login,d=today(),y=today(new Date(Date.now()-864e5));if(L.last===d)return;L.streak=L.last===y?(L.streak%7)+1:1;L.last=d}
+function baseWn(wn){return String(wn||'').split(' ·')[0]}
+function creditKill(wn,hs){if(!PF)return;const n=baseWn(wn);if(WBN(n))PF.wk[n]=(PF.wk[n]||0)+1;if(hs&&P)P.hsk=(P.hsk||0)+1}
+function awardMatch(won){if(!PF||!P)return null;const k=P.k||0,hs=P.hsk||0,xp=(won?100:40)+k*10+hs*5,s=PF.st;s.m++;if(won){s.w++;s.streak++;s.best=Math.max(s.best,s.streak)}else{s.l++;s.streak=0}s.k+=k;s.d+=P.dth||0;s.hs+=hs;
+ for(const w of P.L||[])if(w&&w.n)PF.wu[w.n]=(PF.wu[w.n]||0)+1;dailyReset();PF.daily.pd++;PF.daily.el+=k;if(won)PF.daily.wd++;const keys=won?1:0;PF.keys+=keys;const lv0=PF.lv,up=addXP(xp);saveP();return{xp,keys,lv0,up,k,hs}}
+function rewardHTML(a){if(!a)return'';const r=xpReq(PF.lv);return'<b style="color:#9b8cff">+'+a.xp+' XP</b>（'+(a.k?'擊殺 '+a.k+' ×10':'無擊殺')+(a.hs?'、爆頭擊殺 '+a.hs+' ×5':'')+'）'+(a.keys?'　<b style="color:#ffd23f">+'+a.keys+' 🔑</b>':'')+(a.up?'<br><b style="color:#ffc93c">⬆️ 升級到 Lv '+PF.lv+'！</b>':'')+'<br>Lv '+PF.lv+'　'+PF.xp+' / '+r+' XP<div class="xpb"><i style="width:'+Math.min(100,PF.xp/r*100)+'%"></i></div>'}
+bootAuth();
 </script></body></html>
