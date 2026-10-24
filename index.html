@@ -272,8 +272,8 @@ function msg(t){$('#msg').textContent=t}
 function esc(t){return String(t).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';')}
 function feed(t){const d=document.createElement('div');d.textContent=t;$('#feed').appendChild(d);setTimeout(()=>d.remove(),4000)}
 function aimY(e){return e.sl?.7:e.cr?.95:1.25}
-function spec(){const a=E.filter(e=>e.alive&&e.team===P.team&&!e.isP);return a.length?a[sp%a.length]:null}
-function specOf(e){return E.find(t=>t.alive&&t.team===e.team&&t!==e)||null}
+function spec(){const a=E.filter(e=>e.alive&&!e.isP);return a.length?a[sp%a.length]:null}
+function specOf(e){return E.find(t=>t.alive&&t!==e)||null}
 function front(t,p){return(p.x-t.x)*-Math.sin(t.yaw)+(p.z-t.z)*-Math.cos(t.yaw)>0}
 function spr(d,s){if(!s)return d.clone();const r=d.clone();r.x+=(rnd()-.5)*2*s;r.y+=(rnd()-.5)*2*s;r.z+=(rnd()-.5)*2*s;return r.normalize()}
 function aim(e){if(e.isP)return{o:cam.position.clone(),d:V(0,0,-1).applyEuler(cam.rotation)};return{o:e.ao.clone(),d:spr(e.ad,e.er)}}
@@ -601,7 +601,7 @@ const m=Math.max(0,Math.ceil(rt));$('#sc').innerHTML='<b style="background:#3d8b
 {const si=$('#spi');if(stg){const tw=stg.L&&stg.L[stg.cur];si.style.display='block';si.innerHTML='觀戰 <span style="color:'+(stg.team===P.team?'#6db0ff':'#ff7b7b')+'">'+esc(stg.name)+'</span> · '+esc(tw?tw.n:'')+' · ♥ '+Math.ceil(Math.max(0,stg.hp))+'<div class="hb"><i style="width:'+Math.max(0,stg.hp/1.5)+'%"></i></div>'}else si.style.display='none';
  let nw=0;if(NET){for(const e of E)if(e.net&&!e.alive&&e.spec===P.nid)nw++}else for(const e of E)if(!e.isP&&!e.alive&&specOf(e)===P)nw++;const ey=$('#eye');ey.style.display=nw>0&&P.alive?'block':'none';ey.lastChild.textContent=nw}
 [...$('#wl').children].forEach((c,i)=>c.className=i==P.cur?'on':'');
-const dd=$('#dead'),kc=$('#kc');if(!P.alive){const k=P.killer,tm2=stg;kc.style.display='block';kc.innerHTML=!k||k===P?'<b>你自己</b>你自爆了':'<b>'+esc(k.name)+'</b>用 '+esc(P.kw||'')+' 擊敗了你<span>本場擊殺 '+(k.k||0)+'</span>';dd.style.display=tm2?'block':'none';dd.textContent=tm2?'點擊滑鼠切換觀戰的隊友':''}else{dd.style.display='none';kc.style.display='none'}
+const dd=$('#dead'),kc=$('#kc');if(!P.alive){const k=P.killer,tm2=stg;kc.style.display='block';kc.innerHTML=!k||k===P?'<b>你自己</b>你自爆了':'<b>'+esc(k.name)+'</b>用 '+esc(P.kw||'')+' 擊敗了你<span>本場擊殺 '+(k.k||0)+'</span>';dd.style.display=tm2?'block':'none';dd.textContent=tm2?'點擊滑鼠切換觀戰對象（隊友／敵人）':''}else{dd.style.display='none';kc.style.display='none'}
 da=Math.max(0,da-dt);{const ar=$('#da');ar.style.opacity=Math.min(1,da*1.5);if(da>0){const dx=P.hx-P.x,dz=P.hz-P.z,fw=-dx*Math.sin(P.yaw)-dz*Math.cos(P.yaw),rg=dx*Math.cos(P.yaw)-dz*Math.sin(P.yaw);ar.style.transform='translate(-50%,-50%) rotate('+Math.atan2(rg,fw)+'rad) translateY(-130px)'}}
 fl=Math.max(0,fl-dt);hm=Math.max(0,hm-dt);$('#fl').style.opacity=Math.max(fl,P.alive&&P.hp<45?.3+Math.sin(performance.now()/200)*.1:0);$('#hm').style.opacity=hm>0?1:0;
 if(P.paint>0&&!hud.pt)paintFx();hud.pt=P.paint>0;$('#paint').style.opacity=Math.min(1,P.paint);$('#frz').style.opacity=P.frz>0?.9:P.slow>0?.35:0;$('#brn').style.opacity=P.burn>0?.55:0;$('#flash').style.opacity=Math.min(1,P.flash);
