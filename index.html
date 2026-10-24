@@ -69,6 +69,7 @@ input{background:#0e1330;color:var(--fg);border:1px solid var(--ln);border-radiu
 <h3>隊伍（Party）</h3><div class="row" id="party"></div>
 <div class="note" id="code"></div>
 <h3>難度</h3><div class="row" id="difs"><button data-d="0">簡單</button><button data-d="1" class="on">普通</button><button data-d="2">困難</button></div>
+<h3>地圖</h3><div class="row" id="maps"></div>
 <button class="big" id="go">開始對戰（單機）</button><button class="big" id="online" style="background:#4aa3ff;color:#06101f;margin-top:8px">🌐 線上對戰</button>
 <details><summary>操作說明</summary>WASD 移動 · C 移動中滑行、站著不動蹲下 · 空白鍵跳躍（拿 Bow、Daggers 可二段跳；Bow 按住左鍵蓄力）· Shift 衝刺 · C 滑行（再按一次停止，滑行中按空白可滑行跳）· F 快速近戰 · G 快速使用戰術道具 · V 展示武器 · 按住 Tab 看計分板 · 滑鼠瞄準 · 左鍵攻擊 · 右鍵：開鏡或武器特殊技能 · R 換彈 · 1–4 或滾輪換武器 · Esc 暫停。<br>開局先選四個欄位的武器，之後每回合開始的 3 秒倒數內按 M 可重新換裝，不按則沿用上一回合；每個欄位都可以選 Random。先贏 5 回合獲勝，每回合 90 秒，時間到時血量總和較高的一隊獲勝。死亡後可觀戰隊友，點擊滑鼠切換。若滑鼠無法鎖定，請用新分頁開啟。僅支援桌機鍵鼠。</details>
 </div></div>
@@ -105,19 +106,60 @@ const vm=new T.Group();vs.add(vm);
 function rs(){R.setSize(innerWidth,innerHeight);cam.aspect=vcam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();vcam.updateProjectionMatrix()}addEventListener('resize',rs);rs();
 // ===== map =====
 const fl0=new T.Mesh(new T.PlaneGeometry(64,64),new T.MeshLambertMaterial({color:0xdde2ea}));fl0.rotation.x=-PI/2;sc.add(fl0);
-{const gr=new T.GridHelper(64,32,0xb8c0d0,0xc8d0de);gr.position.y=.01;sc.add(gr)}
+const gr=new T.GridHelper(64,32,0xb8c0d0,0xc8d0de);gr.position.y=.01;sc.add(gr);
 const Wh=0xf2f4f8,Or=0xe8903a,Rd=0xd04545,Bl=0x3f6fd0,Yl=0xf0c020,Gy=0xd5dae4;
-const BX=[[0,-31,64,2,8,Wh],[0,31,64,2,8,Wh],[-31,0,2,64,8,Wh],[31,0,2,64,8,Wh],
-[0,0,6,6,3.3,Wh],[-4.5,0,3,4,2.2,Or],[-7.5,0,3,4,1.1,Or],[4.5,0,3,4,2.2,Or],[7.5,0,3,4,1.1,Or],
-[-12,-10,8,2,2.2,Rd],[12,10,8,2,2.2,Bl],[-12,10,2,8,2.2,Bl],[12,-10,2,8,2.2,Rd],
-[-20,0,3,3,1.1,Or],[20,0,3,3,1.1,Or],[0,-14,6,1.5,1.1,Or],[0,14,6,1.5,1.1,Or],[-20,-18,3,3,1.1,Gy],[20,18,3,3,1.1,Gy],
-[-23,-10,6,6,2.2,Gy],[-23,-5.5,4,3,1.1,Or],[23,10,6,6,2.2,Gy],[23,5.5,4,3,1.1,Or],
-[-8,-20,3,3,2.2,Bl],[8,20,3,3,2.2,Rd],[8,-20,3,3,2.2,Rd],[-8,20,3,3,2.2,Bl],
-[-26,22,1.5,1.5,7,Yl],[26,-22,1.5,1.5,7,Yl],[-14,0,2,2,3.3,Wh],[14,0,2,2,3.3,Wh]];
-const boxes=[],walls=[];
-for(const[x,z,w,d,h,c]of BX){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:c}));m.position.set(x,h/2,z);sc.add(m);walls.push(m);boxes.push({x,z,w,d,h})}
-for(const[x,z,w,d]of BX.slice(0,4))boxes.push({x,z,w,d,h:999});
-const solid=walls.concat([fl0]);sc.updateMatrixWorld(true);
+const BND=[[0,-31,64,2,8],[0,31,64,2,8],[-31,0,2,64,8],[31,0,2,64,8]];
+const MAPLIST=['arena','backroom','crossroad','splash','battleground'];
+const MAPNAME={arena:'Arena',backroom:'Backroom',crossroad:'Cross Road',splash:'Splash',battleground:'Battle Ground'};
+const MAPDATA={
+ arena:{floor:0xdde2ea,grid:1,wallColor:Wh,bx:[
+  [0,0,6,6,3.3,Wh],[-4.5,0,3,4,2.2,Or],[-7.5,0,3,4,1.1,Or],[4.5,0,3,4,2.2,Or],[7.5,0,3,4,1.1,Or],
+  [-12,-10,8,2,2.2,Rd],[12,10,8,2,2.2,Bl],[-12,10,2,8,2.2,Bl],[12,-10,2,8,2.2,Rd],
+  [-20,0,3,3,1.1,Or],[20,0,3,3,1.1,Or],[0,-14,6,1.5,1.1,Or],[0,14,6,1.5,1.1,Or],[-20,-18,3,3,1.1,Gy],[20,18,3,3,1.1,Gy],
+  [-23,-10,6,6,2.2,Gy],[-23,-5.5,4,3,1.1,Or],[23,10,6,6,2.2,Gy],[23,5.5,4,3,1.1,Or],
+  [-8,-20,3,3,2.2,Bl],[8,20,3,3,2.2,Rd],[8,-20,3,3,2.2,Rd],[-8,20,3,3,2.2,Bl],
+  [-26,22,1.5,1.5,7,Yl],[26,-22,1.5,1.5,7,Yl],[-14,0,2,2,3.3,Wh],[14,0,2,2,3.3,Wh]]},
+ backroom:{floor:0x9c7a35,grid:0,wallColor:0xcda75a,bx:[
+  [-15,-10,1.5,18,8,0xd9b45c],[15,-10,1.5,18,8,0xd9b45c],[-15,10,1.5,18,8,0xd9b45c],[15,10,1.5,18,8,0xd9b45c],
+  [0,-19,14,1.5,8,0xd9b45c],[0,19,14,1.5,8,0xd9b45c],[-7,0,1.5,10,8,0xd9b45c],[7,0,1.5,10,8,0xd9b45c],
+  [-20,-20,1.3,1.3,8,0x8f6a2e],[20,-20,1.3,1.3,8,0x8f6a2e],[-20,20,1.3,1.3,8,0x8f6a2e],[20,20,1.3,1.3,8,0x8f6a2e],
+  [-20,0,1.3,1.3,8,0x8f6a2e],[20,0,1.3,1.3,8,0x8f6a2e],[0,-9,1.3,1.3,8,0x8f6a2e],[0,9,1.3,1.3,8,0x8f6a2e],
+  [-4,-4,2.6,2.6,2,0x8f6a2e],[4,4,2.6,2.6,2,0x8f6a2e]],
+  decor:g=>{const a=[];const panel=(x,z)=>a.push(B(g,3.2,.15,1.2,x,7.6,z,0xfff6d0,{e:1}));
+   for(let x=-24;x<=24;x+=8)for(let z=-24;z<=24;z+=12)panel(x,z);return a}},
+ crossroad:{floor:0x5fae3f,grid:1,wallColor:0xd8b878,bx:[
+  [-14,-14,10,10,1,0x5fae3f],[14,14,10,10,1,0x5fae3f],[-14,14,10,10,2,0x5fae3f],[14,-14,10,10,2,0x5fae3f],
+  [0,0,6,6,3,0xd8b878],[0,0,1.2,1.2,5,0xd8b878],
+  [-10,0,2,2,3,0x3f8fd0],[10,0,2,2,3,0xf2d23a],[0,-10,2,2,3,0xf2d23a],[0,10,2,2,3,0x3f8fd0],
+  [0,-27,20,1.2,1.5,0xd8b878],[0,27,20,1.2,1.5,0xd8b878],[-27,0,1.2,20,1.5,0xd8b878],[27,0,1.2,20,1.5,0xd8b878]],
+  decor:g=>{const a=[];a.push(Sp(g,2.2,6,2.2,-6,0x9aa0a8));a.push(Cy(g,1.1,1.8,6,.9,-6,0x9aa0a8));
+   a.push(Sp(g,1,6,3.3,-9,0x9aa0a8));a.push(B(g,.5,1.6,.5,6,1.2,-8.2,0x9aa0a8,{rx:.5}));return a}},
+ splash:{floor:0x2d7fd0,grid:0,wallColor:0x2a6fe0,bx:[
+  [0,-27,30,2,1,0xe8d9a0],[0,27,30,2,1,0xe8d9a0],[-27,0,2,30,1,0xe8d9a0],[27,0,2,30,1,0xe8d9a0],
+  [0,0,10,10,1.5,0xf2f2f2],
+  [-4,-4,2,2,4,0xd6413f],[4,-4,2,2,4,0xd6413f],[-4,4,2,2,4,0xf2cf3a],[4,4,2,2,4,0xf2cf3a],
+  [10,0,3,6,2,0xd6413f],[14,0,3,6,1,0xd6413f],
+  [-14,-14,4,4,1,0x3f8fe0],[14,14,4,4,1,0x3f8fe0],[-14,14,4,4,1,0x3f8fe0],[14,-14,4,4,1,0x3f8fe0]],
+  decor:g=>{const a=[],P4=[[-24,-24],[24,24],[-24,24],[24,-24]];for(const[x,z]of P4){a.push(Cy(g,.5,5,x,2.5,z,0x7a5230));a.push(Sp(g,2.4,x,5.2,z,0x3fa24a))}
+   a.push(B(g,.3,2.2,.3,-4,5.1,-4,0xd6413f));a.push(B(g,.3,2.2,.3,4,5.1,-4,0xf2cf3a));return a}},
+ battleground:{floor:0x5a6450,grid:0,wallColor:0x7a7f88,bx:[
+  [-15,-15,10,10,5,0x6b4fa0],[15,15,10,10,5,0xc7a86a],[-15,15,10,10,4,0xc7a86a],[15,-15,10,10,4,0x6b4fa0],
+  [0,-4,6,3,1,0x8a8f98],[0,0,6,3,2,0x8a8f98],[0,4,6,3,3,0x8a8f98],
+  [-8,0,2,2,1.5,0x6b4fa0],[8,0,2,2,1.5,0xc7a86a],[0,-18,3,3,2,0x6b4fa0],[0,18,3,3,2,0xc7a86a],
+  [-22,0,2,6,2,0xc7a86a],[22,0,2,6,2,0x6b4fa0]]}
+};
+const boxes=[],walls=[],solid=[];let decor=[];
+function clearMapGeo(){for(const m of walls){sc.remove(m);m.geometry.dispose()}walls.length=0;boxes.length=0;solid.length=0;for(const m of decor){sc.remove(m);m.geometry.dispose()}decor=[]}
+function buildMap(key){clearMapGeo();const M=MAPDATA[key]||MAPDATA.arena;
+ fl0.material.color.setHex(M.floor);gr.visible=!!M.grid;
+ const full=BND.map(b=>b.concat([M.wallColor||Wh])).concat(M.bx);
+ for(const[x,z,w,d,h,c]of full){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:c}));m.position.set(x,h/2,z);sc.add(m);walls.push(m);boxes.push({x,z,w,d,h})}
+ for(const[x,z,w,d]of BND)boxes.push({x,z,w,d,h:999});
+ solid.push(...walls,fl0);
+ if(M.decor)decor=M.decor(sc)||[];
+ sc.updateMatrixWorld(true)}
+let curMap='arena';
+buildMap('arena');
 
 // ===== model helpers =====
 const MC={};function mt(c,e){const k=c+(e?'e':'');return MC[k]||(MC[k]=new T.MeshLambertMaterial(e?{color:c,emissive:c,emissiveIntensity:.75}:{color:c}))}
@@ -228,7 +270,7 @@ const SEC=[
 {n:'Exogun',k:'S',d:'範圍濺射雷射',rate:.28,mag:6,res:22,rl:.65,eq:.7,pj:{sp:60,r:.08,col:0x7dff5a,emi:1,dmg:10,hs:2,splash:{r:6.28,dmg:10}},f:600,br:40,bp:12},
 {n:'Slingshot',k:'S',d:'連發彈弓，擊退敵人',au:1,rate:.1,inf:1,eq:.45,mv:1.1,pj:{sp:50,g:14,r:.08,col:0xe0302a,dmg:8,hs:1.5,bnc:2,kb:.5},f:300,br:35,bp:12},
 {n:'Flare Gun',k:'S',d:'燃燒彈，落點整個比分都在燒',rate:.25,mag:1,res:1,rl:.77,eq:1.3,mv:1.1,f:240,br:40,bp:12,pj:{sp:55,g:6},
- fire:(e)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:55,g:6,r:.08,col:0xff6a20,emi:1,dmg:25,hs:1.5,burn:50,fa:1});if(a.d.y<-.6){e.vy=Math.max(e.vy,11);e.vx-=a.d.x*7;e.vz-=a.d.z*7;e.sl=false}}},
+ fire:(e)=>{const a=aim(e),fcol=e.team===P.team?0x3dff6a:0xe04848;shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:55,g:6,r:.08,col:fcol,emi:1,dmg:25,hs:1.5,burn:50,fa:1});if(a.d.y<-.6){e.vy=Math.max(e.vy,11);e.vx-=a.d.x*7;e.vz-=a.d.z*7;e.sl=false}}},
 {n:'Revolver',k:'S',d:'高傷害，右鍵連開（Fan the Hammer）',dmg:30,hsm:1.33,dd:[75,200,8],rate:.4,mag:6,res:36,rl:1.8,eq:.6,mv:.95,sp:.005,qi:.15,f:200,br:50,bp:14,an:'連開',
  alt:(e,w,s,dn)=>{if(!dn||s.a<=0||s.rl>0||e.cd>0||s.q>0||e.frz>0)return;fireW(e,w,s);if(s.a>0){s.q=s.a;s.qt=.15;s.qs=.06}},bAlt:(b,s,d)=>d<12&&s.a>=3&&rnd()<.012},
 {n:'Spray',k:'S',d:'5 發點放，穿透盾牌與武士刀',au:1,burst:5,qi:.04,dmg:8,hsm:1.25,dd:[50,125,2],rate:.5,mag:30,res:90,rl:1.3,eq:.45,mv:1.05,sp:.005,prc:1,f:380,br:30,bp:10}];
@@ -256,7 +298,7 @@ const UTL=[
 {n:'Warpstone',k:'U',d:'丟出後傳送過去，冷卻 30 秒',lim:1,cdr:30,eq:.5,rate:1,f:600,fire:(e)=>throwU(e,{sp:20,g:18,r:.1,col:0x9a3cff,emi:1,land:(q,x)=>warp(q.by,x)})},
 {n:'Flashbang',k:'U',d:'看著它的人會白屏 3 秒 ×2',lim:2,rate:.5,eq:.5,f:200,fire:(e)=>throwU(e,{sp:18,g:20,r:.1,col:0x2c5a2c,bnc:99,fuse:1.5,onFuse:(q,x)=>flashAt(x)})},
 {n:'Freeze Ray',k:'U',d:'冰凍彈，範圍凍結 3 秒，冷卻 50 秒',lim:1,cdr:50,eq:.5,rate:.6,f:900,fire:(e)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),spr(a.d,.009),{sp:40,g:10,r:.12,col:0x9fe0ff,emi:1,land:(q,x)=>iceBurst(x,q.by,16,3,0)})}},
-{n:'Molotov',k:'U',d:'落點濺射 10 傷害，地上燒火 7 秒，冷卻 30 秒',lim:1,cdr:30,eq:.5,rate:.8,f:200,fire:(e)=>throwU(e,{sp:18,g:18,r:.1,col:0x2e6a3a,land:(q,x)=>{boom(x,{r:16,dmg:10,kb:0},q.by,'Molotov');fireArea(x,q.by,16,7,'Molotov',25)}})},
+{n:'Molotov',k:'U',d:'落點濺射 10 傷害，地上燒火 7 秒，冷卻 30 秒',lim:1,cdr:30,eq:.5,rate:.8,f:200,fire:(e)=>throwU(e,{sp:18,g:18,r:.1,col:0x2e6a3a,land:(q,x)=>{boom(x,{r:15.2,dmg:10,kb:0},q.by,'Molotov');fireArea(x,q.by,15.2,7,'Molotov',25)}})},
 {n:'Satchel',k:'U',d:'黏住後右鍵遙控引爆 ×3，連環爆炸',lim:3,rate:.5,eq:0,f:200,an:'引爆',fire:(e)=>throwU(e,{sp:16,g:18,r:.12,col:0x3e5a3a,stick:1,sat:1,life:999,boom:{r:12,dmg:25,kb:1.2}}),alt:(e,w,s,dn)=>{if(dn)detonate(e)}},
 {n:'Smoke Grenade',k:'U',d:'煙霧遮蔽視線並滅火 ×3',lim:3,rate:.5,eq:.5,f:200,fire:(e)=>throwU(e,{sp:18,g:20,r:.1,col:0x8d939c,bnc:99,fuse:1,onFuse:(q,x)=>smoke(x)})},
 {n:'War Horn',k:'U',d:'全隊加速 25% 持續 6 秒，冷卻 45 秒',lim:1,cdr:45,eq:.4,rate:1,f:0,fire:(e)=>horn(e)}];
@@ -333,9 +375,10 @@ P.eh=1.75;setVM();sc.updateMatrixWorld(true)}
 
 // ===== combat =====
 function hurt(t,dmg,by,wn,o={}){if(!t.alive||st!='play'||!(dmg>0)||by===t)return 0;
-if(NET){if(t.net){if(o.vs||!by.isP||GH)return 0;const fr=o.from||V(by.x,by.y+1,by.z);netSend({t:'h',to:t.nid,dmg:+dmg.toFixed(2),wn,hs:o.hs?1:0,ray:o.ray?1:0,prc:o.prc?1:0,f:[+fr.x.toFixed(2),+fr.y.toFixed(2),+fr.z.toFixed(2)],r:NET.round});const blk=!o.prc&&!o.dot&&(t.shd||t.dfl&&o.ray)&&front(t,fr),d=blk?0:Math.min(dmg*(t.frz>0?.5:1),Math.max(1,t.hp));if(!o.dot){hm=.15;snd(blk?1100:900,.05,.05)}if(d>0)dmgNum(Math.round(d),o.hs);return d}
+const noShd=wn==='Exogun'||wn==='Spray',noDfl=wn==='Paintball Gun'||wn==='Distortion'||wn==='Slingshot'||wn==='Spray';
+if(NET){if(t.net){if(o.vs||!by.isP||GH)return 0;const fr=o.from||V(by.x,by.y+1,by.z);netSend({t:'h',to:t.nid,dmg:+dmg.toFixed(2),wn,hs:o.hs?1:0,ray:o.ray?1:0,prc:o.prc?1:0,f:[+fr.x.toFixed(2),+fr.y.toFixed(2),+fr.z.toFixed(2)],r:NET.round});const blk=!o.prc&&!o.dot&&((t.shd&&!noShd)||(t.dfl&&o.ray&&!noDfl))&&front(t,fr),d=blk?0:Math.min(dmg*(t.frz>0?.5:1),Math.max(1,t.hp));if(!o.dot){hm=.15;snd(blk?1100:900,.05,.05)}if(d>0)dmgNum(Math.round(d),o.hs);return d}
  if(by.net&&!o.vs&&!o.net&&!o.dot)return 0}
-if(!o.prc&&!o.dot){const fr=o.from||by;if(t.dfl&&o.ray&&front(t,fr)){if(by.alive)hurt(by,dmg*.8,t,'Katana',{prc:1});snd(1500,.08,.05);return 0}if(t.shd&&front(t,fr)){t.shp-=dmg;if(t.shp<=0){t.shp=0;t.shd=false;snd(300,.3,.1,'sawtooth');if(t.isP)feed('你的盾牌破了，下個比分才會恢復')}else snd(1100,.05,.04);return 0}}
+if(!o.prc&&!o.dot){const fr=o.from||by;if(t.dfl&&o.ray&&!noDfl&&front(t,fr)){if(by.alive)hurt(by,dmg*.8,t,'Katana',{prc:1});snd(1500,.08,.05);return 0}if(t.shd&&!noShd&&front(t,fr)){t.shp-=dmg;if(t.shp<=0){t.shp=0;t.shd=false;snd(300,.3,.1,'sawtooth');if(t.isP)feed('你的盾牌破了，下個比分才會恢復')}else snd(1100,.05,.04);return 0}}
 if(!by.isP&&!by.net)dmg*=DF[cfg.d].dm;const hp0=t.hp;
 if(t.frz>0){dmg*=.5;t.frz=0;t.slow=2.5}t.hp-=dmg;if(t.isP){fl=Math.max(fl,o.dot?.2:.5);if(!o.dot){snd(150,.1,.08);t.hx=by.x;t.hz=by.z;da=1}}if(by.isP&&!o.dot){hm=.15;snd(900,.05,.05)}if(by.isP)dmgNum(Math.round(Math.min(dmg,t.hp+dmg)),o.hs);
 const dealt=Math.max(0,Math.min(dmg,hp0));if(by.net){if(dealt>0)netSend({t:'cr',to:by.nid,d:+dealt.toFixed(1)})}else by.td=(by.td||0)+dealt;
@@ -614,7 +657,7 @@ function ready(){if(st!='lo'&&!(NET&&NET.midLo))return;$('#lo').style.display='n
 if(NET){if(NET.midLo){NET.midLo=0;P.S=P.L.map(w=>({a:w.mag||0,c:w.lim||0,rl:0,h:0,ov:0,q:0,qt:0,qs:0,sp:0,ch:0,acd:0,out:0,lf:0,rc:0,r:w.res||0}));P.cur=0;setVM();lock();return}st='wait';E.forEach(e=>e.mesh.visible=false);netSend({t:'rdy',id:NET.me});if(NET.host)NET.rdy.add(NET.me);lock();return}
 begin();lock();
 setTimeout(()=>{if(document.pointerLockElement!==cv&&!fb&&st!='menu'){paused=true;$('#pause').style.display='flex'}},300)}
-function startMatch(){score=[0,0];setup();openLo()}
+function startMatch(){score=[0,0];curMap=resolveMap();buildMap(curMap);setup();openLo()}
 function tick(dt){
 if(st=='lo'){tm-=dt;$('#lot').textContent='請選擇裝備，'+Math.ceil(tm)+' 秒後自動開始';if(tm<=0)ready();return}
 if(st=='wait'){msg('等待其他玩家準備…');if(NET&&NET.host){NET.wt-=dt;if(NET.wt<=0||NET.lb.players.every(p=>NET.rdy.has(p.id)))hostRound()}return}
@@ -656,6 +699,9 @@ function party(){const n=cfg.n;$('#party').innerHTML='';for(let i=0;i<n;i++){con
 $('#code').textContent='房間代碼：'+(party.c=party.c||Math.random().toString(36).slice(2,6).toUpperCase())+'　（線上邀請好友功能將在下一階段開放；目前隊友與對手皆為 AI）'}
 function pickB(id,k,cb){$(id).onclick=e=>{const b=e.target.closest('button');if(!b)return;[...$(id).children].forEach(c=>c.className='');b.className='on';cb(+b.dataset[k])}}
 pickB('#modes','n',v=>{cfg.n=v;party()});pickB('#difs','d',v=>cfg.d=v);party();
+cfg.map=0;{const mb=$('#maps');MAPLIST.forEach((k,i)=>{const b=document.createElement('button');b.textContent=MAPNAME[k];b.dataset.m=i;if(i===0)b.className='on';mb.appendChild(b)});const rb2=document.createElement('button');rb2.textContent='🎲 Random';rb2.dataset.m=-1;mb.appendChild(rb2)}
+pickB('#maps','m',v=>cfg.map=v);
+function resolveMap(){return MAPLIST[cfg.map<0||cfg.map==null?Math.floor(rnd()*MAPLIST.length):cfg.map]}
 function lock(){try{cv.requestPointerLock&&cv.requestPointerLock()}catch(e){}}
 $('#go').onclick=()=>{$('#menu').style.display='none';$('#hud').style.display='block';paused=false;startMatch()};
 $('#rdy').onclick=ready;
@@ -778,7 +824,7 @@ function byIdFromFire(m){return null}
 function removeProxy(id){const i=E.findIndex(e=>e.nid===id&&e.net);if(i<0)return;sc.remove(E[i].mesh);E.splice(i,1)}
 // ---- entering game ----
 function enterGame(roster,win){NET.inGame=true;NET.round=0;NET.midLo=0;cfg.win=win||5;$('#onl').style.display='none';$('#over').style.display='none';$('#menu').style.display='none';$('#hud').style.display='block';paused=false;score=[0,0];
- for(const e of E)sc.remove(e.mesh);E=[];clearWorldSafe();const me=roster.find(r=>r.id===NET.me);if(!me){netLeave();return}const idx=[0,0];let mx=1;
+ for(const e of E)sc.remove(e.mesh);E=[];clearWorldSafe();curMap=resolveMap();buildMap(curMap);const me=roster.find(r=>r.id===NET.me);if(!me){netLeave();return}const idx=[0,0];let mx=1;
  for(const r of roster){const i=idx[r.team]++;mx=Math.max(mx,idx[r.team]);const isP=r.id===NET.me,e={team:r.team,i,isP,net:!isP,nid:r.id,name:isP?NET.name:r.name,k:0,dth:0,td:0};e.mesh=mkBody(r.team===me.team?0:1);e.mesh.traverse(o=>o.userData.ent=e);sc.add(e.mesh);if(!isP){e.L=[PRI[0],SEC[0],MEL[0],UTL[0]];e.S=mkS(e.L);e.cur=0}E.push(e);if(isP)P=e}
  cfg.n=mx;P.L=P.L||[PRI[0],SEC[0],MEL[0],UTL[0]];respawn();openLo()}
 function startRound(){$('#over').style.display='none';NET.midLo=0;$('#lo').style.display='none';begin();lock()}
