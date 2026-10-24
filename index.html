@@ -208,8 +208,14 @@ const PRI=[
 {n:'Minigun',k:'P',d:'300 發不能換彈，預熱後高速開火',norl:1,au:1,spin:.2,dmg:9,rate:.05,mag:300,rl:3,sp:.045,mv:.6,f:420,br:45,bp:14},
 {n:'Paintball Gun',k:'P',d:'下墜漆彈，干擾視野',au:1,rate:.13,mag:40,rl:2,sp:.015,pj:{sp:45,g:10,r:.07,col:0xff3fa0,emi:1,dmg:22,hs:1,paint:1},zf:55,f:500,br:40,bp:14},
 {n:'Crossbow',k:'P',d:'穿透弩箭，可開鏡',rate:.4,mag:1,rl:1.1,pj:{sp:110,g:2,r:.06,len:.6,col:0x222222,dmg:70,hs:1.5,pierce:1},zf:38,scope:1,f:650,br:80,bp:22},
-{n:'Gunblade',k:'P',d:'左鍵近距離霰彈（12 發），右鍵揮砍',dmg:10,pel:5,rate:.5,mag:12,rl:2,sp:.06,zf:60,f:200,br:16,bp:4,an:'揮砍',
- alt:altCd(.7,(e)=>{e.wnm='Gunblade';melee(e,45,3.2,0);e.kick=1;snd(900,.08,.05)}),bAlt:(b,s,d)=>d<3.3},
+{n:'Gunblade',k:'P',d:'左鍵單發射擊，命中敵人切換成刀刃模式；刀刃命中會補一發子彈傷害並切回槍模式，右鍵在槍模式瞄準、在刀刃模式衝刺',
+ dmg:45,hsm:11/9,rate:.75,mag:12,norl:1,sp:.01,zf:55,br:40,bp:12,
+ fire:(e,w,s,x)=>{if(s.bm){e.wnm='Gunblade';if(e.isP){P.insp=0;P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk='n'}snd(300,.08,.05,'sawtooth');
+  const hit=melee(e,35,8,0);if(hit){if(s.a>0){s.a--;hurt(hit,15,e,'Gunblade',{from:e});snd(900,.07,.05)}s.bm=0}}
+ else{e.wnm='Gunblade';snd(760,.07,.04);const a=aim(e);if(hitscan(e,a.o,a.d,w.dmg,{hsm:w.hsm}))s.bm=1}},
+ alt:(e,w,s,dn)=>{if(s.bm){if(!dn||s.acd>0||e.frz>0||!e.alive)return;s.acd=1.5;e.wnm='Gunblade';if(e.isP){P.insp=0;P.sw=P.swT=.4;P.swd=-(P.swd||1);P.swk='n'}
+  const a=aim(e);e.vx=a.d.x*18;e.vz=a.d.z*18;e.vy=Math.max(e.vy,a.d.y*18+3);e.sl=false;e.kick=1;snd(400,.2,.06,'sawtooth')}else e.zoom=dn},
+ bAlt:(b,s,d)=>s.bm?d<6:d>12},
 {n:'Wildcat',k:'P',d:'極速步槍，機動性高',au:1,dmg:12,rate:.07,mag:35,rl:1.5,sp:.03,mv:1.1,zf:55,f:340,br:45,bp:12}];
 const SEC=[
 {n:'Handgun',k:'S',d:'精準半自動',dmg:24,rate:.26,mag:12,rl:1.1,sp:.012,zf:58,f:520,br:45,bp:12},
@@ -331,12 +337,13 @@ const PG=new T.SphereGeometry(1,10,8),FG=new T.BoxGeometry(.25,.25,.25);
 function puff(p,v,col,life,sz){const m=new T.Mesh(FG,new T.MeshBasicMaterial({color:col,transparent:true,opacity:.85}));m.position.copy(p);m.scale.setScalar(sz||1);sc.add(m);Fx.push({m,t:life,T:life,v,gr:2})}
 function boom(p,o,by,wn){const m=new T.Mesh(PG,new T.MeshBasicMaterial({color:o.col||0xffa030,transparent:true,opacity:.7}));m.position.copy(p);sc.add(m);Fx.push({m,t:.35,T:.35,g:o.r*(o.sz||1)});if(!o.sz)snd(60,.4,.15,'sawtooth');
 for(const e of E)if(e.alive&&e!==o.skip&&!e.net){const d=Math.hypot(e.x-p.x,e.y+1-p.y,e.z-p.z);if(d<o.r){const k=o.flat?1:1-d/o.r;if(e.team!==by.team)hurt(e,o.dmg*k,by,wn,{prc:1,vs:1});if(o.kb!==0)applyPush(e,(()=>{const q=V(e.x,e.y+1,e.z).sub(p);if(q.lengthSq()<1e-4)q.set(0,1,0);q.normalize();q.y+=.5;q.normalize().multiplyScalar(18*k*(o.kb||1));return{ax:q.x,az:q.z,vb:q.y}})())}}}
-function hitscan(e,o,d,dmg,op){let from=muz(e),range=120;const bn=op.bnc||0,list=targets(e);
+function hitscan(e,o,d,dmg,op){let from=muz(e),range=120,hitEnt=null;const bn=op.bnc||0,list=targets(e);
 for(let k=0;k<=bn;k++){const hs=ray(o,d,range,list);let end=o.clone().addScaledVector(d,range),wh=null;
- for(const h of hs){end=h.point;const t=h.object.userData.ent;if(t&&!op.aoe){const hd=!!h.object.userData.head;const dm=hurt(t,dmg*(hd?(op.hsm||2):1),e,e.wnm,{hs:hd,ray:1,prc:op.prc,from:o});if((dm>0||dmg==0)&&op.frost&&!(t.shd&&front(t,o)))frost(t,op.frost)}else if(!t)wh=h;break}
+ for(const h of hs){end=h.point;const t=h.object.userData.ent;if(t&&!op.aoe){const hd=!!h.object.userData.head;const dm=hurt(t,dmg*(hd?(op.hsm||2):1),e,e.wnm,{hs:hd,ray:1,prc:op.prc,from:o});hitEnt=t;if((dm>0||dmg==0)&&op.frost&&!(t.shd&&front(t,o)))frost(t,op.frost)}else if(!t)wh=h;break}
  tracer(from,end,op.col||(e.isP?0xffd060:0xff7070));
  if(op.aoe)boom(end,{r:op.aoe.r,dmg:op.aoe.dmg,kb:0,flat:1,col:0x46f0e0,sz:.5},e,e.wnm);
- if(wh&&k<bn){const n=wh.face.normal.clone().transformDirection(wh.object.matrixWorld);d=d.clone().reflect(n);o=end.clone().addScaledVector(n,.02);from=end.clone();range-=wh.distance}else break}}
+ if(wh&&k<bn){const n=wh.face.normal.clone().transformDirection(wh.object.matrixWorld);d=d.clone().reflect(n);o=end.clone().addScaledVector(n,.02);from=end.clone();range-=wh.distance}else break}
+return hitEnt}
 function fGun(e,w,s,x){const a=aim(e),z=e.isP&&e.zoom?.25:1,sp=x&&x.sp?x.sp:(w.sp||0)*z;for(let i=0;i<(w.pel||1);i++)hitscan(e,a.o,spr(a.d,sp),w.dmg,{hsm:w.hsm,bnc:w.bnc,prc:w.prc,col:w.col,aoe:w.aoe,frost:w.frost})}
 function fProj(e,w){const a=aim(e);for(let i=0;i<(w.pel||1);i++)shootP(e,a.o.clone().addScaledVector(a.d,.6),spr(a.d,w.sp||0),w.pj)}
 function fFlame(e,w,s){const a=aim(e),o=a.o;for(let i=0;i<2;i++)puff(muz(e),spr(a.d,.12).multiplyScalar(13+rnd()*4),rnd()<.5?0xff8a20:0xffc040,.45,.6);
@@ -421,10 +428,10 @@ if(used)b.gcd=3+rnd()*4}
 
 // ===== generic weapon use (player + bots) =====
 function rel(e){const w=e.L[e.cur],s=e.S[e.cur];if(w.norl||(w.res!=null&&!(s.r>0)))return;if(w.mag&&!w.inf&&s.rl<=0&&s.a<w.mag&&s.q<=0)s.rl=w.rl}
-function fireW(e,w,s,x){if(GHA)return;if(NET&&e.isP&&!GH)netFire('w',e.L.indexOf(w),x);if(w.lim&&!w.selfLim)s.c--;if(w.mag&&!w.inf)s.a--;if(w.heat){s.h+=w.heat;if(s.h>=1){s.h=1;s.ov=1}}
+function fireW(e,w,s,x){if(GHA)return;if(NET&&e.isP&&!GH)netFire('w',e.L.indexOf(w),x);if(w.lim&&!w.selfLim)s.c--;if(w.mag&&!w.inf&&!s.bm)s.a--;if(w.heat){s.h+=w.heat;if(s.h>=1){s.h=1;s.ov=1}}
 s.lf=e.age;e.wnm=w.n;if(e.isP){P.rk=(rnd()-.5)*2;P.insp=0;if(w.k=='M'&&!w.au){P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk=w.n=='Riot Shield'?'s':w.n=='Maul'?'h':'n';if(w.n=='Maul')P.sw=P.swT=.6}if(w.k=='U'&&w.lim&&w.n!='Medkit')P.thr=.45}(w.fire||(w.pj?fProj:fGun))(e,w,s,x||{});e.cd=w.rate*(e.isP?1:DF[cfg.d].rm*(1+rnd()*.3));e.kick=1;if(w.f)snd(w.f,.08,.05);
 if(w.burst){s.q=w.burst-1;s.qt=w.qi||.07;s.qs=0}if(w.mag&&!w.inf&&s.a<=0)rel(e)}
-function tryF(e,w,s,x){if(e.cd>0||s.rl>0||s.ov||e.frz>0||s.q>0||s.out>0)return;if(w.spin&&s.sp<1)return;if(w.mag&&!w.inf&&s.a<1){rel(e);return}
+function tryF(e,w,s,x){if(e.cd>0||s.rl>0||s.ov||e.frz>0||s.q>0||s.out>0)return;if(w.spin&&s.sp<1)return;if(w.mag&&!w.inf&&!s.bm&&s.a<1){rel(e);return}
 if(w.can?!w.can(e,s):(w.lim&&s.c<=0))return;fireW(e,w,s,x)}
 function useW(e,dt,trig,alt){const w=e.L[e.cur],s=e.S[e.cur];e.cd-=dt;e.altH=alt&&e.frz<=0;if(w.n=='Chainsaw'&&e.altH&&e.isP){P.revS=(P.revS||0)-dt;if(P.revS<=0){P.revS=.12;snd(95+rnd()*20,.12,.03,'sawtooth')}}
 if(s.rl>0){s.rl-=dt;if(s.rl<=0){s.rl=0;if(w.res!=null){const n=Math.min(w.mag-s.a,s.r||0);s.a+=n;s.r=(s.r||0)-n}else s.a=w.mag}}
@@ -434,7 +441,7 @@ if(w.charge){if(trig&&e.cd<=0&&e.frz<=0)s.ch=Math.min(1,s.ch+dt/w.charge);else i
 else if(trig&&(w.au||!e.isP||!e.ptg))tryF(e,w,s);
 if(w.achg&&alt&&s.chg&&e.frz<=0)s.ch=Math.min(1,s.ch+dt/w.achg);if(w.alt){if(alt&&!e.pal){w.alt(e,w,s,true);if(NET&&e.isP&&w.alt!==ZOOM)netFire('a',e.cur,null,1)}else if(!alt&&e.pal){w.alt(e,w,s,false);if(NET&&e.isP&&w.alt!==ZOOM)netFire('a',e.cur,null,0)}}
 e.ptg=trig;e.pal=alt}
-function swE(e,i){if(i===e.cur||!e.alive||e.frz>0)return;const o=e.S[e.cur];o.rl=0;o.q=0;o.ch=0;if(e.L[e.cur].alt&&e.pal)e.L[e.cur].alt(e,e.L[e.cur],o,false);e.pal=false;e.cur=i;e.zoom=false;e.dfl=false;e.shd=false;e.cd=Math.max(e.cd,e.L[i].eq||(i==0?1:.25));if(e.isP)setVM();else setHold(e)}
+function swE(e,i){if(i===e.cur||!e.alive||e.frz>0)return;const o=e.S[e.cur];o.rl=0;o.q=0;o.ch=0;o.bm=0;if(e.L[e.cur].alt&&e.pal)e.L[e.cur].alt(e,e.L[e.cur],o,false);e.pal=false;e.cur=i;e.zoom=false;e.dfl=false;e.shd=false;e.cd=Math.max(e.cd,e.L[i].eq||(i==0?1:.25));if(e.isP)setVM();else setHold(e)}
 function spdMul(e){const w=e.L[e.cur];return(e.frz>0?0:1)*(e.slow>0?.5:1)*(w.n=='Chainsaw'&&e.altH?1.65:w.mv||(w.k=='M'?1.15:1))*(e.buff>0?1.25:1)*(e.shd?.8:1)}
 function phys(e,dt,wx,wz){move(e,wx+e.vx*dt,wz+e.vz*dt);const og=onGround(e),fr=og&&e.vy<=0?Math.max(0,1-9*dt):Math.max(0,1-(e.isP?.06:.4)*dt);e.vx*=fr;e.vz*=fr;
 e.vy-=22*dt;e.y+=e.vy*dt;const g=ground(e.x,e.z,e.y);if(e.y<=g&&e.vy<=0){e.y=g;e.vy=0;e.djd=0;if(e.djs)e.djs.clear()}}
