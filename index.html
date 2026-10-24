@@ -190,24 +190,24 @@ const DF=[{err:.05,dm:.55,rm:1.6,react:1,spd:3.4},{err:.03,dm:.75,rm:1.25,react:
 function altCd(cd,fn){return(e,w,s,dn)=>{if(!dn||s.acd>0||e.frz>0||!e.alive)return;s.acd=cd;if(e.isP){P.insp=0;if(w.k=='M'||w.n=='Gunblade'){P.sw=P.swT=.4;P.swd=-(P.swd||1);P.swk=w.n=='Knife'||w.n=='Fists'||w.n=='Katana'||w.n=='Trowel'?'s':w.n=='Battle Axe'||w.n=='Maul'?'h':'n'}}fn(e,w,s)}}
 const ZOOM=(e,w,s,dn)=>{e.zoom=dn};
 const PRI=[
-{n:'Assault Rifle',k:'P',d:'全自動連射',au:1,dmg:17,rate:.095,mag:30,rl:1.7,sp:.028,zf:50,f:300,br:60,bp:14},
-{n:'Burst Rifle',k:'P',d:'三連發',dmg:18,burst:3,au:1,rate:.42,mag:30,rl:1.7,sp:.018,zf:50,f:320,br:60,bp:16},
-{n:'Bow',k:'P',d:'左鍵射箭，按住右鍵蓄力放開發射，可二段跳',dj:1,achg:.8,rate:.35,an:'蓄力',alt:(e,w,s,dn)=>{if(dn){s.chg=1;s.ch=0}else if(s.chg){s.chg=0;const c=s.ch;s.ch=0;if(c>0)tryF(e,w,s,{c})}},bAlt:(b,s,d)=>d>12&&(!s.chg||s.ch<.8),inf:1,pj:{sp:70,g:8},fire:(e,w,s,x)=>{const c=x.c||.2,a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:30+50*c,g:8,r:.06,len:.5,col:0x6b4a2e,dmg:20+55*c,hs:1.6})},f:700,br:45,bp:15},
-{n:'RPG',k:'P',d:'火箭共 17 發，每發換彈',rate:.4,mag:1,rl:1.8,res:16,pj:{sp:38,r:.18,col:0x5e9a3a,boom:{r:6,dmg:110}},zf:58,f:100,br:50,bp:16},
-{n:'Sniper',k:'P',d:'右鍵開鏡',dmg:95,rate:1.2,mag:5,rl:2.3,sp:.002,zf:28,scope:1,f:200,br:110,bp:26},
-{n:'Shotgun',k:'P',d:'近距離爆發',dmg:11,pel:9,rate:.8,mag:6,rl:2.2,sp:.07,zf:60,f:140,br:18,bp:6},
-{n:'Distortion',k:'P',d:'範圍彈片，右鍵重力漩渦',pel:5,rate:.55,mag:10,rl:2,sp:.05,aoe:{r:1.6,dmg:7},col:0x46f0e0,f:260,br:28,bp:10,an:'重力漩渦',
- alt:altCd(6,(e)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.8),a.d,{sp:24,r:.22,col:0x7a3cff,emi:1,vortex:1});snd(120,.3,.08,'sine')}),bAlt:(b,s,d)=>d>5&&rnd()<.012},
-{n:'Permafrost',k:'P',d:'5 發點放，右鍵丟冰塊凍結',burst:5,qi:.06,dmg:13,an:'冰塊',alt:altCd(6,(e)=>{const a=aim(e);const q=shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:22,g:14,r:.18,col:0xbfeaff,emi:1,land:(q,x)=>iceBurst(x,q.by)});q.v.y+=3;snd(500,.1,.05)}),bAlt:(b,s,d)=>d<14&&rnd()<.01,rate:.5,mag:25,rl:2.2,sp:.02,col:0x9fe0ff,zf:60,f:180,br:16,bp:6},
-{n:'Energy Rifle',k:'P',d:'無限子彈，光束會反彈',dmg:24,hsm:2,bnc:2,rate:.38,inf:1,sp:.004,col:0x40e0ff,zf:45,f:900,br:70,bp:18},
-{n:'Flamethrower',k:'P',d:'燃燒 25 傷害，燃料自動回復，右鍵強風',au:1,rate:.08,mag:100,norl:1,regen:40,fire:fFlame,an:'強風',br:8,bp:4,
- alt:altCd(3,(e)=>{const a=aim(e);for(let i=0;i<10;i++)puff(muz(e),spr(a.d,.25).multiplyScalar(16),0xffffff,.35,.8);snd(250,.25,.08,'sawtooth');
+{n:'Assault Rifle',k:'P',d:'全自動連射',au:1,dmg:12,hsm:1.25,dd:[50,200,3],rate:.10,mag:20,res:80,rl:1.56,eq:.65,mv:.9,sp:.028,zf:50,f:300,br:60,bp:14},
+{n:'Burst Rifle',k:'P',d:'三連發',dmg:20,hsm:1.25,dd:[60,200,5],burst:3,qi:.08,au:1,rate:.6,mag:12,res:48,rl:1.6,eq:.75,mv:.9,sp:.018,zf:50,f:320,br:60,bp:16},
+{n:'Bow',k:'P',d:'左鍵射箭，按住右鍵蓄力放開發射，可二段跳',dj:1,achg:1.8,rate:.25,eq:.85,mv:1.05,an:'蓄力',alt:(e,w,s,dn)=>{if(dn){s.chg=1;s.ch=0}else if(s.chg){s.chg=0;const c=s.ch;s.ch=0;if(c>0)tryF(e,w,s,{c})}},bAlt:(b,s,d)=>d>12&&(!s.chg||s.ch<.8),mag:1,res:29,rl:.19,pj:{sp:70,g:8},fire:(e,w,s,x)=>{const c=x.c||.2,a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:60+30*c,g:8,r:.06,len:.5,col:0x6b4a2e,dmg:30+30*c,hs:2})},f:700,br:45,bp:15},
+{n:'RPG',k:'P',d:'火箭共 17 發，每發換彈',rate:.25,mag:1,rl:1.04,res:16,eq:1,mv:.85,pj:{sp:38,r:.18,col:0x5e9a3a,boom:{r:16,dmg:50}},zf:58,f:100,br:50,bp:16},
+{n:'Sniper',k:'P',d:'右鍵開鏡',dmg:50,hsm:3,rate:1.5,mag:4,res:8,rl:1.8,eq:1.15,mv:.8,sp:.002,zf:28,scope:1,f:200,br:110,bp:26},
+{n:'Shotgun',k:'P',d:'近距離爆發',dmg:8,hsm:1.5,dd:[10,50,2.5],pel:10,rate:.7,mag:7,res:28,rl:1.8,eq:.75,sp:.07,zf:60,f:140,br:18,bp:6},
+{n:'Distortion',k:'P',d:'範圍彈片，右鍵重力漩渦',pel:5,dmg:7,rate:.4,mag:45,eq:1.25,sp:.05,aoe:{r:4,dmg:7},col:0x46f0e0,f:260,br:28,bp:10,an:'重力漩渦',
+ alt:altCd(30,(e)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.8),a.d,{sp:24,r:.22,col:0x7a3cff,emi:1,vortex:1});snd(120,.3,.08,'sine')}),bAlt:(b,s,d)=>d>5&&rnd()<.012},
+{n:'Permafrost',k:'P',d:'5 發點放，右鍵丟冰塊凍結',burst:2,qi:.08,dmg:14,hsm:1.25,dd:[40,100,3.5],an:'冰塊',alt:altCd(6,(e)=>{const a=aim(e);const q=shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:22,g:14,r:.18,col:0xbfeaff,emi:1,land:(q,x)=>iceBurst(x,q.by,3.2,3,1)});q.v.y+=3;snd(500,.1,.05)}),bAlt:(b,s,d)=>d<14&&rnd()<.01,rate:.2,mag:24,res:48,rl:1.9,eq:.5,sp:.02,col:0x9fe0ff,zf:60,f:180,br:16,bp:6},
+{n:'Energy Rifle',k:'P',d:'無限子彈，光束會反彈',dmg:20,hsm:1.25,bnc:2,rate:.3,inf:1,eq:1.05,sp:.004,col:0x40e0ff,zf:45,f:900,br:70,bp:18},
+{n:'Flamethrower',k:'P',d:'燃燒 85 DPS，燃料自動回復，右鍵強風',au:1,rate:.08,mag:100,norl:1,regen:40,eq:.9,mv:.95,fire:fFlame,an:'強風',br:8,bp:4,
+ alt:altCd(4,(e)=>{const a=aim(e);for(let i=0;i<10;i++)puff(muz(e),spr(a.d,.25).multiplyScalar(16),0xffffff,.35,.8);snd(250,.25,.08,'sawtooth');
   for(const t of E)if(t.alive&&t.team!==e.team){const dv=V(t.x,t.y+1,t.z).sub(a.o),d=dv.length();if(d<7&&dv.normalize().dot(a.d)>.6)push(e,t,{ax:a.d.x*20,az:a.d.z*20,vy:7})}
   for(const q of Pr)if(q.by.team!==e.team&&q.p.distanceTo(a.o)<6){q.v.copy(a.d).multiplyScalar(q.v.length()+5);q.by=e;q.hit.clear()}}),bAlt:(b,s,d)=>d<5&&rnd()<.03},
-{n:'Grenade Launcher',k:'P',d:'左鍵碰到就爆，右鍵反彈一次再爆',rate:.7,mag:6,rl:2.6,pj:{sp:26,g:18},fire:(e,w,s,x)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:26,g:18,r:.1,col:0x5a5a2a,bnc:x.b?1:0,life:4,boom:{r:5,dmg:75}})},alt:(e,w,s,dn)=>{if(dn)tryF(e,w,s,{b:1})},bAlt:()=>rnd()<.01,f:160,br:30,bp:14},
-{n:'Minigun',k:'P',d:'300 發不能換彈，預熱後高速開火',norl:1,au:1,spin:.2,dmg:9,rate:.05,mag:300,rl:3,sp:.045,mv:.6,f:420,br:45,bp:14},
-{n:'Paintball Gun',k:'P',d:'下墜漆彈，干擾視野',au:1,rate:.13,mag:40,rl:2,sp:.015,pj:{sp:45,g:10,r:.07,col:0xff3fa0,emi:1,dmg:22,hs:1,paint:1},zf:55,f:500,br:40,bp:14},
-{n:'Crossbow',k:'P',d:'穿透弩箭，可開鏡',rate:.4,mag:1,rl:1.1,pj:{sp:110,g:2,r:.06,len:.6,col:0x222222,dmg:70,hs:1.5,pierce:1},zf:38,scope:1,f:650,br:80,bp:22},
+{n:'Grenade Launcher',k:'P',d:'左鍵碰到就爆，右鍵反彈一次再爆',rate:.6,mag:6,res:18,rl:1.8,eq:1,mv:.9,pj:{sp:26,g:18},fire:(e,w,s,x)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:26,g:18,r:.1,col:0x5a5a2a,bnc:x.b?1:0,life:4,boom:{r:14,dmg:40}})},alt:(e,w,s,dn)=>{if(dn)tryF(e,w,s,{b:1})},bAlt:()=>rnd()<.01,f:160,br:30,bp:14},
+{n:'Minigun',k:'P',d:'300 發不能換彈，預熱後高速開火',norl:1,au:1,spin:.8,dmg:8,hsm:1.25,dd:[50,200,4],rate:.05,mag:300,eq:1,sp:.045,mv:.75,f:420,br:45,bp:14},
+{n:'Paintball Gun',k:'P',d:'下墜漆彈，干擾視野',au:1,rate:.15,mag:16,res:32,rl:2.4,eq:.8,mv:.9,sp:.015,pj:{sp:45,g:10,r:.07,col:0xff3fa0,emi:1,dmg:22,hs:1,paint:1},zf:55,f:500,br:40,bp:14},
+{n:'Crossbow',k:'P',d:'穿透弩箭，可開鏡',rate:1,mag:1,res:19,rl:1.15,eq:1.15,mv:1.05,pj:{sp:110,g:2,r:.06,len:.6,col:0x222222,dmg:37.5,hs:2,pierce:1},zf:38,scope:1,f:650,br:80,bp:22},
 {n:'Gunblade',k:'P',d:'左鍵單發射擊，命中敵人切換成刀刃模式；刀刃命中會補一發子彈傷害並切回槍模式，右鍵在槍模式瞄準、在刀刃模式衝刺',
  dmg:45,hsm:11/9,rate:.75,mag:12,norl:1,sp:.01,zf:55,br:40,bp:12,
  fire:(e,w,s,x)=>{if(s.bm){e.wnm='Gunblade';if(e.isP){P.insp=0;P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk='n'}snd(300,.08,.05,'sawtooth');
@@ -216,16 +216,16 @@ const PRI=[
  alt:(e,w,s,dn)=>{if(s.bm){if(!dn||s.acd>0||e.frz>0||!e.alive)return;s.acd=1.5;e.wnm='Gunblade';if(e.isP){P.insp=0;P.sw=P.swT=.4;P.swd=-(P.swd||1);P.swk='n'}
   const a=aim(e);e.vx=a.d.x*18;e.vz=a.d.z*18;e.vy=Math.max(e.vy,a.d.y*18+3);e.sl=false;e.kick=1;snd(400,.2,.06,'sawtooth')}else e.zoom=dn},
  bAlt:(b,s,d)=>s.bm?d<6:d>12},
-{n:'Wildcat',k:'P',d:'極速步槍，機動性高',au:1,dmg:12,rate:.07,mag:35,rl:1.5,sp:.03,mv:1.1,zf:55,f:340,br:45,bp:12}];
+{n:'Wildcat',k:'P',d:'極速步槍，機動性高',au:1,dmg:10,hsm:1.3,dd:[40,100,2.5],rate:.06,mag:30,res:90,rl:.78,eq:.45,sp:.03,mv:1.1,zf:55,f:340,br:45,bp:12}];
 const SEC=[
 {n:'Handgun',k:'S',d:'精準半自動',dmg:24,rate:.26,mag:12,rl:1.1,sp:.012,zf:58,f:520,br:45,bp:12},
 {n:'Uzi',k:'S',d:'高射速衝鋒槍',au:1,dmg:11,rate:.065,mag:25,rl:1.3,sp:.04,zf:62,f:360,br:30,bp:9},
 {n:'Shorty',k:'S',d:'雙發短管霰彈',dmg:11,pel:6,rate:.55,mag:2,rl:1.4,sp:.09,f:150,br:12,bp:4},
 {n:'Daggers',k:'S',d:'一次連丟兩把（右手先），可二段跳',dj:1,au:1,burst:2,qi:.13,rate:.3,mag:2,rl:.9,pj:{sp:70,g:4,r:.05,len:.25,col:0xc0c8d8,dmg:20,hs:2},fire:(e,w,s)=>{const a=aim(e),sd=s.a%2?1:-1,r=V(Math.cos(e.yaw),0,-Math.sin(e.yaw));shootP(e,a.o.clone().addScaledVector(a.d,.6).addScaledVector(r,.2*sd),a.d,w.pj)},f:700,br:30,bp:10},
-{n:'Warper',k:'S',d:'傳送門槍：左右鍵各放一個門',inf:1,rate:.4,f:0,br:0,bp:12,fire:(e)=>portal(e,0),alt:(e,w,s,dn)=>{if(dn&&s.acd<=0){s.acd=.4;portal(e,1)}}},
-{n:'Energy Pistols',k:'S',d:'雙槍無限子彈',au:1,dmg:14,rate:.14,inf:1,sp:.015,col:0x40e0ff,f:800,br:40,bp:12},
-{n:'Exogun',k:'S',d:'範圍濺射雷射',rate:.32,mag:12,rl:1.6,pj:{sp:60,r:.08,col:0x7dff5a,emi:1,dmg:14,hs:1.5,splash:{r:2.6,dmg:12}},f:600,br:40,bp:12},
-{n:'Slingshot',k:'S',d:'連發彈弓，擊退敵人',au:1,rate:.25,inf:1,pj:{sp:50,g:14,r:.08,col:0xe0302a,dmg:18,hs:1.5,kb:.5},f:300,br:35,bp:12},
+{n:'Warper',k:'S',d:'傳送門槍：左右鍵各放一個門',inf:1,rate:.25,eq:1,f:0,br:0,bp:12,fire:(e)=>portal(e,0),alt:(e,w,s,dn)=>{if(dn&&s.acd<=0){s.acd=.25;portal(e,1)}}},
+{n:'Energy Pistols',k:'S',d:'雙槍無限子彈',au:1,dmg:2.1,hsm:1.25,rate:.03,inf:1,eq:.6,sp:.015,col:0x40e0ff,f:800,br:40,bp:12},
+{n:'Exogun',k:'S',d:'範圍濺射雷射',rate:.28,mag:6,res:22,rl:.65,eq:.7,pj:{sp:60,r:.08,col:0x7dff5a,emi:1,dmg:10,hs:2,splash:{r:6.28,dmg:10}},f:600,br:40,bp:12},
+{n:'Slingshot',k:'S',d:'連發彈弓，擊退敵人',au:1,rate:.1,inf:1,eq:.45,mv:1.1,pj:{sp:50,g:14,r:.08,col:0xe0302a,dmg:8,hs:1.5,bnc:2,kb:.5},f:300,br:35,bp:12},
 {n:'Flare Gun',k:'S',d:'燃燒彈，落點整個比分都在燒',rate:.5,mag:1,rl:1.5,f:240,br:40,bp:12,pj:{sp:55,g:6},
  fire:(e)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:55,g:6,r:.08,col:0xff6a20,emi:1,dmg:25,hs:1.5,burn:25,fa:1});if(a.d.y<-.6){e.vy=Math.max(e.vy,11);e.vx-=a.d.x*7;e.vz-=a.d.z*7;e.sl=false}}},
 {n:'Revolver',k:'S',d:'高傷害，右鍵連開',dmg:40,hsm:2,rate:.45,mag:6,rl:1.8,sp:.008,f:200,br:50,bp:14,an:'連開',
@@ -339,15 +339,15 @@ function boom(p,o,by,wn){const m=new T.Mesh(PG,new T.MeshBasicMaterial({color:o.
 for(const e of E)if(e.alive&&e!==o.skip&&!e.net){const d=Math.hypot(e.x-p.x,e.y+1-p.y,e.z-p.z);if(d<o.r){const k=o.flat?1:1-d/o.r;if(e.team!==by.team)hurt(e,o.dmg*k,by,wn,{prc:1,vs:1});if(o.kb!==0)applyPush(e,(()=>{const q=V(e.x,e.y+1,e.z).sub(p);if(q.lengthSq()<1e-4)q.set(0,1,0);q.normalize();q.y+=.5;q.normalize().multiplyScalar(18*k*(o.kb||1));return{ax:q.x,az:q.z,vb:q.y}})())}}}
 function hitscan(e,o,d,dmg,op){let from=muz(e),range=120,hitEnt=null;const bn=op.bnc||0,list=targets(e);
 for(let k=0;k<=bn;k++){const hs=ray(o,d,range,list);let end=o.clone().addScaledVector(d,range),wh=null;
- for(const h of hs){end=h.point;const t=h.object.userData.ent;if(t&&!op.aoe){const hd=!!h.object.userData.head;const dm=hurt(t,dmg*(hd?(op.hsm||2):1),e,e.wnm,{hs:hd,ray:1,prc:op.prc,from:o});hitEnt=t;if((dm>0||dmg==0)&&op.frost&&!(t.shd&&front(t,o)))frost(t,op.frost)}else if(!t)wh=h;break}
+ for(const h of hs){end=h.point;const t=h.object.userData.ent;if(t&&!op.aoe){const hd=!!h.object.userData.head;let bd=dmg;if(op.dd){const[dn,df,fd]=op.dd,ds=h.distance;bd=ds<=dn?dmg:ds>=df?fd:dmg+(fd-dmg)*(ds-dn)/(df-dn)}const dm=hurt(t,bd*(hd?(op.hsm||2):1),e,e.wnm,{hs:hd,ray:1,prc:op.prc,from:o});hitEnt=t;if((dm>0||dmg==0)&&op.frost&&!(t.shd&&front(t,o)))frost(t,op.frost)}else if(!t)wh=h;break}
  tracer(from,end,op.col||(e.isP?0xffd060:0xff7070));
  if(op.aoe)boom(end,{r:op.aoe.r,dmg:op.aoe.dmg,kb:0,flat:1,col:0x46f0e0,sz:.5},e,e.wnm);
  if(wh&&k<bn){const n=wh.face.normal.clone().transformDirection(wh.object.matrixWorld);d=d.clone().reflect(n);o=end.clone().addScaledVector(n,.02);from=end.clone();range-=wh.distance}else break}
 return hitEnt}
-function fGun(e,w,s,x){const a=aim(e),z=e.isP&&e.zoom?.25:1,sp=x&&x.sp?x.sp:(w.sp||0)*z;for(let i=0;i<(w.pel||1);i++)hitscan(e,a.o,spr(a.d,sp),w.dmg,{hsm:w.hsm,bnc:w.bnc,prc:w.prc,col:w.col,aoe:w.aoe,frost:w.frost})}
+function fGun(e,w,s,x){const a=aim(e),z=e.isP&&e.zoom?.25:1,sp=x&&x.sp?x.sp:(w.sp||0)*z;for(let i=0;i<(w.pel||1);i++)hitscan(e,a.o,spr(a.d,sp),w.dmg,{hsm:w.hsm,bnc:w.bnc,prc:w.prc,col:w.col,aoe:w.aoe,frost:w.frost,dd:w.dd})}
 function fProj(e,w){const a=aim(e);for(let i=0;i<(w.pel||1);i++)shootP(e,a.o.clone().addScaledVector(a.d,.6),spr(a.d,w.sp||0),w.pj)}
 function fFlame(e,w,s){const a=aim(e),o=a.o;for(let i=0;i<2;i++)puff(muz(e),spr(a.d,.12).multiplyScalar(13+rnd()*4),rnd()<.5?0xff8a20:0xffc040,.45,.6);
-for(const t of E)if(t.alive&&t.team!==e.team){const tp=V(t.x,t.y+1,t.z),dv=tp.clone().sub(o),d=dv.length();if(d<8.5&&dv.normalize().dot(a.d)>.93&&losP(o,tp)){const dm=hurt(t,4,e,'Flamethrower',{from:o});if(dm>0)burn(t,25,e,'Flamethrower')}}}
+for(const t of E)if(t.alive&&t.team!==e.team){const tp=V(t.x,t.y+1,t.z),dv=tp.clone().sub(o),d=dv.length();if(d<26&&dv.normalize().dot(a.d)>.93&&losP(o,tp)){const dm=hurt(t,6.8,e,'Flamethrower',{from:o});if(dm>0)burn(t,25,e,'Flamethrower')}}}
 function melee(e,dmg,rng,back){const a=aim(e);let best=null,bd=1e9;
 for(const t of E)if(t.alive&&t.team!==e.team){const tp=V(t.x,t.y+1.1,t.z),dv=tp.clone().sub(a.o),d=Math.hypot(dv.x,dv.z);if(d<rng+.45&&Math.abs(dv.y)<1.9&&dv.normalize().dot(a.d)>.8&&d<bd&&losP(a.o,tp)){bd=d;best=t}}
 if(!best)return;const ax=e.x-best.x,az=e.z-best.z,l=Math.hypot(ax,az)||1,bs=back&&(-ax*Math.sin(best.yaw)-az*Math.cos(best.yaw))/l<-.5;
@@ -369,9 +369,9 @@ function updPr(dt){for(let i=Pr.length-1;i>=0;i--){const q=Pr[i],x=q.p;q.t+=dt;l
  if(!dead&&q.fuse!=null&&q.t>=q.fuse){if(q.onFuse)q.onFuse(q,x.clone());else boom(x,q.boom,q.by,q.wn);dead=true}
  if(!dead&&(q.t>(q.life||6)||Math.abs(x.x)>40||Math.abs(x.z)>40))dead=true;
  q.m.position.copy(x);if(q.len&&!q.stuck)q.m.lookAt(x.clone().add(q.v));if(dead){sc.remove(q.m);if(q.len)q.m.geometry.dispose();Pr.splice(i,1)}}}
-function mkVortex(p,by){const m=new T.Mesh(PG,new T.MeshBasicMaterial({color:0x7a3cff,transparent:true,opacity:.55}));m.position.copy(p);sc.add(m);VX.push({p:p.clone(),by,m,t:2.5});snd(90,.6,.1,'sine')}
+function mkVortex(p,by){const m=new T.Mesh(PG,new T.MeshBasicMaterial({color:0x7a3cff,transparent:true,opacity:.55}));m.position.copy(p);sc.add(m);VX.push({p:p.clone(),by,m,t:4});snd(90,.6,.1,'sine')}
 function updVX(dt){for(let i=VX.length-1;i>=0;i--){const v=VX[i];v.t-=dt;v.m.scale.setScalar(.8+Math.sin(v.t*12)*.15);
- for(const e of E)if(e.alive&&!e.net&&e.team!==v.by.team){const dx=v.p.x-e.x,dy=v.p.y-(e.y+1),dz=v.p.z-e.z,d=Math.hypot(dx,dy,dz);if(d<8&&d>.6){const a=40*dt/d;e.vx+=dx*a;e.vz+=dz*a;if(dy>0)e.vy=Math.max(e.vy,dy*2);e.sl=false}}
+ for(const e of E)if(e.alive&&!e.net&&e.team!==v.by.team){const dx=v.p.x-e.x,dy=v.p.y-(e.y+1),dz=v.p.z-e.z,d=Math.hypot(dx,dy,dz);if(d<12&&d>.6){const a=40*dt/d;e.vx+=dx*a;e.vz+=dz*a;if(dy>0)e.vy=Math.max(e.vy,dy*2);e.sl=false}}
  if(rnd()<dt*20)puff(v.p.clone().add(V((rnd()-.5)*6,(rnd()-.5)*3,(rnd()-.5)*6)),V(0,0,0),0x9a6aff,.4,.4);
  if(v.t<=0){sc.remove(v.m);VX.splice(i,1)}}}
 function portal(e,i){const a=aim(e),h=ray(a.o,a.d,60,solid)[0];if(!h)return;setPortal(e,i,h.point,h.face.normal.clone().transformDirection(h.object.matrixWorld));snd(i?700:500,.15,.05,'sine')}
