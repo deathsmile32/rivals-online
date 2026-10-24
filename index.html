@@ -116,6 +116,7 @@ const BX=[[0,-31,64,2,8,Wh],[0,31,64,2,8,Wh],[-31,0,2,64,8,Wh],[31,0,2,64,8,Wh],
 [-26,22,1.5,1.5,7,Yl],[26,-22,1.5,1.5,7,Yl],[-14,0,2,2,3.3,Wh],[14,0,2,2,3.3,Wh]];
 const boxes=[],walls=[];
 for(const[x,z,w,d,h,c]of BX){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:c}));m.position.set(x,h/2,z);sc.add(m);walls.push(m);boxes.push({x,z,w,d,h})}
+for(const[x,z,w,d]of BX.slice(0,4))boxes.push({x,z,w,d,h:999});
 const solid=walls.concat([fl0]);sc.updateMatrixWorld(true);
 
 // ===== model helpers =====
@@ -268,7 +269,17 @@ const GP=[['prim',PRI],['sec',SEC],['mel',MEL],['utl',UTL]];let LS=[0,0,0,0];
 let st='menu',cfg={n:1,d:1},score=[0,0],rt=0,tm=0,paused=false,keys={},mL=false,mR=false,fl=0,hm=0,fb=false,da=0,sp=0;
 let E=[],P,Pr=[],Fx=[],VX=[],JP=[],AC,NET=null,GH=0,GHA=0;cfg.win=5;
 const rc=new T.Raycaster();
-const NM=['Karful','xXNoobXx','Pixel','Blaze','Nova','Zeph','Ryko','Mochi','Vex','Juno','Axel','Tofu','Skye','Drift'];
+const NM=['Karful','xXNoobXx','Pixel','Blaze','Nova','Zeph','Ryko','Mochi','Vex','Juno','Axel','Tofu','Skye','Drift',
+'xX_Shadow_Xx','xXSniperXx','xX_Ghost_Xx','xXKillerXx','xX_Reaper_Xx','xXProGamerXx','xX_Dragon_Xx','xXWolfXx','xX_Phantom_Xx','xXLegendXx',
+'n00bmaster69','pr0_slayer','x_Assassin_x','l33t_hacker','sk8rboi','d4rkl0rd','fr0st_byte','cyb3r_punk','h4x0r99','z3r0_g',
+'Toxic99','Savage23','Ninja420','Rekt','Slayer99','Headshot7','Clutch','Camper88','Lagger','Noscope360',
+'Vortexx','Nebula7','Quartz','Obsidian','Cinder','Ember99','Frostbite','Venom','Specter','Wraith',
+'Glitch','Static99','Pyro23','Hydra','Titan','Crimson','Onyx','Rogue','Viper9','Talon',
+'Falcon99','Jinx','Snipez','Bolt','Flux','Cosmo','Astro','Orbit','Zephyrus','Blitz',
+'TTV_Gamer','xX_YT_Xx','Senpai','BasedGod','Sigma99','GigaChad','Skibidi','Rizzler','SussyBaka','PogChamp',
+'KappaKing','EZClap','GGWP','NoobSlayer3000','ThePro123','iiShadow','_Darkness_','MoonKnight','SunBurn','IceQueen',
+'FireLord','StormBreaker','Thunderbolt','Lightning99','NightOwl','DayWalker','GhostRider','Wanderer','Outlaw','Maverick',
+'Renegade','Rebel99','Striker','HunterX','Predator77','AssassinX','Marksman','Gunslinger','Deadeye'];
 function snd(f,d=.08,v=.05,ty='square'){try{AC=AC||new AudioContext();const o=AC.createOscillator(),g=AC.createGain();o.type=ty;o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(AC.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+d);o.stop(AC.currentTime+d)}catch(e){}}
 function blocked(x,z,y){for(const b of boxes)if(b.h>y+.5&&(b.y0==null||y+1.9>b.y0)&&Math.abs(x-b.x)<b.w/2+.4&&Math.abs(z-b.z)<b.d/2+.4)return true;return false}
 function ground(x,z,y){let g=0;for(const b of boxes)if(b.h<=y+.5&&Math.abs(x-b.x)<b.w/2+.3&&Math.abs(z-b.z)<b.d/2+.3)g=Math.max(g,b.h);return g}
@@ -600,7 +611,7 @@ function tick(dt){
 if(st=='lo'){tm-=dt;$('#lot').textContent='請選擇裝備，'+Math.ceil(tm)+' 秒後自動開始';if(tm<=0)ready();return}
 if(st=='wait'){msg('等待其他玩家準備…');if(NET&&NET.host){NET.wt-=dt;if(NET.wt<=0||NET.lb.players.every(p=>NET.rdy.has(p.id)))hostRound()}return}
 if(st=='count'){tm-=dt;msg(Math.ceil(tm));if(tm<=0){if(NET&&NET.midLo)ready();st='play';msg('開始！');setTimeout(()=>st=='play'&&msg(''),900)}}
-else if(st=='play'){rt-=dt;if(!NET||NET.host){const a=[0,0];if(NET){E.forEach(x=>x.alive&&a[x.team]++);if(!a[0]||!a[1])endRound(a[0]?0:1)}if(st=='play'&&rt<=0){const h=[0,0];E.forEach(e=>e.alive&&(h[e.team]+=e.hp));msg('時間到，比較剩餘血量');endRound(h[0]>=h[1]?0:1)}}}
+else if(st=='play'){rt-=dt;if(!NET||NET.host){const a=[0,0];if(NET){E.forEach(x=>x.alive&&a[x.team]++);if(!a[0]||!a[1])endRound(a[0]?0:1)}if(st=='play'&&rt<=0){const h=[0,0];E.forEach(e=>e.alive&&(h[e.team]+=e.hp));endRound(h[0]>=h[1]?0:1)}}}
 else if(st=='end'){tm-=dt;if(tm<=0&&(!NET||NET.host)){const W=cfg.win||5;if(score[0]>=W||score[1]>=W){const w=score[0]>=W?0:1;if(NET)netSend({t:'ov',w});showOver(w)}else if(NET)hostRound();else begin()}}
 if(st=='over'||st=='lo')return;
 for(const e of E)stat(e,dt);for(const e of E)if(e.net)netUpd(e,dt);else if(!e.isP)bot(e,dt);pupd(dt);
