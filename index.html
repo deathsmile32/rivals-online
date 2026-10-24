@@ -218,39 +218,40 @@ const PRI=[
  bAlt:(b,s,d)=>s.bm?d<6:d>12},
 {n:'Wildcat',k:'P',d:'極速步槍，機動性高',au:1,dmg:10,hsm:1.3,dd:[40,100,2.5],rate:.06,mag:30,res:90,rl:.78,eq:.45,sp:.03,mv:1.1,zf:55,f:340,br:45,bp:12}];
 const SEC=[
-{n:'Handgun',k:'S',d:'精準半自動',dmg:24,rate:.26,mag:12,rl:1.1,sp:.012,zf:58,f:520,br:45,bp:12},
-{n:'Uzi',k:'S',d:'高射速衝鋒槍',au:1,dmg:11,rate:.065,mag:25,rl:1.3,sp:.04,zf:62,f:360,br:30,bp:9},
-{n:'Shorty',k:'S',d:'雙發短管霰彈',dmg:11,pel:6,rate:.55,mag:2,rl:1.4,sp:.09,f:150,br:12,bp:4},
-{n:'Daggers',k:'S',d:'一次連丟兩把（右手先），可二段跳',dj:1,au:1,burst:2,qi:.13,rate:.3,mag:2,rl:.9,pj:{sp:70,g:4,r:.05,len:.25,col:0xc0c8d8,dmg:20,hs:2},fire:(e,w,s)=>{const a=aim(e),sd=s.a%2?1:-1,r=V(Math.cos(e.yaw),0,-Math.sin(e.yaw));shootP(e,a.o.clone().addScaledVector(a.d,.6).addScaledVector(r,.2*sd),a.d,w.pj)},f:700,br:30,bp:10},
+{n:'Handgun',k:'S',d:'精準半自動',dmg:12,hsm:1.25,dd:[50,125,3],rate:.13,mag:13,res:91,rl:1.06,eq:.2,sp:.005,zf:58,f:520,br:45,bp:12},
+{n:'Uzi',k:'S',d:'高射速衝鋒槍',au:1,dmg:8,hsm:1.25,dd:[50,125,2],rate:.07,mag:27,res:108,rl:1.5,eq:.45,sp:.01,zf:62,f:360,br:30,bp:9},
+{n:'Shorty',k:'S',d:'近距離十彈散射',dmg:7.5,hsm:1.49,pel:10,dd:[10,25,2.5],rate:.12,mag:2,res:18,rl:1.7,eq:.6,sp:.065,f:150,br:12,bp:4},
+{n:'Daggers',k:'S',d:'一次連丟兩把（右手先），可二段跳',dj:1,au:1,burst:2,qi:.1,rate:.6,mag:2,res:60,rl:.15,eq:.6,mv:1.1,pj:{sp:70,g:4,r:.05,len:.25,col:0xc0c8d8,dmg:20,hs:2},fire:(e,w,s)=>{const a=aim(e),sd=s.a%2?1:-1,r=V(Math.cos(e.yaw),0,-Math.sin(e.yaw));shootP(e,a.o.clone().addScaledVector(a.d,.6).addScaledVector(r,.2*sd),a.d,w.pj)},f:700,br:30,bp:10},
 {n:'Warper',k:'S',d:'傳送門槍：左右鍵各放一個門',inf:1,rate:.25,eq:1,f:0,br:0,bp:12,fire:(e)=>portal(e,0),alt:(e,w,s,dn)=>{if(dn&&s.acd<=0){s.acd=.25;portal(e,1)}}},
 {n:'Energy Pistols',k:'S',d:'雙槍無限子彈',au:1,dmg:2.1,hsm:1.25,rate:.03,inf:1,eq:.6,sp:.015,col:0x40e0ff,f:800,br:40,bp:12},
 {n:'Exogun',k:'S',d:'範圍濺射雷射',rate:.28,mag:6,res:22,rl:.65,eq:.7,pj:{sp:60,r:.08,col:0x7dff5a,emi:1,dmg:10,hs:2,splash:{r:6.28,dmg:10}},f:600,br:40,bp:12},
 {n:'Slingshot',k:'S',d:'連發彈弓，擊退敵人',au:1,rate:.1,inf:1,eq:.45,mv:1.1,pj:{sp:50,g:14,r:.08,col:0xe0302a,dmg:8,hs:1.5,bnc:2,kb:.5},f:300,br:35,bp:12},
-{n:'Flare Gun',k:'S',d:'燃燒彈，落點整個比分都在燒',rate:.5,mag:1,rl:1.5,f:240,br:40,bp:12,pj:{sp:55,g:6},
- fire:(e)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:55,g:6,r:.08,col:0xff6a20,emi:1,dmg:25,hs:1.5,burn:25,fa:1});if(a.d.y<-.6){e.vy=Math.max(e.vy,11);e.vx-=a.d.x*7;e.vz-=a.d.z*7;e.sl=false}}},
-{n:'Revolver',k:'S',d:'高傷害，右鍵連開',dmg:40,hsm:2,rate:.45,mag:6,rl:1.8,sp:.008,f:200,br:50,bp:14,an:'連開',
- alt:(e,w,s,dn)=>{if(!dn||s.a<=0||s.rl>0||e.cd>0||s.q>0||e.frz>0)return;fireW(e,w,s);if(s.a>0){s.q=s.a;s.qt=.09;s.qs=.06}},bAlt:(b,s,d)=>d<12&&s.a>=3&&rnd()<.012},
-{n:'Spray',k:'S',d:'5 發點放，穿透盾牌與武士刀',au:1,burst:5,qi:.05,dmg:10,rate:.38,mag:25,rl:1.5,sp:.03,prc:1,f:380,br:30,bp:10}];
+{n:'Flare Gun',k:'S',d:'燃燒彈，落點整個比分都在燒',rate:.25,mag:1,res:1,rl:.77,eq:1.3,mv:1.1,f:240,br:40,bp:12,pj:{sp:55,g:6},
+ fire:(e)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:55,g:6,r:.08,col:0xff6a20,emi:1,dmg:25,hs:1.5,burn:50,fa:1});if(a.d.y<-.6){e.vy=Math.max(e.vy,11);e.vx-=a.d.x*7;e.vz-=a.d.z*7;e.sl=false}}},
+{n:'Revolver',k:'S',d:'高傷害，右鍵連開（Fan the Hammer）',dmg:30,hsm:1.33,dd:[75,200,8],rate:.4,mag:6,res:36,rl:1.8,eq:.6,mv:.95,sp:.005,qi:.15,f:200,br:50,bp:14,an:'連開',
+ alt:(e,w,s,dn)=>{if(!dn||s.a<=0||s.rl>0||e.cd>0||s.q>0||e.frz>0)return;fireW(e,w,s);if(s.a>0){s.q=s.a;s.qt=.15;s.qs=.06}},bAlt:(b,s,d)=>d<12&&s.a>=3&&rnd()<.012},
+{n:'Spray',k:'S',d:'5 發點放，穿透盾牌與武士刀',au:1,burst:5,qi:.04,dmg:8,hsm:1.25,dd:[50,125,2],rate:.5,mag:30,res:90,rl:1.3,eq:.45,mv:1.05,sp:.005,prc:1,f:380,br:30,bp:10}];
 const MEL=[
-{n:'Fists',k:'M',d:'輕快，右鍵重拳，可二段跳',dj:1,dmg:20,rate:.3,rg:2.4,f:600,an:'重拳',alt:altCd(.7,(e)=>{e.wnm='Fists';melee(e,35,2.4,0);e.kick=1;snd(600,.09,.06)}),bAlt:(b,s,d)=>d<2.6&&rnd()<.03},
-{n:'Knife',k:'M',eq:.35,d:'右鍵刺，背刺秒殺',dmg:40,rate:.5,rg:2.6,f:800,an:'刺',alt:altCd(.8,(e)=>{e.wnm='Knife';melee(e,40,2.6,1);e.kick=1;snd(800,.09,.06)}),bAlt:(b,s,d)=>d<2.6&&rnd()<.05},
-{n:'Katana',k:'M',d:'右鍵格擋反彈子彈 0.8 秒，冷卻 2.5 秒',dmg:50,rate:.6,rg:3.2,f:900,an:'格擋',alt:altCd(2.5,(e)=>{e.dfl=.8;snd(1200,.08,.04)}),bAlt:(b,s,d)=>d>4&&rnd()<.03},
-{n:'Battle Axe',k:'M',d:'右鍵重劈 75 傷害',dmg:55,rate:.85,rg:2.9,f:300,an:'重劈',alt:altCd(1.3,(e)=>{e.wnm='Battle Axe';melee(e,75,2.9,0);e.kick=1;snd(300,.12,.07)}),bAlt:(b,s,d)=>d<2.8&&rnd()<.03},
-{n:'Scythe',k:'M',d:'右鍵向前衝刺',dmg:45,rate:.6,rg:3.4,f:700,an:'衝刺',alt:altCd(3,(e)=>{e.wnm='Scythe';const a=aim(e);e.vx=a.d.x*18;e.vz=a.d.z*18;e.vy=Math.max(e.vy,a.d.y*18+3);e.sl=false;e.kick=1;snd(400,.2,.06,'sawtooth')}),bAlt:(b,s,d)=>d>5&&d<12&&rnd()<.02},
-{n:'Maul',k:'M',d:'雙手重錘，左鍵往下重砸 75，右鍵震地擊飛',dmg:75,rate:1.1,rg:2.8,f:200,an:'震地',alt:altCd(4,(e)=>{e.wnm='Maul';e.kick=1;snd(70,.4,.15,'sawtooth');const m=new T.Mesh(PG,new T.MeshBasicMaterial({color:0xd8c49a,transparent:true,opacity:.6}));m.position.set(e.x,e.y+.2,e.z);sc.add(m);Fx.push({m,t:.4,T:.4,g:4.5});
- for(const t of E)if(t.alive&&t.team!==e.team){const d=Math.hypot(t.x-e.x,t.z-e.z);if(d<4.5&&Math.abs(t.y-e.y)<2){hurt(t,35*(1-d/6),e,'Maul',{prc:1});push(e,t,{ax:(t.x-e.x)/(d||1)*6,az:(t.z-e.z)/(d||1)*6,vy:11})}}}),bAlt:(b,s,d)=>d<3.5},
-{n:'Spear',k:'M',d:'右鍵丟矛（共 3 支），插牆上可站上去跳更高',lim:3,selfLim:1,can:(e,s)=>s.c>0,dmg:45,rate:.7,rg:4.2,f:500,an:'丟矛',alt:(e,w,s,dn)=>{if(!dn||s.c<=0||e.frz>0||!e.alive||s.acd>0)return;s.c--;s.acd=.6;e.wnm='Spear';if(e.isP)P.thr=.45;const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:45,g:6,r:.06,len:.9,col:0xb07a45,dmg:70,hs:1.4,spear:1});e.kick=1;snd(400,.12,.06)},bAlt:(b,s,d)=>d>5&&d<15&&s.c>1&&rnd()<.02},
-{n:'Trowel',k:'M',d:'右鍵蓋一道牆（8 秒）',dmg:30,rate:.5,rg:2.4,f:700,an:'蓋牆',alt:altCd(8,(e)=>buildWall(e)),bAlt:(b,s,d)=>d>8&&b.hp<110&&rnd()<.02},
-{n:'Chainsaw',k:'M',d:'按住左鍵連續切割；按住右鍵催油門大幅加速（可疊戰爭號角、滑行跳飛更遠）',au:1,dmg:11,rate:.1,rg:2.6,f:140,alt:(e,w,s,dn)=>{if(dn)snd(120,.25,.07,'sawtooth')},bAlt:(b,s,d)=>d>3.5&&d<35},
-{n:'Riot Shield',k:'M',d:'拿出就擋正面攻擊（500 HP），左鍵撞擊',dmg:25,rate:.7,rg:2.4,f:180,fire:(e,w)=>{const t=melee(e,25,2.4,0);if(t)push(e,t,{ax:-Math.sin(e.yaw)*12,az:-Math.cos(e.yaw)*12,vy:4})}}];
+{n:'Fists',k:'M',d:'輕快，右鍵重拳，可二段跳',dj:1,dmg:30,rate:.35,rg:2.4,eq:.55,mv:1.05,f:600,an:'重拳',alt:altCd(.7,(e)=>{e.wnm='Fists';melee(e,35,2.4,0);e.kick=1;snd(600,.09,.06)}),bAlt:(b,s,d)=>d<2.6&&rnd()<.03},
+{n:'Knife',k:'M',eq:.45,mv:1.1,d:'右鍵刺，背刺秒殺',dmg:40,rate:.6,rg:2.6,f:800,an:'刺',alt:altCd(1.25,(e)=>{e.wnm='Knife';melee(e,40,2.6,1);e.kick=1;snd(800,.09,.06)}),bAlt:(b,s,d)=>d<2.6&&rnd()<.05},
+{n:'Katana',k:'M',d:'右鍵格擋反彈子彈 1 秒，冷卻 4 秒',dmg:45,rate:.7,rg:3.2,eq:.65,f:900,an:'格擋',alt:altCd(4,(e)=>{e.dfl=1;snd(1200,.08,.04)}),bAlt:(b,s,d)=>d>4&&rnd()<.03},
+{n:'Battle Axe',k:'M',d:'右鍵旋轉劈砍，範圍傷害 30',dmg:55,rate:.7,rg:2.9,eq:.85,mv:.9,f:300,an:'旋劈',alt:altCd(4,(e)=>{e.wnm='Battle Axe';e.kick=1;snd(300,.12,.07);for(const t of E)if(t.alive&&t.team!==e.team){const d=Math.hypot(t.x-e.x,t.z-e.z);if(d<3.4&&Math.abs(t.y-e.y)<2)hurt(t,30,e,'Battle Axe',{prc:1})}}),bAlt:(b,s,d)=>d<3&&rnd()<.03},
+{n:'Scythe',k:'M',d:'右鍵向前衝刺',dmg:35,rate:.7,rg:3.4,eq:1,f:700,an:'衝刺',alt:altCd(4,(e)=>{e.wnm='Scythe';const a=aim(e);e.vx=a.d.x*18;e.vz=a.d.z*18;e.vy=Math.max(e.vy,a.d.y*18+3);e.sl=false;e.kick=1;snd(400,.2,.06,'sawtooth')}),bAlt:(b,s,d)=>d>5&&d<12&&rnd()<.02},
+{n:'Maul',k:'M',d:'雙手重錘，左鍵重砸 75；右鍵在地面起跳，在空中則下砸震地',dmg:75,rate:1,rg:2.8,eq:1,mv:.8,f:200,an:'震地',alt:altCd(6,(e)=>{e.wnm='Maul';e.kick=1;if(onGround(e)){e.vy=10;e.sl=false;snd(90,.3,.1,'sawtooth');return}
+ snd(70,.4,.15,'sawtooth');const m=new T.Mesh(PG,new T.MeshBasicMaterial({color:0xd8c49a,transparent:true,opacity:.6}));m.position.set(e.x,e.y+.2,e.z);sc.add(m);Fx.push({m,t:.4,T:.4,g:4.5});
+ for(const t of E)if(t.alive&&t.team!==e.team){const d=Math.hypot(t.x-e.x,t.z-e.z);if(d<4.5&&Math.abs(t.y-e.y)<2){hurt(t,50*(1-d/9),e,'Maul',{prc:1});push(e,t,{ax:(t.x-e.x)/(d||1)*6,az:(t.z-e.z)/(d||1)*6,vy:11})}}}),bAlt:(b,s,d)=>d<3.5},
+{n:'Spear',k:'M',d:'右鍵丟矛（共 3 支），插牆上可站上去跳更高',lim:3,selfLim:1,can:(e,s)=>s.c>0,dmg:15,rate:.5,rg:4.2,eq:1.25,f:500,an:'丟矛',alt:(e,w,s,dn)=>{if(!dn||s.c<=0||e.frz>0||!e.alive||s.acd>0)return;s.c--;s.acd=1;e.wnm='Spear';if(e.isP)P.thr=.45;const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:45,g:6,r:.06,len:.9,col:0xb07a45,dmg:25,hs:2,spear:1});e.kick=1;snd(400,.12,.06)},bAlt:(b,s,d)=>d>5&&d<15&&s.c>1&&rnd()<.02},
+{n:'Trowel',k:'M',d:'右鍵蓋一道牆（30 秒）',dmg:50,rate:.6,rg:2.4,eq:1,mv:1.1,f:700,an:'蓋牆',alt:altCd(4,(e)=>buildWall(e)),bAlt:(b,s,d)=>d>8&&b.hp<110&&rnd()<.02},
+{n:'Chainsaw',k:'M',d:'按住左鍵連續切割；按住右鍵催油門，移速+85%並持續造成傷害（可疊戰爭號角、滑行跳飛更遠）',au:1,dmg:60,rate:.6,rg:2.6,eq:.6,mv:.9,f:140,alt:(e,w,s,dn)=>{if(dn)snd(120,.25,.07,'sawtooth')},bAlt:(b,s,d)=>d>3.5&&d<35},
+{n:'Riot Shield',k:'M',d:'拿出就擋正面攻擊（500 HP），左鍵撞擊',dmg:25,rate:.7,rg:2.4,eq:1.05,mv:1.125,f:180,fire:(e,w)=>{const t=melee(e,25,2.4,0);if(t)push(e,t,{ax:-Math.sin(e.yaw)*12,az:-Math.cos(e.yaw)*12,vy:4})}}];
 const UTL=[
 {n:'Grenade',k:'U',d:'右鍵拉插銷，冷卻 30 秒',lim:1,cdr:30,selfLim:1,rate:.8,f:200,can:(e,s)=>s.c>0||e.pin!=null,
  fire:(e,w,s)=>{let fz=3;if(e.pin!=null){fz=Math.max(.05,e.pin);e.pin=null}else s.c--;const a=aim(e);const q=shootP(e,a.o.clone().addScaledVector(a.d,.5),a.d,{sp:16,g:20,r:.12,col:0x2c6a2c,bnc:99,fuse:fz,boom:{r:5.5,dmg:100}});q.v.y+=5},
  alt:(e,w,s,dn)=>{if(dn&&e.pin==null&&s.c>0){s.c--;e.pin=3;snd(1200,.05,.04)}}},
-{n:'Medkit',k:'U',d:'左鍵 6 秒回 70，右鍵瞬補 25，冷卻 50 秒',lim:1,cdr:50,mv:.9,eq:.9,rate:1,f:700,an:'瞬補',can:(e,s)=>s.c>0&&e.hp<150,fire:(e)=>{e.hl=6;e.hr=70/6},alt:(e,w,s,dn)=>{if(dn&&s.c>0&&e.hp<150&&e.alive){s.c--;e.hl=.45;e.hr=25/.45;snd(900,.15,.05)}}},
+{n:'Medkit',k:'U',d:'左鍵 6 秒回 70，右鍵瞬補 25，冷卻 90 秒',lim:1,cdr:90,mv:.9,eq:.9,rate:1,f:700,an:'瞬補',can:(e,s)=>s.c>0&&e.hp<150,fire:(e)=>{e.hl=6;e.hr=70/6},alt:(e,w,s,dn)=>{if(dn&&s.c>0&&e.hp<150&&e.alive){s.c--;e.hl=.45;e.hr=25/.45;snd(900,.15,.05)}}},
 {n:'Jump Pad',k:'U',d:'放置後踩上去彈飛 ×3；對著牆放可貼在牆上，碰到會被往牆外彈',lim:3,rate:.6,f:500,fire:(e)=>{const h=e.isP||e.net?padAim(e):null;if(h)placeWallPad(e,h);else placePad(e,e.x-Math.sin(e.yaw)*1.8,e.z-Math.cos(e.yaw)*1.8)}},
-{n:'Grappler',k:'U',d:'鉤爪拉過去，鉤到敵人就把他拉過來，冷卻 3 秒',lim:1,cdr:3,selfLim:1,rate:.8,f:0,fire:(e,w,s)=>{if(grapple(e))s.c--}},
-{n:'Subspace Tripmine',k:'U',d:'敵人看不到，踩到 149 傷害並炸飛 ×2',lim:2,rate:.8,f:400,fire:(e)=>placeMine(e)},
+{n:'Grappler',k:'U',d:'鉤爪拉過去，鉤到敵人就把他拉過來，冷卻 8 秒',lim:1,cdr:8,selfLim:1,rate:.8,eq:.5,mv:.9,f:0,fire:(e,w,s)=>{if(grapple(e))s.c--}},
+{n:'Subspace Tripmine',k:'U',d:'敵人看不到，踩到 150 傷害並炸飛 ×2',lim:2,rate:.8,eq:.5,f:400,fire:(e)=>placeMine(e)},
 {n:'Warpstone',k:'U',d:'丟出後傳送過去，冷卻 30 秒',lim:1,cdr:30,rate:1,f:600,fire:(e)=>throwU(e,{sp:20,g:18,r:.1,col:0x9a3cff,emi:1,land:(q,x)=>warp(q.by,x)})},
 {n:'Flashbang',k:'U',d:'看著它的人會白屏 ×2',lim:2,rate:.8,f:200,fire:(e)=>throwU(e,{sp:18,g:20,r:.1,col:0x2c5a2c,bnc:99,fuse:1.2,onFuse:(q,x)=>flashAt(x)})},
 {n:'Freeze Ray',k:'U',d:'冰凍彈，範圍凍結 3 秒，冷卻 50 秒',lim:1,cdr:50,eq:.5,rate:.6,f:900,fire:(e)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),spr(a.d,.009),{sp:40,g:10,r:.12,col:0x9fe0ff,emi:1,land:(q,x)=>iceBurst(x,q.by,4.5,3,0)})}},
@@ -358,8 +359,8 @@ function inBody(e,p,r){return Math.hypot(p.x-e.x,p.z-e.z)<.5+r&&p.y>e.y-r&&p.y<e
 function pHitE(q,e,hs,x){if(q.land){q.land(q,x);return}if(q.boom){boom(x,q.boom,q.by,q.wn);return}if(q.vortex){mkVortex(x,q.by);return}
 const dm=hurt(e,q.dmg*(hs?(q.hs||2):1),q.by,q.wn,{hs,from:x.clone().sub(q.v.clone().setLength(2))});
 if(dm>0){if(q.burn)burn(e,q.burn,q.by,q.wn);if(q.paint&&!fxT(e,{paint:2.2}))e.paint=2.2;if(q.kb)knock(e,x.clone().sub(q.v.clone().setLength(1.2)),q.kb,q.by)}
-if(q.splash)boom(x,{r:q.splash.r,dmg:q.splash.dmg,kb:0,col:q.col,sz:.6,skip:e},q.by,q.wn);if(q.fa)fireArea(x,q.by,2.5,999)}
-function pHitW(q,x){if(q.land){q.land(q,x);return}if(q.fa)fireArea(x,q.by,2.5,999);if(q.boom)boom(x,q.boom,q.by,q.wn);else if(q.vortex)mkVortex(x,q.by);else if(q.splash)boom(x,{r:q.splash.r,dmg:q.splash.dmg,kb:0,col:q.col,sz:.6},q.by,q.wn)}
+if(q.splash)boom(x,{r:q.splash.r,dmg:q.splash.dmg,kb:0,col:q.col,sz:.6,skip:e},q.by,q.wn);if(q.fa)fireArea(x,q.by,8,999)}
+function pHitW(q,x){if(q.land){q.land(q,x);return}if(q.fa)fireArea(x,q.by,8,999);if(q.boom)boom(x,q.boom,q.by,q.wn);else if(q.vortex)mkVortex(x,q.by);else if(q.splash)boom(x,{r:q.splash.r,dmg:q.splash.dmg,kb:0,col:q.col,sz:.6},q.by,q.wn)}
 function updPr(dt){for(let i=Pr.length-1;i>=0;i--){const q=Pr[i],x=q.p;q.t+=dt;let dead=false;
  if(q.stuck){if(q.det){boom(x,q.boom,q.by,q.wn);dead=true}}
  else{const n=Math.max(1,Math.ceil(q.v.length()*dt/.35)),h=dt/n;
@@ -390,16 +391,16 @@ function spearStick(o,b){const xf=Math.abs(o.x-b.x)>=b.w/2,zf=!xf&&Math.abs(o.z-
 function onSpear(e){return boxes.some(b=>b.spr&&Math.abs(e.x-b.x)<b.w/2+.3&&Math.abs(e.z-b.z)<b.d/2+.3&&Math.abs(e.y-b.h)<.06)}
 function throwU(e,pj){const a=aim(e),q=shootP(e,a.o.clone().addScaledVector(a.d,.5),a.d,pj);q.v.y+=5;return q}
 function lob(b,t,pj){const o=V(b.x,b.y+1.6,b.z),dx=t.x-b.x,dz=t.z-b.z,d=Math.hypot(dx,dz)||1,dr=V(dx/d,0,dz/d),q=shootP(b,o,dr,Object.assign({},pj,{sp:1})),vh=Math.min(22,Math.sqrt(d*(pj.g||18)/1.1));q.v.copy(dr).multiplyScalar(vh).add(V(0,vh*.55,0));return q}
-function grapple(e){const a=aim(e),h=ray(a.o,a.d,45,targets(e))[0];if(!h)return false;const t=h.object.userData.ent;if(GH)return true;if(t){const dv=V(t.x-e.x,0,t.z-e.z).normalize();if(NET&&t.net){fxT(t,{grap:[e.x+dv.x*1.6,e.y+1,e.z+dv.z*1.6]});snd(300,.15,.06);return true}t.grap={p:V(e.x+dv.x*1.6,e.y+1,e.z+dv.z*1.6),t:.9};if(t.gl)sc.remove(t.gl);t.gl=new T.Line(new T.BufferGeometry().setFromPoints([a.o,h.point]),new T.LineBasicMaterial({color:0x222222}));sc.add(t.gl);t.frz=0;snd(300,.15,.06);return true}e.grap={p:h.point.clone(),t:1.3};if(e.gl)sc.remove(e.gl);e.gl=new T.Line(new T.BufferGeometry().setFromPoints([a.o,h.point]),new T.LineBasicMaterial({color:0x222222}));sc.add(e.gl);snd(300,.15,.06);return true}
+function grapple(e){const a=aim(e),h=ray(a.o,a.d,45,targets(e))[0];if(!h)return false;const t=h.object.userData.ent;if(GH)return true;if(t){const dv=V(t.x-e.x,0,t.z-e.z).normalize();if(NET&&t.net){fxT(t,{grap:[e.x+dv.x*1.6,e.y+1,e.z+dv.z*1.6]});snd(300,.15,.06);return true}t.grap={p:V(e.x+dv.x*1.6,e.y+1,e.z+dv.z*1.6),t:.8};if(t.gl)sc.remove(t.gl);t.gl=new T.Line(new T.BufferGeometry().setFromPoints([a.o,h.point]),new T.LineBasicMaterial({color:0x222222}));sc.add(t.gl);t.frz=0;snd(300,.15,.06);return true}e.grap={p:h.point.clone(),t:1.3};if(e.gl)sc.remove(e.gl);e.gl=new T.Line(new T.BufferGeometry().setFromPoints([a.o,h.point]),new T.LineBasicMaterial({color:0x222222}));sc.add(e.gl);snd(300,.15,.06);return true}
 function updGrap(e,dt){const g=e.grap;if(!g)return;g.t-=dt;const dv=g.p.clone().sub(V(e.x,e.y+1,e.z)),d=dv.length();if(d<1.6||g.t<=0){e.grap=null;if(e.gl){sc.remove(e.gl);e.gl=null}return}dv.normalize();e.vx=dv.x*26;e.vz=dv.z*26;e.vy=dv.y*26+3;e.sl=false;if(e.gl)e.gl.geometry.setFromPoints([V(e.x,e.y+1.3,e.z),g.p])}
-function mineBoom(n){const p=n.p;boom(p,{r:3,dmg:0,kb:0,col:0xff4a5a,sz:1},n.by,'Subspace Tripmine');snd(60,.5,.15,'sawtooth');for(const t of E)if(t.alive&&!t.net){const d=Math.hypot(t.x-p.x,t.z-p.z);if(d<3&&Math.abs(t.y-p.y)<2.5){const k=d<1.3?1:1-(d-1.3)/1.7*.6;if(t.team!==n.by.team)hurt(t,149*k,n.by,'Subspace Tripmine',{prc:1,vs:1});t.vy=Math.max(t.vy,24*k);t.sl=false}}}
+function mineBoom(n){const p=n.p;boom(p,{r:3,dmg:0,kb:0,col:0xff4a5a,sz:1},n.by,'Subspace Tripmine');snd(60,.5,.15,'sawtooth');for(const t of E)if(t.alive&&!t.net){const d=Math.hypot(t.x-p.x,t.z-p.z);if(d<3&&Math.abs(t.y-p.y)<2.5){const direct=d<1.3,k=direct?1:1-(d-1.3)/1.7*.6;if(t.team!==n.by.team)hurt(t,direct?150:149*k,n.by,'Subspace Tripmine',{prc:1,vs:1});t.vy=Math.max(t.vy,24*k);t.sl=false}}}
 function placeMine(e){const x=e.x-Math.sin(e.yaw)*2,z=e.z-Math.cos(e.yaw)*2,y=ground(x,z,e.y+.6),m=model({n:'Subspace Tripmine'});m.scale.setScalar(2.2);m.position.set(x,y+.1,z);sc.add(m);MN.push({p:V(x,y+.3,z),by:e,m,arm:.8});snd(400,.1,.05)}
 function updMN(dt){for(let i=MN.length-1;i>=0;i--){const n=MN[i];n.arm-=dt;n.m.rotation.y+=dt*2;n.m.visible=n.by.team===P.team;if(n.arm>0)continue;if(E.some(t=>t.alive&&Math.hypot(t.x-n.p.x,t.z-n.p.z)<1&&Math.abs(t.y-(n.p.y-.3))<1)){mineBoom(n);sc.remove(n.m);MN.splice(i,1)}}}
 function warp(e,x){if(!e.alive)return;const ox=e.x,oz=e.z;e.x=x.x;e.z=x.z;e.y=ground(x.x,x.z,x.y+.5);for(let i=0;i<25&&blocked(e.x,e.z,e.y);i++){e.x+=(ox-e.x)*.1;e.z+=(oz-e.z)*.1}e.vx=e.vz=e.vy=0;e.sl=false;puff(V(e.x,e.y+1,e.z),V(0,1,0),0x9a3cff,.5,2);snd(1000,.25,.06,'sine')}
 function flashAt(p){boom(p,{r:2,dmg:0,kb:0,col:0xffffff,sz:1.5},{team:-1},'Flashbang');snd(2000,.3,.1);for(const e of E){if(!e.alive||e.net)continue;const eye=V(e.x,e.y+1.6,e.z),dv=p.clone().sub(eye),d=dv.length();if(d>30||!losP(eye,p))continue;dv.normalize();const f=e.isP?V(0,0,-1).applyEuler(cam.rotation):V(-Math.sin(e.yaw),0,-Math.cos(e.yaw)),dot=dv.dot(f);if(dot>.2)e.flash=Math.max(e.flash,2.4*dot)}}
 function fireArea(x,by,r=3.5,t=5){const y=ground(x.x,x.z,x.y+.5),p=V(x.x,y,x.z),m=new T.Mesh(new T.CylinderGeometry(r,r,.08,20),new T.MeshBasicMaterial({color:0xff6a1a,transparent:true,opacity:.45}));m.position.set(p.x,y+.05,p.z);sc.add(m);FA.push({p,by,m,t,r});snd(180,.4,.08,'sawtooth')}
 function updFA(dt){for(let i=FA.length-1;i>=0;i--){const f=FA[i];f.t-=dt;f.m.material.opacity=.3+Math.sin(f.t*20)*.1;if(rnd()<dt*f.r*7)puff(f.p.clone().add(V((rnd()-.5)*f.r*1.7,.2,(rnd()-.5)*f.r*1.7)),V(0,2.5,0),rnd()<.5?0xff8a20:0xffc040,.5,.7);
- for(const t of E)if(t.alive&&!t.net&&t.team!==f.by.team&&Math.hypot(t.x-f.p.x,t.z-f.p.z)<f.r&&t.y<f.p.y+1.5)burn(t,25,f.by,f.r<3?'Flare Gun':'Molotov');
+ for(const t of E)if(t.alive&&!t.net&&t.team!==f.by.team&&Math.hypot(t.x-f.p.x,t.z-f.p.z)<f.r&&t.y<f.p.y+1.5)burn(t,f.r>5?50:25,f.by,f.r>5?'Flare Gun':'Molotov');
  if(f.t<=0){sc.remove(f.m);f.m.geometry.dispose();f.m.material.dispose();FA.splice(i,1)}}}
 function smoke(x){const p=V(x.x,ground(x.x,x.z,x.y+.5)+1.5,x.z),ms=[];for(let i=0;i<7;i++){const m=new T.Mesh(PG,new T.MeshLambertMaterial({color:0xc8ccd2,transparent:true,opacity:.92}));m.scale.setScalar(2.2+rnd());m.position.copy(p).add(V((rnd()-.5)*4,(rnd()-.3)*2,(rnd()-.5)*4));sc.add(m);ms.push(m)}SM.push({p,r:4.5,t:8,ms});snd(150,.5,.06,'sine')}
 function updSM(dt){for(let i=SM.length-1;i>=0;i--){const s=SM[i];s.t-=dt;const o=Math.min(1,s.t)*.92;for(const m of s.ms){m.material.opacity=o;m.rotation.y+=dt*.2}if(s.t<=0){for(const m of s.ms){sc.remove(m);m.material.dispose()}SM.splice(i,1)}}}
@@ -408,7 +409,7 @@ function horn(e){snd(110,.8,.12,'sawtooth');snd(165,.8,.08,'sawtooth');for(const
 function detonate(e){for(const q of Pr)if(q.sat&&q.by===e)q.det=1}
 function iceBurst(x,by,r=3.2,dur=1.5,self=1){boom(x,{r,dmg:0,kb:0,col:0xbfeaff,sz:1},{team:-1},'Freeze');snd(1400,.25,.06,'sine');for(const t of E)if(t.alive&&!t.net&&(t.team!==by.team||(self&&t===by))&&Math.hypot(t.x-x.x,t.z-x.z)<r&&Math.abs(t.y+1-x.y)<2.6){t.frz=dur;t.sl=false;t.vx=t.vz=0}}
 function buildWall(e){const fx=-Math.sin(e.yaw),fz=-Math.cos(e.yaw),x=e.x+fx*2.2,z=e.z+fz*2.2,al=Math.abs(fx)>Math.abs(fz),w=al?.4:3.2,d=al?3.2:.4,h=ground(x,z,e.y+.5)+2.6;
- const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:0xc9a27a}));m.position.set(x,h/2,z);sc.add(m);m.updateMatrixWorld(true);const b={x,z,w,d,h};boxes.push(b);walls.push(m);solid.push(m);TW.push({b,m,t:8});snd(220,.2,.08)}
+ const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:0xc9a27a}));m.position.set(x,h/2,z);sc.add(m);m.updateMatrixWorld(true);const b={x,z,w,d,h};boxes.push(b);walls.push(m);solid.push(m);TW.push({b,m,t:30});snd(220,.2,.08)}
 function rmWall(w,i){sc.remove(w.m);w.m.geometry.dispose();boxes.splice(boxes.indexOf(w.b),1);walls.splice(walls.indexOf(w.m),1);solid.splice(solid.indexOf(w.m),1);TW.splice(i,1)}
 function updTW(dt){for(let i=TW.length-1;i>=0;i--){TW[i].t-=dt;if(TW[i].t<=0)rmWall(TW[i],i)}}
 function botUtil(b,t,d){const u=b.L[3],s=b.S[3];if(s.c<=0&&u.n!='Satchel')return;const L=b.los;let used=1;b.wnm=u.n;
@@ -433,7 +434,7 @@ s.lf=e.age;e.wnm=w.n;if(e.isP){P.rk=(rnd()-.5)*2;P.insp=0;if(w.k=='M'&&!w.au){P.
 if(w.burst){s.q=w.burst-1;s.qt=w.qi||.07;s.qs=0}if(w.mag&&!w.inf&&s.a<=0)rel(e)}
 function tryF(e,w,s,x){if(e.cd>0||s.rl>0||s.ov||e.frz>0||s.q>0||s.out>0)return;if(w.spin&&s.sp<1)return;if(w.mag&&!w.inf&&!s.bm&&s.a<1){rel(e);return}
 if(w.can?!w.can(e,s):(w.lim&&s.c<=0))return;fireW(e,w,s,x)}
-function useW(e,dt,trig,alt){const w=e.L[e.cur],s=e.S[e.cur];e.cd-=dt;e.altH=alt&&e.frz<=0;if(w.n=='Chainsaw'&&e.altH&&e.isP){P.revS=(P.revS||0)-dt;if(P.revS<=0){P.revS=.12;snd(95+rnd()*20,.12,.03,'sawtooth')}}
+function useW(e,dt,trig,alt){const w=e.L[e.cur],s=e.S[e.cur];e.cd-=dt;e.altH=alt&&e.frz<=0;if(w.n=='Chainsaw'&&e.altH){melee(e,180*dt,2.8,0);if(e.isP){P.revS=(P.revS||0)-dt;if(P.revS<=0){P.revS=.12;snd(95+rnd()*20,.12,.03,'sawtooth')}}}
 if(s.rl>0){s.rl-=dt;if(s.rl<=0){s.rl=0;if(w.res!=null){const n=Math.min(w.mag-s.a,s.r||0);s.a+=n;s.r=(s.r||0)-n}else s.a=w.mag}}
 if(w.spin)s.sp=trig&&s.rl<=0&&e.frz<=0?Math.min(1,s.sp+dt/w.spin):Math.max(0,s.sp-dt*3);
 if(s.q>0){s.qt-=dt;if(s.qt<=0){if(w.mag&&s.a<=0)s.q=0;else{s.q--;s.qt=w.qi||.07;if(w.mag)s.a--;if(NET&&e.isP)netFire('q',e.cur,{sp:s.qs});(w.fire||fGun)(e,w,s,{sp:s.qs});e.kick=1;if(w.f)snd(w.f,.06,.04);if(w.mag&&s.a<=0){s.q=0;rel(e)}}}}
@@ -442,7 +443,7 @@ else if(trig&&(w.au||!e.isP||!e.ptg))tryF(e,w,s);
 if(w.achg&&alt&&s.chg&&e.frz<=0)s.ch=Math.min(1,s.ch+dt/w.achg);if(w.alt){if(alt&&!e.pal){w.alt(e,w,s,true);if(NET&&e.isP&&w.alt!==ZOOM)netFire('a',e.cur,null,1)}else if(!alt&&e.pal){w.alt(e,w,s,false);if(NET&&e.isP&&w.alt!==ZOOM)netFire('a',e.cur,null,0)}}
 e.ptg=trig;e.pal=alt}
 function swE(e,i){if(i===e.cur||!e.alive||e.frz>0)return;const o=e.S[e.cur];o.rl=0;o.q=0;o.ch=0;o.bm=0;if(e.L[e.cur].alt&&e.pal)e.L[e.cur].alt(e,e.L[e.cur],o,false);e.pal=false;e.cur=i;e.zoom=false;e.dfl=false;e.shd=false;e.cd=Math.max(e.cd,e.L[i].eq||(i==0?1:.25));if(e.isP)setVM();else setHold(e)}
-function spdMul(e){const w=e.L[e.cur];return(e.frz>0?0:1)*(e.slow>0?.5:1)*(w.n=='Chainsaw'&&e.altH?1.65:w.mv||(w.k=='M'?1.15:1))*(e.buff>0?1.25:1)*(e.shd?.8:1)}
+function spdMul(e){const w=e.L[e.cur];return(e.frz>0?0:1)*(e.slow>0?.5:1)*(w.n=='Chainsaw'&&e.altH?1.85:w.mv||(w.k=='M'?1.15:1))*(e.buff>0?1.25:1)*(e.shd?.8:1)}
 function phys(e,dt,wx,wz){move(e,wx+e.vx*dt,wz+e.vz*dt);const og=onGround(e),fr=og&&e.vy<=0?Math.max(0,1-9*dt):Math.max(0,1-(e.isP?.06:.4)*dt);e.vx*=fr;e.vz*=fr;
 e.vy-=22*dt;e.y+=e.vy*dt;const g=ground(e.x,e.z,e.y);if(e.y<=g&&e.vy<=0){e.y=g;e.vy=0;e.djd=0;if(e.djs)e.djs.clear()}}
 function stat(e,dt){if(!e.alive)return;e.age+=dt;
