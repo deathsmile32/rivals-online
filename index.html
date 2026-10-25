@@ -298,6 +298,7 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
 </div></div>
 <div id="auth" class="ov" style="display:none"><div class="card">
 <h1>RIVALS <small style="font-size:14px;color:#9fb0e0">競技對決 · 帳號</small></h1>
+<p class="note" id="amode" style="display:none;font-weight:700;margin:4px 0 0"></p>
 <div class="row" id="authTabs" style="margin-top:8px"><button data-m="in" class="on">登入 Sign in</button><button data-m="up">註冊 Sign up</button></div>
 <h3>使用者名稱 Username</h3><input id="au" type="text" maxlength="16" autocomplete="username" placeholder="3–16 字：英數、底線或中文">
 <h3>密碼 Password</h3><input id="ap" type="password" maxlength="64" autocomplete="current-password" placeholder="至少 4 個字元">
@@ -306,10 +307,10 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
 <button class="big" id="ago">登入 Sign in</button>
 <p class="note" id="amsg" style="color:#ff8a8a;min-height:18px;margin:8px 0 0"></p>
 <div id="alistw" style="display:none"><h3>這台裝置上的帳號</h3><div id="alist"></div></div>
-<p class="note" style="font-size:11px;line-height:1.5;margin-top:12px">⚠️ 帳號和遊戲進度（等級、鑰匙、解鎖武器、任務）<b>只儲存在這台裝置的這個瀏覽器</b>（localStorage），不會上傳到任何伺服器；清除瀏覽器資料、用無痕視窗或換裝置就看不到。密碼會先用 SHA-256 雜湊再存，但這不是真正安全的線上帳號，請不要用你在其他網站使用的密碼。</p>
+<p class="note" id="anote" style="font-size:11px;line-height:1.5;margin-top:12px">⚠️ 帳號和遊戲進度（等級、鑰匙、解鎖武器、任務）<b>只儲存在這台裝置的這個瀏覽器</b>（localStorage），不會上傳到任何伺服器；清除瀏覽器資料、用無痕視窗或換裝置就看不到。密碼會先用 SHA-256 雜湊再存，但這不是真正安全的線上帳號，請不要用你在其他網站使用的密碼。</p>
 </div></div>
 <div id="lui">
- <div id="llv" title="個人資料"><div class="nm"><span class="lvb" id="llvn">1</span><span id="llname">Player</span></div><div class="xpb2"><i id="llxp"></i></div><div style="font:700 11px system-ui;color:#c9cfee;margin-top:3px" id="llxpt"></div></div>
+ <div id="llv" title="個人資料"><div class="nm"><span class="lvb" id="llvn">1</span><span id="llname">Player</span><span id="llsync" style="display:none;font:700 10px system-ui;margin-left:7px;vertical-align:middle"></span></div><div class="xpb2"><i id="llxp"></i></div><div style="font:700 11px system-ui;color:#c9cfee;margin-top:3px" id="llxpt"></div></div>
  <div id="lkeys" title="鑰匙">🔑 <span id="lkeyn">0</span><button id="lkeyAdd" title="取得鑰匙">+</button></div>
  <div id="lgrant"></div>
  <div id="ltasks"><h4>📋 Daily Tasks</h4><div id="ltlist"></div><button id="toDuels">To Duels ➜</button></div>
@@ -353,6 +354,17 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
+// ===== CLOUD ACCOUNTS CONFIG (Firebase). Fill BOTH values to turn on cross-device accounts; leave empty = browser-local accounts only. =====
+// Firebase console: Authentication -> Sign-in method -> enable "Email/Password"; Firestore Database -> create; Rules must be:
+//   rules_version = '2';
+//   service cloud.firestore {
+//     match /databases/{database}/documents {
+//       match /users/{uid} {
+//         allow read, write: if request.auth != null && request.auth.uid == uid;
+//       }
+//     }
+//   }
+const FB_CFG={apiKey:'',projectId:''};
 const T=THREE,$=s=>document.querySelector(s),rnd=Math.random,V=(x,y,z)=>new T.Vector3(x,y,z),PI=Math.PI;
 // ===== renderer, scenes =====
 const cv=$('#c'),R=new T.WebGLRenderer({canvas:cv,antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));R.autoClear=false;
@@ -1126,6 +1138,7 @@ function drawCounter(pd){const t=pd.tex,cx=t.userData.cx,W=256,H=128,txt=pd.cnt+
 function drawStreakBoard(t){const cx=t.userData.cx,W=1024,H=576;cx.fillStyle='#0b0a1c';cx.fillRect(0,0,W,H);cx.strokeStyle='#9b4dff';cx.lineWidth=10;cx.strokeRect(5,5,W-10,H-10);
  cx.font='900 58px '+FNT;cx.textBaseline='middle';cx.fillStyle='#fff';cx.textAlign='left';cx.fillText('Win Streaks',40,62);cx.fillStyle='#ff3b3b';cx.beginPath();cx.arc(W-190,62,14,0,7);cx.fill();cx.fillText('LIVE',W-165,62);
  let us=[];try{accLoad();us=Object.values(ACCDB.users).map(u=>({n:u.name,b:(u.prof&&u.prof.st&&u.prof.st.best)||0,w:(u.prof&&u.prof.st&&u.prof.st.w)||0,lv:(u.prof&&u.prof.lv)||1}))}catch(_){}
+ try{if(fbOn()){const have=new Set(us.map(u=>String(u.n).toLowerCase())),c=ccGet();for(const id in c){const u=c[id],p=u&&u.prof;if(!p||!u.name||have.has(u.name.toLowerCase()))continue;have.add(u.name.toLowerCase());us.push({n:u.name,b:(p.st&&p.st.best)||0,w:(p.st&&p.st.w)||0,lv:p.lv||1})}}}catch(_){}
  us.sort((a,b)=>b.b-a.b||b.w-a.w);cx.font='800 38px '+FNT;
  if(!us.length){cx.fillStyle='#9aa3c8';cx.fillText('尚無紀錄 — 贏下對戰來上榜！',40,200)}
  us.slice(0,7).forEach((u,i)=>{const y=140+i*60;cx.fillStyle=i==0?'#ffd23f':i==1?'#d6dbe8':i==2?'#e0975a':'#c9cfee';cx.fillText('#'+(i+1),40,y);cx.fillStyle='#fff';cx.fillText(u.n.slice(0,14),130,y);cx.fillStyle='#ff9a3c';cx.textAlign='right';cx.fillText('🔥 '+u.b+'   Lv '+u.lv,W-40,y);cx.textAlign='left'});
@@ -1485,7 +1498,7 @@ $('#wins').onclick=e=>{const b=e.target.closest('button');if(!b||!NET||!NET.host
 for(const b of document.querySelectorAll('.tcol button'))b.onclick=()=>{if(!NET||!NET.lb)return;const t=+b.dataset.t;if(NET.host){const p=NET.lb.players.find(p=>p.id===NET.me);p.team=t;hostLb()}else netSend({t:'tm',id:NET.me,team:t})};
 $('#lcin').addEventListener('keydown',e=>{if(e.code=='Enter'){chatSend(e.target.value);e.target.value=''}});
 
-// ===== accounts / profile (browser-local: localStorage only, no backend) =====
+// ===== accounts / profile (browser-local localStorage, plus optional Firebase cloud accounts below) =====
 var ACCT=null,PF=null,ACCDB=null;
 const START_W=['Assault Rifle','Handgun','Fists','Grenade'];
 // key costs: authoritative numbers from the wiki (user-provided). Weapons not explicitly listed there follow the
@@ -1520,24 +1533,129 @@ async function pwHash(u,pw,salt){const s=salt+'|'+u+'|'+pw;try{if(window.crypto&
 function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_W.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1}}}
 function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_W.slice();return p}
 function accLoad(){ACCDB=lsGet('rvl_accounts',null);if(!ACCDB||typeof ACCDB!=='object'||!ACCDB.users)ACCDB={v:1,users:{}};return ACCDB}
-function saveP(){if(!ACCT||!PF||!ACCDB||!ACCDB.users[ACCT])return false;ACCDB.users[ACCT].prof=PF;return lsSet('rvl_accounts',ACCDB)}
-function accName(){return ACCT&&ACCDB&&ACCDB.users[ACCT]?ACCDB.users[ACCT].name:'Player'}
+function saveP(){if(!ACCT||!PF)return false;
+ if(inCloud()){CLOUD.upd=Math.max(Date.now(),CLOUD.upd+1);CLOUD.dirty=true;ccPut(CLOUD.uid,{name:CLOUD.name,prof:PF,updated:CLOUD.upd,synced:CLOUD.synced});
+  const lu=ACCDB&&ACCDB.users[CLOUD.name.toLowerCase()];if(lu&&lu.cloud===CLOUD.uid){lu.prof=PF;lsSet('rvl_accounts',ACCDB)}cloudSched();return true}
+ if(!ACCDB||!ACCDB.users[ACCT])return false;ACCDB.users[ACCT].prof=PF;return lsSet('rvl_accounts',ACCDB)}
+function accName(){if(inCloud())return CLOUD.name||'Player';return ACCT&&ACCDB&&ACCDB.users[ACCT]?ACCDB.users[ACCT].name:'Player'}
+// ===== cloud accounts: Firebase Auth + Cloud Firestore through their REST APIs (plain fetch, no SDK) =====
+// Enabled only when FB_CFG (top of script) has apiKey+projectId AND the network reaches Google; otherwise local mode.
+// Username -> Firebase email: 'u'+hex(utf8(lowercase name))+'@rivals-arena.app' (long CJK names: 'h'+sha256 prefix).
+// Firestore doc users/{uid} = {name:string (display case), prof:string (JSON of PF), updated:int (ms)}.
+// Local cache: rvl_cloud_cache {uid:{name,prof,updated,synced}}; remember-me: rvl_cloud {rt,uid,name}.
+const NAME_RE=/^[A-Za-z0-9_㐀-鿿]{3,16}$/;
+const fbOn=()=>!!(typeof FB_CFG=='object'&&FB_CFG&&FB_CFG.apiKey&&FB_CFG.projectId);
+function newCloud(prev){return{ok:prev?prev.ok:null,probe:prev?prev.probe:null,uid:null,id:null,rt:null,exp:0,name:'',rem:false,live:false,dirty:false,busy:false,again:0,upd:0,synced:0,t:null,st:'',fails:0,pullT:0,snap:null}}
+var CLOUD=newCloud();
+const cloudMode=()=>fbOn()&&CLOUD.ok===true;
+const inCloud=()=>!!(CLOUD.uid&&CLOUD.live&&ACCT==='c:'+CLOUD.uid);
+function fbEmail(k){k=String(k).toLowerCase();const h=[...new TextEncoder().encode(k)].map(b=>b.toString(16).padStart(2,'0')).join('');return(h.length<=62?'u'+h:'h'+sha256js(k).slice(0,60))+'@rivals-arena.app'}
+// legacy local accounts allowed 4–5 char passwords; Firebase needs ≥6, so those are padded the same way everywhere
+const fbPw=pw=>{pw=String(pw);return pw.length<6?pw+'·rvl-legacy':pw};
+const FB_ERR={EMAIL_EXISTS:'這個名稱已經有人用了',INVALID_LOGIN_CREDENTIALS:'帳號或密碼錯誤',INVALID_PASSWORD:'帳號或密碼錯誤',EMAIL_NOT_FOUND:'帳號或密碼錯誤',WEAK_PASSWORD:'密碼至少 6 個字',
+ TOO_MANY_ATTEMPTS_TRY_LATER:'嘗試太多次，請稍後再試',USER_DISABLED:'這個帳號已被停用',INVALID_EMAIL:'這個名稱不能用在雲端帳號',OPERATION_NOT_ALLOWED:'雲端還沒開啟「電子郵件/密碼」登入（請到 Firebase 主控台啟用）',
+ TOKEN_EXPIRED:'登入已過期，請重新登入',INVALID_REFRESH_TOKEN:'登入已過期，請重新登入',USER_NOT_FOUND:'登入已過期，請重新登入',PERMISSION_DENIED:'雲端拒絕存取（請檢查 Firestore 規則）'};
+function fbMsg(e){if(typeof e=='string')return e;if(e&&e.net)return'無法連線到雲端（請檢查網路），請稍後再試';const c=(e&&e.code)||'';if(FB_ERR[c])return FB_ERR[c];if(/API_?KEY/i.test(c+(e&&e.raw||'')))return'雲端設定錯誤（API key 無效）';return'雲端錯誤：'+(c||(e&&e.message)||e)}
+async function fbFetch(url,opt,ms){const ac=(typeof AbortController!='undefined'&&!opt.keepalive)?new AbortController():null,t=ac&&setTimeout(()=>ac.abort(),ms||12000);let r;
+ try{r=await fetch(url,ac?Object.assign({},opt,{signal:ac.signal}):opt)}catch(_){throw{net:1}}finally{if(t)clearTimeout(t)}
+ let j={};try{j=await r.json()}catch(_){}
+ if(!r.ok){const er=(j&&j.error)||{},m=String(er.message||'');const code=/^[A-Z_]+(\s|:|$)/.test(m)?m.split(/[\s:]/)[0]:(er.status||('HTTP_'+r.status));throw{code,status:r.status,raw:m}}return j}
+const fbKey=()=>'?key='+encodeURIComponent(FB_CFG.apiKey);
+const fbAuth=(ep,b)=>fbFetch('https://identitytoolkit.googleapis.com/v1/accounts:'+ep+fbKey(),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({returnSecureToken:true},b))});
+function cloudRemember(S){S=S||CLOUD;if(!S.live||S!==CLOUD||!S.uid||!S.rt)return;const v=JSON.stringify({rt:S.rt,uid:S.uid,name:S.name});try{if(S.rem)localStorage.setItem('rvl_cloud',v);else localStorage.removeItem('rvl_cloud');sessionStorage.setItem('rvl_cloud',v)}catch(_){}}
+function cloudForget(){try{localStorage.removeItem('rvl_cloud');sessionStorage.removeItem('rvl_cloud')}catch(_){}}
+function fbSetTok(S,id,rt,exp,uid){S.id=id;if(rt)S.rt=rt;S.exp=Date.now()+(+exp||3600)*1000-60000;if(uid)S.uid=uid;cloudRemember(S)}
+async function fbRefresh(S){const j=await fbFetch('https://securetoken.googleapis.com/v1/token'+fbKey(),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(S.rt)});fbSetTok(S,j.id_token,j.refresh_token,j.expires_in,j.user_id);return S.id}
+async function fbTok(S,force){if(!force&&S.id&&Date.now()<S.exp)return S.id;return fbRefresh(S)}
+const fsUrl=uid=>'https://firestore.googleapis.com/v1/projects/'+encodeURIComponent(FB_CFG.projectId)+'/databases/(default)/documents/users/'+encodeURIComponent(uid);
+async function fsReq(S,method,body,keep){const uid=S.uid;for(let i=0;;i++){const tok=await fbTok(S,i>0);
+ try{return await fbFetch(fsUrl(uid),{method,headers:Object.assign({Authorization:'Bearer '+tok},body?{'Content-Type':'application/json'}:{}),body:body||undefined,keepalive:!!keep})}catch(e){if(e&&e.status===401&&i==0)continue;throw e}}}
+async function fsGet(S){try{const j=await fsReq(S,'GET'),f=j.fields||{};let prof=null;try{prof=JSON.parse((f.prof&&f.prof.stringValue)||'null')}catch(_){}
+ return{prof:prof&&typeof prof=='object'?prof:null,name:(f.name&&f.name.stringValue)||'',updated:+(f.updated&&f.updated.integerValue)||0}}catch(e){if(e&&e.status===404)return null;throw e}}
+const fsPut=(S,profStr,upd,keep)=>fsReq(S,'PATCH',JSON.stringify({fields:{name:{stringValue:S.name},prof:{stringValue:profStr},updated:{integerValue:String(upd)}}}),keep);
+function ccGet(){const c=lsGet('rvl_cloud_cache',null);return c&&typeof c=='object'?c:{}}
+function ccPut(uid,o){const c=ccGet();c[uid]=Object.assign(c[uid]||{},o);lsSet('rvl_cloud_cache',c)}
+const SYNC_T={ok:['☁️ 已同步','#9fe0b0'],busy:['☁️ 同步中…','#cfd6ff'],off:['⚠️ 離線，稍後同步','#ffc93c'],err:['⚠️ 同步失敗，稍後重試','#ff9a8a']};
+function setSync(s,e){CLOUD.st=s;const el=document.getElementById('llsync');if(!el)return;const v=inCloud()&&SYNC_T[s];el.style.display=v?'inline':'none';if(v){el.textContent=v[0];el.style.color=v[1];el.title=e?fbMsg(e):'雲端帳號：進度會自動同步'}}
+function cloudSched(){clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>cloudFlush(),3000);if(CLOUD.st!=='off'&&CLOUD.st!=='err')setSync('busy')}
+async function cloudFlush(keep,S){S=S||CLOUD;if(!S.uid||!S.dirty)return true;clearTimeout(S.t);if(S.busy){S.again=1;return false}
+ const prof=S===CLOUD?PF:S.snap;if(!prof)return false;S.busy=true;const upd=S.upd,ps=JSON.stringify(prof);let ok=false;if(S===CLOUD)setSync('busy');
+ try{await fsPut(S,ps,upd,keep);ok=true;S.fails=0;S.synced=Math.max(S.synced,upd);if(S.upd===upd)S.dirty=false;ccPut(S.uid,{synced:S.synced});if(S===CLOUD){CLOUD.ok=true;setSync(S.dirty?'busy':'ok')}}
+ catch(e){if(S===CLOUD&&S.live){setSync(e&&e.net?'off':'err',e);S.t=setTimeout(()=>cloudFlush(),Math.min(60000,5000*(++S.fails)))}}
+ finally{S.busy=false}
+ if(S.again){S.again=0;if(S.dirty&&(S!==CLOUD||S.live))return cloudFlush(keep,S)}return ok}
+function saveNow(){const r=saveP();if(inCloud())cloudFlush();return r}
+function cloudProbe(){if(!fbOn())return Promise.resolve(false);if(CLOUD.ok===true)return Promise.resolve(true);
+ if(!CLOUD.probe){const p=fbFetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup'+fbKey(),{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'},6000).then(()=>true,e=>!(e&&e.net)).then(ok=>{if(CLOUD.probe===p)CLOUD.probe=null;if(CLOUD.ok!==true)CLOUD.ok=ok;authModeUI();return CLOUD.ok});CLOUD.probe=p}return CLOUD.probe}
+function newSess(j,name,rem){return Object.assign(newCloud(CLOUD),{ok:true,uid:j.localId,id:j.idToken,rt:j.refreshToken,exp:Date.now()+(+j.expiresIn||3600)*1000-60000,name,rem:!!rem})}
+const MIG_MSG='☁️ 已把這台裝置的進度上傳到雲端帳號';
+function cloudBegin(S,name,prof,upd,push,isNew,msg){S.name=name;S.live=true;S.synced=S.upd=upd||0;CLOUD=S;ACCT='c:'+S.uid;PF=fixProf(prof);
+ try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}cloudRemember(S);
+ accEnter(isNew,msg);if(push)cloudFlush();else setSync('busy')}
+async function cloudLoad(S,name,mig){const d=await fsGet(S),c=ccGet()[S.uid];let prof,upd=0,push=false,msg='';
+ if(d&&d.prof){prof=d.prof;upd=d.updated;if(d.name)name=d.name;if(c&&c.prof&&(c.updated||0)>upd){prof=c.prof;push=true}}
+ else if(c&&c.prof){prof=c.prof;push=true;if(c.name)name=c.name}
+ else if(mig&&mig.lu&&await pwHash(mig.k,mig.pw,mig.lu.salt)===mig.lu.hash){prof=mig.lu.prof;name=mig.lu.name||name;mig.lu.cloud=S.uid;lsSet('rvl_accounts',ACCDB);push=true;msg=MIG_MSG}
+ else{prof=newProf();push=true}
+ cloudBegin(S,name,prof,upd,push,0,msg)}
+async function cloudSignUp(name,pw,rem){name=String(name||'').trim();pw=String(pw);if(!NAME_RE.test(name))throw'使用者名稱需 3–16 字（英數、底線或中文）';if(pw.length<6)throw'密碼至少 6 個字';const k=name.toLowerCase();
+ const j=await fbAuth('signUp',{email:fbEmail(k),password:pw});const S=newSess(j,name,rem);
+ accLoad();const lu=ACCDB.users[k];let prof=newProf(),msg='';
+ if(lu&&await pwHash(k,pw,lu.salt)===lu.hash){prof=lu.prof;lu.cloud=S.uid;lsSet('rvl_accounts',ACCDB);msg=MIG_MSG}// (b) same name+password on this device -> upload it
+ cloudBegin(S,name,prof,0,true,!msg,msg)}
+async function cloudSignIn(name,pw,rem){name=String(name||'').trim();pw=String(pw);const k=name.toLowerCase();if(!NAME_RE.test(name)||!pw)throw'帳號或密碼錯誤';
+ accLoad();const lu=ACCDB.users[k];let j;
+ try{j=await fbAuth('signInWithPassword',{email:fbEmail(k),password:fbPw(pw)})}
+ catch(e){if(!(e&&/^(INVALID_LOGIN_CREDENTIALS|EMAIL_NOT_FOUND|INVALID_PASSWORD)$/.test(e.code)&&lu&&await pwHash(k,pw,lu.salt)===lu.hash))throw e;
+  // (a) no such cloud account (or wrong cloud password) but the local account verifies -> try creating the cloud account from it.
+  // If the name already exists in the cloud (EMAIL_EXISTS) it belongs to someone/some password else: never overwrite it.
+  try{j=await fbAuth('signUp',{email:fbEmail(k),password:fbPw(pw)})}catch(e2){if(e2&&e2.code==='EMAIL_EXISTS')throw'帳號或密碼錯誤（雲端已經有「'+name+'」這個帳號，密碼和這台裝置的本機帳號不同）';throw e2}
+  const S=newSess(j,lu.name||name,rem);lu.cloud=S.uid;lsSet('rvl_accounts',ACCDB);cloudBegin(S,lu.name||name,lu.prof,0,true,0,MIG_MSG);return}
+ await cloudLoad(newSess(j,name,rem),name,{lu,pw,k})}
+async function cloudResume(cs,rem){const S=Object.assign(newCloud(CLOUD),{uid:cs.uid,rt:cs.rt,name:cs.name||'Player',rem:!!rem});
+ try{await fbRefresh(S);CLOUD.ok=true;authModeUI();await cloudLoad(S,S.name,null)}
+ catch(e){if(e&&e.net){const c=ccGet()[S.uid];if(c&&c.prof){cloudBegin(S,c.name||S.name,c.prof,c.synced||0,false,0,'⚠️ 目前無法連線雲端，先用這台裝置上的進度，連線後會自動同步');setSync('off');clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>cloudFlush(),5000);return}
+   $('#amsg').textContent=fbMsg(e);return}
+  cloudForget();$('#amsg').textContent=e&&/TOKEN|USER_/.test(e.code||'')?'登入已過期，請重新登入':fbMsg(e)}}
+async function cloudPull(){const S=CLOUD;if(!inCloud()||S.dirty||S.busy||st!=='lobby'||PANEL||Date.now()-S.pullT<15000)return;S.pullT=Date.now();
+ try{const d=await fsGet(S);if(S!==CLOUD||!inCloud()||S.dirty||S.busy||st!=='lobby'||PANEL||!d||!d.prof||d.updated<=S.synced)return;
+  PF=fixProf(d.prof);S.synced=S.upd=d.updated;ccPut(S.uid,{name:S.name,prof:PF,updated:d.updated,synced:d.updated});applyProfile();if(typeof renderLUI=='function')renderLUI();setSync('ok');toast('☁️ 已載入其他裝置的最新進度','#4fc3f7')}catch(_){}}
+addEventListener('pagehide',()=>{if(inCloud()&&CLOUD.dirty)cloudFlush(true)});
+document.addEventListener('visibilitychange',()=>{if(!inCloud())return;if(document.visibilityState==='hidden'){if(CLOUD.dirty)cloudFlush(true)}else cloudPull()});
+var LOCAL_NOTE=null;
+function authModeUI(){const m=$('#amode'),n=$('#anote');if(!m||!n)return;const p=$('#ap');if(LOCAL_NOTE==null)LOCAL_NOTE=n.innerHTML;
+ if(!fbOn()){m.style.display='none';n.innerHTML=LOCAL_NOTE}
+ else if(CLOUD.ok===true){m.style.display='block';m.style.color='#9fe0b0';m.textContent='☁️ 雲端帳號：任何裝置都能登入';n.innerHTML='進度（等級、鑰匙、解鎖武器、任務）會自動同步到雲端。換電腦、手機或瀏覽器時，用同一個名稱和密碼登入就能繼續玩。這台裝置以前的本機帳號，用原本的名稱和密碼登入時會自動上傳到雲端。'}
+ else if(CLOUD.ok===false){m.style.display='block';m.style.color='#ffc93c';m.textContent='💾 本機帳號（只存在這個瀏覽器）';n.innerHTML='⚠️ 目前無法連線雲端，使用本機帳號；請用網站版登入雲端帳號。<br>'+LOCAL_NOTE}
+ else{m.style.display='block';m.style.color='#cfd6ff';m.textContent='☁️ 正在連線雲端…';n.innerHTML=''}
+ if(p)p.placeholder=cloudMode()?'至少 6 個字元':'至少 4 個字元'}
 async function accSignUp(name,pw,rem){name=String(name||'').trim();if(!/^[A-Za-z0-9_㐀-鿿]{3,16}$/.test(name))throw'使用者名稱需 3–16 字（英數、底線或中文）';if(String(pw).length<4)throw'密碼至少要 4 個字元';
  accLoad();const k=name.toLowerCase();if(ACCDB.users[k])throw'這個名稱已在這台裝置上註冊過，請直接登入';const salt=rid(12);ACCDB.users[k]={name,salt,hash:await pwHash(k,pw,salt),created:Date.now(),prof:newProf()};if(!lsSet('rvl_accounts',ACCDB)){delete ACCDB.users[k];throw'無法儲存帳號（瀏覽器封鎖了 localStorage？）'}accStart(k,rem,1)}
 async function accSignIn(name,pw,rem){accLoad();const k=String(name||'').trim().toLowerCase(),u=ACCDB.users[k];if(!u)throw'找不到這個帳號（只能登入在這台裝置/瀏覽器上註冊的帳號）';if(await pwHash(k,pw,u.salt)!==u.hash)throw'密碼錯誤';accStart(k,rem)}
-function accStart(k,rem,isNew){ACCT=k;PF=fixProf(ACCDB.users[k].prof);ACCDB.users[k].prof=PF;
+function accStart(k,rem,isNew){if(CLOUD.live){CLOUD.live=false;CLOUD=newCloud(CLOUD)}ACCT=k;PF=fixProf(ACCDB.users[k].prof);ACCDB.users[k].prof=PF;
  try{if(rem)localStorage.setItem('rvl_session',k);else localStorage.removeItem('rvl_session');sessionStorage.setItem('rvl_session',k)}catch(_){}
- dailyReset();loginStreak();applyProfile();saveP();$('#auth').style.display='none';enterLobby();toast((isNew?'🎉 帳號建立成功，':'👋 歡迎回來，')+accName()+'！','#2fbf71')}
-function accLogout(){saveP();if(NET)netLeave();ACCT=null;PF=null;try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}if(typeof closePanels=='function')closePanels();showAuth()}
+ accEnter(isNew)}
+function accEnter(isNew,msg){dailyReset();loginStreak();applyProfile();saveP();$('#auth').style.display='none';enterLobby();toast((isNew?'🎉 帳號建立成功，':'👋 歡迎回來，')+accName()+'！','#2fbf71');if(msg)setTimeout(()=>toast(msg,'#4fc3f7'),700);setSync(CLOUD.st||'busy')}
+function accLogout(){saveP();if(NET)netLeave();if(inCloud()){const S=CLOUD;S.live=false;S.snap=PF;if(S.dirty)cloudFlush(true,S);CLOUD=newCloud(S);cloudForget();setSync('')}ACCT=null;PF=null;try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}if(typeof closePanels=='function')closePanels();showAuth()}
 function showAuth(){st='menu';paused=false;document.exitPointerLock&&document.exitPointerLock();for(const id of['#hud','#menu','#onl','#over','#pause','#lo'])$(id).style.display='none';$('#lobbyMenuBtn').style.display='none';if(typeof syncLUI=='function')syncLUI();
- $('#auth').style.display='flex';$('#amsg').textContent='';$('#ap').value='';$('#ap2').value='';accLoad();const us=Object.values(ACCDB.users);$('#alistw').style.display=us.length?'block':'none';$('#alist').innerHTML='';
- for(const u of us){const b=document.createElement('button');b.textContent='👤 '+u.name+' · Lv '+((u.prof&&u.prof.lv)||1);b.onclick=()=>{authMode('in');$('#au').value=u.name;$('#ap').focus()};$('#alist').appendChild(b)}
+ $('#auth').style.display='flex';$('#amsg').textContent='';$('#ap').value='';$('#ap2').value='';accLoad();const us=Object.values(ACCDB.users);
+ if(fbOn()){const have=new Set(us.map(u=>String(u.name).toLowerCase())),c=ccGet();for(const id in c){const u=c[id];if(u&&u.name&&!have.has(u.name.toLowerCase())){have.add(u.name.toLowerCase());us.push({name:u.name,prof:u.prof,cl:1})}}if(CLOUD.ok!==true)cloudProbe()}
+ $('#alistw').style.display=us.length?'block':'none';$('#alist').innerHTML='';
+ for(const u of us){const b=document.createElement('button');b.textContent=(u.cl||u.cloud?'☁️ ':'👤 ')+u.name+' · Lv '+((u.prof&&u.prof.lv)||1);b.onclick=()=>{authMode('in');$('#au').value=u.name;$('#ap').focus()};$('#alist').appendChild(b)}
  authMode(us.length?'in':'up');setTimeout(()=>($('#au').value?$('#ap'):$('#au')).focus(),50)}
-function authMode(m){authMode.m=m;[...$('#authTabs').children].forEach(b=>b.className=b.dataset.m==m?'on':'');$('#ap2w').style.display=m=='up'?'block':'none';$('#ago').textContent=m=='up'?'註冊並開始 Sign up':'登入 Sign in';$('#ap').autocomplete=m=='up'?'new-password':'current-password';$('#amsg').textContent=''}
-async function authGo(){const u=$('#au').value,p=$('#ap').value,rem=$('#arem').checked;$('#amsg').textContent='';try{if(authMode.m=='up'){if(p!==$('#ap2').value)throw'兩次輸入的密碼不一樣';await accSignUp(u,p,rem)}else await accSignIn(u,p,rem)}catch(e){$('#amsg').textContent=typeof e=='string'?e:('發生錯誤：'+(e&&e.message||e))}}
+function authMode(m){authMode.m=m;[...$('#authTabs').children].forEach(b=>b.className=b.dataset.m==m?'on':'');$('#ap2w').style.display=m=='up'?'block':'none';$('#ago').textContent=m=='up'?'註冊並開始 Sign up':'登入 Sign in';$('#ap').autocomplete=m=='up'?'new-password':'current-password';$('#amsg').textContent='';authModeUI()}
+async function authGo(){if(authGo.busy)return;const u=$('#au').value,p=$('#ap').value,rem=$('#arem').checked;$('#amsg').textContent='';authGo.busy=1;$('#ago').disabled=true;
+ try{if(fbOn()&&CLOUD.ok==null){$('#amsg').textContent='☁️ 正在連線雲端…';await cloudProbe();$('#amsg').textContent=''}else if(fbOn()&&CLOUD.ok===false)cloudProbe();const cm=cloudMode();
+  if(authMode.m=='up'){if(p!==$('#ap2').value)throw'兩次輸入的密碼不一樣';await(cm?cloudSignUp(u,p,rem):accSignUp(u,p,rem))}else await(cm?cloudSignIn(u,p,rem):accSignIn(u,p,rem))}
+ catch(e){if(e&&e.net){CLOUD.ok=false;authModeUI();$('#amsg').textContent='無法連線到雲端，已改用本機帳號（只存在這個瀏覽器），請再按一次；之後可用網站版登入雲端帳號'}
+  else $('#amsg').textContent=typeof e=='string'?e:(e&&e.code)?fbMsg(e):('發生錯誤：'+(e&&e.message||e))}
+ finally{authGo.busy=0;$('#ago').disabled=false}}
 $('#authTabs').onclick=e=>{const b=e.target.closest('button');if(b)authMode(b.dataset.m)};$('#ago').onclick=authGo;
 for(const id of['#au','#ap','#ap2'])$(id).addEventListener('keydown',e=>{if(e.code=='Enter'||e.code=='NumpadEnter')authGo()});
-function bootAuth(){accLoad();let k=null,rem=false;try{const a=localStorage.getItem('rvl_session'),b=sessionStorage.getItem('rvl_session');k=a||b;rem=!!a}catch(_){}
+function bootAuth(){accLoad();
+ if(fbOn()){let cs=null,crem=false;try{const a=localStorage.getItem('rvl_cloud'),b=sessionStorage.getItem('rvl_cloud');cs=JSON.parse(a||b||'null');crem=!!a}catch(_){}
+  if(cs&&cs.uid&&cs.rt){enterLobby();showAuth();$('#au').value=cs.name||'';$('#amsg').textContent='☁️ 正在自動登入 '+(cs.name||'')+'…';cloudResume(cs,crem);return}}
+ let k=null,rem=false;try{const a=localStorage.getItem('rvl_session'),b=sessionStorage.getItem('rvl_session');k=a||b;rem=!!a}catch(_){}
  if(k&&ACCDB.users[k]){accStart(k,rem);return}enterLobby();showAuth()}
 function toast(t,c){const d=document.createElement('div');d.textContent=t;if(c)d.style.borderColor=c;$('#toasts').appendChild(d);setTimeout(()=>{d.style.transition='opacity .4s';d.style.opacity=0;setTimeout(()=>d.remove(),450)},2600)}
 function applyProfile(){LS=PF.lo.map((n,k)=>{if(n=='Random')return -1;const i=GP[k][1].findIndex(w=>w.n==n);return i>=0&&isUnl(n)?i:0});try{$('#nick').value=accName()}catch(_){}if(typeof applySettings=='function')applySettings()}
@@ -1549,7 +1667,7 @@ function loginStreak(){const L=PF.login,d=today(),y=today(new Date(Date.now()-86
 function baseWn(wn){return String(wn||'').split(' ·')[0]}
 function creditKill(wn,hs){if(!PF)return;const n=baseWn(wn);if(WBN(n))PF.wk[n]=(PF.wk[n]||0)+1;if(hs&&P)P.hsk=(P.hsk||0)+1}
 function awardMatch(won){if(!PF||!P)return null;const k=P.k||0,hs=P.hsk||0,xp=(won?100:40)+k*10+hs*5,s=PF.st;s.m++;if(won){s.w++;s.streak++;s.best=Math.max(s.best,s.streak)}else{s.l++;s.streak=0}s.k+=k;s.d+=P.dth||0;s.hs+=hs;
- for(const w of P.L||[])if(w&&w.n)PF.wu[w.n]=(PF.wu[w.n]||0)+1;dailyReset();PF.daily.pd++;PF.daily.el+=k;if(won)PF.daily.wd++;const keys=won?1:0;PF.keys+=keys;const lv0=PF.lv,up=addXP(xp);saveP();return{xp,keys,lv0,up,k,hs}}
+ for(const w of P.L||[])if(w&&w.n)PF.wu[w.n]=(PF.wu[w.n]||0)+1;dailyReset();PF.daily.pd++;PF.daily.el+=k;if(won)PF.daily.wd++;const keys=won?1:0;PF.keys+=keys;const lv0=PF.lv,up=addXP(xp);saveNow();return{xp,keys,lv0,up,k,hs}}
 function rewardHTML(a){if(!a)return'';const r=xpReq(PF.lv);return'<b style="color:#9b8cff">+'+a.xp+' XP</b>（'+(a.k?'擊殺 '+a.k+' ×10':'無擊殺')+(a.hs?'、爆頭擊殺 '+a.hs+' ×5':'')+'）'+(a.keys?'　<b style="color:#ffd23f">+'+a.keys+' 🔑</b>':'')+(a.up?'<br><b style="color:#ffc93c">⬆️ 升級到 Lv '+PF.lv+'！</b>':'')+'<br>Lv '+PF.lv+'　'+PF.xp+' / '+r+' XP<div class="xpb"><i style="width:'+Math.min(100,PF.xp/r*100)+'%"></i></div>'}
 var LBC={yaw:0,pitch:-.25,dist:8};
 function lobbyFP(){return LB.inRange}
@@ -1587,7 +1705,7 @@ function renderWInfo(){const w=WSEL,k=wcat(w),u=isUnl(w.n),c=wCost(w.n),eq=curLo
  h+='<h3>Overview · View weapon metrics</h3>'+wMetrics(w).map(r=>'<div class="mrow"><span>'+r[0]+'</span><div class="pb"><i style="width:'+Math.round(r[2]*100)+'%"></i></div><em>'+r[1]+'</em></div>').join('');
  h+='<h3>Statistics</h3><div class="mrow"><span>擊殺 Elims</span><em style="width:auto">'+((PF&&PF.wk[w.n])||0)+'</em></div><div class="mrow"><span>使用場次</span><em style="width:auto">'+((PF&&PF.wu[w.n])||0)+'</em></div>';
  el.innerHTML=h;$('#wslot').textContent=CATN[k]+(eq?' · 已裝備':'');
- const bb=$('#wBuy');if(bb)bb.onclick=()=>{if(!PF||PF.keys<c||isUnl(w.n))return;PF.keys-=c;PF.unl.push(w.n);saveP();toast('🔓 已解鎖 '+w.n+'！','#ffd23f');snd(880,.12,.06,'sine');renderWpn()};
+ const bb=$('#wBuy');if(bb)bb.onclick=()=>{if(!PF||PF.keys<c||isUnl(w.n))return;PF.keys-=c;PF.unl.push(w.n);saveNow();toast('🔓 已解鎖 '+w.n+'！','#ffd23f');snd(880,.12,.06,'sine');renderWpn()};
  const be=$('#wEq');if(be)be.onclick=()=>{LS[k]=GP[k][1].indexOf(w);saveLoadout();lobbyLoadoutRefresh();toast('✔ 已裝備 '+w.n);renderWpn()};
  const br=$('#wRnd');if(br)br.onclick=()=>{LS[k]=-1;saveLoadout();lobbyLoadoutRefresh();renderWpn()}}
 function wInit(){if(WR)return;WR=new T.WebGLRenderer({canvas:$('#wcv'),alpha:true,antialias:true});WR.setPixelRatio(Math.min(devicePixelRatio,2));WS=new T.Scene();WS.add(new T.AmbientLight(0xffffff,.95));const l=new T.DirectionalLight(0xffffff,.9);l.position.set(2,3,4);WS.add(l);const l2=new T.DirectionalLight(0x9ab8ff,.4);l2.position.set(-3,-1,-2);WS.add(l2);WCAM=new T.PerspectiveCamera(32,1,.01,50)}
@@ -1601,12 +1719,12 @@ function lobbyLoadoutRefresh(){if(st!=='lobby'||!P)return;const pk=(a,k)=>{const
 const CODE_KEYS={free:10,bonus:15,chill:20};
 function redeem(){const c=$('#codeIn').value.trim().toLowerCase(),m=$('#codeMsg');if(!PF)return;if(!c){m.style.color='#ff8a8a';m.textContent='請輸入代碼';return}
  const already=()=>{m.style.color='#ffc93c';m.textContent='這個代碼已經兌換過了'};
- if(c==='deathsmilexux'){if(PF.codes.includes(c))return already();PF.codes.push(c);let n=0;for(const w of ALLW())if(!PF.unl.includes(w.n)){PF.unl.push(w.n);n++}saveP();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已解鎖全部武器（新增 '+n+' 把）';toast('🎉 代碼兌換成功：全部武器已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
+ if(c==='deathsmilexux'){if(PF.codes.includes(c))return already();PF.codes.push(c);let n=0;for(const w of ALLW())if(!PF.unl.includes(w.n)){PF.unl.push(w.n);n++}saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已解鎖全部武器（新增 '+n+' 把）';toast('🎉 代碼兌換成功：全部武器已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(CODE_KEYS[c]!=null){if(PF.codes.includes(c))return already();PF.codes.push(c);const n=CODE_KEYS[c];giveKeys(n,'代碼 '+c);m.style.color='#35d07f';m.textContent='✅ 兌換成功！+'+n+' 🔑';return}
  if(c==='ommgggwhatisthis'){if(PF.codes.includes(c))return already();PF.codes.push(c);const locked=ALLW().filter(w=>!PF.unl.includes(w.n));
-  if(!locked.length){saveP();m.style.color='#ffc93c';m.textContent='你已經擁有全部武器了！';return}
+  if(!locked.length){saveNow();m.style.color='#ffc93c';m.textContent='你已經擁有全部武器了！';return}
   const pool=locked.slice(),got=[];for(let i=0;i<2&&pool.length;i++)got.push(pool.splice(Math.floor(rnd()*pool.length),1)[0]);
-  for(const w of got)PF.unl.push(w.n);PF.freeGrant=got.map(w=>w.n);saveP();
+  for(const w of got)PF.unl.push(w.n);PF.freeGrant=got.map(w=>w.n);saveNow();
   m.style.color='#35d07f';m.textContent='✅ 免費獲得：'+got.map(w=>w.n).join('、');
   toast('🎁 免費獲得：'+got.map(w=>w.n).join('、'),'#9b4dff');snd(880,.15,.06,'sine');renderLUI();return}
  m.style.color='#ff8a8a';m.textContent='❌ 無效的代碼 Invalid code';snd(200,.15,.05)}
@@ -1632,7 +1750,7 @@ const LOGIN_R=[1,1,2,2,3,3,5];
 const CONTRACTS=[{w:'Assault Rifle',g:20,r:3},{w:'Handgun',g:15,r:3},{w:'Fists',g:8,r:3},{w:'Grenade',g:5,r:3},{w:'Shotgun',g:12,r:4},{w:'Sniper',g:10,r:4},{w:'Revolver',g:12,r:4},{w:'Katana',g:10,r:4}];
 function ctState(c){const s=PF.ct[c.w]||{t:0,b:0};return{g:c.g*(s.t+1),p:Math.max(0,(PF.wk[c.w]||0)-s.b),t:s.t,r:c.r+s.t*2}}
 const PASS_MAX=30;function passR(l){return l==1?3:l%10==0?10:l%5==0?5:2}
-function giveKeys(n,why){PF.keys+=n;saveP();toast('🔑 +'+n+' 鑰匙'+(why?' · '+why:''),'#ffd23f');snd(990,.1,.05,'sine');renderLUI()}
+function giveKeys(n,why){PF.keys+=n;saveNow();toast('🔑 +'+n+' 鑰匙'+(why?' · '+why:''),'#ffd23f');snd(990,.1,.05,'sine');renderLUI()}
 // ---- Play ----
 function renderPlay(){const pc=$('#playCards');pc.innerHTML='';const cols=['#2f9e4f','#2a6fe0','#d99a14','#c62828','#8e3cff'];
  for(let n=1;n<=5;n++){const b=document.createElement('button');b.className='cd mcard';b.style.background='linear-gradient('+cols[n-1]+','+cols[n-1]+'88)';b.innerHTML=n+'v'+n+'<small>'+(n==1?'單挑 Duel':'組隊 Team')+'</small>';b.onclick=()=>playMode(n);pc.appendChild(b)}
@@ -1665,14 +1783,14 @@ PRENDER.Pass=()=>{const r=xpReq(PF.lv);let h='<div class="row" style="align-item
  for(let l=1;l<=PASS_MAX;l++){const got=PF.pass.includes(l),ok=PF.lv>=l&&!got;h+='<div class="pt"><div class="lvn">Lv '+l+'</div><div class="cell'+(ok?' ok':'')+(got?' got':'')+'"><span style="font-size:10px;color:#35d07f">FREE</span><b>🔑</b>×'+passR(l)+(ok?'<button class="gbtn" data-pl="'+l+'" style="padding:2px 10px;font-size:12px">領取</button>':got?'✔':'<span style="font-size:11px;color:#9fb0e0">🔒</span>')+'</div><div class="cell prem"><span style="font-size:10px">PREMIUM</span><b>🔒</b><span style="font-size:10px">敬請期待</span></div></div>'}
  h+='</div><button class="gbtn" id="passAll" style="margin-top:4px">一次領取全部可領獎勵</button>';$('#passBody').innerHTML=h;
  const claim=l=>{if(PF.lv<l||PF.pass.includes(l))return 0;PF.pass.push(l);PF.keys+=passR(l);return passR(l)};
- for(const b of $('#passBody').querySelectorAll('[data-pl]'))b.onclick=()=>{const n=claim(+b.dataset.pl);if(n){saveP();toast('🔑 +'+n+' 鑰匙 · Pass Lv '+b.dataset.pl,'#ffd23f');renderLUI();PRENDER.Pass()}};
- $('#passAll').onclick=()=>{let n=0;for(let l=1;l<=PASS_MAX;l++)n+=claim(l);if(n){saveP();toast('🔑 +'+n+' 鑰匙 · Season Pass','#ffd23f');renderLUI()}else toast('目前沒有可領取的獎勵');PRENDER.Pass()};
+ for(const b of $('#passBody').querySelectorAll('[data-pl]'))b.onclick=()=>{const n=claim(+b.dataset.pl);if(n){saveNow();toast('🔑 +'+n+' 鑰匙 · Pass Lv '+b.dataset.pl,'#ffd23f');renderLUI();PRENDER.Pass()}};
+ $('#passAll').onclick=()=>{let n=0;for(let l=1;l<=PASS_MAX;l++)n+=claim(l);if(n){saveNow();toast('🔑 +'+n+' 鑰匙 · Season Pass','#ffd23f');renderLUI()}else toast('目前沒有可領取的獎勵');PRENDER.Pass()};
  const pr=$('#passRow'),cur=pr.children[Math.max(0,PF.lv-3)];if(cur)pr.scrollLeft=cur.offsetLeft-pr.offsetLeft};
 // ---- Shop ----
 const BUNDLES=[{n:'Starter 新手包',e:'🎁',w:['Burst Rifle','Uzi','Knife','Flashbang']},{n:'Sharpshooter 神射手',e:'🎯',w:['Sniper','Revolver','Katana','Smoke Grenade']},{n:'Demolition 爆破專家',e:'💥',w:['RPG','Grenade Launcher','Molotov','Satchel']},{n:'Melee Master 近戰大師',e:'⚔️',w:['Scythe','Battle Axe','Chainsaw','Riot Shield']},{n:'Mobility 機動包',e:'🌀',w:['Daggers','Jump Pad','Grappler','Spear']}];
 var SHOPT='home';function shopTab(t){SHOPT=t;PRENDER.Shop()}
 function dailyDeals(){const lk=ALLW().filter(w=>!isUnl(w.n));let s=0;for(const ch of today()+ACCT)s=(s*31+ch.charCodeAt(0))>>>0;const out=[];const a=lk.slice();while(out.length<3&&a.length){s=(s*1103515245+12345)>>>0;out.push(a.splice(s%a.length,1)[0])}return out}
-function buyW(names,price,label){if(PF.keys<price){toast('🔑 鑰匙不足');return}PF.keys-=price;for(const n of names)if(!PF.unl.includes(n))PF.unl.push(n);saveP();toast('🛒 購買成功：'+label,'#35d07f');snd(880,.12,.06,'sine');renderLUI();PRENDER.Shop()}
+function buyW(names,price,label){if(PF.keys<price){toast('🔑 鑰匙不足');return}PF.keys-=price;for(const n of names)if(!PF.unl.includes(n))PF.unl.push(n);saveNow();toast('🛒 購買成功：'+label,'#35d07f');snd(880,.12,.06,'sine');renderLUI();PRENDER.Shop()}
 PRENDER.Shop=()=>{const T2=[['home','Home'],['bundles','Bundles'],['skins','Skins'],['daily','Daily'],['keys','Keys'],['more','More']];$('#shopTabs').innerHTML=T2.map(([k,n])=>'<button data-st="'+k+'" class="'+(SHOPT==k?'on':'')+'">'+n+'</button>').join('');for(const b of $('#shopTabs').children)b.onclick=()=>shopTab(b.dataset.st);
  $('#skeys').textContent='　🔑 '+PF.keys;let h='';const soon=t=>'<div class="cd" style="opacity:.75"><h4>'+t+'</h4><div class="soon">Robux 付費項目 · 敬請期待</div></div>';
  const wcard=(w,price,old)=>'<div class="cd"><img src="'+icon(w)+'" style="width:100%;height:80px;object-fit:contain"><h4>'+w.n+'</h4><div class="sub2">'+CATN[wcat(w)]+'</div>'+(isUnl(w.n)?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bw="'+w.n+'" data-pr="'+price+'"'+(PF.keys>=price?'':' disabled')+'>'+(old?'<s style="opacity:.6">'+old+'</s> ':'')+'🔑 '+price+'</button>')+'</div>';
@@ -1693,7 +1811,7 @@ PRENDER.Set=()=>{const s=PF.set,sl=(k,lab,mn,mx,stp)=>'<div class="setrow"><labe
  h+='<h3>➕ 準心 Crosshair</h3><div class="setrow"><label>顏色 Color</label><div class="row">'+CCOL.map(c=>'<button data-cc="'+c+'" style="width:30px;height:30px;padding:0;border-radius:50%;background:'+c+';border:3px solid '+(s.cc==c?'#fff':'#0000')+'"></button>').join('')+'</div></div>'+sl('cz','大小 Size',2,16,1)+'<div class="setrow"><label>預覽</label><div style="width:60px;height:40px;background:#556;border-radius:6px;position:relative"><div id="xprev" style="position:absolute;left:50%;top:50%;width:'+s.cz+'px;height:'+s.cz+'px;margin:'+(-s.cz/2)+'px;border-radius:50%;background:'+s.cc+';box-shadow:0 0 0 1px #000"></div></div></div>';
  h+='<h3>🎥 畫面</h3><div class="setrow"><label>鏡頭晃動 Camera shake</label><button id="shk" class="'+(s.shake?'on':'')+'">'+(s.shake?'開 ON':'關 OFF')+'</button></div>';
  const af=afOn(),aa=aaOn();h+='<h3>🎯 射擊輔助 Assist</h3><div class="setrow"><label>自動射擊 Auto-fire</label><button id="saf" class="'+(af?'on':'')+'">'+(af?'開 ON':'關 OFF')+'</button></div><div class="setrow"><label>輔助瞄準 Aim assist</label><button id="saa" class="'+(aa?'on':'')+'">'+(aa?'開 ON':'關 OFF')+'</button></div><p class="note" style="font-size:11px;margin-top:0">自動射擊：準心對到敵人時自動開火。輔助瞄準：準心附近有看得到的敵人時，鏡頭會被輕輕吸過去（不會穿牆、不會鎖隊友）。預設：手機兩個都開；電腦兩個都關。</p>';
- h+='<h3>👤 帳號</h3><div class="setrow"><label>'+esc(accName())+'</label><button id="logout" style="background:#c62828;border-color:#7a1010">登出 Log out</button></div><p class="note" style="font-size:11px">設定與進度只存在這台裝置的瀏覽器（localStorage）。</p>';
+ h+='<h3>👤 帳號</h3><div class="setrow"><label>'+esc(accName())+'</label><button id="logout" style="background:#c62828;border-color:#7a1010">登出 Log out</button></div><p class="note" style="font-size:11px">'+(inCloud()?'☁️ 雲端帳號：設定與進度會自動同步，任何裝置都能登入。':'設定與進度只存在這台裝置的瀏覽器（localStorage）。')+'</p>';
  $('#setBody').innerHTML=h;
  for(const r of $('#setBody').querySelectorAll('[data-sk]'))r.oninput=()=>{s[r.dataset.sk]=+r.value;r.nextElementSibling.textContent=r.value;applySettings();if(r.dataset.sk=='cz'){const pv=$('#xprev');pv.style.width=pv.style.height=r.value+'px';pv.style.margin=(-r.value/2)+'px'}saveP()};
  for(const b of $('#setBody').querySelectorAll('[data-cc]'))b.onclick=()=>{s.cc=b.dataset.cc;applySettings();saveP();PRENDER.Set()};
