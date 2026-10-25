@@ -220,7 +220,7 @@ body.lbhub #tbTop{display:none}
 .bdg.rk{background:linear-gradient(#ffe27a,#d99a14);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)}
 .pfmw{font:900 14px system-ui;margin-bottom:6px}.pftiles{display:flex;gap:8px}.pftile{width:74px;height:74px;border-radius:10px;background:#0c0f1c;border:2px solid #ffffff1c;display:flex;flex-direction:column;align-items:center;overflow:hidden;font:800 9.5px system-ui;text-align:center;padding-bottom:4px;box-sizing:border-box}.pftile img{width:66px;height:40px;object-fit:contain;margin:8px 0 auto}
 .pfx{width:56px;height:56px;border-radius:50%;background:linear-gradient(#ff5d5d,#c62828);border:3px solid #fff;color:#fff;font:900 24px system-ui;padding:0;box-shadow:0 4px 0 #7a1010}
-body.lbhub #tbFire,body.lbhub #tbAlt,body.lbhub #tbMelee,body.lbhub #tbUtil,body.lbhub #tbReload,body.lbhub #tbCrouch{display:none}
+body.lbhub #tbFire,body.lbhub #tbAlt,body.lbhub #tbMelee,body.lbhub #tbUtil,body.lbhub #tbReload{display:none}.tbemo{font-size:1.5em;line-height:1;pointer-events:none;filter:grayscale(.15)}
 body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #wn,body.lbhub #hud #am,body.lbhub #hud #altc,body.lbhub #hud #sc,body.lbhub #hud #bar,body.lbhub #hud #eye{display:none}
 @media (max-width:820px),(max-height:520px){
  #lbar button{width:52px;height:52px;font-size:9px;border-radius:11px}#lbar button b{font-size:21px;line-height:25px}#lbar{gap:4px}
@@ -249,12 +249,12 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
  <div id="tjoyBase"><div id="tjoyStick"></div></div>
  <div id="tbtnCluster">
   <button id="tbCrouch" title="蹲下/滑行"><svg viewBox="0 0 24 24"><path d="M7 4.5a2 2 0 1 0 0 .01"/><path d="M8 8l3 5 5 1M11 13l-2 6M3 20h18"/><path d="M16 9l4 0"/></svg></button>
-  <button id="tbMelee" title="快速近戰"><svg viewBox="0 0 24 24"><path class="f" d="M3.5 20.5l1.8.4 10.4-10.4-2.2-2.2L3.1 18.7z"/><path class="f" d="M14.6 7.2l2.2 2.2 4.7-6.5z"/></svg></button>
+  <button id="tbMelee" title="快速近戰"><span class="tbemo">👊</span></button>
   <button id="tbUtil" title="快速道具"><svg viewBox="0 0 24 24"><circle cx="11" cy="14.5" r="6"/><path d="M9 8.5h4v-2H9z"/><path d="M13 7c1.5-2.5 4-3 6-1.5"/></svg></button>
   <button id="tbReload" title="換彈"><svg viewBox="0 0 24 24"><path d="M19.5 12.5a7.5 7.5 0 1 1-2.2-5.7"/><path d="M19.5 3.5v4.5H15"/></svg></button>
   <button id="tbJump" title="跳躍"><svg viewBox="0 0 24 24"><path class="f" d="M12 2.5L21.5 12.5H16V21.5H8V12.5H2.5Z"/></svg></button>
-  <button id="tbAlt" title="特殊技能/開鏡"><svg viewBox="0 0 24 24"><path class="f" d="M13.5 1.5L4 14h7l-1.5 8.5L20 9.5h-7z"/></svg></button>
-  <button id="tbFire" title="攻擊"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5"/><circle class="f" cx="12" cy="12" r="1.8"/></svg></button>
+  <button id="tbAlt" title="特殊技能/開鏡"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/><path d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5"/><circle class="f" cx="12" cy="12" r="1.8"/></svg></button>
+  <button id="tbFire" title="攻擊"><svg viewBox="0 0 24 24"><path class="f" d="M12 2c2.6 2.2 3.6 5 3.6 8v7.5H8.4V10c0-3 1-5.8 3.6-8z"/><path class="f" d="M7.6 18.8h8.8V22H7.6z"/></svg></button>
  </div>
  <div id="tbTop">
   <button id="tbSpec" title="觀戰"><svg viewBox="0 0 24 24"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3.2"/></svg></button>
