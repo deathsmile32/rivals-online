@@ -686,7 +686,34 @@ const SKINS=[
  drawFx:p=>{skBurst(p,14,[0xffd35e,0xfff2c0],1.6,.45,.045);snd(1300,.1,.05,'sine');setTimeout(()=>snd(1700,.14,.05,'sine'),90)}},
 {id:'kb_key',weapon:'Knife',name:'鑰匙刃 Key Blade',rarity:'rare',how:'從皮膚箱開出 Unboxed from the Skin Case',
  build:g=>{const S=0xb9c0ca;B(g,.03,.1,.03,0,0,0,0x1f2024);Cz(g,.038,.038,.018,0,.08,0,S);Cz(g,.02,.02,.019,0,.08,0,0x1f2024);B(g,.013,.22,.045,0,.2,0,S);for(const y of[.14,.19])B(g,.03,.012,.016,.02,y,0,S);B(g,.012,.07,.03,0,.32,-.006,S,{rx:.4});return{}},
- drawFx:p=>{skBurst(p,8,[0x6fc8ff,0xeef2f7],1.4,.3,.04);snd(1500,.05,.04,'triangle');setTimeout(()=>snd(1900,.05,.04,'triangle'),70)}}
+ drawFx:p=>{skBurst(p,8,[0x6fc8ff,0xeef2f7],1.4,.3,.04);snd(1500,.05,.04,'triangle');setTimeout(()=>snd(1900,.05,.04,'triangle'),70)}},
+// ----- Sniper skins: original procedural reinterpretations, NOT reproduced Roblox/Rivals art. Same frame as MD['Sniper']
+// (grip at origin, barrel toward -z, return {fore:[x,y,z]}). Each carries insp (per-skin inspect style id used by the
+// setVM/animVM inspect dispatch), flashColor/flashScale (muzzle flash box override), inspFx/reloadFx/fireFx (one-shot
+// per-skin FX callbacks fired by skInspFx/skRelFx/skFireFx; p = world Vector3 at the muzzle).
+{id:'sn_pixel',weapon:'Sniper',name:'Pixel Sniper',rarity:'common',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'pxflip',flashColor:0x3dff6a,
+ build:g=>{const G=0x3dff6a,G2=0x1fae44,Bk=0x0d0d10;B(g,.07,.1,.1,0,.08,-.02,Bk);B(g,.07,.1,.1,0,.08,-.12,G);B(g,.07,.1,.1,0,.08,-.22,Bk);B(g,.07,.1,.1,0,.08,-.32,G);B(g,.07,.1,.1,0,.08,-.42,Bk);B(g,.07,.1,.1,0,.08,-.5,G2);B(g,.055,.055,.06,0,.17,-.14,Bk);B(g,.055,.055,.06,0,.17,-.3,Bk);B(g,.045,.12,.055,0,0,.03,Bk,GRIP);B(g,.07,.14,.16,0,.07,.28,G);B(g,.07,.14,.16,0,.07,.42,Bk);B(g,.045,.09,.045,0,.02,-.08,G2);return{fore:[0,.08,-.5]}},
+ inspFx:p=>skBurst(p,5,[0x3dff6a,0xffffff],1,.22,.035),
+ reloadFx:()=>{snd(220,.04,.06,'square');snd(170,.03,.05,'square');setTimeout(()=>{snd(260,.04,.06,'sawtooth');snd(140,.03,.05,'square')},90)},
+ fireFx:p=>{skBurst(p,6,[0x3dff6a,0x1fae44],1.8,.18,.04);snd(1500,.05,.06,'square')}},
+{id:'sn_eventhorizon',weapon:'Sniper',name:'Event Horizon',rarity:'epic',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'void',flashColor:0x8a2be2,
+ build:g=>{const D=0x0a0014,Pp=0x8a2be2,Bk=0x16161c;B(g,.05,.07,.42,0,.08,-.04,Bk);Cz(g,.02,.02,.4,0,.08,-.46,Bk);const sph=new T.Mesh(new T.SphereGeometry(.09,16,12),mt(D,1));sph.position.set(0,.08,-.18);g.add(sph);const ring=new T.Group();ring.position.set(0,.08,-.18);const r1=new T.Mesh(UT,mt(Pp,1));r1.scale.set(.16,.16,.025);r1.rotation.x=PI/2+.3;ring.add(r1);const r2=new T.Mesh(UT,mt(0xd8bfff,1));r2.scale.set(.2,.2,.02);r2.rotation.x=PI/2-.2;ring.add(r2);g.add(ring);B(g,.045,.12,.055,0,0,.03,Bk,GRIP);B(g,.055,.11,.2,0,.05,.25,0x1c1030);return{fore:[0,.08,-.5],ring}},
+ inspFx:p=>skBurst(p,8,[0xd8bfff,0xffffff],1.4,.3,.045),
+ reloadFx:()=>{snd(90,.26,.05,'sine');setTimeout(()=>snd(1200,.08,.08,'square'),260)},
+ fireFx:p=>{skBurst(p,10,[0x8a2be2,0xffffff,0xd8bfff],2,.3,.05);snd(650,.05,.06,'sine');setTimeout(()=>snd(420,.1,.05,'sine'),40)}},
+{id:'sn_lightfifty',weapon:'Sniper',name:'Light Fifty',rarity:'legendary',how:'從獎勵轉盤 Unboxed from the Prize Wheel',insp:'heavy',flashColor:0xffb347,flashScale:1.6,
+ build:g=>{const G=0x4a4a4a,G2=0x2e2e32,Dk=0x1a1a1c;B(g,.085,.12,.62,0,.08,-.12,G);Cz(g,.024,.024,.56,0,.09,-.66,Dk);Cz(g,.05,.05,.34,0,.17,-.1,G2);Cz(g,.06,.06,.04,0,.17,-.28,Dk);B(g,.03,.05,.03,0,.14,-.1,Dk);B(g,.075,.17,.3,0,.04,.34,G);B(g,.045,.12,.065,0,0,.05,Dk,GRIP);B(g,.05,.1,.08,0,.02,-.18,Dk);B(g,.015,.22,.015,.05,-.05,-.55,0x15151a,{rx:.5,rz:.25});B(g,.015,.22,.015,-.05,-.05,-.55,0x15151a,{rx:.5,rz:-.25});return{fore:[0,.09,-.66]}},
+ reloadFx:()=>{snd(65,.32,.11,'sawtooth');setTimeout(()=>snd(220,.06,.07,'square'),260)},
+ fireFx:p=>{skBurst(p,14,[0xffb347,0xffffff,0xff8a20],2.6,.3,.08);snd(55,.32,.15,'sawtooth')}},
+{id:'sn_hyper',weapon:'Sniper',name:'Hyper Sniper',rarity:'epic',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'pulse',flashColor:0xff2fd0,
+ build:g=>{const Bk=0x14141a,Pu=0x2a1a3a,Mg=0xff2fd0;B(g,.065,.095,.46,0,.08,-.06,Bk);B(g,.06,.03,.3,0,.14,-.3,Pu);Cz(g,.016,.016,.4,0,.09,-.48,Bk);B(g,.045,.12,.055,0,0,.03,Bk,GRIP);B(g,.06,.13,.24,0,.06,.3,Pu);B(g,.04,.08,.06,0,.02,-.14,Bk);const glow=new T.Group();const gm=new T.Mesh(new T.BoxGeometry(.012,.09,.3),mt(Mg,1));gm.position.set(.034,.14,-.22);glow.add(gm);const gm2=new T.Mesh(new T.BoxGeometry(.012,.09,.3),mt(Mg,1));gm2.position.set(-.034,.14,-.22);glow.add(gm2);g.add(glow);return{fore:[0,.04,-.48],glow}},
+ reloadFx:()=>{snd(1400,.04,.05,'square');setTimeout(()=>{snd(700,.03,.05,'sine');setTimeout(()=>snd(1100,.03,.05,'sine'),35);setTimeout(()=>snd(1600,.04,.06,'sine'),70)},70)},
+ fireFx:p=>{skBurst(p,4,[0xff2fd0,0xffffff],3.2,.12,.03);snd(2200,.04,.05,'triangle')}},
+{id:'sn_gingerbread',weapon:'Sniper',name:'Gingerbread Sniper',rarity:'rare',how:'從節慶皮膚箱開出 Unboxed from the Festive Skin Case',insp:'wiggle',flashColor:0xe0302a,
+ build:g=>{const Br=0xc68642,Br2=0x9c6530,R=0xcc2222,W=0xffffff;B(g,.065,.1,.3,0,.08,-.04,Br);Cz(g,.02,.02,.3,0,.09,-.34,Br2);for(let i=0;i<5;i++)Cz(g,.021,.021,.055,0,.09,-.2-i*.06,i%2?R:W);B(g,.06,.12,.2,0,.06,.28,Br);B(g,.045,.12,.055,0,0,.03,Br2,GRIP);Sp(g,.025,0,.15,-.08,R);Sp(g,.018,.025,.15,-.1,W);return{fore:[0,.09,-.46]}},
+ inspFx:p=>skBurst(p,8,[0xe0302a,0xffffff],1.3,.3,.04),
+ reloadFx:()=>{for(let i=0;i<4;i++)setTimeout(()=>snd(1800+rnd()*600,.03,.03,'triangle'),i*35);setTimeout(()=>snd(900,.06,.05,'sine'),160)},
+ fireFx:p=>{skBurst(p,9,[0xe0302a,0xffffff],1.6,.3,.045);snd(1300,.08,.05,'sine');setTimeout(()=>snd(1700,.1,.05,'triangle'),70)}}
 ];
 const SKBYID=Object.fromEntries(SKINS.map(x=>[x.id,x])),skinsFor=wn=>SKINS.filter(x=>x.weapon==wn);
 function model(w,wk,sk){const g=new T.Group();const S=sk&&SKBYID[sk]&&SKBYID[sk].weapon==w.n?SKBYID[sk]:null;const u=(S?S.build:MD[w.n]||(()=>({})))(g)||{};g.userData=u;if(wk)try{applyWrap(g,w,wk)}catch(e){console.error(e)}return g}
@@ -1277,9 +1304,13 @@ default:used=0}
 if(used)b.gcd=3+rnd()*4}
 
 // ===== generic weapon use (player + bots) =====
-function rel(e){const w=e.L[e.cur],s=e.S[e.cur];if(w.norl||(w.res!=null&&!(s.r>0)))return;if(w.mag&&!w.inf&&s.rl<=0&&s.a<w.mag&&s.q<=0)s.rl=w.rl}
+function rel(e){const w=e.L[e.cur],s=e.S[e.cur];if(w.norl||(w.res!=null&&!(s.r>0)))return;if(w.mag&&!w.inf&&s.rl<=0&&s.a<w.mag&&s.q<=0){s.rl=w.rl;skRelFx(e,w)}}
+// per-skin FX hooks (Sniper skins etc): reuse SKBYID entries' reloadFx/fireFx/inspFx, local player only.
+function skRelFx(e,w){if(!e.isP||!w)return;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.reloadFx)try{S.reloadFx()}catch(err){console.error(err)}}
+function skFireFx(e,w){if(!e.isP||!w)return false;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.fireFx){try{S.fireFx(muz(e))}catch(err){console.error(err)}return true}return false}
+function skInspFx(e){if(!e||!e.isP||!e.alive)return;const w=e.L[e.cur];const S=w&&SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.inspFx)try{S.inspFx(muz(e))}catch(err){console.error(err)}}
 function fireW(e,w,s,x){if(GHA)return;if(NET&&!GH)nf(e,'w',e.L.indexOf(w),x);if(w.lim&&!w.selfLim)s.c--;if(w.mag&&!w.inf&&!s.bm)s.a--;if(w.heat){s.h+=w.heat;if(s.h>=1){s.h=1;s.ov=1}}
-s.lf=e.age;e.shotT=BT;e.wnm=w.n;if(e.isP){P.rk=(rnd()-.5)*2;P.insp=0;if(w.k=='M'&&!w.au){P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk=w.n=='Riot Shield'?'s':w.n=='Maul'?'h':'n';if(w.n=='Maul')P.sw=P.swT=.6}if(w.k=='U'&&w.lim&&w.n!='Medkit')P.thr=.45}(w.fire||(w.pj?fProj:fGun))(e,w,s,x||{});e.cd=w.rate*(e.isP?1:DF[cfg.d].rm*(1+rnd()*.3));e.kick=1;if(w.f)snd(w.f,.08,.05);
+s.lf=e.age;e.shotT=BT;e.wnm=w.n;if(e.isP){P.rk=(rnd()-.5)*2;P.insp=0;if(w.k=='M'&&!w.au){P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk=w.n=='Riot Shield'?'s':w.n=='Maul'?'h':'n';if(w.n=='Maul')P.sw=P.swT=.6}if(w.k=='U'&&w.lim&&w.n!='Medkit')P.thr=.45}(w.fire||(w.pj?fProj:fGun))(e,w,s,x||{});e.cd=w.rate*(e.isP?1:DF[cfg.d].rm*(1+rnd()*.3));e.kick=1;if(!skFireFx(e,w)&&w.f)snd(w.f,.08,.05);
 if(w.burst){s.q=w.burst-1;s.qt=w.qi||.07;s.qs=0}if(w.mag&&!w.inf&&s.a<=0)rel(e)}
 function tryF(e,w,s,x){if(e.cd>0||s.rl>0||s.ov||e.frz>0||s.q>0||s.out>0)return;if(w.spin&&s.sp<1)return;if(w.mag&&!w.inf&&!s.bm&&s.a<1){rel(e);return}
 if(w.can?!w.can(e,s):(w.lim&&s.c<=0))return;fireW(e,w,s,x)}
@@ -1483,10 +1514,10 @@ else{const m=model(w,wk,sk);mm=m;u=m.userData;h.add(m);arm(h,[0,-.01,.035],.32,.
  if(w.n=='Maul'){const pv=new T.Group();h.remove(m);pv.add(m);h.add(pv);pv.rotation.set(.3,0,-.85);la=arm(h,[.22,.17,.04],-.5,.35)}
  if(RS[w.n]=='mag'){let by=-.015;if(u.mag)mag=u.mag;else for(const c of m.children)if(c.isMesh&&c.position.y<by&&c.position.z>-.35&&c.position.z<.15){by=c.position.y;mag=c}if(!mag)mag=B(m,.036,.06,.04,0,-.075,.035,0x1f2024)}
  if(w.n=='Bow'){arrow=m.children.filter(c=>c.isMesh&&[0x6b4a2e,0xb9bec7,0xffffff].includes(c.material.color.getHex()));for(const a of arrow)a.userData.z0=a.position.z}
- if(w.k=='P'||w.k=='S'){const bb=new T.Box3().setFromObject(m);fl=new T.Mesh(new T.BoxGeometry(.09,.09,.03),new T.MeshBasicMaterial({color:0xffe070}));fl.position.set(0,.1,bb.min.z-.03);fl.visible=false;h.add(fl)}}
+ if(w.k=='P'||w.k=='S'){const bb=new T.Box3().setFromObject(m),SK=sk&&SKBYID[sk];fl=new T.Mesh(new T.BoxGeometry(.09,.09,.03),new T.MeshBasicMaterial({color:(SK&&SK.flashColor)||0xffe070}));fl.position.set(0,.1,bb.min.z-.03);if(SK&&SK.flashScale)fl.scale.setScalar(SK.flashScale);fl.visible=false;h.add(fl)}}
 const top=mm?new T.Box3().setFromObject(mm).max.y:.1,sc2=w.k=='U'?.5:.62;h.scale.setScalar(sc2);
 const base=w.n=='Bow'?[.08,-.15,-.46]:w.n=='Gunblade'?[.22,-.3,-.5]:w.k=='M'?(w.n=='Fists'?[0,-.12,-.4]:w.n=='Maul'?[.08,-.22,-.5]:[.2,-.24,-.5]):w.k=='U'?[.18,-.17,-.46]:w.k=='S'?[.18,-.15,-.46]:[.2,-.2,-.52];
-const insp=w.n=='Fists'?'knuck':w.n=='Revolver'||w.n=='Handgun'||w.n=='Flare Gun'?'twirl':w.n=='Knife'||w.n=='Daggers'?'side':w.n=='Maul'?'mlift':w.k=='S'?'sturn':w.k=='M'?'swing':w.k=='U'?'toss':'turn';
+const skI=sk&&SKBYID[sk];const insp=(skI&&skI.weapon==w.n&&skI.insp)||(w.n=='Fists'?'knuck':w.n=='Revolver'||w.n=='Handgun'||w.n=='Flare Gun'?'twirl':w.n=='Knife'||w.n=='Daggers'?'side':w.n=='Maul'?'mlift':w.k=='S'?'sturn':w.k=='M'?'swing':w.k=='U'?'toss':'turn');
 vm.userData={wk,sk,h,u,w,fl,m:mm,m2,la,laRest:la?la.position.clone():null,mag,magY:mag?mag.position.y:0,arrow,base,fa:u.fa,brx:w.k=='M'&&w.n!='Fists'&&w.n!='Riot Shield'&&w.n!='Maul'?-.75:0,bry:w.k=='M'?0:.04,...(w.n=='Gunblade'?{brx:.45}:{}),brz:w.n=='Bow'?1.15:0,adsY:-.012-top*sc2,insp};P.eq=.35;P.insp=0}
 let bob=0;
 function animVM(dt){const sT=!P.alive&&(st=='play'||st=='end')?spec():null;if(sT){specVM(sT,dt);return}if(vm.userData.spec){setVM();P.eq=0}
@@ -1510,6 +1541,11 @@ if(s.rl>0&&w.rl&&P.qmT<=0){const p=1-s.rl/w.rl,t=RS[w.n]||'mag';
  else if(t=='box'){py+=kf(p,[[0,0],[.2,-.1],[.8,-.1],[1,0]]);rz+=kf(p,[[0,0],[.2,.3],[.8,.3],[1,0]]);lo=kf(p,[[.2,0],[.4,1],[.7,1],[.85,0]])}}
 if(P.insp>0){const p=1-P.insp/2.4,t=U.insp;
  if(t=='twirl'||t=='sturn'||t=='side'||t=='knuck'){}
+ else if(t=='pxflip'){rx+=kf(p,[[0,0],[.15,.9],[.4,.9],[.55,0],[1,0]]);ry+=kf(p,[[0,0],[.15,.25],[.4,.25],[.55,0],[1,0]]);py+=kf(p,[[0,0],[.15,.05],[.4,.05],[1,0]])}
+ else if(t=='void'){ry+=kf(p,[[0,0],[.2,.5],[.8,.5],[1,0]]);rz+=kf(p,[[0,0],[.2,.15],[.8,.15],[1,0]]);if(u.ring)u.ring.rotation.z+=dt*9}
+ else if(t=='heavy'){py-=kf(p,[[0,0],[.3,.1],[.7,.1],[1,0]]);rx+=kf(p,[[0,0],[.3,.35],[.7,.35],[1,0]])}
+ else if(t=='pulse'){ry+=kf(p,[[0,0],[.2,.6],[.7,.6],[1,0]]);if(u.glow){const gp=kf(p,[[0,0],[.12,1.8],[.28,1],[1,1]]);u.glow.scale.setScalar(gp)}}
+ else if(t=='wiggle'){const w2=Math.min(1,p/.5),e2=kf(p,[[0,0],[.1,1],[.5,1],[.7,0],[1,0]]);rz+=Math.sin(w2*PI*4)*e2*.3;py+=Math.abs(Math.sin(w2*PI*4))*e2*.05}
  else if(t=='flip'){py-=kf(p,[[.38,0],[.45,-.03],[.55,0]]);ry+=kf(p,[[.5,0],[.65,.8],[.85,.8],[1,0]])}
  else if(t=='mlift'){py+=kf(p,[[0,0],[.25,.06],[.8,.06],[1,0]]);rz+=kf(p,[[0,0],[.25,.3],[.5,.3],[.65,-.1],[.85,-.1],[1,0]]);px+=kf(p,[[0,0],[.25,-.05],[.85,-.05],[1,0]])}
  else if(t=='swing'){ry+=kf(p,[[0,0],[.25,1],[.5,1],[.75,-.6],[1,0]]);rz+=kf(p,[[0,0],[.25,.5],[.5,.5],[.75,-.4],[1,0]])}
@@ -1804,7 +1840,7 @@ const x=s*Math.cos(P.yaw)-f*Math.sin(P.yaw),z=-s*Math.sin(P.yaw)-f*Math.cos(P.ya
 function dblJump(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||P.sl)return;let w=P.L[P.cur];if(P.qmT>0&&P.L[2].dj&&!P.djs.has(P.L[2].n))w=P.L[2];if(!w.dj||onGround(P)||P.djs.has(w.n))return;P.djs.add(w.n);P.vy=7.5;puff(V(P.x,P.y,P.z),V(0,-1,0),0xffffff,.3,1);snd(600,.08,.04)}
 function qmelee(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qm||0)>performance.now()||P.cur==2)return;const w=P.L[2];if(w.can&&!w.can(P,P.S[2]))return;P.qm=performance.now()+500;P.wnm=w.n;if(NET)netFire('m',2);w.fire(P,w,P.S[2],{});P.kick=1;P.qmT=.4;setVM(w);P.eq=0;P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk='n';snd(800,.09,.06);skDrawFx(P,w)}
 function qutil(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qu||0)>performance.now())return;const w=P.L[3],s=P.S[3];if(w.can?!w.can(P,s):(w.lim&&s.c<=0))return;if(w.lim&&!w.selfLim)s.c--;P.qu=performance.now()+400;P.wnm=w.n;if(NET)netFire('u',3);w.fire(P,w,s,{});if(w.f)snd(w.f,.08,.05)}
-addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyM'&&st=='lobby'&&LB.inRange&&!e.repeat)leaveRange();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyV'&&!e.repeat&&P.alive)P.insp=2.4;const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！');if(e.code=='KeyQ'&&!e.repeat&&st=='lobby'&&LB.inRange&&LB.trashPrompt&&!RAON)showRangeLo()});
+addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyM'&&st=='lobby'&&LB.inRange&&!e.repeat)leaveRange();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyV'&&!e.repeat&&P.alive){P.insp=2.4;skInspFx(P)}const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！');if(e.code=='KeyQ'&&!e.repeat&&st=='lobby'&&LB.inRange&&LB.trashPrompt&&!RAON)showRangeLo()});
 addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('button,input,.pnl,#lui,.ov,#leaveRange'))return;if(PANEL)return;if(!MOBILE&&!paused&&!chatOn&&document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end'||(st=='lobby'&&lobbyFP())))lock()});
 addEventListener('keyup',e=>keys[e.code]=0);
 addEventListener('wheel',e=>{if(PANEL)return;if(hubTP()){LBC.dist=Math.max(3,Math.min(16,LBC.dist+(e.deltaY>0?.9:-.9)));return}if(live())swE(P,(P.cur+(e.deltaY>0?1:3))%4)});
@@ -1847,7 +1883,7 @@ if(MOBILE){
  btnTouch($('#tbSpec'),()=>{if(live()&&!P.alive)sp++});
  btnTouch($('#tbZoom'),()=>{if(!live()||!P.alive)return;const w=P.L[P.cur];if(w.zf)P.zoom=!P.zoom});
  btnTouch($('#tbBoard'),()=>{keys.Tab=keys.Tab?0:1});
- btnTouch($('#tbEmote'),()=>{if(live()&&P.alive)P.insp=2.4});
+ btnTouch($('#tbEmote'),()=>{if(live()&&P.alive){P.insp=2.4;skInspFx(P)}});
  setInterval(()=>{if(!P)return;const w=P.L&&P.L[P.cur];$('#tbSpec').classList.toggle('off',!!P.alive);$('#tbZoom').classList.toggle('off',!(w&&w.zf));$('#tbZoom').classList.toggle('press',!!P.zoom&&!!(w&&w.zf));$('#tbBoard').classList.toggle('press',!!keys.Tab)},200);
  // shooting range: the prompt and the weapon-name label open the free weapon menu (no Q key on touch)
  const wnEl=$('#wn');wnEl.addEventListener('touchstart',e=>{if(st=='lobby'&&LB.inRange&&!RAON&&!PANEL){e.preventDefault();showRangeLo()}},{passive:false});
@@ -2603,7 +2639,14 @@ function crItemObj(k,id,col,O){const g=new T.Group();
 function crOpen(cid){const C=CRBYID[cid];if(!C||!PF)return;if(st!=='lobby'||!P){toast('請先回到大廳再開箱');return}if(crHeld(cid)<1){toast('背包裡沒有這個箱子');return}
  const left=crLeft(C);PF.crates[cid]--;if(PF.crates[cid]<=0)delete PF.crates[cid];
  if(!left.length){PF[C.cur]+=C.price;saveNow();crDlgClose();toast('你已經擁有 '+C.name+' 的全部物品，已退回 '+C.price+' '+CURI[C.cur],'#ffd23f');renderLUI();if(CRO)croEnd();else if(PANEL=='Pack')PRENDER.Pack();return}
- const id=left[Math.floor(Math.random()*left.length)];crGrant(C.kind,id);saveNow();renderLUI();crDlgClose();
+ // Light Fifty ("巴雷特"): a separate, exactly-1-in-1000 roll layered in front of the Skin Case's normal uniform
+ // pick — only when the player doesn't already own it (i.e. it's still in `left`). It never touches the relative
+ // odds of any other skin/wrap/finisher: when it doesn't hit (or isn't eligible), the uniform pick below runs over
+ // `left` with Light Fifty excluded, so the other items split the remaining probability exactly as before.
+ let id;const lf='sn_lightfifty';
+ if(cid==='scase'&&left.includes(lf)&&Math.random()<0.001)id=lf;
+ else{const pool2=cid==='scase'?left.filter(x=>x!==lf):left;id=(pool2.length?pool2:left)[Math.floor(Math.random()*(pool2.length?pool2.length:left.length))]}
+ crGrant(C.kind,id);saveNow();renderLUI();crDlgClose();
  const again=!!CRO;if(again)croClean();else{closePanels();CRS={x:P.x,y:P.y,z:P.z,myaw:P.myaw,hub:!LB.inRange,c0:{p:cam.position.clone(),q:cam.quaternion.clone()}};keys={};mL=mR=false;if(document.pointerLockElement)document.exitPointerLock();
   P.x=0;P.y=0;P.z=23.2;P.vx=P.vy=P.vz=0;P.sl=false;P.cr=false;P.dash=null;$('#leaveRange').style.display='none'}
  P.myaw=PI;if(P.tag)P.tag.visible=false;finPS();
