@@ -278,6 +278,60 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
 @media (max-width:820px),(max-height:520px){.wrt{font-size:17px}.wrt img{width:26px;height:26px}.wrp{font-size:12px;padding:1px 10px}.wtile{width:58px;height:58px}.wtile span{font-size:10px}.wtile .wti{font-size:24px;line-height:38px}#wrCtl{padding:4px 6px}#wrRow{gap:5px;margin-bottom:3px}#wrBack,#wrInv,#wrFav{padding:6px 8px;font-size:12px}#wrQ{padding:6px 8px;font-size:12px}#wrBuy{padding:3px 12px;font-size:13px}.wrw{display:none}}
 #wrStrip .ski{object-fit:contain;background:radial-gradient(#2c3354,#12141f);padding:4px 2px 12px}.wtile.sklk .ski{opacity:.32;filter:grayscale(.5)}.wtile .lkb{left:0;right:0;top:6px;text-align:center;font-size:26px;text-shadow:0 0 4px #000}
 #rwrow select{background:#222a4a;color:#fff;border:1px solid var(--ln);border-radius:8px;padding:6px 8px;font-size:14px}
+
+/* ===== crates / lootboxes ===== */
+#ltk{display:flex;align-items:center;gap:6px;margin-left:6px;padding:0 10px 0 10px;border-left:2px solid #ffffff22;cursor:pointer}
+#crDlg{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:#000000a8}
+.crbox{position:relative;background:#000;border:1px solid #ffffff16;border-radius:18px;width:min(560px,94vw);max-height:94vh;box-sizing:border-box;padding:14px 16px 20px;color:#fff;display:flex;flex-direction:column;box-shadow:0 12px 50px #000}
+.crbox.odds{width:min(640px,96vw);height:min(560px,94vh)}
+.crhd{display:flex;align-items:center;gap:10px;flex:none}
+.crview{width:96px;height:50px;border-radius:12px;background:linear-gradient(#6fd8ff,#1d86ff 55%,#0d62e6);border:0;box-shadow:inset 0 -4px 0 #0a3f9a,inset 0 2px 0 #ffffff70;color:#fff;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font:900 25px/1 system-ui;letter-spacing:1px;text-shadow:0 2px 0 #0a3f9a;flex:none}
+.crview small{font:900 10px/1 system-ui;color:#0a3f9a;text-shadow:none;letter-spacing:0;opacity:1;margin-bottom:1px}
+.crttl{flex:1;text-align:center;font:900 30px/1.1 system-ui;min-width:0}.crttl small{display:block;font:800 13px system-ui;color:#9fa6c8}
+.crbox.odds .crttl{text-align:left}.crbox.odds .crttl small{display:inline;margin-left:8px;font-size:15px}
+.crx{width:96px;height:50px;border-radius:12px;background:linear-gradient(#ff6464,#d42020);border:0;box-shadow:inset 0 -4px 0 #8a0f0f,inset 0 2px 0 #ffffff50;color:#fff;font:900 28px system-ui;padding:0;flex:none}
+.crart{position:relative;width:200px;height:160px;margin:8px auto 4px;flex:none}.crart img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 10px #000)}
+.crart b{position:absolute;left:0;right:0;bottom:-4px;text-align:center;font:900 42px system-ui;color:#fff;text-shadow:0 3px 0 #000,0 0 6px #000}
+.crbuy{display:block;margin:10px auto 0;min-width:210px;height:66px;border-radius:14px;background:linear-gradient(#fffa6a,#f6dc00 55%,#e8c000);border:0;box-shadow:inset 0 -5px 0 #b08a00,inset 0 2px 0 #fff9,0 3px 0 #0006;font:900 36px system-ui;color:#fff;text-shadow:0 2px 0 #a07c00,0 0 3px #a07c00;padding:0 26px;flex:none}
+.crbuy span{font-size:30px;text-shadow:none}.crbuy:active{transform:translateY(2px)}
+.crbuy.off{background:linear-gradient(#8d909c,#5e616d);box-shadow:inset 0 -5px 0 #393b45;text-shadow:0 2px 0 #333;font-size:22px;cursor:default}
+.crmsg{text-align:center;min-height:20px;font:800 14px/1.4 system-ui;margin-top:8px;color:#ffc93c}
+.crnote{text-align:center;color:#8d93ad;font:700 12.5px/1.6 system-ui;margin-top:4px}
+.crlink{background:none;border:0;color:#6fc3ff;font:800 12.5px system-ui;padding:0;text-decoration:underline}
+.crq{text-align:center;font:900 24px system-ui;margin:8px 0 4px}
+.crbtns{display:flex;gap:14px;justify-content:center;margin-top:12px}.crbtns button{min-width:150px;min-height:58px;font:900 22px system-ui;border-radius:14px}
+.crbtns #crNo{background:linear-gradient(#5a5f74,#3a3d4c);border:2px solid #25273a}
+.crgrp{display:flex;align-items:center;gap:10px;padding:6px 12px;margin-top:8px;border-radius:12px;background:linear-gradient(90deg,transparent,#ffffff0c 45%,#ffffff1c);cursor:pointer;flex:none}
+.crgrp .ar{font-size:14px;width:16px;color:#ddd}.crgrp img{width:54px;height:42px;object-fit:contain}.crgrp b{display:block;font:900 22px/1.1 system-ui}.crgrp span{font:700 13px system-ui;color:#ccd}
+.crlist{flex:1;min-height:0;overflow-y:auto;touch-action:pan-y;-webkit-overflow-scrolling:touch;padding-right:4px}
+.crrow{display:flex;align-items:center;gap:10px;padding:5px 12px 5px 28px;margin:5px 0;border-radius:12px;background:linear-gradient(90deg,transparent 30%,#ffffff12)}
+.crrow i{width:46px;height:46px;flex:none;border-radius:50%;border:3px solid;overflow:hidden;background:#1a1c28;display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+.crrow i img{width:100%;height:100%;object-fit:cover}.crrow i b{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:22px}
+.crrow .t{flex:1;min-width:0}.crrow .t b{display:block;font:900 20px/1.15 system-ui;text-shadow:0 1px 0 #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crrow .t span{font:700 12.5px system-ui;color:#e6e8f2}
+.crrow em{font:900 22px system-ui;font-style:normal;flex:none}.crrow.own{opacity:.38}.crrow.own em{font-size:15px;color:#9fa6c8}
+.crfoot{color:#7d8298;font:600 10.5px/1.45 system-ui;margin-top:8px;flex:none}
+.crcards{grid-template-columns:repeat(auto-fill,minmax(190px,1fr))}
+.crcd{cursor:pointer;text-align:center;background:radial-gradient(circle at 50% 30%,#3a3f62,#181b2c 70%)}.crcd:hover{border-color:#fff8}
+.crcd img{width:100%;height:120px;object-fit:contain;filter:drop-shadow(0 6px 8px #000a)}
+.crcd .crn{position:absolute;right:10px;top:8px;font:900 24px system-ui;color:#fff;text-shadow:0 2px 0 #000}
+.crpr{margin:8px auto 0;display:inline-block;min-width:110px;padding:6px 14px;border-radius:10px;background:linear-gradient(#fffa6a,#f2d000);box-shadow:inset 0 -3px 0 #b08a00;font:900 22px system-ui;color:#fff;text-shadow:0 2px 0 #a07c00}
+.crpr.off{background:linear-gradient(#8d909c,#5e616d);box-shadow:inset 0 -3px 0 #393b45;text-shadow:0 1px 0 #333;font-size:15px}
+.crob{width:100%;margin-top:8px;font-size:18px}
+.crempty{text-align:center;padding:40px 10px;font:900 20px system-ui;color:#cfd6ff;display:flex;flex-direction:column;align-items:center;gap:14px}.crempty button{min-width:180px;min-height:52px;font-size:19px}
+.pt .cell.tkc{border-color:#ffd23f66}.ptk{font:900 11.5px system-ui;color:#ffd23f}
+body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!important}
+#crOv{position:fixed;inset:0;z-index:26;display:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#crBan{position:absolute;left:50%;top:calc(12px + env(safe-area-inset-top,0px));transform:translateX(-50%);display:none;text-align:center;border:3px solid;border-radius:18px;padding:8px 34px 10px;min-width:min(420px,84vw);max-width:94vw;box-sizing:border-box;animation:crb .5s cubic-bezier(.2,1.5,.4,1);pointer-events:none}
+@keyframes crb{from{transform:translate(-50%,-40px) scale(.6);opacity:0}}
+#crBan .ty{font:800 14px system-ui;color:#dfe3ff;letter-spacing:1px}
+#crBan .nm{font:900 36px/1.15 system-ui;margin:2px 0}
+#crBan .rr{font:900 16px system-ui}
+#crBan .ok{font:800 13px system-ui;color:#7dff9a;margin-top:3px}
+#crBtns{position:absolute;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:none;justify-content:center;gap:14px}
+#crBtns button{min-width:170px;min-height:60px;font:900 22px system-ui;border-radius:14px;box-shadow:0 4px 0 #0008}
+#crSkip{position:absolute;left:0;right:0;bottom:calc(18px + env(safe-area-inset-bottom,0px));text-align:center;font:800 14px system-ui;color:#ffffffb0;text-shadow:0 1px 3px #000;pointer-events:none;animation:ushb 1.6s infinite}
+@media (max-height:430px){.crbox{padding:8px 12px 10px}.crview,.crx{width:80px;height:42px;font-size:21px}.crx{font-size:22px}.crttl{font-size:22px}.crttl small{font-size:11px}.crart{width:150px;height:100px;margin:2px auto}.crart b{font-size:30px}.crbuy{height:54px;font-size:28px;margin-top:4px}.crq{font-size:19px;margin:2px 0}.crbtns{margin-top:6px}.crbtns button{min-height:50px;font-size:19px}.crrow{padding:3px 8px 3px 14px;margin:3px 0}.crrow i{width:38px;height:38px}.crrow .t b{font-size:16px}.crrow .t span{font-size:11px}.crrow em{font-size:17px}.crgrp img{width:40px;height:32px}.crgrp b{font-size:17px}.crfoot{font-size:9.5px;margin-top:4px}
+ #crBan{padding:4px 22px 6px}#crBan .nm{font-size:25px}#crBan .ty,#crBan .rr{font-size:12px}#crBan .ok{font-size:11px;margin-top:1px}#crBtns button{min-height:50px;min-width:140px;font-size:19px}.crcd img{height:84px}}
 </style></head><body>
 <canvas id="c"></canvas>
 <div id="hud"><div id="paint"></div><div id="frz"></div><div id="brn"></div><div id="flash"></div><div id="fl"></div><div id="cross"></div><div id="hm">✕</div><div id="hp"><div id="hpb"></div></div><div id="altc"></div><div id="bar"><i></i></div><div id="am"></div><div id="wn"></div><div id="wl"></div><div id="sc"></div><div id="msg"></div><div id="feed"></div><div id="dead"></div><div id="kc"></div><div id="scope"><i></i></div><div id="tab"></div><div id="da">▲</div><div id="rb"></div><div id="elim"></div><div id="eye">👁 <b></b></div><div id="spi"></div><div id="chat"></div><input id="cin" maxlength="120" placeholder="輸入訊息，Enter 送出，Esc 取消" autocomplete="off"><div id="bs"></div><div id="swp">Switch Weapons <b>M</b></div></div>
@@ -349,13 +403,13 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
 </div></div>
 <div id="lui">
  <div id="llv" title="個人資料"><div class="nm"><span class="lvb" id="llvn">1</span><span id="llname">Player</span><span id="llsync" style="display:none;font:700 10px system-ui;margin-left:7px;vertical-align:middle"></span></div><div class="xpb2"><i id="llxp"></i></div><div style="font:700 11px system-ui;color:#c9cfee;margin-top:3px" id="llxpt"></div></div>
- <div id="lkeys" title="鑰匙">🔑 <span id="lkeyn">0</span><button id="lkeyAdd" title="取得鑰匙">+</button></div>
+ <div id="lkeys" title="鑰匙">🔑 <span id="lkeyn">0</span><button id="lkeyAdd" title="取得鑰匙">+</button><span id="ltk" title="皮膚票 Skin Tickets（從 Season Pass 取得）">🎫 <span id="ltkn">0</span></span></div>
  <div id="lgrant"></div>
  <div id="ltasks"><h4>📋 Daily Tasks</h4><div id="ltlist"></div><button id="toDuels">To Duels ➜</button></div>
  <div id="lplist"></div>
  <div id="lplay"><button id="playBtn">Play</button><button id="avBtn" title="隊伍 Party">🙂<span id="avPlus">+</span></button></div>
  <div id="lbar">
-  <button data-p="pack"><b>🎒</b>Backpack</button>
+  <button data-p="pack"><b>🎒</b>Backpack<span class="badge" id="bpbadge"></span></button>
   <button data-p="wpn"><b>🔫</b>Weapons</button>
   <button data-p="tasks"><b>📋</b>Tasks<span class="badge" id="tbadge"></span></button>
   <button data-p="shop"><b>🛒</b>Shop</button>
@@ -390,6 +444,8 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
 <div id="pProf" class="pnl"><div class="pcardx" id="profCard"></div><button class="pfx" data-x>✕</button></div>
 <div id="msel"><div id="mstop"><span class="lbl">🗺️ 選擇地圖 <small>Map Vote</small></span><div class="tbox"><svg viewBox="0 0 24 24"><path d="M5 2h14v2h-1.5c0 3.5-2.2 5.6-4 8 1.8 2.4 4 4.5 4 8H19v2H5v-2h1.5c0-3.5 2.2-5.6 4-8-1.8-2.4-4-4.5-4-8H5z"/></svg><span id="mstm">10.0</span></div><span class="md" id="msmd"></span></div><div id="mgrid"></div></div>
 <div id="toasts"></div>
+<div id="crOv"><div id="crBan"></div><div id="crBtns"></div><div id="crSkip">點一下畫面跳過 · Tap to skip</div></div>
+<div id="crDlg"><div class="crbox" id="crBox"></div></div>
 <div id="over" class="ov" style="display:none"><div class="card"><h1 id="ot"></h1><div id="orew"></div><div class="row"><button class="on" id="again">再來一場</button><button id="tomenu">回到選單</button></div></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -562,12 +618,12 @@ function model(w,wk,sk){const g=new T.Group();const S=sk&&SKBYID[sk]&&SKBYID[sk]
 // r: 0 common 1 rare 2 epic 3 legendary · p: key price · g: glow (emissive map) · how: how it is obtained
 const WTILE=.32,WRC=['#7ed957','#28d7e8','#a05cff','#ff4b4b'],WRN=['普通 Common','稀有 Rare','史詩 Epic','傳說 Legendary'];
 const WRAPS=[
-{id:'bc',zh:'藍色迷彩',en:'Blue Camo',r:0,p:0,how:'起始贈送'},{id:'fc',zh:'森林迷彩',en:'Forest Camo',r:0,p:8,how:'用鑰匙購買'},
-{id:'pk',zh:'粉紅可愛',en:'Cute Pink',r:0,p:10,how:'用鑰匙購買'},{id:'bs',zh:'藍鋼',en:'Bluesteel',r:0,p:15,how:'用鑰匙購買'},
-{id:'tv',zh:'電視雜訊',en:'TV Error',r:1,p:20,how:'用鑰匙購買'},{id:'nv',zh:'新星',en:'Nova',r:1,p:22,g:1,how:'用鑰匙購買'},{id:'cf',zh:'碳纖維',en:'Carbon Fiber',r:1,p:28,how:'用鑰匙購買'},
-{id:'ms',zh:'月光石',en:'Moonstone',r:2,p:45,how:'用鑰匙購買'},{id:'wb',zh:'蛛網',en:'Webbed',r:2,p:48,how:'用鑰匙購買'},{id:'mi',zh:'惡作劇',en:'Mischief',r:2,p:50,how:'用鑰匙購買'},
-{id:'ar',zh:'阿拉伯花紋',en:'Arabesque',r:2,p:55,how:'用鑰匙購買'},{id:'lv',zh:'熔岩',en:'Lava',r:2,p:60,g:1,how:'用鑰匙購買'},
-{id:'au',zh:'黃金熔流',en:'Aurum',r:3,p:100,g:1,how:'用鑰匙購買'},{id:'a5',zh:'A5 和牛',en:'A5',r:3,p:100,how:'用鑰匙購買'}];
+{id:'bc',zh:'藍色迷彩',en:'Blue Camo',r:0,p:0,how:'起始贈送'},{id:'fc',zh:'森林迷彩',en:'Forest Camo',r:0,p:8,how:'從包裝箱開出 Wrap Box'},
+{id:'pk',zh:'粉紅可愛',en:'Cute Pink',r:0,p:10,how:'從包裝箱開出 Wrap Box'},{id:'bs',zh:'藍鋼',en:'Bluesteel',r:0,p:15,how:'從包裝箱開出 Wrap Box'},
+{id:'tv',zh:'電視雜訊',en:'TV Error',r:1,p:20,how:'從包裝箱開出 Wrap Box'},{id:'nv',zh:'新星',en:'Nova',r:1,p:22,g:1,how:'從包裝箱開出 Wrap Box'},{id:'cf',zh:'碳纖維',en:'Carbon Fiber',r:1,p:28,how:'從包裝箱開出 Wrap Box'},
+{id:'ms',zh:'月光石',en:'Moonstone',r:2,p:45,how:'從包裝箱開出 Wrap Box'},{id:'wb',zh:'蛛網',en:'Webbed',r:2,p:48,how:'從包裝箱開出 Wrap Box'},{id:'mi',zh:'惡作劇',en:'Mischief',r:2,p:50,how:'從包裝箱開出 Wrap Box'},
+{id:'ar',zh:'阿拉伯花紋',en:'Arabesque',r:2,p:55,how:'從包裝箱開出 Wrap Box'},{id:'lv',zh:'熔岩',en:'Lava',r:2,p:60,g:1,how:'從包裝箱開出 Wrap Box'},
+{id:'au',zh:'黃金熔流',en:'Aurum',r:3,p:100,g:1,how:'從包裝箱開出 Wrap Box'},{id:'a5',zh:'A5 和牛',en:'A5',r:3,p:100,how:'從包裝箱開出 Wrap Box'}];
 const WBYID=Object.fromEntries(WRAPS.map(w=>[w.id,w]));
 const H3=h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)],PS=a=>a.map(([t,h])=>[t,H3(h)]);
 function mkRng(s){return()=>(s=(s*1664525+1013904223)>>>0)/4294967296}
@@ -627,18 +683,27 @@ function grantSkin(id){if(!PF||!SKBYID[id]||PF.skins.includes(id))return false;P
 // ===== kill finishers 死亡特效 (procedural three.js; cosmetic only) =====
 // r: 0 common 1 rare 2 epic · p: key price · D: effect length (s) · e/c: tile emoji + gradient. Each owned finisher works on ALL weapons; PF.fin={weapon:id|'?'}
 const FINS=[
-{id:'as',zh:'升天',en:'Ascend',r:1,p:30,D:3.4,e:'😇',c:['#fff2b0','#2aa6c8'],how:'用鑰匙購買'},
-{id:'dh',zh:'暗黑之心',en:'Darkheart',r:2,p:50,D:3.3,e:'💜',c:['#7a2cd6','#1a0630'],how:'用鑰匙購買'},
-{id:'ec',zh:'電擊',en:'Electrocute',r:2,p:55,D:2.6,e:'⚡',c:['#bfe6ff','#2a3a8a'],how:'用鑰匙購買'},
-{id:'ob',zh:'軌道轟炸',en:'Orbital Strike',r:2,p:60,D:3.2,e:'☄️',c:['#ffffff','#e02020'],how:'用鑰匙購買'},
-{id:'fz',zh:'冰凍',en:'Freeze',r:1,p:25,D:3.1,e:'🧊',c:['#c8f0ff','#2a8ad0'],how:'用鑰匙購買'},
-{id:'rs',zh:'流星升起',en:'Rising Star',r:1,p:35,D:3.2,e:'🌠',c:['#ffd23f','#ff6a1a'],how:'用鑰匙購買 · 賽季通行證風格'},
-{id:'sm',zh:'雪人化',en:'Snowmanify',r:1,p:28,D:3.7,e:'⛄',c:['#ffffff','#3a8ad0'],how:'用鑰匙購買'},
-{id:'ck',zh:'砸蛋糕',en:'Caked',r:0,p:12,D:3.3,e:'🎂',c:['#ffd0e6','#d94a9a'],how:'用鑰匙購買'},
-{id:'ch',zh:'粉筆輪廓',en:'Chalked',r:0,p:10,D:3.0,e:'🖍️',c:['#8a90b8','#20243a'],how:'用鑰匙購買'},
+{id:'as',zh:'升天',en:'Ascend',r:1,p:30,D:3.4,e:'😇',c:['#fff2b0','#2aa6c8'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'dh',zh:'暗黑之心',en:'Darkheart',r:2,p:50,D:3.3,e:'💜',c:['#7a2cd6','#1a0630'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'ec',zh:'電擊',en:'Electrocute',r:2,p:55,D:2.6,e:'⚡',c:['#bfe6ff','#2a3a8a'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'ob',zh:'軌道轟炸',en:'Orbital Strike',r:2,p:60,D:3.2,e:'☄️',c:['#ffffff','#e02020'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'fz',zh:'冰凍',en:'Freeze',r:1,p:25,D:3.1,e:'🧊',c:['#c8f0ff','#2a8ad0'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'rs',zh:'流星升起',en:'Rising Star',r:1,p:35,D:3.2,e:'🌠',c:['#ffd23f','#ff6a1a'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'sm',zh:'雪人化',en:'Snowmanify',r:1,p:28,D:3.7,e:'⛄',c:['#ffffff','#3a8ad0'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'ck',zh:'砸蛋糕',en:'Caked',r:0,p:12,D:3.3,e:'🎂',c:['#ffd0e6','#d94a9a'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'ch',zh:'粉筆輪廓',en:'Chalked',r:0,p:10,D:3.0,e:'🖍️',c:['#8a90b8','#20243a'],how:'從死亡特效箱開出 Finisher Pack'},
 {id:'fc',zh:'節慶彩帶',en:'Festive Confetti',r:0,p:0,D:2.9,e:'🎉',c:['#ff7a9c','#2ab87a'],how:'起始贈送'},
-{id:'hk',zh:'駭客入侵',en:'Hacked',r:0,p:15,D:2.9,e:'👾',c:['#20ff80','#04281a'],how:'用鑰匙購買'}];
+{id:'hk',zh:'駭客入侵',en:'Hacked',r:0,p:15,D:2.9,e:'👾',c:['#20ff80','#04281a'],how:'從死亡特效箱開出 Finisher Pack'}];
 const FBYID=Object.fromEntries(FINS.map(x=>[x.id,x]));
+// ===== lootboxes 開箱 (crates). Cosmetics come from crates: buying puts one in PF.crates={crateId:count} (the 🎒 backpack); opening grants a random item the player does NOT own yet (no duplicates).
+// To add a crate push {id,name,en,cur:'keys'|'tickets',price,kind:'wrap'|'fin'|'skin',pool:()=>[item ids]} (the 3D model comes from mkCrate(kind)).
+const CURI={keys:'🔑',tickets:'🎫'},CURN={keys:'鑰匙',tickets:'皮膚票'};
+const CRATES=[
+ {id:'wbox',name:'包裝箱',en:'Wrap Box',cur:'keys',price:5,kind:'wrap',pool:()=>WRAPS.filter(x=>x.id!='bc').map(x=>x.id)},
+ {id:'fpack',name:'死亡特效箱',en:'Finisher Pack',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.id!='fc').map(x=>x.id)},
+ {id:'scase',name:'皮膚箱',en:'Skin Case',cur:'tickets',price:10,kind:'skin',pool:()=>SKINS.map(x=>x.id)}];
+const CRBYID=Object.fromEntries(CRATES.map(c=>[c.id,c]));
+
 const cl01=x=>x<0?0:x>1?1:x,ph=(t,a,b)=>cl01((t-a)/(b-a)),ez=x=>x*x*(3-2*x),RR=(a,b)=>a+Math.random()*(b-a),RP=a=>a[Math.floor(Math.random()*a.length)],Z3=[0,0,0],Q=n=>Math.max(1,Math.round(n*(typeof MOBILE!=='undefined'&&MOBILE?.55:1)));
 const UB=new T.BoxGeometry(1,1,1),US=new T.SphereGeometry(1,14,10),UC=new T.CylinderGeometry(1,1,1,20),UCO=new T.CylinderGeometry(1,1,1,24,1,true),UK=new T.ConeGeometry(1,1,14),UT=new T.TorusGeometry(1,.3,8,22),UD=new T.CircleGeometry(1,40).rotateX(-PI/2),UR=new T.RingGeometry(.8,1,56).rotateX(-PI/2),UP=new T.PlaneGeometry(1,1);
 const USTAR=(()=>{const s=new T.Shape();for(let i=0;i<10;i++){const a=i*PI/5+PI/2,r=i%2?.46:1;i?s.lineTo(Math.cos(a)*r,Math.sin(a)*r):s.moveTo(Math.cos(a)*r,Math.sin(a)*r)}s.closePath();const g=new T.ExtrudeGeometry(s,{depth:.35,bevelEnabled:false});g.translate(0,0,-.175);return g})();
@@ -842,12 +907,11 @@ function finPrevFrame(dt){const c=$('#wcv'),w=c.clientWidth,h=c.clientHeight;if(
 function finEnter(){if(!PF||!WSEL)return;FINM=true;WRAPM=true;FQ='';$('#wrQ').value='';$('#wrQ').placeholder='搜尋名稱 Search by name';$('#pWpn').classList.add('wrapmode');FPREV=finCur();finPrevInit();finPrevGo();renderFin()}
 function finExit(){finPrevEnd();WRAPM=false;$('#pWpn').classList.remove('wrapmode');renderWpn()}
 function finPick(id){const w=WSEL,own=id===''||id=='?'||PF.fins.includes(id);FPREV=id;if(own){if(id)PF.fin[w.n]=id;else delete PF.fin[w.n];saveP()}finPrevGo();renderFin()}
-function buyFin(id){const x=FBYID[id];if(!x||!PF||PF.fins.includes(id))return false;if(PF.keys<x.p){toast('🔑 鑰匙不足');return false}PF.keys-=x.p;PF.fins.push(id);saveNow();toast('💀 已解鎖死亡特效：'+x.zh+' '+x.en,'#35d07f');snd(880,.12,.06,'sine');renderLUI();return true}
 function renderFin(){if(!FINM||!PF||!WSEL)return;$('#wrInv').style.display='';const w=WSEL,own=id=>PF.fins.includes(id),cur=finCur(),isF=!!FBYID[FPREV],X=isF?FBYID[FPREV]:null;
  $('#wkeys').textContent='　🔑 '+PF.keys;
- const nm=FPREV==''?'預設 None':FPREV=='?'?'隨機 Random':X.zh+' '+X.en,how=FPREV==''?'預設：屍體倒在地上':FPREV=='?'?'每次擊殺隨機使用一個已擁有的死亡特效':(own(FPREV)?(X.p?'已擁有 · '+X.how:X.how):'🔒 '+X.how+' · 🔑 '+X.p);
- $('#wrTitle').innerHTML='<div class="wrt">'+(isF?'<span class="wri">'+X.e+'</span>':'<span class="wri">'+(FPREV=='?'?'🔀':'⊘')+'</span>')+'<b>'+nm+'</b></div><div class="wrp">'+how+(isF?' · '+WRN[X.r]:'')+'</div>'+(isF&&!own(FPREV)?'<button class="gbtn" id="wrBuy"'+(PF.keys>=X.p?'':' disabled')+'>🔓 解鎖 🔑 '+X.p+'</button>':'')+'<div class="wrw">'+w.n+(cur&&cur!='?'&&FBYID[cur]?' · 已裝備 '+FBYID[cur].zh:cur=='?'?' · 已裝備 隨機':'')+'</div>';
- const bb=$('#wrBuy');if(bb)bb.onclick=()=>{if(buyFin(FPREV))finPick(FPREV)};
+ const nm=FPREV==''?'預設 None':FPREV=='?'?'隨機 Random':X.zh+' '+X.en,how=FPREV==''?'預設：屍體倒在地上':FPREV=='?'?'每次擊殺隨機使用一個已擁有的死亡特效':(own(FPREV)?(X.p?'已擁有 · '+X.how:X.how):'🔒 從死亡特效箱開出');
+ $('#wrTitle').innerHTML='<div class="wrt">'+(isF?'<span class="wri">'+X.e+'</span>':'<span class="wri">'+(FPREV=='?'?'🔀':'⊘')+'</span>')+'<b>'+nm+'</b></div><div class="wrp">'+how+(isF?' · '+WRN[X.r]:'')+'</div>'+(isF&&!own(FPREV)?'<button class="gbtn" id="wrBuy">🛒 前往商店</button>':'')+'<div class="wrw">'+w.n+(cur&&cur!='?'&&FBYID[cur]?' · 已裝備 '+FBYID[cur].zh:cur=='?'?' · 已裝備 隨機':'')+'</div>';
+ const bb=$('#wrBuy');if(bb)bb.onclick=()=>crGo('fpack');
  $('#wrInv').innerHTML='▶ 重播 Replay';$('#wrInv').className='';const fv=isF&&PF.finFav.includes(FPREV);$('#wrFav').innerHTML=(fv?'♥':'♡')+' 最愛 Favorited';$('#wrFav').className=fv?'on':'';$('#wrFav').disabled=!isF;
  const q=FQ.trim().toLowerCase();let L=FINS.filter(x=>!q||(x.zh+' '+x.en).toLowerCase().includes(q));L=L.filter(x=>PF.finFav.includes(x.id)).concat(L.filter(x=>!PF.finFav.includes(x.id)));
  const tile=(id,img,name,col,fav,lock)=>'<button class="wtile'+(FPREV===id?' sel':'')+'" data-w="'+id+'" style="border-color:'+col+'">'+img+'<span>'+name+'</span>'+(cur===id?'<em class="ck">✔</em>':'')+(fav?'<em class="hf">♥</em>':'')+(lock?'<em class="lkx">🔒</em>':'')+'</button>';
@@ -1295,7 +1359,7 @@ animBody(b,dt,mvd)}
 function pupd(dt){if(!P.alive){P.zoom=false;const t=spec();if(t){cam.position.set(t.x,t.y+1.75,t.z);cam.rotation.set(t.pitch||0,t.yaw,0)}else cam.position.set(P.x,P.y+.4,P.z);return}
 if(AUTOP&&st!='lobby'){cam.position.set(P.x,P.y+1.6,P.z);cam.rotation.set(P.pitch||0,P.yaw,0);cam.updateMatrixWorld();return}
 if(RAON)keys.KeyW=keys.KeyA=keys.KeyS=keys.KeyD=keys.Space=0;
-const tp=hubTP();if(tp){P.yaw=LBC.yaw;P.pitch=0;if(PANEL||RAON){keys.KeyW=keys.KeyA=keys.KeyS=keys.KeyD=0}}const f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0),og=onGround(P);let wx=0,wz=0;if(P.wasG&&!og){P.vx+=P.gwx||0;P.vz+=P.gwz||0}
+const tp=hubTP();if(tp){P.yaw=LBC.yaw;P.pitch=0;if(PANEL||RAON||CRO){keys.KeyW=keys.KeyA=keys.KeyS=keys.KeyD=0;if(CRO)keys.Space=keys.ShiftLeft=0}}const f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0),og=onGround(P);let wx=0,wz=0;if(P.wasG&&!og){P.vx+=P.gwx||0;P.vz+=P.gwz||0}
 const act=st=='play'||st=='end'||st=='lobby';if(!act&&P.sl)P.sl=false;
 if(act){P.scd-=dt;const n=Math.hypot(f,s)||1,air=false,spd=(keys.ShiftLeft&&!P.cr?8:6)/n*dt*spdMul(P)*(air?.35:1)*(P.cr?.5:1);
  wx=(s*Math.cos(P.yaw)-f*Math.sin(P.yaw))*spd;wz=(-s*Math.sin(P.yaw)-f*Math.cos(P.yaw))*spd;
@@ -1306,7 +1370,7 @@ if(act){P.scd-=dt;const n=Math.hypot(f,s)||1,air=false,spd=(keys.ShiftLeft&&!P.c
  if(P.dash){const D=P.dash;D.t-=dt;if(!P.sl){wx=0;wz=0}wx+=D.x*D.v*dt;wz+=D.z*D.v*dt;if(D.t<=0){P.vx+=D.x*D.v*.5;P.vz+=D.z*D.v*.5;P.lag=D.lag;P.dash=null}}}
 P.gwx=og&&!P.dash?wx/dt:0;P.gwz=og&&!P.dash?wz/dt:0;P.wasG=og;const px=P.x,pz=P.z;phys(P,dt,wx,wz);if(P.sl&&Math.hypot(P.x-px,P.z-pz)<P.sv*dt*.3){P.sl=false;P.scd=.4}
 aimAssist(dt);P.eh+=((P.sl?.9:P.cr?1.15:1.75)-P.eh)*Math.min(1,12*dt);cam.position.set(P.x,P.y+P.eh,P.z);cam.rotation.set(P.pitch,P.yaw,0);P.shk=Math.max(0,(P.shk||0)-dt*2.5);if(P.shk>0&&(!PF||PF.set.shake)){const q=P.shk*P.shk*.035;cam.rotation.x+=(rnd()-.5)*q;cam.rotation.y+=(rnd()-.5)*q;cam.rotation.z=(rnd()-.5)*q*.6}cam.updateMatrixWorld();
-if(tp){tpCam(dt,P.x-px,P.z-pz);animBody(P,dt,Math.hypot(P.x-px,P.z-pz));useW(P,dt,false,false);return}
+if(tp){tpCam(dt,P.x-px,P.z-pz);animBody(P,dt,Math.hypot(P.x-px,P.z-pz));useW(P,dt,false,false);if(CRO)croFrame(dt);return}
 const qmA=P.qmT>0&&P.L[2].alt;if(qmA){const w2=P.L[2],dn=(st=='play'||st=='end'||st=='lobby')&&mR;if(dn&&!P.qpal){w2.alt(P,w2,P.S[2],true);if(NET)netFire('a',2,null,1);P.qmT=Math.max(P.qmT,.45)}else if(!dn&&P.qpal){w2.alt(P,w2,P.S[2],false);if(NET)netFire('a',2,null,0)}P.qpal=dn;P.S[2].acd=Math.max(0,(P.S[2].acd||0)-dt)}else P.qpal=false;
 useW(P,dt,(st=='play'||st=='end'||st=='lobby')&&(mL||mobileAutoFire(P)),!qmA&&(st=='play'||st=='end'||st=='lobby')&&mR)}
 // ---- per-account assist settings (-1 = device default: ON for touch, OFF for mouse) ----
@@ -1650,7 +1714,7 @@ $('#tomenu').onclick=()=>{$('#over').style.display='none';if(NET)netLeave();ente
 $('#pause').onclick=e=>{if(e.target.id=='pleave'){netLeave();$('#pause').style.display='none';enterLobby();return}paused=false;$('#pause').style.display='none';lock()};
 document.addEventListener('pointerlockchange',()=>{if(!MOBILE&&document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end'||(st=='lobby'&&lobbyFP()))&&!chatOn&&!PANEL&&!(NET&&NET.midLo)){paused=true;mL=mR=false;keys={};$('#pzt').textContent=NET?'線上對戰進行中（遊戲不會暫停）':'已暫停';$('#pleave').style.display=NET?'inline-block':'none';$('#pause').style.display='flex'}});
 document.addEventListener('pointerlockerror',()=>{fb=true;paused=false;$('#pause').style.display='none'});
-const live=()=>P&&!paused&&!RAON&&(st=='play'||st=='count'||st=='end'||st=='lobby');
+const live=()=>P&&!paused&&!RAON&&!CRO&&(st=='play'||st=='count'||st=='end'||st=='lobby');
 function applyLook(dx,dy,tch){if(!live()||!P.alive||P.frz>0||PANEL)return;if(hubTP()){camRot(dx/TOUCH_LOOK_SENS,dy/TOUCH_LOOK_SENS,tch);return}P.lookT=performance.now();const S=PF?PF.set:{ms:1,ts:1,ads:1},m=tch?S.ts:S.ms,k=(P.zoom?.0009*S.ads:.0022)*m*(P.aaSlow&&aaOn()?.6:1);P.yaw-=dx*k;if(P.sl){const a=-dx*k*.4,c=Math.cos(a),sn=Math.sin(a),x=P.sdx;P.sdx=x*c+P.sdz*sn;P.sdz=-x*sn+P.sdz*c}P.pitch=Math.max(-1.5,Math.min(1.5,P.pitch-dy*k))}
 addEventListener('mousemove',e=>{if(hubTP()){if(mR&&!PANEL&&!paused)camRot(e.movementX,e.movementY);return}applyLook(e.movementX,e.movementY)});
 addEventListener('mousedown',e=>{if(!live())return;if(!P.alive){sp++;return}if(e.button==0)mL=true;if(e.button==2)mR=true});
@@ -1895,8 +1959,8 @@ function sha256js(str){const K=SHA_K.K,by=new TextEncoder().encode(str),l=by.len
   H=[a,b,c,d,e,f,g,h].map((v,j)=>(v+H[j])|0)}
  return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('')}
 async function pwHash(u,pw,salt){const s=salt+'|'+u+'|'+pw;try{if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}}catch(_){}return sha256js(s)}
-function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_W.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],seenUpd:[],claimedUpd:[],wraps:['bc'],wrap:{},wrapInv:{},wrapFav:[],fins:['fc'],fin:{},finFav:[],skins:[],skin:{},skinFav:[],set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1}}}
-function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_W.slice();for(const k of['seenUpd','claimedUpd','wraps','wrapFav','fins','finFav','skins','skinFav'])if(!Array.isArray(p[k]))p[k]=[];for(const k of['wrap','wrapInv','fin','skin'])if(Array.isArray(p[k])||!p[k])p[k]={};
+function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_W.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],seenUpd:[],claimedUpd:[],wraps:['bc'],wrap:{},wrapInv:{},wrapFav:[],fins:['fc'],fin:{},finFav:[],skins:[],skin:{},skinFav:[],tickets:0,crates:{},passT:[],set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1}}}
+function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_W.slice();for(const k of['seenUpd','claimedUpd','wraps','wrapFav','fins','finFav','skins','skinFav','passT'])if(!Array.isArray(p[k]))p[k]=[];for(const k of['wrap','wrapInv','fin','skin','crates'])if(Array.isArray(p[k])||!p[k])p[k]={};p.tickets=Math.max(0,Math.floor(+p.tickets||0));for(const k in p.crates){const v=Math.floor(+p.crates[k]||0);if(!CRBYID[k]||!(v>0))delete p.crates[k];else p.crates[k]=v}p.passT=p.passT.filter((x,i,a)=>typeof x=='number'&&a.indexOf(x)===i);
  p.wraps=p.wraps.filter((x,i,a)=>typeof x=='string'&&WBYID[x]&&a.indexOf(x)===i);if(!p.wraps.includes('bc'))p.wraps.unshift('bc');p.wrapFav=p.wrapFav.filter(x=>WBYID[x]);for(const n in p.wrap){const v=p.wrap[n];if(v!=='?'&&!p.wraps.includes(v))delete p.wrap[n]}
  p.fins=p.fins.filter((x,i,a)=>typeof x=='string'&&FBYID[x]&&a.indexOf(x)===i);if(!p.fins.includes('fc'))p.fins.unshift('fc');p.finFav=p.finFav.filter(x=>FBYID[x]);for(const n in p.fin){const v=p.fin[n];if(v!=='?'&&!p.fins.includes(v))delete p.fin[n]}if(p.codes.includes('deathsmilexux'))for(const x of FINS)if(!p.fins.includes(x.id))p.fins.push(x.id);
  p.skins=p.skins.filter((x,i,a)=>typeof x=='string'&&SKBYID[x]&&a.indexOf(x)===i);if(p.codes.includes('deathsmilexux'))for(const x of SKINS)if(!p.skins.includes(x.id))p.skins.push(x.id);p.skinFav=p.skinFav.filter(x=>SKBYID[x]);for(const n in p.skin){const v=p.skin[n];if(v!=='?'&&!(SKBYID[v]&&SKBYID[v].weapon==n&&p.skins.includes(v)))delete p.skin[n]}return p}
@@ -1985,7 +2049,7 @@ async function cloudResume(cs,rem){const S=Object.assign(newCloud(CLOUD),{uid:cs
  catch(e){if(e&&e.net){const c=ccGet()[S.uid];if(c&&c.prof){cloudBegin(S,c.name||S.name,c.prof,c.synced||0,false,0,'⚠️ 目前無法連線雲端，先用這台裝置上的進度，連線後會自動同步');setSync('off');clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>cloudFlush(),5000);return}
    $('#amsg').textContent=fbMsg(e);return}
   cloudForget();$('#amsg').textContent=e&&/TOKEN|USER_/.test(e.code||'')?'登入已過期，請重新登入':fbMsg(e)}}
-async function cloudPull(){const S=CLOUD;if(!inCloud()||S.dirty||S.busy||st!=='lobby'||PANEL||Date.now()-S.pullT<15000)return;S.pullT=Date.now();
+async function cloudPull(){const S=CLOUD;if(!inCloud()||S.dirty||S.busy||st!=='lobby'||PANEL||CRO||Date.now()-S.pullT<15000)return;S.pullT=Date.now();
  try{const d=await fsGet(S);if(S!==CLOUD||!inCloud()||S.dirty||S.busy||st!=='lobby'||PANEL||!d||!d.prof||d.updated<=S.synced)return;
   PF=fixProf(d.prof);S.synced=S.upd=d.updated;ccPut(S.uid,{name:S.name,prof:PF,updated:d.updated,synced:d.updated});applyProfile();if(typeof renderLUI=='function')renderLUI();setSync('ok');toast('☁️ 已載入其他裝置的最新進度','#4fc3f7')}catch(_){}}
 addEventListener('pagehide',()=>{if(inCloud()&&CLOUD.dirty)cloudFlush(true)});
@@ -2122,6 +2186,12 @@ var UPDATES=[
  {e:'💀',h:280,t:'死亡特效 Finisher 登場！',b:['用某把武器擊倒敵人時，他的身體會播放你替這把武器裝備的死亡特效，而不是直接倒在地上','每把武器可以各自裝備不同的特效，預設就是原本的倒地','不血腥：全部都是程序化的特效，不需要下載任何東西','看到最後一頁可以領取 10 把鑰匙 🔑']},
  {e:'✨',h:45,t:'11 款死亡特效',b:['升天、暗黑之心、電擊、軌道轟炸','冰凍、流星升起、雪人化','砸蛋糕、粉筆輪廓、節慶彩帶（免費送給每位玩家）、駭客入侵','邊框顏色代表稀有度：綠＝普通、藍＝稀有、紫＝史詩'],ill:()=>'<div class="uwr">'+FINS.slice(0,6).map(x=>'<i style="background:linear-gradient(135deg,'+x.c[0]+','+x.c[1]+');border-color:'+WRC[x.r]+';font-style:normal;text-align:center;line-height:40px;font-size:24px">'+x.e+'</i>').join('')+'</div><div class="uwr">'+FINS.slice(6).map(x=>'<i style="background:linear-gradient(135deg,'+x.c[0]+','+x.c[1]+');border-color:'+WRC[x.r]+';font-style:normal;text-align:center;line-height:40px;font-size:24px">'+x.e+'</i>').join('')+'</div>'},
  {e:'🎮',h:180,t:'怎麼取得與裝備',b:['Weapons → 選一把武器 → 💀 死亡特效：點特效會立刻播放預覽，沒買的也能先看','買了之後所有武器都能用；也可以選「隨機」或加入最愛','商店新增 Finishers 分頁，用鑰匙購買','射擊場選武器時，可以選「試用死亡特效」，再去打移動靶看看','線上對戰時，其他玩家也看得到你的特效']},
+ {e:'🙏',h:120,t:'感謝你的支持！',b:['謝謝你一起玩、一起測試，也歡迎繼續給我們回饋','點下面的按鈕，領取這次更新的獎勵']}]},
+{ver:'2026.10.26b',title:'武器皮膚＋開箱 登場',rewardKeys:10,slides:[
+ {e:'🔫',h:30,t:'突擊步槍新造型＋3 款皮膚',b:['Assault Rifle 換成全新的 FN SCAR 預設外型','新增 3 款武器皮膚：AK-47（稀有）、Augmented Rifle（史詩）、Drum Gun（史詩）','皮膚會改變武器的 3D 外型，數值完全不變；Weapons → 🎨 皮膚 可以裝備、加入最愛或選隨機','射擊場選武器時可以免費試用全部皮膚','看到最後一頁可以領取 10 把鑰匙 🔑'],ill:()=>'<div class="uwr">'+[''].concat(SKINS.map(x=>x.id)).map(i=>'<img src="'+skinIcon(WBN('Assault Rifle'),i)+'" style="width:84px;height:50px;object-fit:contain;background:#ffffff14;border-radius:10px;border:2px solid '+(i?SKRC[SKBYID[i].rarity]:'#666')+'">').join('')+'</div>'},
+ {e:'📦',h:320,t:'包裝和死亡特效改由開箱取得',b:['商店新增「📦 Crates 箱子」分頁，不再直接用鑰匙購買包裝和死亡特效','包裝箱 Wrap Box 5 🔑 · 死亡特效箱 Finisher Pack 10 🔑 · 皮膚箱 Skin Case 10 🎫','保證不會開到重複：只會開出你還沒擁有的物品；按 VIEW 可以看到每個物品的機率','你已經擁有的包裝和死亡特效都還在，不會消失'],ill:()=>'<div class="uwr">'+CRATES.map(c=>'<img src="'+crArt(c.id)+'" style="width:86px;height:70px;object-fit:contain">').join('')+'</div>'},
+ {e:'🎒',h:200,t:'背包與開箱動畫',b:['買下的箱子會先放進 🎒 背包，背包圖示上的紅色數字代表還有幾個箱子沒開','在背包點箱子 → 打開：箱子會從你的角色身上彈出來、在地上彈跳、搖晃，然後打開','點一下畫面可以跳過動畫；背包裡還有同一種箱子時，可以直接按「再開一個」','開到的東西會立刻存進你的收藏，就算中途關掉也不會不見']},
+ {e:'🎫',h:45,t:'皮膚票 Skin Tickets',b:['新的貨幣：皮膚票 🎫，顯示在畫面上方鑰匙的旁邊','皮膚票只能從 🎫 Season Pass 通行證的免費獎勵取得（Lv 3、6、10、15、20、25、30）','集滿 10 張就能買一個皮膚箱','以前已經超過這些等級的玩家，也可以回到通行證補領皮膚票']},
  {e:'🙏',h:120,t:'感謝你的支持！',b:['謝謝你一起玩、一起測試，也歡迎繼續給我們回饋','點下面的按鈕，領取這次更新的獎勵']}]}];
 function updLatest(){return UPDATES&&UPDATES[UPDATES.length-1]}
 function updUnclaimed(){const U=updLatest();return!!(U&&PF&&U.rewardKeys>0&&!PF.claimedUpd.includes(U.ver))}
@@ -2148,12 +2218,11 @@ function wrapSetPrev(id){WPREV=id;WPK=id=='?'?(PF.wraps.length?PF.wraps[Math.flo
 function wrapEnter(){if(!PF||!WSEL||WSEL.n=='Fists')return;WRAPM=true;WQ='';$('#wrQ').value='';$('#pWpn').classList.add('wrapmode');wrapSetPrev(wrapCur());renderWrap()}
 function wrapExit(){WRAPM=false;$('#pWpn').classList.remove('wrapmode');renderWpn()}
 function wrapPick(id){const w=WSEL;wrapSetPrev(id);if(id===''||id=='?'||PF.wraps.includes(id)){if(id)PF.wrap[w.n]=id;else delete PF.wrap[w.n];saveP();lobbyLoadoutRefresh()}renderWrap()}
-function buyWrap(id){const x=WBYID[id];if(!x||!PF||PF.wraps.includes(id))return false;if(PF.keys<x.p){toast('🔑 鑰匙不足');return false}PF.keys-=x.p;PF.wraps.push(id);saveNow();toast('🧻 已解鎖包裝：'+x.zh+' '+x.en,'#35d07f');snd(880,.12,.06,'sine');renderLUI();return true}
 function renderWrap(){if(SKNM)return renderSkin();if(FINM)return renderFin();$('#wrInv').style.display='';if(!WRAPM||!PF||!WSEL)return;const w=WSEL,own=id=>PF.wraps.includes(id),cur=wrapCur(),inv=!!PF.wrapInv[w.n],isW=!!WBYID[WPREV],X=isW?WBYID[WPREV]:null;
  $('#wkeys').textContent='　🔑 '+PF.keys;
- const nm=WPREV==''?'無 None':WPREV=='?'?'隨機 Random':X.zh+' '+X.en,how=WPREV==''?'不套用包裝':WPREV=='?'?'每場對戰隨機使用一個已擁有的包裝':(own(WPREV)?(X.p?'已擁有 · '+X.how:X.how):'🔒 '+X.how+' · 🔑 '+X.p);
- $('#wrTitle').innerHTML='<div class="wrt">'+(isW?'<img src="'+wrapSwatch(WPREV)+'" style="border-color:'+WRC[X.r]+'">':'<span class="wri">'+(WPREV=='?'?'🔀':'⊘')+'</span>')+'<b>'+nm+'</b></div><div class="wrp">'+how+'</div>'+(isW&&!own(WPREV)?'<button class="gbtn" id="wrBuy"'+(PF.keys>=X.p?'':' disabled')+'>🔓 解鎖 🔑 '+X.p+'</button>':'')+'<div class="wrw">'+w.n+(cur&&cur!='?'&&WBYID[cur]?' · 已裝備 '+WBYID[cur].zh:cur=='?'?' · 已裝備 隨機':'')+'</div>';
- const bb=$('#wrBuy');if(bb)bb.onclick=()=>{if(buyWrap(WPREV))wrapPick(WPREV)};
+ const nm=WPREV==''?'無 None':WPREV=='?'?'隨機 Random':X.zh+' '+X.en,how=WPREV==''?'不套用包裝':WPREV=='?'?'每場對戰隨機使用一個已擁有的包裝':(own(WPREV)?(X.p?'已擁有 · '+X.how:X.how):'🔒 從包裝箱開出');
+ $('#wrTitle').innerHTML='<div class="wrt">'+(isW?'<img src="'+wrapSwatch(WPREV)+'" style="border-color:'+WRC[X.r]+'">':'<span class="wri">'+(WPREV=='?'?'🔀':'⊘')+'</span>')+'<b>'+nm+'</b></div><div class="wrp">'+how+'</div>'+(isW&&!own(WPREV)?'<button class="gbtn" id="wrBuy">🛒 前往商店</button>':'')+'<div class="wrw">'+w.n+(cur&&cur!='?'&&WBYID[cur]?' · 已裝備 '+WBYID[cur].zh:cur=='?'?' · 已裝備 隨機':'')+'</div>';
+ const bb=$('#wrBuy');if(bb)bb.onclick=()=>crGo('wbox');
  $('#wrInv').innerHTML=(inv?'☑':'☐')+' 反轉 Inverted';$('#wrInv').className=inv?'on':'';const fv=isW&&PF.wrapFav.includes(WPREV);$('#wrFav').innerHTML=(fv?'♥':'♡')+' 最愛 Favorited';$('#wrFav').className=fv?'on':'';$('#wrFav').disabled=!isW;
  const q=WQ.trim().toLowerCase();let L=WRAPS.filter(x=>!q||(x.zh+' '+x.en).toLowerCase().includes(q));L=L.filter(x=>PF.wrapFav.includes(x.id)).concat(L.filter(x=>!PF.wrapFav.includes(x.id)));
  const tile=(id,img,name,col,fav,lock)=>'<button class="wtile'+(WPREV===id?' sel':'')+'" data-w="'+id+'" style="border-color:'+col+'">'+img+'<span>'+name+'</span>'+(cur===id?'<em class="ck">✔</em>':'')+(fav?'<em class="hf">♥</em>':'')+(lock?'<em class="lkx">🔒</em>':'')+'</button>';
@@ -2177,9 +2246,9 @@ function skinExit(){SKNM=false;WRAPM=false;$('#pWpn').classList.remove('wrapmode
 function skinPick(id){const w=WSEL;skinSet(id);if(id===''||id=='?'||PF.skins.includes(id)){if(id)PF.skin[w.n]=id;else delete PF.skin[w.n];saveP();lobbyLoadoutRefresh()}renderSkin()}
 function renderSkin(){if(!SKNM||!PF||!WSEL)return;const w=WSEL,own=id=>PF.skins.includes(id),cur=skCur(),isS=!!SKBYID[SKPREV],X=isS?SKBYID[SKPREV]:null;
  $('#wkeys').textContent='　🔑 '+PF.keys;$('#wrInv').style.display='none';
- const nm=SKPREV==''?'預設 None':SKPREV=='?'?'隨機 Random':X.name,how=SKPREV==''?'預設外觀':SKPREV=='?'?'每場對戰隨機使用一個已擁有的皮膚':(own(SKPREV)?X.how:'🔒 '+X.how);
- $('#wrTitle').innerHTML='<div class="wrt">'+(isS?'<img src="'+skinIcon(w,SKPREV)+'" style="border-color:'+SKRC[X.rarity]+';object-fit:contain;background:#161826">':'<span class="wri">'+(SKPREV=='?'?'🔀':'⊘')+'</span>')+'<b>'+nm+'</b></div><div class="wrp">'+how+(isS?' · '+SKRN[X.rarity]:'')+'</div><div class="wrw">'+w.n+(cur&&cur!='?'&&SKBYID[cur]?' · 已裝備 '+SKBYID[cur].name:cur=='?'?' · 已裝備 隨機':'')+'</div>';
- const fv=isS&&PF.skinFav.includes(SKPREV);$('#wrFav').innerHTML=(fv?'♥':'♡')+' 最愛 Favorited';$('#wrFav').className=fv?'on':'';$('#wrFav').disabled=!isS;
+ const nm=SKPREV==''?'預設 None':SKPREV=='?'?'隨機 Random':X.name,how=SKPREV==''?'預設外觀':SKPREV=='?'?'每場對戰隨機使用一個已擁有的皮膚':(own(SKPREV)?X.how:'🔒 從皮膚箱開出');
+ $('#wrTitle').innerHTML='<div class="wrt">'+(isS?'<img src="'+skinIcon(w,SKPREV)+'" style="border-color:'+SKRC[X.rarity]+';object-fit:contain;background:#161826">':'<span class="wri">'+(SKPREV=='?'?'🔀':'⊘')+'</span>')+'<b>'+nm+'</b></div><div class="wrp">'+how+(isS?' · '+SKRN[X.rarity]:'')+'</div>'+(isS&&!own(SKPREV)?'<button class="gbtn" id="wrBuy">🛒 前往商店</button>':'')+'<div class="wrw">'+w.n+(cur&&cur!='?'&&SKBYID[cur]?' · 已裝備 '+SKBYID[cur].name:cur=='?'?' · 已裝備 隨機':'')+'</div>';
+ {const bb=$('#wrBuy');if(bb)bb.onclick=()=>crGo('scase')}const fv=isS&&PF.skinFav.includes(SKPREV);$('#wrFav').innerHTML=(fv?'♥':'♡')+' 最愛 Favorited';$('#wrFav').className=fv?'on':'';$('#wrFav').disabled=!isS;
  const q=SKQ.trim().toLowerCase();let L=skinsFor(w.n).filter(x=>!q||x.name.toLowerCase().includes(q));L=L.filter(x=>PF.skinFav.includes(x.id)).concat(L.filter(x=>!PF.skinFav.includes(x.id)));
  const tile=(id,img,name,col,fav,lock)=>'<button class="wtile'+(SKPREV===id?' sel':'')+(lock?' sklk':'')+'" data-w="'+id+'" style="border-color:'+col+'">'+img+'<span>'+name+'</span>'+(cur===id?'<em class="ck">✔</em>':'')+(fav?'<em class="hf">♥</em>':'')+(lock?'<em class="lkb">🔒</em>':'')+'</button>';
  let h=q?'':tile('',(PF.skin[w.n]?'':'')+'<img class="ski" src="'+skinIcon(w,'')+'">','預設 None','#666',0,0)+tile('?','<b class="wti">🔀</b>','隨機 Random','#666',0,0);
@@ -2187,16 +2256,16 @@ function renderSkin(){if(!SKNM||!PF||!WSEL)return;const w=WSEL,own=id=>PF.skins.
  const s0=$('#wrStrip'),sl=s0.scrollLeft;s0.innerHTML=h||'<div class="note" style="padding:14px">找不到符合的皮膚</div>';s0.scrollLeft=sl}
 // ---- lobby HUD ----
 var LUIt=0;
-function syncLUI(){{const lr=st=='lobby'&&LB.inRange&&!PANEL?'block':'none',el2=$('#leaveRange');if(el2.style.display!==lr)el2.style.display=lr}const on=st=='lobby'&&!!PF&&!(typeof LB!=='undefined'&&LB.inRange);const el=$('#lui');if(el.style.display!==(on?'block':'none')){el.style.display=on?'block':'none';if(on)renderLUI()}updAuto(on);document.body.classList.toggle('lbhub',on);const inr=st=='lobby'&&LB.inRange;document.body.classList.toggle('inrange',inr);{const lp=$('#lprompt'),d=st=='lobby'&&!PANEL&&!RAON?'block':'none';if(lp.style.display!==d)lp.style.display=d}}
-function claimable(){if(!PF)return{t:0,p:0};dailyReset();let t=0;for(const d of DAILY)if(PF.daily[d.k]>=d.g&&!PF.daily.cl.includes(d.k))t++;if(PF.login.cl!==today())t++;for(const c of CONTRACTS){const s=ctState(c);if(s.p>=s.g)t++}let p=0;for(let l=1;l<=Math.min(PF.lv,PASS_MAX);l++)if(!PF.pass.includes(l))p++;return{t,p}}
-function renderLUI(){if(!PF)return;const r=xpReq(PF.lv);$('#llvn').textContent=PF.lv;$('#llname').textContent=accName();$('#llxp').style.width=Math.min(100,PF.xp/r*100)+'%';$('#llxpt').textContent='Lv '+PF.lv+' · '+PF.xp+' / '+r+' XP';$('#lkeyn').textContent=PF.keys;
+function syncLUI(){{const lr=st=='lobby'&&LB.inRange&&!PANEL?'block':'none',el2=$('#leaveRange');if(el2.style.display!==lr)el2.style.display=lr}if(CRO&&st!=='lobby')croEnd();const hub=st=='lobby'&&!!PF&&!(typeof LB!=='undefined'&&LB.inRange),on=hub&&!CRO;const el=$('#lui');if(el.style.display!==(on?'block':'none')){el.style.display=on?'block':'none';if(on)renderLUI()}updAuto(on);document.body.classList.toggle('lbhub',hub);const inr=st=='lobby'&&LB.inRange;document.body.classList.toggle('inrange',inr);{const lp=$('#lprompt'),d=st=='lobby'&&!PANEL&&!RAON&&!CRO?'block':'none';if(lp.style.display!==d)lp.style.display=d}}
+function claimable(){if(!PF)return{t:0,p:0};dailyReset();let t=0;for(const d of DAILY)if(PF.daily[d.k]>=d.g&&!PF.daily.cl.includes(d.k))t++;if(PF.login.cl!==today())t++;for(const c of CONTRACTS){const s=ctState(c);if(s.p>=s.g)t++}let p=0;for(let l=1;l<=Math.min(PF.lv,PASS_MAX);l++)if(!PF.pass.includes(l)||(passT(l)&&!PF.passT.includes(l)))p++;return{t,p}}
+function renderLUI(){if(!PF)return;const r=xpReq(PF.lv);$('#llvn').textContent=PF.lv;$('#llname').textContent=accName();$('#llxp').style.width=Math.min(100,PF.xp/r*100)+'%';$('#llxpt').textContent='Lv '+PF.lv+' · '+PF.xp+' / '+r+' XP';$('#lkeyn').textContent=PF.keys;$('#ltkn').textContent=PF.tickets;{const bp=$('#bpbadge'),n=crTot();bp.style.display=n?'block':'none';bp.textContent=n}
  {const fg=$('#lgrant');if(fg){if(PF.freeGrant&&PF.freeGrant.length){fg.style.display='block';fg.innerHTML='🎁 免費獲得：'+PF.freeGrant.map(esc).join('、')+'<button id="lgrantX">✕</button>';const xb=$('#lgrantX');if(xb)xb.onclick=()=>{PF.freeGrant=[];saveP();renderLUI()}}else fg.style.display='none'}}
  dailyReset();$('#ltlist').innerHTML=DAILY.map(d=>{const v=Math.min(d.g,PF.daily[d.k]),dn=v>=d.g;return'<div class="tk'+(dn?' done':'')+'">'+d.n+' <b>'+v+'/'+d.g+'</b><span class="r">'+(PF.daily.cl.includes(d.k)?'✔':d.r+' 🔑')+'</span><div class="pb"><i style="width:'+v/d.g*100+'%"></i></div></div>'}).join('');
  {const ub=$('#ubadge');if(ub)ub.style.display=updUnclaimed()?'block':'none'}const c=claimable();for(const[id,n]of[['#tbadge',c.t],['#pbadge',c.p]]){const b=$(id);b.style.display=n?'block':'none';b.textContent=n}renderPList()}
 function renderPList(){if(!PF)return;const rows=['<div>⭐ <span class="lvb">'+PF.lv+'</span>'+esc(accName())+(PF.st.streak>1?' 🔥'+PF.st.streak:'')+'</div>'];if(typeof LPX!=='undefined')for(const id in LPX){const q=LPX[id];rows.push('<div>👤 <span class="lvb">'+(q.lv||1)+'</span>'+esc(q.name)+(q.streak>1?' 🔥'+q.streak:'')+'</div>')}$('#lplist').innerHTML='<div style="color:#9fb0e0;font-size:11px">PLAYERS · '+rows.length+'</div>'+rows.join('')}
 $('#lbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p=='upd'){openUpd();return}const m={pack:'Pack',wpn:'Wpn',tasks:'Tasks',shop:'Shop',pass:'Pass',set:'Set',event:'Event'}[b.dataset.p];if(m)openPanel(m)};
 $('#lonline').onclick=()=>{$('#onl').style.display='flex';if(!NET){$('#onA').style.display='block';$('#onB').style.display='none';onMsgUI('')}};
-$('#lkeyAdd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};
+$('#lkeyAdd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};$('#ltk').onclick=()=>openPanel('Pass');
 $('#toDuels').onclick=()=>{if(typeof toDuels=='function')toDuels()};
 $('#llv').onclick=()=>{if(typeof openProfile=='function')openProfile()};
 // ---- tasks / contracts / pass data ----
@@ -2205,6 +2274,8 @@ const LOGIN_R=[1,1,2,2,3,3,5];
 const CONTRACTS=[{w:'Assault Rifle',g:20,r:3},{w:'Handgun',g:15,r:3},{w:'Fists',g:8,r:3},{w:'Grenade',g:5,r:3},{w:'Shotgun',g:12,r:4},{w:'Sniper',g:10,r:4},{w:'Revolver',g:12,r:4},{w:'Katana',g:10,r:4}];
 function ctState(c){const s=PF.ct[c.w]||{t:0,b:0};return{g:c.g*(s.t+1),p:Math.max(0,(PF.wk[c.w]||0)-s.b),t:s.t,r:c.r+s.t*2}}
 const PASS_MAX=30;function passR(l){return l==1?3:l%10==0?10:l%5==0?5:2}
+// skin-ticket 🎫 rewards on the FREE track (the only ticket source). Claimed separately in PF.passT so accounts that already claimed a tier's keys can still claim its tickets.
+const PASS_TK={3:3,6:3,10:4,15:5,20:5,25:5,30:5};const passT=l=>PASS_TK[l]||0;
 function giveKeys(n,why){PF.keys+=n;saveNow();toast('🔑 +'+n+' 鑰匙'+(why?' · '+why:''),'#ffd23f');snd(990,.1,.05,'sine');renderLUI()}
 // ---- Play ----
 function renderPlay(){const pc=$('#playCards');pc.innerHTML='';const cols=['#2f9e4f','#2a6fe0','#d99a14','#c62828','#8e3cff'];
@@ -2217,11 +2288,16 @@ function playMode(n){closePanels();if(NET){if(typeof onlinePlay=='function')onli
 function goMatch(){$('#hud').style.display='block';$('#lobbyMenuBtn').style.display='none';paused=false;msg('');startMatch()}
 PRENDER.Play=renderPlay;$('#playBtn').onclick=()=>openPanel('Play');
 // ---- Backpack ----
-PRENDER.Pack=()=>{const n=ALLW().filter(w=>isUnl(w.n)).length;let h='<h3 style="margin-top:0">目前裝備 Loadout</h3><div class="cards">';
+var PKT='crates';
+PRENDER.Pack=()=>{const ct=crTot();let h='<div class="ptabs"><button data-pt="crates" class="'+(PKT=='crates'?'on':'')+'">📦 箱子 Crates'+(ct?' ×'+ct:'')+'</button><button data-pt="wpn" class="'+(PKT=='wpn'?'on':'')+'">🔫 武器 Weapons</button></div>';
+ if(PKT=='crates'){const own=CRATES.filter(C=>crHeld(C.id)>0);h+=own.length?'<div class="note" style="margin-bottom:6px">點箱子就能打開 · 保證開到你還沒擁有的物品（不會重複）</div><div class="cards crcards">'+own.map(C=>'<div class="cd crcd" data-cro="'+C.id+'"><img src="'+crArt(C.id)+'" alt=""><b class="crn">×'+crHeld(C.id)+'</b><h4>'+C.name+'</h4><div class="sub2">'+C.en+' · 還有 '+crLeft(C).length+' 個物品可開</div><button class="gbtn crob">打開</button></div>').join('')+'</div><button class="bbtn" id="pkShop" style="margin-top:12px">🛒 去商店買更多箱子</button>':'<div class="crempty"><div style="font-size:60px">🎒</div><div>背包是空的，去商店買箱子吧</div><button class="gbtn" id="pkShop">🛒 前往商店</button></div>'}
+ else{const n=ALLW().filter(w=>isUnl(w.n)).length;h+='<h3 style="margin-top:0">目前裝備 Loadout</h3><div class="cards">';
  GP.forEach(([,a],k)=>{const nm=curLo(k),w=a.find(x=>x.n==nm);h+='<div class="cd" style="cursor:pointer" data-k="'+k+'"><div class="sub2">'+CATN[k]+'</div>'+(w?'<img src="'+icon(w)+'" style="width:120px;height:72px;object-fit:contain;display:block;margin:4px auto">':'<div style="font-size:48px;text-align:center;line-height:80px">🎲</div>')+'<h4 style="text-align:center">'+nm+'</h4></div>'});
  h+='</div><h3>已擁有 Owned · '+n+' / '+ALLW().length+'</h3>';GP.forEach(([,a],k)=>{h+='<div class="sub2" style="margin:6px 0 2px;color:#9fb0e0;font-weight:800">'+CATN[k]+'</div><div class="row">';for(const w of a)if(isUnl(w.n))h+='<div class="slot" style="display:flex;align-items:center;gap:4px"><img src="'+icon(w)+'" style="width:40px;height:24px;object-fit:contain">'+w.n+'</div>';h+='</div>'});
- h+='<p class="note">點上方的裝備格可以到 Weapons 更換；未擁有的武器在 Weapons 用鑰匙 🔑 解鎖。</p>';$('#packBody').innerHTML=h;
- for(const c of $('#packBody').querySelectorAll('[data-k]'))c.onclick=()=>{const k=+c.dataset.k;WSEL=GP[k][1][Math.max(0,LS[k])];openPanel('Wpn')}};
+ h+='<p class="note">點上方的裝備格可以到 Weapons 更換；未擁有的武器在 Weapons 用鑰匙 🔑 解鎖。</p>'}
+ const B0=$('#packBody');B0.innerHTML=h;for(const b of B0.querySelectorAll('[data-pt]'))b.onclick=()=>{PKT=b.dataset.pt;PRENDER.Pack()};
+ for(const c of B0.querySelectorAll('[data-cro]'))c.onclick=()=>crDlg(c.dataset.cro,'open');const ps=$('#pkShop');if(ps)ps.onclick=()=>{openPanel('Shop');shopTab('crates')};
+ for(const c of B0.querySelectorAll('[data-k]'))c.onclick=()=>{const k=+c.dataset.k;WSEL=GP[k][1][Math.max(0,LS[k])];openPanel('Wpn')}};
 // ---- Tasks ----
 PRENDER.Tasks=()=>{dailyReset();let h='<h3 style="margin-top:0">📅 Daily Tasks（每日 0 點重置）</h3><div class="cards">';
  for(const d of DAILY){const v=Math.min(d.g,PF.daily[d.k]),cl=PF.daily.cl.includes(d.k);h+='<div class="cd"><h4>'+d.n+'</h4><div class="sub2">'+v+' / '+d.g+'</div><div class="pb" style="margin:6px 0"><i style="width:'+v/d.g*100+'%"></i></div><button class="gbtn" style="width:100%" data-dk="'+d.k+'"'+(v>=d.g&&!cl?'':' disabled')+'>'+(cl?'✔ 已領取':'領取 '+d.r+' 🔑')+'</button></div>'}
@@ -2234,34 +2310,174 @@ PRENDER.Tasks=()=>{dailyReset();let h='<h3 style="margin-top:0">📅 Daily Tasks
  for(const b of $('#tasksBody').querySelectorAll('[data-ct]'))b.onclick=()=>{const c=CONTRACTS.find(x=>x.w==b.dataset.ct),s=ctState(c);if(s.p<s.g)return;PF.ct[c.w]={t:s.t+1,b:PF.wk[c.w]||0};giveKeys(s.r,c.w+' 合約');PRENDER.Tasks()}};
 // ---- Pass ----
 PRENDER.Pass=()=>{const r=xpReq(PF.lv);let h='<div class="row" style="align-items:center;gap:14px"><div style="font:900 18px system-ui">Season 1 · 你的等級 <span class="lvb" style="font-size:15px">'+PF.lv+'</span></div><div style="flex:1;min-width:160px"><div class="xpb2" style="height:10px"><i style="width:'+Math.min(100,PF.xp/r*100)+'%"></i></div><div class="note">'+PF.xp+' / '+r+' XP 到下一級（打對戰獲得 XP：勝 100、敗 40、每擊殺 +10、爆頭擊殺 +5）</div></div></div>';
- h+='<div class="note" style="margin:8px 0 2px">上排 FREE 免費獎勵：等級達到就能領取 · 下排 PREMIUM 付費獎勵：🔒 敬請期待</div><div class="pass" id="passRow">';
- for(let l=1;l<=PASS_MAX;l++){const got=PF.pass.includes(l),ok=PF.lv>=l&&!got;h+='<div class="pt"><div class="lvn">Lv '+l+'</div><div class="cell'+(ok?' ok':'')+(got?' got':'')+'"><span style="font-size:10px;color:#35d07f">FREE</span><b>🔑</b>×'+passR(l)+(ok?'<button class="gbtn" data-pl="'+l+'" style="padding:2px 10px;font-size:12px">領取</button>':got?'✔':'<span style="font-size:11px;color:#9fb0e0">🔒</span>')+'</div><div class="cell prem"><span style="font-size:10px">PREMIUM</span><b>🔒</b><span style="font-size:10px">敬請期待</span></div></div>'}
+ h+='<div class="note" style="margin:8px 0 2px">上排 FREE 免費獎勵：等級達到就能領取（Lv 3、6、10、15、20、25、30 另外送 🎫 皮膚票，用來買皮膚箱）· 下排 PREMIUM 付費獎勵：🔒 敬請期待</div><div class="pass" id="passRow">';
+ for(let l=1;l<=PASS_MAX;l++){const tk=passT(l),got=PF.pass.includes(l)&&(!tk||PF.passT.includes(l)),ok=PF.lv>=l&&!got;h+='<div class="pt"><div class="lvn">Lv '+l+'</div><div class="cell'+(ok?' ok':'')+(got?' got':'')+(tk?' tkc':'')+'"><span style="font-size:10px;color:#35d07f">FREE</span><b>🔑</b>×'+passR(l)+(tk?' <span class="ptk">＋🎫'+tk+'</span>':'')+(ok?'<button class="gbtn" data-pl="'+l+'" style="padding:2px 10px;font-size:12px">領取</button>':got?'✔':'<span style="font-size:11px;color:#9fb0e0">🔒</span>')+'</div><div class="cell prem"><span style="font-size:10px">PREMIUM</span><b>🔒</b><span style="font-size:10px">敬請期待</span></div></div>'}
  h+='</div><button class="gbtn" id="passAll" style="margin-top:4px">一次領取全部可領獎勵</button>';$('#passBody').innerHTML=h;
- const claim=l=>{if(PF.lv<l||PF.pass.includes(l))return 0;PF.pass.push(l);PF.keys+=passR(l);return passR(l)};
- for(const b of $('#passBody').querySelectorAll('[data-pl]'))b.onclick=()=>{const n=claim(+b.dataset.pl);if(n){saveNow();toast('🔑 +'+n+' 鑰匙 · Pass Lv '+b.dataset.pl,'#ffd23f');renderLUI();PRENDER.Pass()}};
- $('#passAll').onclick=()=>{let n=0;for(let l=1;l<=PASS_MAX;l++)n+=claim(l);if(n){saveNow();toast('🔑 +'+n+' 鑰匙 · Season Pass','#ffd23f');renderLUI()}else toast('目前沒有可領取的獎勵');PRENDER.Pass()};
+ const claim=l=>{const o=[0,0];if(PF.lv<l)return o;if(!PF.pass.includes(l)){PF.pass.push(l);PF.keys+=o[0]=passR(l)}if(passT(l)&&!PF.passT.includes(l)){PF.passT.push(l);PF.tickets+=o[1]=passT(l)}return o},rw=o=>(o[0]?'🔑 +'+o[0]+' 鑰匙':'')+(o[0]&&o[1]?'　':'')+(o[1]?'🎫 +'+o[1]+' 皮膚票':'');
+ for(const b of $('#passBody').querySelectorAll('[data-pl]'))b.onclick=()=>{const o=claim(+b.dataset.pl);if(o[0]||o[1]){saveNow();toast(rw(o)+' · Pass Lv '+b.dataset.pl,'#ffd23f');if(o[1])snd(1180,.14,.05,'sine');renderLUI();PRENDER.Pass()}};
+ $('#passAll').onclick=()=>{const t=[0,0];for(let l=1;l<=PASS_MAX;l++){const o=claim(l);t[0]+=o[0];t[1]+=o[1]}if(t[0]||t[1]){saveNow();toast(rw(t)+' · Season Pass','#ffd23f');renderLUI()}else toast('目前沒有可領取的獎勵');PRENDER.Pass()};
  const pr=$('#passRow'),cur=pr.children[Math.max(0,PF.lv-3)];if(cur)pr.scrollLeft=cur.offsetLeft-pr.offsetLeft};
 // ---- Shop ----
 const BUNDLES=[{n:'Starter 新手包',e:'🎁',w:['Burst Rifle','Uzi','Knife','Flashbang']},{n:'Sharpshooter 神射手',e:'🎯',w:['Sniper','Revolver','Katana','Smoke Grenade']},{n:'Demolition 爆破專家',e:'💥',w:['RPG','Grenade Launcher','Molotov','Satchel']},{n:'Melee Master 近戰大師',e:'⚔️',w:['Scythe','Battle Axe','Chainsaw','Riot Shield']},{n:'Mobility 機動包',e:'🌀',w:['Daggers','Jump Pad','Grappler','Spear']}];
 var SHOPT='home';function shopTab(t){SHOPT=t;PRENDER.Shop()}
 function dailyDeals(){const lk=ALLW().filter(w=>!isUnl(w.n));let s=0;for(const ch of today()+ACCT)s=(s*31+ch.charCodeAt(0))>>>0;const out=[];const a=lk.slice();while(out.length<3&&a.length){s=(s*1103515245+12345)>>>0;out.push(a.splice(s%a.length,1)[0])}return out}
 function buyW(names,price,label){if(PF.keys<price){toast('🔑 鑰匙不足');return}PF.keys-=price;for(const n of names)if(!PF.unl.includes(n))PF.unl.push(n);saveNow();toast('🛒 購買成功：'+label,'#35d07f');snd(880,.12,.06,'sine');renderLUI();PRENDER.Shop()}
-PRENDER.Shop=()=>{const T2=[['home','Home'],['bundles','Bundles'],['wraps','Wraps'],['fins','Finishers'],['skins','Skins'],['daily','Daily'],['keys','Keys'],['more','More']];$('#shopTabs').innerHTML=T2.map(([k,n])=>'<button data-st="'+k+'" class="'+(SHOPT==k?'on':'')+'">'+n+'</button>').join('');for(const b of $('#shopTabs').children)b.onclick=()=>shopTab(b.dataset.st);
- $('#skeys').textContent='　🔑 '+PF.keys;let h='';const soon=t=>'<div class="cd" style="opacity:.75"><h4>'+t+'</h4><div class="soon">Robux 付費項目 · 敬請期待</div></div>';
+PRENDER.Shop=()=>{const T2=[['home','Home'],['crates','📦 Crates 箱子'],['bundles','Bundles'],['daily','Daily'],['keys','Keys'],['more','More']];$('#shopTabs').innerHTML=T2.map(([k,n])=>'<button data-st="'+k+'" class="'+(SHOPT==k?'on':'')+'">'+n+'</button>').join('');for(const b of $('#shopTabs').children)b.onclick=()=>shopTab(b.dataset.st);
+ $('#skeys').textContent='　🔑 '+PF.keys+'　🎫 '+PF.tickets;let h='';const soon=t=>'<div class="cd" style="opacity:.75"><h4>'+t+'</h4><div class="soon">Robux 付費項目 · 敬請期待</div></div>';
  const wcard=(w,price,old)=>'<div class="cd"><img src="'+icon(w)+'" style="width:100%;height:80px;object-fit:contain"><h4>'+w.n+'</h4><div class="sub2">'+CATN[wcat(w)]+'</div>'+(isUnl(w.n)?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bw="'+w.n+'" data-pr="'+price+'"'+(PF.keys>=price?'':' disabled')+'>'+(old?'<s style="opacity:.6">'+old+'</s> ':'')+'🔑 '+price+'</button>')+'</div>';
- if(SHOPT=='home'){h='<div class="cards"><div class="cd" style="grid-column:span 2;background:linear-gradient(135deg,#6a3cff,#2a1a6a)"><h4>🎫 Season Pass · Season 1</h4><div class="sub2" style="color:#e0d8ff">升級領取免費鑰匙獎勵（30 級）</div><button class="bbtn" id="shPass" style="margin-top:10px">查看 Pass</button></div><div class="cd" style="background:linear-gradient(135deg,#d99a14,#6a4a0a)"><h4>🔑 Mega Key Bundle</h4><div class="soon" style="color:#ffe9b0">Robux · 敬請期待</div></div></div><h3>🔥 今日特價 Daily</h3><div class="cards">'+dailyDeals().map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>'}
+ if(SHOPT=='home'){h='<div class="cards"><div class="cd" style="grid-column:span 2;background:linear-gradient(135deg,#6a3cff,#2a1a6a)"><h4>🎫 Season Pass · Season 1</h4><div class="sub2" style="color:#e0d8ff">升級領取免費鑰匙獎勵（30 級）</div><button class="bbtn" id="shPass" style="margin-top:10px">查看 Pass</button></div><div class="cd" style="background:linear-gradient(135deg,#d0408a,#4a1a7a)"><h4>📦 開箱 Crates</h4><div class="sub2" style="color:#ffd8f0">包裝箱 · 死亡特效箱 · 皮膚箱<br>不會開到重複</div><button class="bbtn" id="shCr" style="margin-top:10px">查看箱子</button></div><div class="cd" style="background:linear-gradient(135deg,#d99a14,#6a4a0a)"><h4>🔑 Mega Key Bundle</h4><div class="soon" style="color:#ffe9b0">Robux · 敬請期待</div></div></div><h3>🔥 今日特價 Daily</h3><div class="cards">'+dailyDeals().map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>'}
  else if(SHOPT=='bundles'){h='<div class="cards">'+BUNDLES.map((b,i)=>{const need=b.w.filter(n=>!isUnl(n)),price=Math.max(1,Math.round(need.reduce((s,n)=>s+wCost(n),0)*.8));return'<div class="cd"><h4>'+b.e+' '+b.n+'</h4><div class="row" style="gap:2px;margin:6px 0">'+b.w.map(n=>'<img src="'+icon(WBN(n))+'" title="'+n+'" style="width:46%;height:42px;object-fit:contain;background:#0003;border-radius:6px;'+(isUnl(n)?'opacity:.4':'')+'">').join('')+'</div><div class="sub2">'+b.w.join(' · ')+'</div>'+(need.length?'<button class="gbtn" style="width:100%;margin-top:6px" data-bb="'+i+'" data-pr="'+price+'"'+(PF.keys>=price?'':' disabled')+'>🔑 '+price+'（8 折，只算未擁有的）</button>':'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 全部擁有</div>')+'</div>'}).join('')+'</div>'}
- else if(SHOPT=='wraps')h='<div class="note">包裝只改變武器的顏色與花紋，買了可以套用在任何武器上（Weapons → 🧻 包裝）。邊框顏色代表稀有度。</div><div class="cards">'+WRAPS.map(x=>{const o=PF.wraps.includes(x.id);return'<div class="cd" style="border-color:'+WRC[x.r]+'"><img src="'+wrapSwatch(x.id)+'" style="width:100%;height:84px;object-fit:cover;border-radius:10px"><h4>'+x.zh+'</h4><div class="sub2">'+x.en+' · <span style="color:'+WRC[x.r]+'">'+WRN[x.r]+'</span></div>'+(o?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有'+(x.p?'':'（起始贈送）')+'</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bwr="'+x.id+'"'+(PF.keys>=x.p?'':' disabled')+'>🔑 '+x.p+'</button>')+'</div>'}).join('')+'</div>';
- else if(SHOPT=='fins')h='<div class="note">死亡特效：用武器擊倒敵人時，在他身上播放特效。買一次，所有武器都能用（Weapons → 💀 死亡特效 Finisher，或在射擊場試用）。邊框顏色代表稀有度。</div><div class="cards">'+FINS.map(x=>{const o=PF.fins.includes(x.id);return'<div class="cd" style="border-color:'+WRC[x.r]+'"><div style="height:84px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:44px;background:linear-gradient(135deg,'+x.c[0]+','+x.c[1]+')">'+x.e+'</div><h4>'+x.zh+'</h4><div class="sub2">'+x.en+' · <span style="color:'+WRC[x.r]+'">'+WRN[x.r]+'</span></div>'+(o?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有'+(x.p?'':'（起始贈送）')+'</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bfn="'+x.id+'"'+(PF.keys>=x.p?'':' disabled')+'>🔑 '+x.p+'</button>')+'</div>'}).join('')+'</div>';
- else if(SHOPT=='skins')h='<div class="cd" style="text-align:center;padding:40px"><div style="font-size:50px">🎨</div><h4>Skins 造型</h4><div class="soon">敬請期待</div></div>';
+ else if(SHOPT=='crates')h='<div class="note" style="margin-bottom:8px">外觀道具改由開箱取得：買下的箱子會放進 🎒 背包，打開時保證開到你還沒擁有的物品（不會重複）。點箱子可以查看內容和機率。</div><div class="cards crcards">'+CRATES.map(C=>{const l=crLeft(C).length,hd=crHeld(C.id);return'<div class="cd crcd" data-crt="'+C.id+'"><img src="'+crArt(C.id)+'" alt="">'+(hd?'<b class="crn">🎒×'+hd+'</b>':'')+'<h4>'+C.name+'</h4><div class="sub2">'+C.en+' · Lootbox · 剩 '+l+' / '+C.pool().length+' 個</div>'+(l?'<div class="crpr">'+C.price+' '+CURI[C.cur]+'</div>':'<div class="crpr off">已全部擁有</div>')+'</div>'}).join('')+'</div><div class="note" style="margin-top:10px">🎫 皮膚票只能從 Season Pass 通行證的免費獎勵取得 · 你有 🔑 '+PF.keys+' · 🎫 '+PF.tickets+'</div>';
  else if(SHOPT=='daily'){const d=dailyDeals();h=d.length?'<div class="note">每天換一批，75 折（只會出現你還沒解鎖的武器）</div><div class="cards">'+d.map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>':'<div class="cd">🎉 你已經擁有全部武器！</div>'}
- else if(SHOPT=='keys')h='<div class="note">鑰匙可以從每日任務、連續登入、合約、Season Pass 和勝場獲得。</div><div class="cards">'+soon('🔑 ×50 Key Pack')+soon('🔑 ×150 Key Pack')+soon('🔑 ×500 Mega Key Bundle')+'</div>';
+ else if(SHOPT=='keys')h='<div class="note">鑰匙可以從每日任務、連續登入、合約、Season Pass 和勝場獲得；🎫 皮膚票只能從 Season Pass 取得。</div><div class="cards">'+soon('🔑 ×50 Key Pack')+soon('🔑 ×150 Key Pack')+soon('🔑 ×500 Mega Key Bundle')+'</div>';
  else h='<div class="cards"><div class="cd"><h4>🎟️ Codes 兌換代碼</h4><div class="sub2">輸入代碼領取獎勵</div><button class="gbtn" id="shCode" style="margin-top:8px">Redeem a code</button></div><div class="cd"><h4>📋 Tasks</h4><button class="bbtn" id="shTasks" style="margin-top:8px">打開任務</button></div></div>';
- $('#shopBody').innerHTML=h;const g=id=>$('#shopBody').querySelector(id);if(g('#shPass'))g('#shPass').onclick=()=>openPanel('Pass');if(g('#shCode'))g('#shCode').onclick=()=>openPanel('Code');if(g('#shTasks'))g('#shTasks').onclick=()=>openPanel('Tasks');
+ $('#shopBody').innerHTML=h;const g=id=>$('#shopBody').querySelector(id);if(g('#shPass'))g('#shPass').onclick=()=>openPanel('Pass');if(g('#shCr'))g('#shCr').onclick=()=>shopTab('crates');for(const c of $('#shopBody').querySelectorAll('[data-crt]'))c.onclick=()=>crDlg(c.dataset.crt,'buy');if(g('#shCode'))g('#shCode').onclick=()=>openPanel('Code');if(g('#shTasks'))g('#shTasks').onclick=()=>openPanel('Tasks');
  for(const b of $('#shopBody').querySelectorAll('[data-bw]'))b.onclick=()=>buyW([b.dataset.bw],+b.dataset.pr,b.dataset.bw);
- for(const b of $('#shopBody').querySelectorAll('[data-bwr]'))b.onclick=()=>{if(buyWrap(b.dataset.bwr))PRENDER.Shop()};
- for(const b of $('#shopBody').querySelectorAll('[data-bfn]'))b.onclick=()=>{if(buyFin(b.dataset.bfn))PRENDER.Shop()};
  for(const b of $('#shopBody').querySelectorAll('[data-bb]'))b.onclick=()=>{const bd=BUNDLES[+b.dataset.bb];buyW(bd.w,+b.dataset.pr,bd.n)}};
+// ===== crates: shop/backpack dialogs + 3D opening cinematic =====
+var CRO=null,CRS=null,CRD=null;
+const CRT={pop:.5,land:1.45,shake:2.45,open:3.15,rev:4.05};
+const crOwns=(k,id)=>!!PF&&(k=='wrap'?PF.wraps:k=='fin'?PF.fins:PF.skins).includes(id);
+const crLeft=C=>C.pool().filter(id=>!crOwns(C.kind,id));
+const crHeld=id=>(PF&&PF.crates&&PF.crates[id])|0;
+const crTot=()=>PF?CRATES.reduce((s,c)=>s+crHeld(c.id),0):0;
+function crGrant(k,id){const a=k=='wrap'?PF.wraps:k=='fin'?PF.fins:PF.skins;if(!a.includes(id))a.push(id)}
+const RZE=s=>{const i=s.indexOf(' ');return[s.slice(0,i),s.slice(i+1)]},eob=x=>{x=Math.min(1,Math.max(0,x));return 1+2.70158*Math.pow(x-1,3)+1.70158*Math.pow(x-1,2)};
+function crInfo(k,id){if(k=='wrap'){const x=WBYID[id],[z,e]=RZE(WRN[x.r]);return{nm:x.zh+' '+x.en,col:WRC[x.r],r:x.r,rz:z,re:e,typ:'包裝 Wrap',sub:z+'包裝 '+e+' Wrap（所有武器）',ic:'<img src="'+wrapSwatch(id)+'">'}}
+ if(k=='fin'){const x=FBYID[id],[z,e]=RZE(WRN[x.r]);return{nm:x.zh+' '+x.en,col:WRC[x.r],r:x.r,rz:z,re:e,typ:'死亡特效 Finisher',sub:z+'死亡特效 '+e+' Finisher（所有武器）',ic:'<b style="background:linear-gradient(135deg,'+x.c[0]+','+x.c[1]+')">'+x.e+'</b>'}}
+ const x=SKBYID[id],[z,e]=RZE(SKRN[x.rarity]);return{nm:x.name,col:SKRC[x.rarity],r:['common','rare','epic','legendary'].indexOf(x.rarity),rz:z,re:e,typ:'皮膚 Skin · '+x.weapon,sub:z+'皮膚 '+e+' Skin for '+x.weapon,ic:'<img src="'+skinIcon(WBN(x.weapon),id)+'" style="object-fit:contain;background:#2a2d40">'}}
+const CRSHG=new Set([UB,US,UC,UCO,UK,UT,UD,UR,UP,USTAR]);
+function crDisp(o){o.traverse(m=>{if(m.geometry&&!CRSHG.has(m.geometry))m.geometry.dispose()})}
+var CRM=null;
+function crMats(){if(CRM)return CRM;const ph=(c,e,sh)=>new T.MeshPhongMaterial({color:c,emissive:e,shininess:sh,specular:0xc8b8ff});
+ const art=cvTex(256,320,(x,W,H)=>{const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#9a4cff');g.addColorStop(.6,'#4a14a8');g.addColorStop(1,'#22074e');x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.strokeStyle='#ffffffd0';x.lineCap='round';x.lineWidth=11;x.beginPath();x.arc(W*.05,H*1.02,W*.98,-1.32,-.3);x.stroke();x.lineWidth=4;x.beginPath();x.arc(W*.05,H*1.02,W*.82,-1.25,-.38);x.stroke();
+  const bx=(c,X,Y,w,h,a)=>{x.save();x.translate(X,Y);x.rotate(a);x.fillStyle=c;x.fillRect(-w/2,-h/2,w,h);x.strokeStyle='#0007';x.lineWidth=4;x.strokeRect(-w/2,-h/2,w,h);x.restore()};
+  bx('#2fbf4f',92,214,44,72,.55);bx('#2fbf4f',134,222,40,66,.15);bx('#3d7bef',128,158,70,64,.3);bx('#ffd23f',82,150,30,60,-.7);bx('#ffd23f',176,150,28,56,.9);bx('#ffd23f',158,98,50,50,.25);
+  x.fillStyle='#111';x.save();x.translate(158,98);x.rotate(.25);x.fillRect(-12,-8,7,10);x.fillRect(5,-8,7,10);x.fillRect(-8,8,16,4);x.restore();
+  for(let i=0;i<46;i++){x.fillStyle='rgba(255,255,255,'+(Math.random()*.7)+')';const r=Math.random()*2.4;x.fillRect(Math.random()*W,Math.random()*H,r,r)}
+  x.font='900 38px '+FNT;x.textAlign='center';x.lineWidth=8;x.strokeStyle='#22074e';x.strokeText('FINISHER',W/2,H-30);x.fillStyle='#fff';x.fillText('FINISHER',W/2,H-30)});
+ CRM={foil:ph(0x8a3cf0,0x2a0a5a,90),crimp:ph(0xd8ccf2,0x1a1430,140),art:new T.MeshLambertMaterial({map:art})};return CRM}
+// crate 3D model: base sits at y=0 inside a squash group; open(k) animates the opening (k from 0, may exceed 1)
+function mkCrate(kind){const g=new T.Group(),sq=new T.Group();g.add(sq);g.rotation.order='YXZ';let open=()=>{},top=.6;
+ if(kind=='wrap'){const P1=0xe8667f,P2=0xb84a63,TP=0xf6f6f6,TG=0xcfcfcf,W=.8,H=.56;
+  B(sq,W,H,W,0,H/2,0,P1);B(sq,W-.05,.01,W-.05,0,H-.004,0,0x5a2232);
+  for(const s of[-1,1]){B(sq,.025,.075,.26,s*(W/2+.004),H*.64,0,P2);B(sq,.15,.24,.012,0,H-.12,s*(W/2+.006),TP);B(sq,.15,.025,.014,0,H-.245,s*(W/2+.007),TG)}
+  for(const a of[-1,1])for(const b of[-1,1])B(sq,.014,H,.014,a*W/2,H/2,b*W/2,P2);
+  const fl=[];for(const s of[-1,1]){const pv=new T.Group();pv.position.set(s*W/2,H,0);sq.add(pv);B(pv,W/2,.03,W,-s*W/4,.015,0,P1);B(pv,.075,.036,W+.014,-s*(W/2-.0375),.018,0,TP);fl.push([pv,s])}
+  open=k=>{for(const[pv,s]of fl)pv.rotation.z=-s*2.25*eob(k/.45)};top=H}
+ else if(kind=='fin'){const M=crMats(),W=.62,H=.84,D=.13,bh=H-.18;
+  const bd=new T.Mesh(new T.BoxGeometry(W,bh,D),M.foil);bd.position.y=.09+bh/2;sq.add(bd);
+  for(const s of[-1,1]){const a=new T.Mesh(new T.PlaneGeometry(W-.05,bh-.05),M.art);a.position.set(0,.09+bh/2,s*(D/2+.002));if(s<0)a.rotation.y=PI;sq.add(a)}
+  const crimp=(par,y,dy)=>{const c=new T.Mesh(new T.BoxGeometry(W+.02,.09,D*.5),M.crimp);c.position.set(0,y,0);par.add(c);for(let i=0;i<10;i++){const t=new T.Mesh(new T.BoxGeometry(.046,.046,D*.48),M.crimp);t.rotation.z=PI/4;t.position.set(-W/2+.025+i*(W-.03)/9,y+dy*.045,0);par.add(t)}};
+  crimp(sq,.045,-1);const pv=new T.Group(),y0=.09+bh;pv.position.set(-W/2-.01,y0,0);sq.add(pv);const tp=new T.Group();tp.position.x=W/2+.01;pv.add(tp);crimp(tp,.045,1);
+  open=k=>{const a=Math.max(0,k);pv.rotation.z=Math.min(1,a*2.4)*.75+Math.max(0,a-.35)*3.2;pv.position.set(-W/2-.01-Math.max(0,a-.3)*1.3,y0+Math.max(0,a-.3)*1.6-Math.pow(Math.max(0,a-.55),2)*4,0);pv.scale.setScalar(Math.max(.01,1-Math.max(0,a-.6)*1.4));pv.visible=a<1.3};top=H}
+ else{const C1=0x6c2ee6,C2=0x9a62ff,C3=0x4a1aa8,L=1.12,H0=.2,HL=.12,D=.56;
+  B(sq,L,H0,D,0,H0/2,0,C1);B(sq,L-.07,.012,D-.07,0,H0-.004,0,0x1a1030);
+  for(const x of[-.36,.36])B(sq,.06,H0+.004,D+.02,x,H0/2,0,C2);
+  for(const a of[-1,1])for(const b of[-1,1])B(sq,.1,H0+.01,.1,a*(L/2-.035),H0/2,b*(D/2-.035),C3);
+  for(const x of[-.2,.2])B(sq,.08,.07,.03,x,H0-.025,D/2+.012,0xcfd2e0);B(sq,.24,.045,.05,0,H0-.09,D/2+.04,C3);
+  const pv=new T.Group();pv.position.set(0,H0,-D/2);sq.add(pv);B(pv,L,HL,D,0,HL/2,D/2,C1);
+  for(const x of[-.36,.36])B(pv,.06,HL+.004,D+.02,x,HL/2,D/2,C2);for(const a of[-1,1])for(const b of[-1,1])B(pv,.1,HL+.01,.1,a*(L/2-.035),HL/2,D/2+b*(D/2-.035),C3);
+  for(const x of[-.2,0,.2])B(pv,.07,.012,D*.9,x,HL+.004,D/2,C2,{ry:.45});
+  open=k=>{pv.rotation.x=-1.95*eob(k/.5)};top=H0+HL}
+ return{g,sq,open,top}}
+const CRART={};
+function crArt(id){if(CRART[id]!=null)return CRART[id];const C=CRBYID[id];if(!C)return'';const M=mkCrate(C.kind);let u='';
+ try{IR.setSize(256,256);M.g.rotation.set(0,.62,0);if(C.kind=='fin')M.g.rotation.set(0,.35,-.18);IS.add(M.g);M.g.updateMatrixWorld(true);const b=new T.Box3().setFromObject(M.g),c=b.getCenter(V()),r=b.getSize(V()).length()/2,pc=new T.PerspectiveCamera(30,1,.01,50);
+  pc.position.copy(c).add(V(0,.62,1).normalize().multiplyScalar(r/Math.sin(15*PI/180)*1.02));pc.lookAt(c);IR.render(IS,pc);u=IR.domElement.toDataURL()}catch(e){console.error(e)}
+ IS.remove(M.g);crDisp(M.g);IR.setSize(160,96);return CRART[id]=u}
+// ---- dialogs: buy (VIEW / ✖ / art ×1 / yellow price), odds list, open-confirm ----
+function crGo(id){closePanels();openPanel('Shop');shopTab('crates');crDlg(id,'buy')}
+function crDlgClose(){CRD=null;$('#crDlg').style.display='none'}
+function crDlg(id,mode,back){const C=CRBYID[id];if(!C||!PF)return;CRD={id,mode,back};const bx=$('#crBox'),left=crLeft(C),h=crHeld(id),all=C.pool();let x='';
+ const art=n=>'<div class="crart"><img src="'+crArt(id)+'" alt=""><b>×'+n+'</b></div>',hd=(l,t)=>'<div class="crhd">'+l+'<div class="crttl">'+t+'</div><button class="crx" id="crX">✖</button></div>',vb='<button class="crview" id="crV"><small>Contents</small>VIEW</button>';
+ if(mode=='odds'){const n=left.length,rk=i=>crInfo(C.kind,i).r,srt=a=>a.slice().sort((p,q)=>rk(q)-rk(p)),row=(i,o)=>{const I=crInfo(C.kind,i);return'<div class="crrow'+(o?' own':'')+'"><i style="border-color:'+I.col+'">'+I.ic+'</i><div class="t"><b style="color:'+I.col+'">'+esc(I.nm)+'</b><span>'+esc(I.sub)+'</span></div><em>'+(o?'已擁有':(100/n).toFixed(2)+'%')+'</em></div>'};
+  x=hd('','你的機率<small>Your Odds</small>')+'<div class="crgrp" id="crG"><span class="ar">▼</span><img src="'+crArt(id)+'" alt=""><div><b>'+C.name+' '+C.en+'</b><span>Lootbox 箱子 · '+C.price+' '+CURI[C.cur]+'</span></div></div><div class="crlist" id="crL">'+(n?'':'<div class="crq" style="font-size:16px">你已經擁有這個箱子的全部物品 🎉</div>')+srt(left).map(i=>row(i,0)).join('')+srt(all.filter(i=>!left.includes(i))).map(i=>row(i,1)).join('')+'</div>'+
+   '<div class="crfoot">開箱不會開到你已經擁有的物品（不會重複）。每個還沒擁有的物品機率都一樣，所以機率會隨著你的收藏改變；已擁有的物品列在最下方。這個機率只屬於你，依照你目前擁有的包裝、死亡特效和皮膚計算。</div>'}
+ else if(mode=='open')x=hd(vb,C.name+'<small>'+C.en+'</small>')+art(h)+'<div class="crq">要打開 '+C.name+' 嗎？</div><div class="crbtns"><button class="gbtn" id="crOk">打開</button><button id="crNo">取消</button></div><div class="crnote">還有 '+left.length+' / '+all.length+' 個物品可以開出 · 不會開到重複</div>';
+ else{const full=!left.length,enough=!full&&h>=left.length;x=hd(vb,C.name+'<small>'+C.en+'</small>')+art(1)+(full?'<button class="crbuy off" disabled>已全部擁有</button>':enough?'<button class="crbuy off" disabled>背包裡的箱子已足夠</button>':'<button class="crbuy" id="crB">'+C.price+' <span>'+CURI[C.cur]+'</span></button>')+
+  '<div class="crmsg" id="crMsg">'+(full?'你已經擁有這個箱子的全部物品':enough?'背包裡已經有 '+h+' 個，足夠開出剩下的 '+left.length+' 個物品':'')+'</div><div class="crnote">你有 '+CURI[C.cur]+' '+PF[C.cur]+' '+CURN[C.cur]+' · 🎒 背包裡 ×'+h+(h?' · <button class="crlink" id="crPk">前往背包 ›</button>':'')+'<br>剩下 '+left.length+' / '+all.length+' 個物品 · 買了會先放進背包</div>'}
+ bx.innerHTML=x;bx.className='crbox'+(mode=='odds'?' odds':'');$('#crDlg').style.display='flex';const g=q=>bx.querySelector(q);
+ g('#crX').onclick=()=>mode=='odds'?crDlg(id,back||'buy'):crDlgClose();if(g('#crV'))g('#crV').onclick=()=>crDlg(id,'odds',mode);
+ if(g('#crB'))g('#crB').onclick=()=>crBuy(id);if(g('#crPk'))g('#crPk').onclick=()=>{crDlgClose();openPanel('Pack')};
+ if(g('#crOk'))g('#crOk').onclick=()=>crOpen(id);if(g('#crNo'))g('#crNo').onclick=crDlgClose;
+ if(g('#crG'))g('#crG').onclick=()=>{const l=g('#crL'),o=l.style.display=='none';l.style.display=o?'':'none';g('#crG .ar').textContent=o?'▼':'▶'}}
+$('#crDlg').addEventListener('click',e=>{if(e.target.id=='crDlg')crDlgClose()});
+for(const ev of['mousedown','touchstart','wheel'])$('#crDlg').addEventListener(ev,e=>e.stopPropagation(),{passive:true});
+function crBuy(id){const C=CRBYID[id];if(!C||!PF)return;const left=crLeft(C).length,h=crHeld(id),m=$('#crMsg');if(!left||h>=left)return;
+ if(PF[C.cur]<C.price){const d=C.price-PF[C.cur];m.style.color='#ff8a8a';m.textContent=CURI[C.cur]+' '+CURN[C.cur]+'不足：還差 '+d+(C.cur=='tickets'?'（皮膚票只能從 Season Pass 通行證取得）':'（完成任務、通行證或勝場可以獲得鑰匙）');toast(CURI[C.cur]+' '+CURN[C.cur]+'不足（還差 '+d+'）','#ff6a6a');snd(200,.15,.05);return}
+ PF[C.cur]-=C.price;PF.crates[id]=h+1;saveNow();toast('📦 '+C.name+' 已放進背包','#35d07f');snd(880,.12,.06,'sine');renderLUI();if(PANEL=='Shop')PRENDER.Shop();crDlg(id,'buy');const mm=$('#crMsg');if(mm){mm.style.color='#7dff9a';mm.textContent='✔ 已放進背包！到 🎒 Backpack 打開它'}}
+// ---- opening: grant FIRST (saved immediately), then the cinematic ----
+function crItemObj(k,id,col,O){const g=new T.Group();
+ if(k=='fin'){const X=FBYID[id],tex=cvTex(256,256,(x,W)=>{const gr=x.createLinearGradient(0,0,W,W);gr.addColorStop(0,X.c[0]);gr.addColorStop(1,X.c[1]);rr(x,12,12,W-24,W-24,44);x.fillStyle=gr;x.fill();x.lineWidth=14;x.strokeStyle=col;x.stroke();x.font='140px '+FNT;x.textAlign='center';x.textBaseline='middle';x.fillText(X.e,W/2,W/2+10)});
+  const m=new T.MeshBasicMaterial({map:tex,transparent:true,side:T.DoubleSide});O.mats.push(m);O.tex.push(tex);g.add(new T.Mesh(new T.PlaneGeometry(.78,.78),m));g.userData.tile=1;return g}
+ const w=WBN(k=='skin'?SKBYID[id].weapon:'Assault Rifle'),m=k=='skin'?model(w,'',id):model(w,id,skEq(w)),h=new T.Group();m.rotation.y=PI/2;h.add(m);g.add(h);g.updateMatrixWorld(true);
+ const b=new T.Box3().setFromObject(h),c=b.getCenter(V()),z=b.getSize(V());h.position.sub(c);const sc0=1.15/Math.max(z.x,z.y,z.z,.2);h.position.multiplyScalar(sc0);h.scale.setScalar(sc0);return g}
+function crOpen(cid){const C=CRBYID[cid];if(!C||!PF)return;if(st!=='lobby'||!P){toast('請先回到大廳再開箱');return}if(crHeld(cid)<1){toast('背包裡沒有這個箱子');return}
+ const left=crLeft(C);PF.crates[cid]--;if(PF.crates[cid]<=0)delete PF.crates[cid];
+ if(!left.length){PF[C.cur]+=C.price;saveNow();crDlgClose();toast('你已經擁有 '+C.name+' 的全部物品，已退回 '+C.price+' '+CURI[C.cur],'#ffd23f');renderLUI();if(CRO)croEnd();else if(PANEL=='Pack')PRENDER.Pack();return}
+ const id=left[Math.floor(Math.random()*left.length)];crGrant(C.kind,id);saveNow();renderLUI();crDlgClose();
+ const again=!!CRO;if(again)croClean();else{closePanels();CRS={x:P.x,y:P.y,z:P.z,myaw:P.myaw,hub:!LB.inRange,c0:{p:cam.position.clone(),q:cam.quaternion.clone()}};keys={};mL=mR=false;if(document.pointerLockElement)document.exitPointerLock();
+  P.x=0;P.y=0;P.z=23.2;P.vx=P.vy=P.vz=0;P.sl=false;P.cr=false;P.dash=null;$('#leaveRange').style.display='none'}
+ P.myaw=PI;if(P.tag)P.tag.visible=false;finPS();
+ const I=crInfo(C.kind,id),rc=parseInt(I.col.slice(1),16),f=V(-Math.sin(P.myaw),0,-Math.cos(P.myaw)),root=new T.Group();sc.add(root);
+ const O={C,kind:C.kind,id,I,rc,t:0,blend:!again,ev:{},f,sd:V(f.z,0,-f.x),L:V(P.x,0,P.z).addScaledVector(f,1.35).addScaledVector(V(f.z,0,-f.x),2.1),g:root,mats:[],tex:[],cr:mkCrate(C.kind)};
+ root.add(O.cr.g);O.cr.g.scale.setScalar(.001);
+ const spr=o=>{const m=new T.SpriteMaterial(Object.assign({map:ftex('glow'),transparent:true,depthWrite:false,blending:T.AdditiveBlending,opacity:0},o));O.mats.push(m);const s2=new T.Sprite(m);root.add(s2);return s2};
+ O.glow=spr({color:rc});O.flash=spr({color:0xffffff});
+ {const m=new T.MeshBasicMaterial({color:0,map:ftex('glow'),transparent:true,opacity:0,depthWrite:false});O.mats.push(m);O.sh=new T.Mesh(new T.PlaneGeometry(1,1),m);O.sh.rotation.x=-PI/2;root.add(O.sh)}
+ {const rg=new T.Group(),bg=new T.PlaneGeometry(.3,2.6);bg.translate(0,1.3,0);const m=new T.MeshBasicMaterial({map:ftex('beam'),color:rc,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide});O.mats.push(m);for(let i=0;i<12;i++){const p=new T.Mesh(bg,m);p.rotation.z=i/12*PI*2;rg.add(p)}O.rays=rg;O.rayM=m;rg.visible=false;root.add(rg)}
+ O.it=crItemObj(C.kind,id,I.col,O);O.it.visible=false;root.add(O.it);
+ document.body.classList.add('crop');$('#crOv').style.display='block';$('#crBan').style.display='none';$('#crBtns').style.display='none';$('#crSkip').style.display='block';CRO=O}
+function croSkip(){const O=CRO;if(!O||O.rev)return;O.skip=1;O.blend=false;O.t=Math.max(O.t,CRT.rev+.02)}
+function croClean(){const O=CRO;if(!O)return;sc.remove(O.g);crDisp(O.g);for(const m of O.mats)m.dispose();for(const x of O.tex)x.dispose();if(O.fin){finDispose(O.fin);FIN=FIN.filter(q=>q!==O.fin)}CRO=null}
+function croEnd(){croClean();document.body.classList.remove('crop');$('#crOv').style.display='none';$('#crBan').style.display='none';$('#crBtns').style.display='none';
+ if(P){if(P.tag)P.tag.visible=true;if(CRS&&CRS.hub&&st=='lobby'){P.x=CRS.x;P.y=CRS.y;P.z=CRS.z;P.myaw=CRS.myaw}P.yaw=P.myaw;if(typeof LBC!=='undefined'){LBC.yaw=P.myaw;LBC.pitch=-.25}}CRS=null;keys={};mL=mR=false;renderLUI()}
+function crReveal(){const O=CRO;if(!O)return;O.rev=1;const I=O.I,b=$('#crBan');b.style.borderColor=I.col;b.style.boxShadow='0 0 34px '+I.col+'aa,0 8px 30px #000a';b.style.background='radial-gradient(ellipse at 50% -20%,'+I.col+'77,#0b0d1aee 72%)';
+ b.innerHTML='<div class="ty">'+esc(I.typ)+'</div><div class="nm" style="color:'+I.col+';text-shadow:0 3px 0 #000,0 0 18px '+I.col+'">'+esc(I.nm)+'</div><div class="rr" style="color:'+I.col+'">'+I.rz+' '+I.re+'</div><div class="ok">✔ 已加入收藏 · Added to your collection</div>';
+ b.style.display='block';b.style.animation='none';void b.offsetWidth;b.style.animation='';
+ const n=crHeld(O.C.id),bt=$('#crBtns');bt.innerHTML='<button class="gbtn" id="crDone">完成</button>'+(n?'<button class="bbtn" id="crAgain">再開一個 ×'+n+'</button>':'');bt.style.display='flex';$('#crSkip').style.display='none';
+ $('#crDone').onclick=e=>{e.stopPropagation();croEnd()};const ag=$('#crAgain');if(ag)ag.onclick=e=>{e.stopPropagation();crOpen(O.C.id)};
+ [523,659,784,1047].forEach((q,i)=>setTimeout(()=>snd(q,.24,.05,'sine'),i*85));if(I.r>=2)setTimeout(()=>snd(1319,.4,.045,'sine'),380)}
+{const ov=$('#crOv');ov.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;e.preventDefault();croSkip()});for(const ev of['mousedown','touchstart','wheel'])ov.addEventListener(ev,e=>e.stopPropagation(),{passive:true})}
+addEventListener('keydown',e=>{if(CRD&&e.code=='Escape'){crDlgClose();e.stopImmediatePropagation();return}if(!CRO)return;if(['Space','Enter','NumpadEnter','Escape'].includes(e.code)){e.preventDefault();e.stopImmediatePropagation();if(!CRO.rev)croSkip();else if(e.code!='Space')croEnd()}},true);
+const _cv1=new T.Vector3(),_cv2=new T.Vector3(),_cv3=new T.Vector3(),_cq=new T.Quaternion();
+// called every frame from pupd (lobby third-person branch) while a crate is being opened
+function croFrame(dt){const O=CRO;if(!O||!P)return;O.t+=dt;const t=O.t,K=CRT,f=O.f,L=O.L,cr=O.cr,g=cr.g;
+ P.myaw=PI+.65*ez(ph(t,K.pop*.5,K.land));const ev=(k,at,fn)=>{if(!O.ev[k]&&t>=at){O.ev[k]=1;fn(!!O.skip)}};
+ const ch=_cv1.set(P.x,P.y+1.2,P.z).addScaledVector(f,.3),y0=PI+PI+.3,CT=[K.land,K.land+.4,K.land+.7,K.land+.9];let px=L.x,py=0,pz=L.z,s=1,sy=1,ry=y0,rz=0,rx=0;
+ if(t<K.pop){const k=t/K.pop;px=ch.x;py=ch.y-.25+.2*k;pz=ch.z;s=.5*eob(k);ry=y0-2.4;sy=1+.25*Math.sin(k*PI)}
+ else if(t<K.land){const k=(t-K.pop)/(K.land-K.pop);px=ch.x+(L.x-ch.x)*k;pz=ch.z+(L.z-ch.z)*k;py=(ch.y-.05)*(1-k)+1.0*4*k*(1-k);s=.5+.5*ez(k);ry=y0-2.4+2.4*ez(k);rx=-Math.sin(k*PI)*.45;sy=1+.2*Math.sin(k*PI)}
+ else{const BD=[.4,.3,.2],BH=[.36,.15,.05];let tb=t-K.land;for(let i=0;i<3;i++){if(tb<BD[i]){const u=tb/BD[i];py=BH[i]*4*u*(1-u);sy=1+.14*(BH[i]/.36)*Math.sin(u*PI);break}tb-=BD[i]}
+  const SQ=[.36,.24,.14,.08];CT.forEach((c,i)=>{const d=t-c;if(d>=0&&d<.13)sy-=SQ[i]*Math.sin(d/.13*PI)});
+  if(t>K.shake&&t<K.open+.06){const k=ph(t,K.shake,K.open);rz=Math.sin(t*52)*.11*(.35+k);ry+=Math.sin(t*37)*.07*k;s=1+.05*k*Math.sin(t*31);sy+=.05*k*Math.sin(t*23);if(k>.75)py=Math.abs(Math.sin(t*26))*.05}
+  if(t>=K.open){const d=t-K.open;sy+=d<.25?-.22*Math.sin(d/.25*PI):0}}
+ g.position.set(px,py,pz);g.rotation.set(rx,ry,rz);g.scale.setScalar(Math.max(.001,s));cr.sq.scale.set(1/Math.sqrt(sy),sy,1/Math.sqrt(sy));cr.open(t<K.open?0:t-K.open);
+ const sh=O.sh;sh.position.set(px,.03,pz);sh.scale.setScalar(Math.max(.01,(1.25+(cr.top>.5?0:.3))*s/(1+py*1.2)));sh.material.opacity=t<K.pop*.6?0:.6/(1+py*1.5);
+ // camera: front-ish of the avatar, slightly above; drifts in, then tilts up to the reward
+ const cp=_cv2.copy(L).addScaledVector(f,2.9-.35*ez(ph(t,0,K.rev))).addScaledVector(O.sd,-.35);cp.y=1.7-.2*ez(ph(t,K.open,K.rev));
+ const lk=_cv3.set(P.x,0,P.z).lerp(L,.68+.32*ez(ph(t,K.shake-.3,K.open+.3)));lk.y=.8+.32*ez(ph(t,K.open-.1,K.rev));
+ cam.position.copy(cp);cam.lookAt(lk);if(O.blend&&CRS&&t<.75){const k=ez(t/.75);_cq.copy(cam.quaternion);cam.position.lerpVectors(CRS.c0.p,cp,k);cam.quaternion.copy(CRS.c0.q).slerp(_cq,k)}cam.updateMatrixWorld();
+ // reward rises out of the crate
+ const top=cr.top*s,iy=top+.78,ip=_cv1.set(L.x,0,L.z);
+ if(t>=K.open+.05){const k=ph(t,K.open+.05,K.open+.9);O.it.visible=true;O.it.position.set(L.x,top+.1+(iy-top-.1)*ez(k),L.z);O.it.scale.setScalar(Math.max(.01,eob(k)));if(O.it.userData.tile)O.it.rotation.y=P.myaw+PI+Math.sin(t*1.3)*.55;else O.it.rotation.y+=dt*(.8+(1-k)*7);ip.copy(O.it.position)}else ip.y=top;
+ const gl=O.glow;gl.position.set(px,py+top*.7+(t>K.open?.35:0),pz);
+ if(t<K.open){const k=ph(t,K.shake-.25,K.open);gl.material.opacity=.85*k*(.8+.2*Math.sin(t*20));gl.scale.setScalar(.5+1.5*k)}else{gl.position.copy(ip);gl.position.addScaledVector(f,-.4);gl.material.opacity=.5;gl.scale.setScalar(1.7+.15*Math.sin(t*3))}
+ {const k=ph(t,K.open,K.open+.55);O.flash.position.set(L.x,top+.3,L.z);O.flash.material.opacity=t>=K.open?(1-k)*.95:0;O.flash.scale.setScalar(1+6.5*ez(k))}
+ if(t>=K.open){O.rays.visible=true;O.rays.position.copy(ip).addScaledVector(f,-.5);O.rays.quaternion.copy(cam.quaternion);O.rays.rotateZ(t*.35);O.rays.scale.setScalar(.2+1.15*ez(ph(t,K.open,K.open+.6)));O.rayM.opacity=.26+.05*Math.sin(t*4)}
+ // avatar: arms push the crate out, then cheer at the reveal
+ const u=P.mesh&&P.mesh.userData;if(u&&u.aL){if(t<K.pop+.4){const a=Math.sin(Math.min(1,t/(K.pop+.4))*PI);u.aL.rotation.set(1.45*a,0,.12*a);u.aR.rotation.set(1.45*a,0,-.12*a)}else if(O.rev){const b=Math.sin((t-K.rev)*7)*.13;u.aL.rotation.set(PI-.4+b,0,-.38);u.aR.rotation.set(PI-.4-b,0,.38)}}
+ // timed events (sounds, particles, reveal); skipping runs them silently
+ ev('pop',.02,sk=>{if(!sk){snd(420,.09,.06,'sine');setTimeout(()=>snd(760,.12,.05,'sine'),70)}});
+ CT.forEach((c,i)=>ev('b'+i,c,sk=>{if(sk)return;snd(150-i*18,.09,.08-i*.017,'triangle');for(let j=0;j<Q(8-i*2);j++){const a=Math.random()*6.283;psE(FPN,{p:[L.x+Math.cos(a)*.4,.03,L.z+Math.sin(a)*.4],v:[Math.cos(a)*RR(.6,1.4),RR(.2,.7),Math.sin(a)*RR(.6,1.4)],s:RR(.05,.09),c:0xb9b4c8,l:RR(.3,.5),g:2,d:2})}}));
+ if(t>K.shake&&t<K.open&&!O.skip){O.rt=(O.rt||0)-dt;if(O.rt<=0){O.rt=.075;snd(240+Math.random()*140,.03,.022,'square')}}
+ ev('open',K.open,sk=>{if(!sk)[480,680,940,1260].forEach((q,i)=>setTimeout(()=>snd(q,.1,.04,'sawtooth'),i*35));const y=top+.1;
+  for(let i=0;i<Q(80);i++){const a=Math.random()*6.283,e=RR(.25,1.35),sp=RR(1.6,4.4);psE(FPA,{p:[L.x,y,L.z],v:[Math.cos(a)*Math.cos(e)*sp,Math.sin(e)*sp,Math.sin(a)*Math.cos(e)*sp],s:RR(.035,.09),c:Math.random()<.35?0xffffff:O.rc,l:RR(.7,1.5),g:3,d:1.1,m:0,r:[RR(0,6),RR(0,6),0],w:[RR(-9,9),RR(-9,9),0]})}
+  if(O.kind=='wrap'||O.kind=='fin')for(let i=0;i<Q(14);i++)psE(FPN,{p:[L.x+RR(-.3,.3),y,L.z+RR(-.3,.3)],v:[RR(-1.5,1.5),RR(2,3.5),RR(-1.5,1.5)],s:[RR(.05,.1),.008,RR(.04,.08)],c:O.kind=='wrap'?RP([0xe8667f,0xf6f6f6]):RP([0x8a3cf0,0xd8ccf2]),l:RR(1,1.6),g:6,d:.6,b:.3,f:.02,r:[RR(0,6),RR(0,6),0],w:[RR(-12,12),RR(-12,12),0]})});
+ if(t>K.open+.3&&Math.random()<.55)psE(FPA,{p:[ip.x+RR(-.65,.65),ip.y+RR(-.5,.55),ip.z+RR(-.65,.65)],v:[0,RR(.15,.5),0],s:RR(.025,.055),c:Math.random()<.5?0xffffff:O.rc,l:RR(.5,.9),m:0,r:[RR(0,6),RR(0,6),0],w:[RR(-6,6),RR(-6,6),0]});
+ ev('rev',K.rev,()=>crReveal());
+ if(O.kind=='fin'&&O.rev){if(!O.fin||O.fin.done||O.fin.dead){O.fw=(O.fw||0)-dt;if(O.fw<=0){if(O.fin){finDispose(O.fin);FIN=FIN.filter(q=>q!==O.fin)}O.fin=finPlay(L.x+O.sd.x*1.9-f.x*1.0,0,L.z+O.sd.z*1.9-f.z*1.0,P.myaw,0xe04848,O.id);O.fw=1.1}}}}
 // ---- Settings ----
 const CCOL=['#ffffff','#35d07f','#ff4040','#ffd23f','#40e0ff','#ff5ad0'];
 function applySettings(){if(!PF)return;const s=PF.set,c=$('#cross');c.style.background=s.cc;c.style.width=c.style.height=s.cz+'px';c.style.margin=(-s.cz/2)+'px'}
