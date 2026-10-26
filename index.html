@@ -1841,7 +1841,9 @@ function netFire(k,slot,x,dn){if(!NET||!NET.inGame||slot<0)return;const o=cam.po
 function byId(id){return E.find(e=>e.nid===id)}
 function mkS(L){return L.map(w=>({a:w.mag||0,c:w.lim||0,rl:0,h:0,ov:0,q:0,qt:0,qs:0,sp:0,ch:0,acd:0,out:0,lf:0,rc:0,r:w.res||0}))}
 function loadPeer(){return new Promise((res,rej)=>{if(window.Peer)return res();const srcs=QP.plib?[QP.plib]:['https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js','https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js'];let i=0;const nx=()=>{if(i>=srcs.length)return rej(new Error('lib'));const sc2=document.createElement('script');sc2.src=srcs[i++];sc2.onload=()=>window.Peer?res():nx();sc2.onerror=nx;document.head.appendChild(sc2)};nx()})}
-function peerOpts(){const o={debug:0};if(QP.ph){o.host=QP.ph;o.port=+(QP.pp||443);o.secure=QP.ps!=='0';o.path=QP.pk||'/'}return o}
+// free public TURN relay (Open Relay Project) as a fallback when direct P2P (STUN) can't traverse NAT/firewall; disable with ?turn=0
+const ICE_SERVERS=[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun.relay.metered.ca:80'},{urls:'turn:global.relay.metered.ca:80',username:'openrelayproject',credential:'openrelayproject'},{urls:'turn:global.relay.metered.ca:80?transport=tcp',username:'openrelayproject',credential:'openrelayproject'},{urls:'turn:global.relay.metered.ca:443',username:'openrelayproject',credential:'openrelayproject'},{urls:'turns:global.relay.metered.ca:443?transport=tcp',username:'openrelayproject',credential:'openrelayproject'}];
+function peerOpts(){const o={debug:0};if(QP.ph){o.host=QP.ph;o.port=+(QP.pp||443);o.secure=QP.ps!=='0';o.path=QP.pk||'/'}if(QP.turn!=='0')o.config={iceServers:ICE_SERVERS};return o}
 // transport: host <-> clients (star). h = {open(), msg(cid,m), leave(cid), err(type)}
 function trPeerHost(code,h){const peer=new Peer(NETP+code,peerOpts()),cs={};
  peer.on('open',()=>h.open());peer.on('error',e=>h.err(e&&e.type||'error'));peer.on('disconnected',()=>{try{peer.reconnect()}catch(_){}});
