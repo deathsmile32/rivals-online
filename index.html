@@ -281,6 +281,16 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
 
 /* ===== crates / lootboxes ===== */
 #ltk{display:flex;align-items:center;gap:6px;margin-left:6px;padding:0 10px 0 10px;border-left:2px solid #ffffff22;cursor:pointer}
+#gfDlg{position:fixed;inset:0;z-index:42;display:none;align-items:center;justify-content:center;background:#000000b0}
+.gfbox{background:linear-gradient(#1f2440,#0f1220);border:2px solid #ffd23f99;border-radius:16px;width:min(480px,94vw);max-height:92vh;overflow:auto;padding:14px 16px;box-sizing:border-box;color:#fff;box-shadow:0 10px 50px #000}
+.gfbox h3{margin:0 0 10px;font:900 22px system-ui;text-align:center}.gfbox .row{justify-content:center;margin-top:10px}.gfbox .crow{margin:5px 0;font:700 15px system-ui;overflow-wrap:anywhere}.gfbox .crow em{font-style:normal;color:#9fb0e0;display:inline-block;width:64px}
+.gfrow{display:flex;gap:8px;align-items:center;margin:7px 0}.gfrow>label{width:74px;flex:none;font-weight:900;color:#9fb0e0}.gfrow input,.gfrow select{flex:1;min-width:0;font-size:15px}.gfrow select{background:#0e1330;color:#fff;border:1px solid var(--ln);border-radius:8px;padding:8px}
+.gfadm{background:linear-gradient(90deg,#ffcf3f,#ff8a1a);color:#2a1600;font:900 15px system-ui;border-radius:10px;padding:7px 12px;margin-bottom:6px}
+.gfwho{min-height:18px;font-weight:800;margin-left:82px;font-size:13px}.gfcost{font:900 16px system-ui;margin:8px 0;color:#ffd23f}
+.gfcats{margin:0}.gfcats button{padding:5px 10px;font-size:13px}
+.gfit{display:flex;gap:10px;align-items:center;background:#0c0f1c;border:1px solid #ffffff22;border-radius:10px;padding:8px 10px;margin:6px 0}.gfit .t{flex:1;min-width:0}.gfit .t b{display:block}.gfit .t span{color:#9fb0e0;font-size:12px;overflow-wrap:anywhere;display:block}
+.gfcols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:820px),(max-height:520px){.gfrow{margin:4px 0}.gfrow>label{width:56px;font-size:13px}.gfwho{margin-left:64px}.gfbox{padding:10px 12px}.gfbox h3{font-size:18px;margin-bottom:6px}.gfcols{gap:8px}}
 #crDlg{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:#000000a8}
 .crbox{position:relative;background:#000;border:1px solid #ffffff16;border-radius:18px;width:min(560px,94vw);max-height:94vh;box-sizing:border-box;padding:14px 16px 20px;color:#fff;display:flex;flex-direction:column;box-shadow:0 12px 50px #000}
 .crbox.odds{width:min(640px,96vw);height:min(560px,94vh)}
@@ -417,6 +427,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
   <button data-p="set"><b>⚙️</b>Settings</button>
   <button data-p="event"><b>🎃</b>Event</button>
   <button data-p="upd" title="更新內容"><b>📢</b>更新<span class="badge" id="ubadge"></span></button>
+  <button data-p="gift" title="送禮 Gift"><b>🎁</b>送禮<span class="badge" id="gfbadge"></span></button>
  </div>
  <button id="lonline">🌐 線上房間</button>
 </div>
@@ -441,22 +452,53 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
 <div id="pParty" class="pnl"><div class="pbox"><div class="ptitle">👥 Party<span class="note" id="partyNote" style="font-weight:700"></span><button class="xbtn" data-x>✕</button></div>
  <div style="flex:1;display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:14px;min-height:0"><div><div style="font:900 16px system-ui;margin-bottom:6px">Your Party</div><div class="pslots" id="pslots"></div><button id="partyLeave" style="margin-top:8px;display:none">離開隊伍</button></div>
  <div style="display:flex;flex-direction:column;min-height:0"><div class="row"><input id="psearch" type="text" placeholder="🔍 搜尋玩家" style="flex:1;min-width:120px"></div><div class="ptabs" id="ptabs" style="margin-top:8px"><button data-t="all" class="on">All</button><button data-t="fr">Friends</button><button data-t="lb">Lobby</button></div><div class="pscroll" id="plistP"></div></div></div></div></div>
+<div id="pGift" class="pnl"><div class="pbox" style="width:min(660px,96vw)"><div class="ptitle">🎁 送禮 Gift<span class="note" style="font-weight:700" id="gfkeys"></span><button class="xbtn" data-x>✕</button></div><div class="ptabs" id="gfTabs"></div><div class="pscroll" id="giftBody"></div></div></div>
 <div id="pProf" class="pnl"><div class="pcardx" id="profCard"></div><button class="pfx" data-x>✕</button></div>
 <div id="msel"><div id="mstop"><span class="lbl">🗺️ 選擇地圖 <small>Map Vote</small></span><div class="tbox"><svg viewBox="0 0 24 24"><path d="M5 2h14v2h-1.5c0 3.5-2.2 5.6-4 8 1.8 2.4 4 4.5 4 8H19v2H5v-2h1.5c0-3.5 2.2-5.6 4-8-1.8-2.4-4-4.5-4-8H5z"/></svg><span id="mstm">10.0</span></div><span class="md" id="msmd"></span></div><div id="mgrid"></div></div>
 <div id="toasts"></div>
 <div id="crOv"><div id="crBan"></div><div id="crBtns"></div><div id="crSkip">點一下畫面跳過 · Tap to skip</div></div>
 <div id="crDlg"><div class="crbox" id="crBox"></div></div>
+<div id="gfDlg"><div class="gfbox" id="gfBox"></div></div>
 <div id="over" class="ov" style="display:none"><div class="card"><h1 id="ot"></h1><div id="orew"></div><div class="row"><button class="on" id="again">再來一場</button><button id="tomenu">回到選單</button></div></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ===== CLOUD ACCOUNTS CONFIG (Firebase). Fill BOTH values to turn on cross-device accounts; leave empty = browser-local accounts only. =====
-// Firebase console: Authentication -> Sign-in method -> enable "Email/Password"; Firestore Database -> create; Rules must be:
+// Firebase console: Authentication -> Sign-in method -> enable "Email/Password"; Firestore Database -> create; Rules must be
+// (users = own profile, names = @ID -> uid registry for gifting, gifts = 送禮 inbox; 'u6465617468736d696c65@rivals-arena.app' = fbEmail('deathsmile'), the admin):
 //   rules_version = '2';
 //   service cloud.firestore {
 //     match /databases/{database}/documents {
+//       function signedIn() { return request.auth != null; }
+//       function ownsName(n) {
+//         return request.auth.token.email == 'u' + n.toUtf8().toHexString().lower() + '@rivals-arena.app'
+//           || ('h' + hashing.sha256(n.toUtf8()).toHexString().lower()).matches(request.auth.token.email.split('@')[0] + '.*');
+//       }
+//       function isAdmin() { return request.auth.token.email == 'u6465617468736d696c65@rivals-arena.app'; }
 //       match /users/{uid} {
-//         allow read, write: if request.auth != null && request.auth.uid == uid;
+//         allow read, write: if signedIn() && request.auth.uid == uid;
+//       }
+//       match /names/{name} {
+//         allow read: if signedIn();
+//         allow create, update: if signedIn() && ownsName(name)
+//           && request.resource.data.uid == request.auth.uid && request.resource.data.email == request.auth.token.email
+//           && (resource == null || resource.data.uid == request.auth.uid);
+//         allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+//       }
+//       match /gifts/{id} {
+//         allow create: if signedIn()
+//           && request.resource.data.keys().hasOnly(['toUid','toName','fromUid','fromName','kind','item','qty','msg','free','ts'])
+//           && request.resource.data.fromUid == request.auth.uid
+//           && request.resource.data.toUid is string && request.resource.data.toUid != request.auth.uid
+//           && request.resource.data.fromName is string
+//           && get(/databases/$(database)/documents/names/$(request.resource.data.fromName.lower())).data.uid == request.auth.uid
+//           && request.resource.data.kind in ['weapon','crate','keys','tickets','skin','wrap','fin']
+//           && request.resource.data.qty is int && request.resource.data.qty >= 1 && request.resource.data.qty <= 10000
+//           && request.resource.data.msg is string && request.resource.data.msg.size() <= 40
+//           && request.resource.data.free is bool
+//           && ((request.resource.data.free == false && request.resource.data.kind in ['weapon','crate']) || (request.resource.data.free == true && isAdmin()));
+//         allow read, delete: if signedIn() && resource.data.toUid == request.auth.uid;
+//         allow read: if signedIn() && resource.data.fromUid == request.auth.uid;
 //       }
 //     }
 //   }
@@ -1652,7 +1694,7 @@ function mkLobbyPlayer(){const pk=(a,k)=>{const w=a[LS[k]<0?0:LS[k]];return w&&i
  E=[e];P=e;wlFill(e.L);
  setVM();setHold(e);sc.updateMatrixWorld(true)}
 function enterLobby(){for(const e of E)if(e&&e.mesh)sc.remove(e.mesh);E=[];clearWorldSafe();curMap='lobby';buildMap('lobby');mkLobbyPlayer();LB.inRange=false;LB.pad=null;lobbyPrompt('');
- st='lobby';tm=0;rt=0;paused=false;if(NET)NET.inGame=false;document.exitPointerLock&&document.exitPointerLock();if(typeof LBC!=='undefined'){LBC.yaw=0;LBC.pitch=-.25}
+ st='lobby';tm=0;rt=0;paused=false;if(typeof giftPoll=='function')setTimeout(()=>giftPoll(1),700);if(NET)NET.inGame=false;document.exitPointerLock&&document.exitPointerLock();if(typeof LBC!=='undefined'){LBC.yaw=0;LBC.pitch=-.25}
  $('#menu').style.display='none';$('#onl').style.display='none';$('#over').style.display='none';$('#pause').style.display='none';$('#lo').style.display='none';$('#rb').style.display='none';
  $('#hud').style.display='block';$('#lobbyMenuBtn').style.display='none';msg('');wasNearShop=false;closePanels();renderLUI();if(typeof onRangeChange=='function')onRangeChange(false)}
 function tick(dt){BT+=dt;if(st=='msel'){mselTick(dt);return}
@@ -1959,8 +2001,8 @@ function sha256js(str){const K=SHA_K.K,by=new TextEncoder().encode(str),l=by.len
   H=[a,b,c,d,e,f,g,h].map((v,j)=>(v+H[j])|0)}
  return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('')}
 async function pwHash(u,pw,salt){const s=salt+'|'+u+'|'+pw;try{if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}}catch(_){}return sha256js(s)}
-function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_W.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],seenUpd:[],claimedUpd:[],wraps:['bc'],wrap:{},wrapInv:{},wrapFav:[],fins:['fc'],fin:{},finFav:[],skins:[],skin:{},skinFav:[],tickets:0,crates:{},passT:[],set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1}}}
-function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_W.slice();for(const k of['seenUpd','claimedUpd','wraps','wrapFav','fins','finFav','skins','skinFav','passT'])if(!Array.isArray(p[k]))p[k]=[];for(const k of['wrap','wrapInv','fin','skin','crates'])if(Array.isArray(p[k])||!p[k])p[k]={};p.tickets=Math.max(0,Math.floor(+p.tickets||0));for(const k in p.crates){const v=Math.floor(+p.crates[k]||0);if(!CRBYID[k]||!(v>0))delete p.crates[k];else p.crates[k]=v}p.passT=p.passT.filter((x,i,a)=>typeof x=='number'&&a.indexOf(x)===i);
+function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_W.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],seenUpd:[],claimedUpd:[],wraps:['bc'],wrap:{},wrapInv:{},wrapFav:[],fins:['fc'],fin:{},finFav:[],skins:[],skin:{},skinFav:[],tickets:0,crates:{},passT:[],giftLog:[],giftClaimed:[],set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1}}}
+function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_W.slice();for(const k of['seenUpd','claimedUpd','wraps','wrapFav','fins','finFav','skins','skinFav','passT','giftLog','giftClaimed'])if(!Array.isArray(p[k]))p[k]=[];p.giftClaimed=p.giftClaimed.filter(x=>typeof x=='string').slice(-200);p.giftLog=p.giftLog.filter(x=>x&&typeof x=='object'&&(x.d=='s'||x.d=='r')).slice(0,40);for(const k of['wrap','wrapInv','fin','skin','crates'])if(Array.isArray(p[k])||!p[k])p[k]={};p.tickets=Math.max(0,Math.floor(+p.tickets||0));for(const k in p.crates){const v=Math.floor(+p.crates[k]||0);if(!CRBYID[k]||!(v>0))delete p.crates[k];else p.crates[k]=v}p.passT=p.passT.filter((x,i,a)=>typeof x=='number'&&a.indexOf(x)===i);
  p.wraps=p.wraps.filter((x,i,a)=>typeof x=='string'&&WBYID[x]&&a.indexOf(x)===i);if(!p.wraps.includes('bc'))p.wraps.unshift('bc');p.wrapFav=p.wrapFav.filter(x=>WBYID[x]);for(const n in p.wrap){const v=p.wrap[n];if(v!=='?'&&!p.wraps.includes(v))delete p.wrap[n]}
  p.fins=p.fins.filter((x,i,a)=>typeof x=='string'&&FBYID[x]&&a.indexOf(x)===i);if(!p.fins.includes('fc'))p.fins.unshift('fc');p.finFav=p.finFav.filter(x=>FBYID[x]);for(const n in p.fin){const v=p.fin[n];if(v!=='?'&&!p.fins.includes(v))delete p.fin[n]}if(p.codes.includes('deathsmilexux'))for(const x of FINS)if(!p.fins.includes(x.id))p.fins.push(x.id);
  p.skins=p.skins.filter((x,i,a)=>typeof x=='string'&&SKBYID[x]&&a.indexOf(x)===i);if(p.codes.includes('deathsmilexux'))for(const x of SKINS)if(!p.skins.includes(x.id))p.skins.push(x.id);p.skinFav=p.skinFav.filter(x=>SKBYID[x]);for(const n in p.skin){const v=p.skin[n];if(v!=='?'&&!(SKBYID[v]&&SKBYID[v].weapon==n&&p.skins.includes(v)))delete p.skin[n]}return p}
@@ -2021,7 +2063,7 @@ function cloudProbe(){if(!fbOn())return Promise.resolve(false);if(CLOUD.ok===tru
  if(!CLOUD.probe){const p=fbFetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup'+fbKey(),{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'},6000).then(()=>true,e=>!(e&&e.net)).then(ok=>{if(CLOUD.probe===p)CLOUD.probe=null;if(CLOUD.ok!==true)CLOUD.ok=ok;authModeUI();return CLOUD.ok});CLOUD.probe=p}return CLOUD.probe}
 function newSess(j,name,rem){return Object.assign(newCloud(CLOUD),{ok:true,uid:j.localId,id:j.idToken,rt:j.refreshToken,exp:Date.now()+(+j.expiresIn||3600)*1000-60000,name,rem:!!rem})}
 const MIG_MSG='☁️ 已把這台裝置的進度上傳到雲端帳號';
-function cloudBegin(S,name,prof,upd,push,isNew,msg){S.name=name;S.live=true;S.synced=S.upd=upd||0;CLOUD=S;ACCT='c:'+S.uid;PF=fixProf(prof);
+function cloudBegin(S,name,prof,upd,push,isNew,msg){if(typeof giftReset=='function')giftReset();S.name=name;S.live=true;S.synced=S.upd=upd||0;CLOUD=S;ACCT='c:'+S.uid;PF=fixProf(prof);
  try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}cloudRemember(S);
  accEnter(isNew,msg);if(push)cloudFlush();else setSync('busy')}
 async function cloudLoad(S,name,mig){const d=await fsGet(S),c=ccGet()[S.uid];let prof,upd=0,push=false,msg='';
@@ -2053,7 +2095,7 @@ async function cloudPull(){const S=CLOUD;if(!inCloud()||S.dirty||S.busy||st!=='l
  try{const d=await fsGet(S);if(S!==CLOUD||!inCloud()||S.dirty||S.busy||st!=='lobby'||PANEL||!d||!d.prof||d.updated<=S.synced)return;
   PF=fixProf(d.prof);S.synced=S.upd=d.updated;ccPut(S.uid,{name:S.name,prof:PF,updated:d.updated,synced:d.updated});applyProfile();if(typeof renderLUI=='function')renderLUI();setSync('ok');toast('☁️ 已載入其他裝置的最新進度','#4fc3f7')}catch(_){}}
 addEventListener('pagehide',()=>{if(inCloud()&&CLOUD.dirty)cloudFlush(true)});
-document.addEventListener('visibilitychange',()=>{if(!inCloud())return;if(document.visibilityState==='hidden'){if(CLOUD.dirty)cloudFlush(true)}else cloudPull()});
+document.addEventListener('visibilitychange',()=>{if(!inCloud())return;if(document.visibilityState==='hidden'){if(CLOUD.dirty)cloudFlush(true)}else{cloudPull();if(typeof giftPoll=='function')giftPoll(1)}});
 var LOCAL_NOTE=null;
 function authModeUI(){const m=$('#amode'),n=$('#anote');if(!m||!n)return;const p=$('#ap');if(LOCAL_NOTE==null)LOCAL_NOTE=n.innerHTML;
  if(!fbOn()){m.style.display='none';n.innerHTML=LOCAL_NOTE}
@@ -2068,7 +2110,7 @@ function accStart(k,rem,isNew){if(CLOUD.live){CLOUD.live=false;CLOUD=newCloud(CL
  try{if(rem)localStorage.setItem('rvl_session',k);else localStorage.removeItem('rvl_session');sessionStorage.setItem('rvl_session',k)}catch(_){}
  accEnter(isNew)}
 function accEnter(isNew,msg){dailyReset();loginStreak();applyProfile();saveP();$('#auth').style.display='none';enterLobby();toast((isNew?'🎉 帳號建立成功，':'👋 歡迎回來，')+accName()+'！','#2fbf71');if(msg)setTimeout(()=>toast(msg,'#4fc3f7'),700);setSync(CLOUD.st||'busy')}
-function accLogout(){saveP();if(NET)netLeave();if(inCloud()){const S=CLOUD;S.live=false;S.snap=PF;if(S.dirty)cloudFlush(true,S);CLOUD=newCloud(S);cloudForget();setSync('')}ACCT=null;PF=null;try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}if(typeof closePanels=='function')closePanels();showAuth()}
+function accLogout(){saveP();if(typeof giftReset=='function')giftReset();if(NET)netLeave();if(inCloud()){const S=CLOUD;S.live=false;S.snap=PF;if(S.dirty)cloudFlush(true,S);CLOUD=newCloud(S);cloudForget();setSync('')}ACCT=null;PF=null;try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}if(typeof closePanels=='function')closePanels();showAuth()}
 function showAuth(){st='menu';paused=false;document.exitPointerLock&&document.exitPointerLock();for(const id of['#hud','#menu','#onl','#over','#pause','#lo'])$(id).style.display='none';$('#lobbyMenuBtn').style.display='none';if(typeof syncLUI=='function')syncLUI();
  $('#auth').style.display='flex';$('#amsg').textContent='';$('#ap').value='';$('#ap2').value='';accLoad();const us=Object.values(ACCDB.users);
  if(fbOn()){const have=new Set(us.map(u=>String(u.name).toLowerCase())),c=ccGet();for(const id in c){const u=c[id];if(u&&u.name&&!have.has(u.name.toLowerCase())){have.add(u.name.toLowerCase());us.push({name:u.name,prof:u.prof,cl:1})}}if(CLOUD.ok!==true)cloudProbe()}
@@ -2157,6 +2199,7 @@ function redeem(){const c=$('#codeIn').value.trim().toLowerCase(),m=$('#codeMsg'
  const already=()=>{m.style.color='#ffc93c';m.textContent='這個代碼已經兌換過了'};
  if(c==='deathsmilexux'){if(PF.codes.includes(c)){if(WRAPS.every(x=>PF.wraps.includes(x.id))&&FINS.every(x=>PF.fins.includes(x.id))&&SKINS.every(x=>PF.skins.includes(x.id)))return already();for(const x of WRAPS)if(!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！新增解鎖全部武器包裝、死亡特效與皮膚';toast('🎉 全部包裝與死亡特效已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}PF.codes.push(c);let n=0;for(const w of ALLW())if(!PF.unl.includes(w.n)){PF.unl.push(w.n);n++}for(const x of WRAPS)if(!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已解鎖全部武器、包裝、死亡特效與皮膚（新增武器 '+n+' 把）';toast('🎉 代碼兌換成功：全部武器已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='skintest'){if(PF.codes.includes(c))return already();PF.codes.push(c);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已獲得全部測試皮膚（'+SKINS.map(x=>x.name).join('、')+'）';toast('🎨 已獲得全部皮膚！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
+ if(c==='skinscases'){if(PF.codes.includes(c))return already();PF.codes.push(c);PF.crates.scase=crHeld('scase')+1;saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 1 個皮膚箱 Skin Case（已放進 🎒 背包）';toast('📦 皮膚箱 Skin Case ×1 已放進背包','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(CODE_KEYS[c]!=null){if(PF.codes.includes(c))return already();PF.codes.push(c);const n=CODE_KEYS[c];giveKeys(n,'代碼 '+c);m.style.color='#35d07f';m.textContent='✅ 兌換成功！+'+n+' 🔑';return}
  if(c==='ommgggwhatisthis'){if(PF.codes.includes(c))return already();PF.codes.push(c);const locked=ALLW().filter(w=>!PF.unl.includes(w.n));
   if(!locked.length){saveNow();m.style.color='#ffc93c';m.textContent='你已經擁有全部武器了！';return}
@@ -2261,9 +2304,9 @@ function claimable(){if(!PF)return{t:0,p:0};dailyReset();let t=0;for(const d of 
 function renderLUI(){if(!PF)return;const r=xpReq(PF.lv);$('#llvn').textContent=PF.lv;$('#llname').textContent=accName();$('#llxp').style.width=Math.min(100,PF.xp/r*100)+'%';$('#llxpt').textContent='Lv '+PF.lv+' · '+PF.xp+' / '+r+' XP';$('#lkeyn').textContent=PF.keys;$('#ltkn').textContent=PF.tickets;{const bp=$('#bpbadge'),n=crTot();bp.style.display=n?'block':'none';bp.textContent=n}
  {const fg=$('#lgrant');if(fg){if(PF.freeGrant&&PF.freeGrant.length){fg.style.display='block';fg.innerHTML='🎁 免費獲得：'+PF.freeGrant.map(esc).join('、')+'<button id="lgrantX">✕</button>';const xb=$('#lgrantX');if(xb)xb.onclick=()=>{PF.freeGrant=[];saveP();renderLUI()}}else fg.style.display='none'}}
  dailyReset();$('#ltlist').innerHTML=DAILY.map(d=>{const v=Math.min(d.g,PF.daily[d.k]),dn=v>=d.g;return'<div class="tk'+(dn?' done':'')+'">'+d.n+' <b>'+v+'/'+d.g+'</b><span class="r">'+(PF.daily.cl.includes(d.k)?'✔':d.r+' 🔑')+'</span><div class="pb"><i style="width:'+v/d.g*100+'%"></i></div></div>'}).join('');
- {const ub=$('#ubadge');if(ub)ub.style.display=updUnclaimed()?'block':'none'}const c=claimable();for(const[id,n]of[['#tbadge',c.t],['#pbadge',c.p]]){const b=$(id);b.style.display=n?'block':'none';b.textContent=n}renderPList()}
+ {const ub=$('#ubadge');if(ub)ub.style.display=updUnclaimed()?'block':'none'}{const gb=$('#gfbadge'),n=inCloud()?GIFT.pend.length:0;if(gb){gb.style.display=n?'block':'none';gb.textContent=n}}const c=claimable();for(const[id,n]of[['#tbadge',c.t],['#pbadge',c.p]]){const b=$(id);b.style.display=n?'block':'none';b.textContent=n}renderPList()}
 function renderPList(){if(!PF)return;const rows=['<div>⭐ <span class="lvb">'+PF.lv+'</span>'+esc(accName())+(PF.st.streak>1?' 🔥'+PF.st.streak:'')+'</div>'];if(typeof LPX!=='undefined')for(const id in LPX){const q=LPX[id];rows.push('<div>👤 <span class="lvb">'+(q.lv||1)+'</span>'+esc(q.name)+(q.streak>1?' 🔥'+q.streak:'')+'</div>')}$('#lplist').innerHTML='<div style="color:#9fb0e0;font-size:11px">PLAYERS · '+rows.length+'</div>'+rows.join('')}
-$('#lbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p=='upd'){openUpd();return}const m={pack:'Pack',wpn:'Wpn',tasks:'Tasks',shop:'Shop',pass:'Pass',set:'Set',event:'Event'}[b.dataset.p];if(m)openPanel(m)};
+$('#lbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p=='upd'){openUpd();return}if(b.dataset.p=='gift'){giftOpen();return}const m={pack:'Pack',wpn:'Wpn',tasks:'Tasks',shop:'Shop',pass:'Pass',set:'Set',event:'Event'}[b.dataset.p];if(m)openPanel(m)};
 $('#lonline').onclick=()=>{$('#onl').style.display='flex';if(!NET){$('#onA').style.display='block';$('#onB').style.display='none';onMsgUI('')}};
 $('#lkeyAdd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};$('#ltk').onclick=()=>openPanel('Pass');
 $('#toDuels').onclick=()=>{if(typeof toDuels=='function')toDuels()};
@@ -2334,6 +2377,111 @@ PRENDER.Shop=()=>{const T2=[['home','Home'],['crates','📦 Crates 箱子'],['bu
  $('#shopBody').innerHTML=h;const g=id=>$('#shopBody').querySelector(id);if(g('#shPass'))g('#shPass').onclick=()=>openPanel('Pass');if(g('#shCr'))g('#shCr').onclick=()=>shopTab('crates');for(const c of $('#shopBody').querySelectorAll('[data-crt]'))c.onclick=()=>crDlg(c.dataset.crt,'buy');if(g('#shCode'))g('#shCode').onclick=()=>openPanel('Code');if(g('#shTasks'))g('#shTasks').onclick=()=>openPanel('Tasks');
  for(const b of $('#shopBody').querySelectorAll('[data-bw]'))b.onclick=()=>buyW([b.dataset.bw],+b.dataset.pr,b.dataset.bw);
  for(const b of $('#shopBody').querySelectorAll('[data-bb]'))b.onclick=()=>{const bd=BUNDLES[+b.dataset.bb];buyW(bd.w,+b.dataset.pr,bd.n)}};
+// ===== gifting 送禮 (cloud accounts only; Firestore REST, same session/token refresh as the profile sync) =====
+// names/{lowercase username} = {uid,name,email}: every cloud user writes their own on login -> resolves a recipient @ID (profile card handle) to a uid.
+// gifts/{autoId} = {toUid,toName,fromUid,fromName,kind,item,qty,msg,free,ts}; kind: weapon|crate|keys|tickets|skin|wrap|fin (keys/tickets: item='').
+// Players pay with their OWN currency (weapon = its key price, crate = price × qty) -> saveNow -> create the doc (refunded if the write fails).
+// Recipient: :runQuery gifts where toUid == me (single-field equality, no index) -> popup -> 領取 applies to PF, saves, then DELETEs the doc
+// (PF.giftClaimed keeps claimed ids so a failed delete can never be claimed twice). Already-owned weapon -> its key price in keys.
+// Admin = the cloud account 'deathsmile' (auth email ADMIN_EMAIL = fbEmail('deathsmile')): may gift anything free (free:true); the Firestore rules
+// (see FB_CFG comment) only accept free:true from that email, and receivers additionally drop free gifts that are not from it.
+const ADMIN_NAME='deathsmile',ADMIN_EMAIL='u6465617468736d696c65@rivals-arena.app',GIFT_KINDS=['weapon','crate','keys','tickets','skin','wrap','fin'],GIFT_QMAX={keys:10000,tickets:1000,crate:20};
+var GIFT_POLL_MS=60000,GIFT={pend:[],t:0,busy:false,reg:'',seen:{},adminUid:null,to:null,toIn:'',who:'',cat:'weapon',item:{},qty:1,msg:'',tab:'send',sending:false};
+function giftReset(){Object.assign(GIFT,{pend:[],t:0,reg:'',seen:{},adminUid:null,to:null,toIn:'',who:'',qty:1,msg:'',tab:'send',cat:'weapon'});const d=$('#gfDlg');if(d)d.style.display='none'}
+const fsBase=()=>'https://firestore.googleapis.com/v1/projects/'+encodeURIComponent(FB_CFG.projectId)+'/databases/(default)/documents';
+async function fsCall(path,method,body){const S=CLOUD;for(let i=0;;i++){const tok=await fbTok(S,i>0);
+ try{return await fbFetch(fsBase()+path,{method,headers:Object.assign({Authorization:'Bearer '+tok},body?{'Content-Type':'application/json'}:{}),body:body?JSON.stringify(body):undefined})}catch(e){if(e&&e.status===401&&i==0)continue;throw e}}}
+const fsEnc=o=>{const f={};for(const k in o){const v=o[k];f[k]=typeof v=='boolean'?{booleanValue:v}:typeof v=='number'?{integerValue:String(Math.round(v))}:{stringValue:String(v)}}return{fields:f}};
+const fsDec=f=>{const o={};for(const k in f||{}){const v=f[k]||{};o[k]='stringValue'in v?v.stringValue:'integerValue'in v?+v.integerValue:'booleanValue'in v?v.booleanValue:'doubleValue'in v?+v.doubleValue:null}return o};
+// the signed-in account's auth email: from the Firebase ID token (JWT) payload; fallback = the name mapping. UI only — the server rules check the real token.
+function tokEmail(){try{const p=JSON.parse(atob(String(CLOUD.id).split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));if(p&&p.email)return String(p.email).toLowerCase()}catch(_){}return CLOUD.name?fbEmail(CLOUD.name):''}
+const isAdmin=()=>inCloud()&&tokEmail()===ADMIN_EMAIL;
+async function giftReg(){if(!inCloud())return;const k=CLOUD.name.toLowerCase(),key=CLOUD.uid+'|'+k;if(GIFT.reg===key)return;
+ try{await fsCall('/names/'+encodeURIComponent(k),'PATCH',fsEnc({uid:CLOUD.uid,name:CLOUD.name,email:tokEmail()}));GIFT.reg=key}catch(_){}}
+async function giftFind(raw){const k=String(raw||'').trim().replace(/^@/,'').toLowerCase();if(!k)throw'請輸入對方的 ID';if(!NAME_RE.test(k))throw'ID 格式不對（3–16 字：英數、底線或中文）';
+ if(k===CLOUD.name.toLowerCase())throw'不能送禮給自己';let d;
+ try{d=fsDec((await fsCall('/names/'+encodeURIComponent(k),'GET')).fields)}catch(e){if(e&&e.status===404)throw'找不到 @'+k+'（對方需要先用新版登入一次雲端帳號）';throw e}
+ if(!d.uid||(d.email&&d.email!==fbEmail(k)))throw'找不到 @'+k;if(d.uid===CLOUD.uid)throw'不能送禮給自己';return{uid:d.uid,name:d.name||k,k}}
+function giftLbl(k,i,q){if(k=='weapon')return'🔫 '+i;if(k=='crate'){const C=CRBYID[i];return'📦 '+(C?C.name+' '+C.en:i)+(q>1?' ×'+q:'')}if(k=='keys')return'🔑 '+q+' 鑰匙';if(k=='tickets')return'🎫 '+q+' 皮膚票';
+ if(k=='skin'){const x=SKBYID[i];return'🎨 '+(x?x.name+'（'+x.weapon+' 皮膚）':i)}if(k=='wrap'){const x=WBYID[i];return'🧻 '+(x?x.zh+' '+x.en+' 包裝':i)}if(k=='fin'){const x=FBYID[i];return'💀 '+(x?x.zh+' '+x.en+' 死亡特效':i)}return'?'}
+function giftCost(k,i,q){if(k=='weapon'&&WBN(i))return{cur:'keys',n:wCost(i)};if(k=='crate'&&CRBYID[i])return{cur:CRBYID[i].cur,n:CRBYID[i].price*q};return null}
+function giftOk(g){if(!g||g.toUid!==CLOUD.uid||!GIFT_KINDS.includes(g.kind)||typeof g.item!='string'||!Number.isInteger(g.qty))return false;const k=g.kind,i=g.item,q=g.qty;
+ if(g.free===true){if(String(g.fromName||'').toLowerCase()!==ADMIN_NAME||(GIFT.adminUid&&g.fromUid!==GIFT.adminUid))return false}else if(k!='weapon'&&k!='crate')return false;
+ if(k=='weapon')return q===1&&!!WBN(i)&&!START_W.includes(i);if(k=='crate')return!!CRBYID[i]&&q>=1&&q<=20;if(k=='keys')return q>=1&&q<=10000;if(k=='tickets')return q>=1&&q<=1000;
+ if(k=='skin')return q===1&&!!SKBYID[i];if(k=='wrap')return q===1&&!!WBYID[i]&&i!='bc';if(k=='fin')return q===1&&!!FBYID[i]&&i!='fc';return false}
+function giftLog(e){PF.giftLog.unshift(e);const n={s:0,r:0};PF.giftLog=PF.giftLog.filter(x=>++n[x.d]<=20)}
+async function giftPoll(force){if(!inCloud()||!PF||GIFT.busy||st!=='lobby')return;if(!force&&Date.now()-GIFT.t<GIFT_POLL_MS)return;GIFT.busy=true;GIFT.t=Date.now();const S=CLOUD;
+ try{await giftReg();const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:'gifts'}],where:{fieldFilter:{field:{fieldPath:'toUid'},op:'EQUAL',value:{stringValue:S.uid}}},limit:50}});if(S!==CLOUD||!inCloud())return;
+  const L=[];for(const x of Array.isArray(r)?r:[]){if(!x||!x.document)continue;const g=fsDec(x.document.fields);g.id=String(x.document.name).split('/').pop();L.push(g)}
+  if(L.some(g=>g.free===true)&&!GIFT.adminUid){try{const d=fsDec((await fsCall('/names/'+ADMIN_NAME,'GET')).fields);if(d.email===ADMIN_EMAIL)GIFT.adminUid=d.uid}catch(_){}}
+  const P2=[];for(const g of L){if(PF.giftClaimed.includes(g.id)||!giftOk(g)){if(!CLOUD.dirty||!PF.giftClaimed.includes(g.id))fsCall('/gifts/'+encodeURIComponent(g.id),'DELETE').catch(()=>{});continue}P2.push(g)}
+  P2.sort((a,b)=>(a.ts||0)-(b.ts||0));GIFT.pend=P2;renderLUI();if(PANEL=='Gift'&&GIFT.tab=='recv')PRENDER.Gift();
+  if(P2.some(g=>!GIFT.seen[g.id]))giftPopup()}
+ catch(_){}finally{GIFT.busy=false}}
+setInterval(()=>giftPoll(0),5000);
+async function giftClaim(id){const g=GIFT.pend.find(x=>x.id===id);if(!g||!PF||!inCloud())return;GIFT.pend=GIFT.pend.filter(x=>x.id!==id);if(PF.giftClaimed.includes(id))return;const k=g.kind,i=g.item,q=g.qty;let note='';
+ if(k=='weapon'){if(isUnl(i)){const c=wCost(i);PF.keys+=c;note='你已經擁有 '+i+'，自動換成 🔑 '+c+' 鑰匙'}else PF.unl.push(i)}
+ else if(k=='crate')PF.crates[i]=crHeld(i)+q;else if(k=='keys')PF.keys+=q;else if(k=='tickets')PF.tickets+=q;
+ else if(crOwns(k,i)){if(k=='skin'){PF.tickets+=10;note='你已經擁有這個皮膚，自動換成 🎫 10 皮膚票'}else{const c=Math.max(5,(k=='wrap'?WBYID[i]:FBYID[i]).p);PF.keys+=c;note='你已經擁有這個外觀，自動換成 🔑 '+c+' 鑰匙'}}else crGrant(k,i);
+ PF.giftClaimed.push(id);if(PF.giftClaimed.length>200)PF.giftClaimed.splice(0,PF.giftClaimed.length-200);giftLog({d:'r',n:g.fromName,k,i,q,f:g.free?1:0,m:g.msg||'',t:Date.now()});
+ saveP();toast('🎁 已領取 '+giftLbl(k,i,q)+'（來自 '+g.fromName+'）','#35d07f');if(note)setTimeout(()=>toast('ℹ️ '+note,'#ffd23f'),700);snd(880,.12,.06,'sine');renderLUI();if(PANEL=='Gift')PRENDER.Gift();
+ const ok=await cloudFlush();if(ok&&!CLOUD.dirty)try{await fsCall('/gifts/'+encodeURIComponent(id),'DELETE')}catch(_){}}// delete failed / not yet synced -> retried by the next poll
+async function giftClaimAll(){for(const x of GIFT.pend.slice())await giftClaim(x.id)}
+async function giftSend(o){if(GIFT.sending||!inCloud()||!PF)return false;const free=isAdmin(),c=free?null:giftCost(o.kind,o.item,o.qty);if(!free&&!c)return false;
+ if(c&&PF[c.cur]<c.n){toast(CURI[c.cur]+' '+CURN[c.cur]+'不足（還差 '+(c.n-PF[c.cur])+'）','#ff6a6a');snd(200,.15,.05);return false}
+ GIFT.sending=true;if(c){PF[c.cur]-=c.n;saveNow()}renderLUI();
+ const doc={toUid:o.to.uid,toName:o.to.name,fromUid:CLOUD.uid,fromName:CLOUD.name,kind:o.kind,item:o.item,qty:o.qty,msg:o.msg,free,ts:Date.now()};
+ try{await giftReg();await fsCall('/gifts','POST',fsEnc(doc));giftLog({d:'s',n:o.to.name,k:o.kind,i:o.item,q:o.qty,f:free?1:0,m:o.msg,t:Date.now()});saveNow();toast('🎁 已送出 '+giftLbl(o.kind,o.item,o.qty)+' 給 '+o.to.name,'#35d07f');snd(990,.12,.06,'sine');return true}
+ catch(e){if(c){PF[c.cur]+=c.n;saveNow()}toast('❌ 送禮失敗'+(c?'，已退回 '+c.n+' '+CURI[c.cur]:'')+'：'+fbMsg(e),'#ff6a6a');snd(200,.15,.05);return false}
+ finally{GIFT.sending=false;renderLUI()}}
+// ---- UI: 🎁 lobby button -> panel (送禮 / 收到 / 紀錄), confirm dialog, "你收到禮物！" popup ----
+function giftOpen(){if(!inCloud()){toast('送禮需要雲端帳號（請用網站版登入）','#ffc93c');return}GIFT.tab=GIFT.pend.length?'recv':'send';openPanel('Gift');if(Date.now()-GIFT.t>10000)giftPoll(1)}
+const GCATS=[['weapon','🔫 武器'],['crate','📦 箱子'],['keys','🔑 鑰匙',1],['tickets','🎫 皮膚票',1],['skin','🎨 皮膚',1],['wrap','🧻 包裝',1],['fin','💀 死亡特效',1]];
+function giftItems(k,adm){if(k=='weapon')return ALLW().filter(w=>!START_W.includes(w.n)).map(w=>[w.n,w.n+(adm?'':' — 🔑 '+wCost(w.n))]);if(k=='crate')return CRATES.map(C=>[C.id,C.name+' '+C.en+(adm?'':' — '+C.price+' '+CURI[C.cur])]);
+ if(k=='skin')return SKINS.map(x=>[x.id,x.name+'（'+x.weapon+'）']);if(k=='wrap')return WRAPS.filter(x=>x.id!='bc').map(x=>[x.id,x.zh+' '+x.en]);if(k=='fin')return FINS.filter(x=>x.id!='fc').map(x=>[x.id,x.zh+' '+x.en]);return[]}
+const gfQ=k=>k=='crate'||k=='keys'||k=='tickets',gfQmax=(k,adm)=>k=='crate'?(adm?20:10):GIFT_QMAX[k]||1;
+function gfSel(){const adm=isAdmin(),k=GIFT.cat,it=giftItems(k,adm);let i=GIFT.item[k];if(it.length&&!it.some(x=>x[0]===i))i=GIFT.item[k]=it[0][0];if(!it.length)i='';const q=gfQ(k)?Math.max(1,Math.min(gfQmax(k,adm),Math.floor(+GIFT.qty)||1)):1;return{kind:k,item:i,qty:q,msg:String(GIFT.msg||'').trim().slice(0,40)}}
+function gfCostTxt(o){if(isAdmin())return'👑 免費（管理員）';const c=giftCost(o.kind,o.item,o.qty);if(!c)return'—';const ok=PF[c.cur]>=c.n;return'花費：'+CURI[c.cur]+' '+c.n+' '+CURN[c.cur]+'<span style="color:'+(ok?'#9fe0b0':'#ff8a8a')+';font-size:13px;margin-left:8px">（你有 '+PF[c.cur]+(ok?'':'，不足')+'）</span>'}
+function gfRow(g,btn){return'<div class="gfit"><div style="font-size:28px">'+(g.free?'👑':'🎁')+'</div><div class="t"><b>'+esc(giftLbl(g.kind,g.item,g.qty))+'</b><span>來自 '+esc(g.fromName||'?')+(g.free?' · 管理員贈送':'')+'</span>'+(g.msg?'<span>💬 '+esc(g.msg)+'</span>':'')+'</div>'+(btn?'<button class="gbtn" data-gc="'+esc(g.id)+'">領取</button>':'')+'</div>'}
+PRENDER.Gift=()=>{if(!PF)return;const adm=isAdmin(),cl=inCloud(),np=GIFT.pend.length;$('#gfkeys').textContent='　🔑 '+PF.keys+'　🎫 '+PF.tickets;
+ $('#gfTabs').innerHTML=[['send','🎁 送禮'],['recv','📥 收到'+(np?' ('+np+')':'')],['log','📜 紀錄']].map(([k,n])=>'<button data-gt="'+k+'" class="'+(GIFT.tab==k?'on':'')+'">'+n+'</button>').join('');
+ for(const b of $('#gfTabs').children)b.onclick=()=>{GIFT.tab=b.dataset.gt;PRENDER.Gift()};let h='';const B0=$('#giftBody');
+ if(!cl)h='<div class="cd">送禮需要雲端帳號（請用網站版登入）</div>';
+ else if(GIFT.tab=='send'){const o=gfSel(),it=giftItems(o.kind,adm);
+  h=(adm?'<div class="gfadm">👑 管理員：免費贈送 · 任何武器、箱子、鑰匙、皮膚票、皮膚、包裝、死亡特效都不會扣你的東西</div>':'')+
+  '<div class="gfrow"><label>送給 To</label><input id="gfTo" type="text" maxlength="17" placeholder="對方的 ID，例如 @player123" value="'+esc(GIFT.toIn)+'"><button class="bbtn" id="gfFind">查詢</button></div><div class="gfwho" id="gfWho">'+GIFT.who+'</div>'+
+  '<div class="gfrow"><label>禮物 Gift</label><div class="ptabs gfcats">'+GCATS.filter(c=>adm||!c[2]).map(([k,n])=>'<button data-gk="'+k+'" class="'+(o.kind==k?'on':'')+'">'+n+'</button>').join('')+'</div></div>'+
+  (it.length?'<div class="gfrow"><label></label><select id="gfItem">'+it.map(([v,t])=>'<option value="'+esc(v)+'"'+(v===o.item?' selected':'')+'>'+esc(t)+'</option>').join('')+'</select></div>':'')+
+  (gfQ(o.kind)?'<div class="gfrow"><label>數量</label><input id="gfQty" type="number" min="1" max="'+gfQmax(o.kind,adm)+'" value="'+o.qty+'"><span class="note">1–'+gfQmax(o.kind,adm)+'</span></div>':'')+
+  '<div class="gfrow"><label>留言</label><input id="gfMsg" type="text" maxlength="40" placeholder="（選填，最多 40 字）" value="'+esc(GIFT.msg)+'"></div>'+
+  '<div class="gfcost" id="gfCost">'+gfCostTxt(o)+'</div><button class="gbtn" id="gfGo" style="width:100%;font-size:17px"'+(GIFT.sending?' disabled':'')+'>🎁 送出禮物</button>'+
+  '<div class="note" style="margin-top:8px">你的 ID：<b>@'+esc(CLOUD.name.toLowerCase())+'</b>（個人資料卡上的 @名稱）· 朋友輸入這個 ID 就能送你禮物'+(adm?'':'<br>送武器 = 付那把武器的鑰匙價格；對方已經有那把武器會自動換成鑰匙。送箱子 = 付箱子價格，箱子會放進對方的 🎒 背包。')+'</div>'}
+ else if(GIFT.tab=='recv')h=(np?GIFT.pend.map(g=>gfRow(g,1)).join('')+'<button class="gbtn" id="gfAll" style="margin-top:6px">全部領取</button> ':'<div class="cd" style="margin-bottom:8px">📭 目前沒有待領取的禮物</div>')+'<button class="bbtn" id="gfRef" style="margin-top:6px">🔄 重新整理</button>';
+ else{const col=(d,t)=>{const L=PF.giftLog.filter(x=>x.d==d).slice(0,20);return'<div><h3 style="margin-top:0">'+t+'</h3>'+(L.length?L.map(x=>'<div class="gfit"><div class="t"><b>'+esc(giftLbl(x.k,x.i,x.q))+'</b><span>'+(d=='s'?'給 ':'來自 ')+esc(x.n)+(x.f?' · 👑 免費':'')+' · '+new Date(x.t).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+'</span>'+(x.m?'<span>💬 '+esc(x.m)+'</span>':'')+'</div></div>').join(''):'<div class="note">還沒有紀錄</div>')+'</div>'};
+  h='<div class="gfcols">'+col('s','📤 已送出')+col('r','📥 已收到')+'</div>'}
+ B0.innerHTML=h;const g=q=>B0.querySelector(q);
+ if(g('#gfTo')){g('#gfTo').oninput=e=>{GIFT.toIn=e.target.value;GIFT.to=null;GIFT.who='';g('#gfWho').innerHTML=''};g('#gfTo').onkeydown=e=>{if(e.code=='Enter'||e.code=='NumpadEnter')gfLookup()};g('#gfFind').onclick=()=>gfLookup()}
+ for(const b of B0.querySelectorAll('[data-gk]'))b.onclick=()=>{GIFT.cat=b.dataset.gk;GIFT.qty=1;PRENDER.Gift()};
+ const upc=()=>{const c=g('#gfCost');if(c)c.innerHTML=gfCostTxt(gfSel())};if(g('#gfItem'))g('#gfItem').onchange=e=>{GIFT.item[GIFT.cat]=e.target.value;upc()};if(g('#gfQty'))g('#gfQty').oninput=e=>{GIFT.qty=e.target.value;upc()};
+ if(g('#gfMsg'))g('#gfMsg').oninput=e=>{GIFT.msg=e.target.value};if(g('#gfGo'))g('#gfGo').onclick=gfGo;
+ for(const b of B0.querySelectorAll('[data-gc]'))b.onclick=()=>giftClaim(b.dataset.gc);if(g('#gfAll'))g('#gfAll').onclick=giftClaimAll;if(g('#gfRef'))g('#gfRef').onclick=()=>giftPoll(1)};
+async function gfLookup(){const w=$('#gfWho'),raw=GIFT.toIn;if(!w)return null;w.style.color='#cfd6ff';w.textContent='查詢中…';
+ try{const r=await giftFind(raw);if(GIFT.toIn!==raw)return null;GIFT.to=r;GIFT.who='<span style="color:#7dff9a">✔ 找到玩家：'+esc(r.name)+'（@'+esc(r.k)+'）</span>'}catch(e){if(GIFT.toIn!==raw)return null;GIFT.to=null;GIFT.who='<span style="color:#ff8a8a">'+esc(typeof e=='string'?e:fbMsg(e))+'</span>'}
+ const w2=$('#gfWho');if(w2){w2.style.color='';w2.innerHTML=GIFT.who}return GIFT.to}
+function gfDlg(h){const d=$('#gfDlg');$('#gfBox').innerHTML=h;d.style.display=h?'flex':'none'}
+async function gfGo(){if(GIFT.sending)return;const o=gfSel();if(!o.item&&!gfQ(o.kind))return;if(!GIFT.to&&!(await gfLookup()))return;const to=GIFT.to,adm=isAdmin(),c=adm?null:giftCost(o.kind,o.item,o.qty);
+ if(!adm&&!c)return;if(c&&PF[c.cur]<c.n){toast(CURI[c.cur]+' '+CURN[c.cur]+'不足（還差 '+(c.n-PF[c.cur])+'）','#ff6a6a');snd(200,.15,.05);return}
+ gfDlg('<h3>確認送禮</h3><div class="crow"><em>送給</em><b>'+esc(to.name)+'</b>（@'+esc(to.k)+'）</div><div class="crow"><em>禮物</em><b>'+esc(giftLbl(o.kind,o.item,o.qty))+'</b></div>'+(o.msg?'<div class="crow"><em>留言</em>💬 '+esc(o.msg)+'</div>':'')+
+  '<div class="gfcost" style="text-align:center">'+(adm?'👑 管理員免費贈送（不扣任何東西）':'花費 '+CURI[c.cur]+' '+c.n+' '+CURN[c.cur]+'　送出後剩 '+(PF[c.cur]-c.n))+'</div>'+(o.kind=='weapon'?'<div class="note" style="text-align:center">如果對方已經有這把武器，會自動換成 🔑 '+wCost(o.item)+' 鑰匙給他</div>':'')+
+  '<div class="row"><button class="gbtn" id="gfYes">確定送出</button><button id="gfNo">取消</button></div>');
+ $('#gfNo').onclick=()=>gfDlg('');$('#gfYes').onclick=async()=>{const y=$('#gfYes');y.disabled=true;y.textContent='送出中…';const ok=await giftSend(Object.assign({to},o));gfDlg('');if(ok){GIFT.msg=''}if(PANEL=='Gift')PRENDER.Gift()}}
+function giftPopup(){const d=$('#gfDlg');if(!inCloud()||st!=='lobby'||CRO||d.style.display=='flex'||$('#crDlg').style.display=='flex'||PANEL=='Gift'||$('#auth').style.display!=='none')return;if(!GIFT.pend.length)return;
+ for(const g of GIFT.pend)GIFT.seen[g.id]=1;
+ gfDlg('<h3>🎁 你收到禮物！</h3>'+GIFT.pend.map(g=>gfRow(g,1)).join('')+'<div class="row"><button class="gbtn" id="gfPAll">全部領取</button><button id="gfPLater">稍後再領</button></div>');
+ const bx=$('#gfBox');for(const b of bx.querySelectorAll('[data-gc]'))b.onclick=async()=>{b.disabled=true;await giftClaim(b.dataset.gc);if(GIFT.pend.length&&d.style.display=='flex'){d.style.display='none';giftPopup()}else gfDlg('')};
+ $('#gfPAll').onclick=()=>{gfDlg('');giftClaimAll()};$('#gfPLater').onclick=()=>gfDlg('')}
+$('#gfDlg').addEventListener('click',e=>{if(e.target.id=='gfDlg')gfDlg('')});
+for(const ev of['mousedown','touchstart','wheel'])$('#gfDlg').addEventListener(ev,e=>e.stopPropagation(),{passive:true});
 // ===== crates: shop/backpack dialogs + 3D opening cinematic =====
 var CRO=null,CRS=null,CRD=null;
 const CRT={pop:.5,land:1.45,shake:2.45,open:3.15,rev:4.05};
