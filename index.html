@@ -280,7 +280,25 @@ body.lbhub #hud #cross,body.lbhub #hud #hp,body.lbhub #hud #wl,body.lbhub #hud #
 #rwrow select{background:#222a4a;color:#fff;border:1px solid var(--ln);border-radius:8px;padding:6px 8px;font-size:14px}
 
 /* ===== crates / lootboxes ===== */
-#ltk{display:flex;align-items:center;gap:6px;margin-left:6px;padding:0 10px 0 10px;border-left:2px solid #ffffff22;cursor:pointer}
+#ltk,#lgd{display:flex;align-items:center;gap:6px;margin-left:6px;padding:0 10px 0 10px;border-left:2px solid #ffffff22;cursor:pointer}
+/* ===== Keys shop: gold-priced key bundles ===== */
+.kbcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:10px}
+.kbcd{position:relative;border-radius:14px;padding:10px 10px 12px;background:linear-gradient(160deg,#ffe066,#f2b51a 55%,#9a6406);color:#3a2400;cursor:pointer;border:3px solid #fff1a8;text-align:center;box-shadow:0 4px 0 #6a4404;user-select:none}
+.kbcd:active{transform:translateY(2px)}.kbcd.red{background:linear-gradient(160deg,#ff6a52,#d01a22 55%,#5c0610);color:#fff;border-color:#ffb4a4;box-shadow:0 4px 0 #46040a}
+.kbcd h4{font:900 16px/1.15 system-ui;margin:2px 0}.kbcd .kbe{font:800 11px system-ui;opacity:.8}.kbcd .kbn{font:900 30px/1.1 system-ui;text-shadow:0 2px 0 #fff6}.kbcd.red .kbn{text-shadow:0 2px 0 #0006}
+.kbcd .kbart{height:62px;display:flex;align-items:center;justify-content:center;font-size:40px;gap:2px}.kbcd .kbart img{height:62px;max-width:100%;object-fit:contain}
+.kbcd .kbpr{margin-top:8px;background:#17171f;color:#ffd84a;border-radius:10px;padding:6px;font:900 18px system-ui}.kbcd .kbpr.off{color:#ff8a8a}
+.kbcd .kbx{position:absolute;top:6px;left:6px;background:#fff;color:#c8141e;font:900 10px system-ui;border-radius:8px;padding:2px 6px}
+#kbDlg{position:fixed;inset:0;z-index:41;display:none;align-items:center;justify-content:center;background:#000000b0}
+.kbbox{background:linear-gradient(#262a44,#11131f);border:3px solid #ffd23f;border-radius:16px;width:min(460px,94vw);max-height:92vh;display:flex;flex-direction:column;padding:12px 14px;box-sizing:border-box;color:#fff;box-shadow:0 10px 50px #000}
+.kbbox.red{border-color:#ff4a4a}.kbbox h3{margin:0 0 6px;font:900 21px system-ui;text-align:center}.kbbox .kbl{overflow:auto;min-height:0;flex:1}
+.kbrow{display:flex;align-items:center;gap:10px;padding:5px 8px;margin:4px 0;background:#ffffff0d;border-radius:10px;font:800 15px system-ui}
+.kbrow .ic{width:42px;height:42px;flex:none;border-radius:8px;background:#0006;display:flex;align-items:center;justify-content:center;font-size:20px;letter-spacing:-6px;white-space:nowrap;overflow:hidden}.kbrow .ic img{width:100%;height:100%;object-fit:contain}
+.kbrow .nm{flex:1;min-width:0}.kbrow .nm small{display:block;font:700 11px system-ui;color:#aab}.kbrow b{font:900 18px system-ui;color:#ffd84a}
+.kbbtns{display:flex;gap:10px;margin-top:10px}.kbbtns button{flex:1;border:0;border-radius:12px;padding:10px;font:900 20px system-ui;color:#fff;cursor:pointer}
+.kbbtns .no{background:#d9302c;box-shadow:0 3px 0 #7a1210;flex:.45}.kbbtns .ok{background:#2fbf4f;box-shadow:0 3px 0 #0b5a1c}.kbbtns .ok:disabled{background:#555;box-shadow:none;color:#bbb}
+.kbmsg{text-align:center;font:800 13px system-ui;color:#ff8a8a;min-height:16px;margin-top:6px}
+@media (max-height:460px){.kbrow{padding:2px 8px;margin:2px 0}.kbrow .ic{width:32px;height:32px;font-size:18px}.kbbox h3{font-size:17px;margin:0 0 3px}.kbbtns button{padding:6px;font-size:17px}.kbbtns{margin-top:6px}}
 #gfDlg{position:fixed;inset:0;z-index:42;display:none;align-items:center;justify-content:center;background:#000000b0}
 .gfbox{background:linear-gradient(#1f2440,#0f1220);border:2px solid #ffd23f99;border-radius:16px;width:min(480px,94vw);max-height:92vh;overflow:auto;padding:14px 16px;box-sizing:border-box;color:#fff;box-shadow:0 10px 50px #000}
 .gfbox h3{margin:0 0 10px;font:900 22px system-ui;text-align:center}.gfbox .row{justify-content:center;margin-top:10px}.gfbox .crow{margin:5px 0;font:700 15px system-ui;overflow-wrap:anywhere}.gfbox .crow em{font-style:normal;color:#9fb0e0;display:inline-block;width:64px}
@@ -413,7 +431,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
 </div></div>
 <div id="lui">
  <div id="llv" title="個人資料"><div class="nm"><span class="lvb" id="llvn">1</span><span id="llname">Player</span><span id="llsync" style="display:none;font:700 10px system-ui;margin-left:7px;vertical-align:middle"></span></div><div class="xpb2"><i id="llxp"></i></div><div style="font:700 11px system-ui;color:#c9cfee;margin-top:3px" id="llxpt"></div></div>
- <div id="lkeys" title="鑰匙">🔑 <span id="lkeyn">0</span><button id="lkeyAdd" title="取得鑰匙">+</button><span id="ltk" title="皮膚票 Skin Tickets（從 Season Pass 取得）">🎫 <span id="ltkn">0</span></span></div>
+ <div id="lkeys" title="鑰匙">🔑 <span id="lkeyn">0</span><button id="lkeyAdd" title="取得鑰匙">+</button><span id="ltk" title="皮膚票 Skin Tickets（從 Season Pass 取得）">🎫 <span id="ltkn">0</span></span><span id="lgd" title="金幣 Gold（打比賽、每日任務、升級獲得 · 可買鑰匙組合包）">🪙 <span id="lgdn">0</span></span></div>
  <div id="lgrant"></div>
  <div id="ltasks"><h4>📋 Daily Tasks</h4><div id="ltlist"></div><button id="toDuels">To Duels ➜</button></div>
  <div id="lplist"></div>
@@ -455,7 +473,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
 <div id="pGift" class="pnl"><div class="pbox" style="width:min(660px,96vw)"><div class="ptitle">🎁 送禮 Gift<span class="note" style="font-weight:700" id="gfkeys"></span><button class="xbtn" data-x>✕</button></div><div class="ptabs" id="gfTabs"></div><div class="pscroll" id="giftBody"></div></div></div>
 <div id="pProf" class="pnl"><div class="pcardx" id="profCard"></div><button class="pfx" data-x>✕</button></div>
 <div id="msel"><div id="mstop"><span class="lbl">🗺️ 選擇地圖 <small>Map Vote</small></span><div class="tbox"><svg viewBox="0 0 24 24"><path d="M5 2h14v2h-1.5c0 3.5-2.2 5.6-4 8 1.8 2.4 4 4.5 4 8H19v2H5v-2h1.5c0-3.5 2.2-5.6 4-8-1.8-2.4-4-4.5-4-8H5z"/></svg><span id="mstm">10.0</span></div><span class="md" id="msmd"></span></div><div id="mgrid"></div></div>
-<div id="toasts"></div>
+<div id="toasts"></div><div id="kbDlg"><div class="kbbox" id="kbBox"></div></div>
 <div id="crOv"><div id="crBan"></div><div id="crBtns"></div><div id="crSkip">點一下畫面跳過 · Tap to skip</div></div>
 <div id="crDlg"><div class="crbox" id="crBox"></div></div>
 <div id="gfDlg"><div class="gfbox" id="gfBox"></div></div>
@@ -641,6 +659,50 @@ const SKRC={common:'#7ed957',rare:'#28d7e8',epic:'#ff4b4b',legendary:'#ffb02e'},
 function skBurst(p,n,col,spd,life,sz){for(let i=0;i<n;i++){const a=rnd()*6.283,e=rnd()*1.4-.2,c=Array.isArray(col)?col[Math.floor(rnd()*col.length)]:col;puff(V(p.x,p.y,p.z),V(Math.cos(a)*Math.cos(e),Math.sin(e)*.5+.4,Math.sin(a)*Math.cos(e)).multiplyScalar(spd*(.5+rnd())),c,life*(.7+rnd()*.5),sz*(.6+rnd()*.7))}}
 // weapon SKINS: change the 3D model shape (wraps only recolour). build(g) = same contract as MD builders (grip at origin, barrel -z, returns {fore,mag}); stats/mechanics are untouched.
 // {id, weapon, name, rarity:'common'|'rare'|'epic'|'legendary', how:'obtained how (shown in pill)', build:g=>({fore:[x,y,z],mag:Group})}. Owned: PF.skins=[id]; equipped: PF.skin={weapon:id|'?'}; PF.skinFav=[id]. Add new skins by pushing here.
+// ----- 鑰匙雙刃 Key Daggers (Legendary Key Bundle exclusive; ex:1 = never in the Skin Case pool). Original primitive build: solid glossy gold,
+// hollow outline blade (two rails -> sharp tip), key-bitting step notches + crossguard, collar ring, round handle, octagonal gear-ring pommel (key bow).
+// Local frame like MD['Daggers'] (grip at origin, blade +y). piv = viewmodel hold angle (set in setVM), spn = spin about the blade axis (inspect/reload).
+const KDG=0xe8b412,KDD=0xb88209;// lit gold (owner ref ≈0xf5c518 / 0xd9a50f; base toned down so the bright viewmodel lights don't clip it to flat yellow)
+function kdM(c){const k='kd'+c;return MC[k]||(MC[k]=new T.MeshPhongMaterial({color:c,emissive:0x140c00,shininess:70,specular:0xfff0b0}))}
+function kdBuild(g){const piv=new T.Group(),spn=new T.Group();piv.add(spn);g.add(piv);
+ const bx=(w,h,d,x,y,z,c,rz)=>{const m=new T.Mesh(new T.BoxGeometry(w,h,d),kdM(c));m.position.set(x,y,z);if(rz)m.rotation.z=rz;spn.add(m);return m},cy=(r,h,y,c)=>{const m=new T.Mesh(new T.CylinderGeometry(r,r,h,14),kdM(c));m.position.y=y;spn.add(m);return m};
+ cy(.016,.13,-.005,KDG);cy(.026,.034,.07,KDD);cy(.02,.012,.05,KDG);bx(.11,.02,.032,0,.095,0,KDG);bx(.13,.01,.022,0,.095,0,KDD);bx(.08,.016,.026,0,.112,0,KDG);
+ const L=Math.hypot(.038,.335),a=Math.atan2(.038,.335);for(const sd of[-1,1]){bx(.016,L,.026,sd*.019,.2725,0,KDG,sd*a);bx(.006,L*.88,.03,sd*.011,.262,0,KDD,sd*a);
+  bx(.016,.014,.024,sd*.054,.118,0,KDD);bx(.012,.012,.024,sd*.05,.137,0,KDG);bx(.01,.014,.024,sd*.047,.156,0,KDD)}
+ const tip=bx(.022,.022,.026,0,.43,0,KDG,PI/4);
+ for(let k=0;k<8;k++){const f=k*PI/4,t=f+PI/8;bx(.04,.014,.022,Math.cos(f)*.046,-.115+Math.sin(f)*.046,0,KDG,f+PI/2);bx(.014,.014,.022,Math.cos(t)*.058,-.115+Math.sin(t)*.058,0,KDD,t)}
+ return{dual:1,kd:1,piv,spn,tip}}
+// viewmodel-space spark pool for the Key Daggers FX (lives in the viewmodel scene vs; one InstancedMesh, no per-particle allocation)
+var KPS=null,KDPR=null,KDPJ=null;const _kv=new T.Vector3(),_kP=[0,0,0],_kV=[0,0,0],_kO={p:_kP,v:_kV,s:.01,l:.3,c:0xffffff,d:3,m:0},KDC=[0xffffff,0xfff2b0,0xf5c518,0xffe066];
+function kps(){return KPS||(KPS=mkPS(vs,(typeof MOBILE!=='undefined'&&MOBILE)?180:360,1))}
+function kdSpk(x,y,z,n,spd,life,sz,vx,vy,vz){const S=kps();for(let i=0;i<n;i++){const a=Math.random()*6.283,e=Math.random()*2-1,r=Math.sqrt(1-e*e),k=spd*(.35+Math.random());_kP[0]=x;_kP[1]=y;_kP[2]=z;_kV[0]=Math.cos(a)*r*k+(vx||0);_kV[1]=e*k+(vy||0);_kV[2]=Math.sin(a)*r*k+(vz||0);_kO.s=sz*(.6+Math.random()*.8);_kO.l=life*(.7+Math.random()*.5);_kO.c=KDC[(Math.random()*KDC.length)|0];psE(S,_kO)}}
+function kdAt(o,n,spd,life,sz){if(!o)return;o.getWorldPosition(_kv);kdSpk(_kv.x,_kv.y,_kv.z,n,spd,life,sz)}
+// golden slash arc in front of the camera (viewmodel space); sd=1 right hand -> left, -1 mirrored
+function kdArc(sd){for(let i=0;i<14;i++){const t=i/13,a=(t-.5)*2.2;kdSpk(sd*Math.sin(a)*.22,-.06+Math.cos(a)*.1-.06,-.62,1,.12,.22+t*.12,.016,-sd*.5,0,0)}}
+// world projectile look (thrown key dagger) + white/gold streak trail from the shared finisher particle pool
+// crossed-pair render of the Key Daggers for the shop cards / bundle dialog (cached data URL; shares the icon renderer IR/IS)
+var KDART=null;function kdArt(){if(KDART)return KDART;try{const g=new T.Group();for(const sd of[-1,1]){const d=new T.Group(),u=kdBuild(d);u.piv.rotation.z=-sd*.42;d.position.set(sd*.035,0,sd*.01);g.add(d)}IS.add(g);g.updateMatrixWorld(true);
+ const b=new T.Box3().setFromObject(g),c=b.getCenter(V()),z=b.getSize(V()),h=Math.max(z.x,z.y)*.54,oc=new T.OrthographicCamera(-h,h,h,-h,.01,10);oc.position.set(c.x,c.y,c.z+3);oc.lookAt(c);IR.setSize(128,128);IR.render(IS,oc);KDART=IR.domElement.toDataURL();IS.remove(g);IR.setSize(160,96)}catch(e){console.error(e);KDART=''}return KDART}
+function kdProj(){if(!KDPR){KDPR=new T.Group();const b=new T.Group();kdBuild(b);b.rotation.x=PI/2;b.scale.setScalar(1.6);KDPR.add(b)}return KDPR.clone()}
+function kdPJ(e,w){return skinKey(e,w)=='dg_key'?(KDPJ||(KDPJ=Object.assign({},w.pj,{km:1,ktr:1}))):w.pj}
+const _kwO={p:[0,0,0],v:[0,0,0],s:.05,l:.3,c:0xffffff,d:2,m:0};
+function kdTrail(x){finPS();if(!FPA)return;for(let i=0;i<2;i++){const o=_kwO;o.p[0]=x.x+(Math.random()-.5)*.06;o.p[1]=x.y+(Math.random()-.5)*.06;o.p[2]=x.z+(Math.random()-.5)*.06;o.s=.035+Math.random()*.04;o.l=.22+Math.random()*.15;o.c=i?0xffffff:KDC[(Math.random()*4)|0];psE(FPA,o)}}
+// per-frame Key Daggers viewmodel pose / FX (called from animVM after the generic weapon pose; local player only)
+function kdVM(U,u,s,dt){const m1=U.m,m2=U.m2;if(!m1)return;const A=m1.userData,Bm=m2&&m2.userData;let r1z=1.28,r1y=-1,r2z=-1.28,r2y=1,o1x=0,o1y=-.07,o1z=0,o2x=0,o2y=-.07,o2z=0,s1=0,s2=0,th=0;
+ if(P.kdF){P.kdF=0;kdAt(A.spn,14,.5,.35,.018);if(Bm)kdAt(Bm.spn,14,.5,.35,.018)}
+ const t=P.insp>0?(P.inspV||U.insp):null,p=P.insp>0?1-P.insp/2.4:0;
+ if(t=='keyspin'){const sp=kf(p,[[0,0],[.3,PI*6]]);s1=sp;s2=-sp;const c=kf(p,[[.28,0],[.38,1],[.55,1],[.64,0]]);r1z+=.42*c;r2z-=.42*c;r1y+=.35*c;r2y-=.35*c;o1x-=.07*c;o2x+=.07*c;o1y+=.06*c;o2y+=.06*c;o1z-=.05*c;o2z-=.05*c;
+  const up=kf(p,[[.6,0],[.7,1],[.9,1],[1,0]]);r1z+=(.12-r1z)*up;r1y+=(-.15-r1y)*up;o1y+=.13*up;o1x-=.05*up;s1+=kf(p,[[.7,0],[.88,PI]]);
+  if(c>.9&&Math.random()<dt*20)kdAt(A.tip,1,.15,.25,.014);if(up>.6&&Math.random()<dt*16)kdAt(A.tip,2,.2,.3,.016)}
+ else if(t=='keytoss'){const q=cl01((p-.06)/.5);if(q>0&&q<1){const h=Math.sin(q*PI);th=h*.42;o1y+=th;o1x-=h*.08;r1z+=q*PI*6;if(m1.visible){kdAt(A.tip,4,.03,.45,.008);kdAt(A.spn,2,.02,.4,.007)}}
+  const bk=kf(p,[[.54,0],[.6,1],[.86,1],[1,0]]);r1z+=bk*1.9;o1y-=bk*.03;if(p>.55&&p<.6&&!P.kdC){P.kdC=1;kdAt(A.spn,10,.4,.3,.016);snd(1600,.03,.06,'square');setTimeout(()=>snd(2400,.05,.04,'sine'),40)}
+  r2z-=Math.sin(cl01(p/.6)*PI)*.25}
+ if(P.insp<=0)P.kdC=0;
+ if(P.krl>0){P.krl=Math.max(0,P.krl-dt);const q=1-P.krl/.32,sp=ez(q)*PI*4;s1+=sp;s2-=sp;if(P.kfl){P.kfl=0;kdAt(A.spn,12,.35,.22,.022);if(Bm)kdAt(Bm.spn,12,.35,.22,.022)}}
+ if(P.kst>0){P.kst=Math.max(0,P.kst-dt);const q=1-P.kst/.36,e1=Math.sin(cl01(q/.5)*PI),e2=Math.sin(cl01((q-.28)/.5)*PI);o1z-=e1*.22;o1x-=e1*.05;r1y-=e1*.4;o2z-=e2*.22;o2x+=e2*.05;r2y+=e2*.4}
+ m1.position.set(U.kx[0]+o1x,m1.position.y+o1y,o1z);A.piv.rotation.set(0,r1y,r1z);A.spn.rotation.y=s1;
+ if(m2&&Bm&&Bm.piv){m2.position.set(U.kx[1]+o2x,m2.position.y+o2y,o2z);Bm.piv.rotation.set(0,r2y,r2z);Bm.spn.rotation.y=s2}
+ if(u.ka){const a=u.ka,r=u.kar;a[0].position.set(r[0].x+o1x,r[0].y+o1y-th,r[0].z+o1z);a[1].position.set(r[1].x+o2x,r[1].y+o2y,r[1].z+o2z)}}
 const SKINS=[
 {id:'ak47',weapon:'Assault Rifle',name:'AK-47',rarity:'rare',how:'從皮膚箱開出 Unboxed from the Skin Case',build:g=>{const W=0xb34a14,W2=0x953a0d,mg=new T.Group();
  B(g,.062,.095,.4,0,.088,-.04,K);B(g,.052,.022,.34,0,.147,-.05,K2);B(g,.066,.05,.24,0,.108,-.38,W);B(g,.07,.05,.26,0,.062,-.37,W2);B(g,.07,.07,.03,0,.085,-.5,K2);
@@ -713,7 +775,13 @@ const SKINS=[
  build:g=>{const Br=0xc68642,Br2=0x9c6530,R=0xcc2222,W=0xffffff;B(g,.065,.1,.3,0,.08,-.04,Br);Cz(g,.02,.02,.3,0,.09,-.34,Br2);for(let i=0;i<5;i++)Cz(g,.021,.021,.055,0,.09,-.2-i*.06,i%2?R:W);B(g,.06,.12,.2,0,.06,.28,Br);B(g,.045,.12,.055,0,0,.03,Br2,GRIP);Sp(g,.025,0,.15,-.08,R);Sp(g,.018,.025,.15,-.1,W);return{fore:[0,.09,-.46]}},
  inspFx:p=>skBurst(p,8,[0xe0302a,0xffffff],1.3,.3,.04),
  reloadFx:()=>{for(let i=0;i<4;i++)setTimeout(()=>snd(1800+rnd()*600,.03,.03,'triangle'),i*35);setTimeout(()=>snd(900,.06,.05,'sine'),160)},
- fireFx:p=>{skBurst(p,9,[0xe0302a,0xffffff],1.6,.3,.045);snd(1300,.08,.05,'sine');setTimeout(()=>snd(1700,.1,.05,'triangle'),70)}}
+ fireFx:p=>{skBurst(p,9,[0xe0302a,0xffffff],1.6,.3,.045);snd(1300,.08,.05,'sine');setTimeout(()=>snd(1700,.1,.05,'triangle'),70)}},
+{id:'dg_key',weapon:'Daggers',name:'鑰匙雙刃 Key Daggers',rarity:'legendary',ex:1,how:'傳奇鑰匙組合包限定 Legendary Key Bundle Exclusive',insp:'keyspin',insp2:'keytoss',build:kdBuild,
+ drawFx:()=>{P.kdF=1;snd(2600,.025,.07,'square');snd(1300,.03,.04,'square');[520,700,940,1260].forEach((f,i)=>setTimeout(()=>snd(f,.09,.035,'sine'),40+i*45))},
+ inspFx:()=>{if(P.inspV=='keytoss'){snd(420,.12,.04,'triangle');setTimeout(()=>snd(760,.18,.03,'triangle'),120);[300,520,760,1000].forEach(t=>setTimeout(()=>snd(3200,.03,.025,'sine'),t))}
+  else{[90,190,290,390,490,590].forEach((t,i)=>setTimeout(()=>snd(1900+(i%2)*500,.022,.05,'square'),t));setTimeout(()=>{snd(620,.05,.06,'square');setTimeout(()=>snd(1240,.12,.04,'sine'),60)},930);setTimeout(()=>snd(2640,.25,.03,'sine'),1700)}},
+ reloadFx:()=>{P.krl=.32;P.kfl=1;snd(1750,.025,.06,'square');setTimeout(()=>snd(2350,.025,.06,'square'),70)},
+ fireFx:()=>{P.kst=.36;kdArc(1);snd(950,.07,.05,'triangle');snd(2093,.22,.035,'sine');setTimeout(()=>{kdArc(-1);snd(820,.07,.05,'triangle');snd(2637,.22,.03,'sine')},100)}}
 ];
 const SKBYID=Object.fromEntries(SKINS.map(x=>[x.id,x])),skinsFor=wn=>SKINS.filter(x=>x.weapon==wn);
 function model(w,wk,sk){const g=new T.Group();const S=sk&&SKBYID[sk]&&SKBYID[sk].weapon==w.n?SKBYID[sk]:null;const u=(S?S.build:MD[w.n]||(()=>({})))(g)||{};g.userData=u;if(wk)try{applyWrap(g,w,wk)}catch(e){console.error(e)}return g}
@@ -804,7 +872,7 @@ const CURI={keys:'🔑',tickets:'🎫'},CURN={keys:'鑰匙',tickets:'皮膚票'}
 const CRATES=[
  {id:'wbox',name:'包裝箱',en:'Wrap Box',cur:'keys',price:5,kind:'wrap',pool:()=>WRAPS.filter(x=>x.id!='bc').map(x=>x.id)},
  {id:'fpack',name:'死亡特效箱',en:'Finisher Pack',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.id!='fc').map(x=>x.id)},
- {id:'scase',name:'皮膚箱',en:'Skin Case',cur:'tickets',price:10,kind:'skin',pool:()=>SKINS.map(x=>x.id)}];
+ {id:'scase',name:'皮膚箱',en:'Skin Case',cur:'tickets',price:10,kind:'skin',pool:()=>SKINS.filter(x=>!x.ex).map(x=>x.id)}];
 const CRBYID=Object.fromEntries(CRATES.map(c=>[c.id,c]));
 
 const cl01=x=>x<0?0:x>1?1:x,ph=(t,a,b)=>cl01((t-a)/(b-a)),ez=x=>x*x*(3-2*x),RR=(a,b)=>a+Math.random()*(b-a),RP=a=>a[Math.floor(Math.random()*a.length)],Z3=[0,0,0],Q=n=>Math.max(1,Math.round(n*(typeof MOBILE!=='undefined'&&MOBILE?.55:1)));
@@ -1066,7 +1134,7 @@ const SEC=[
 {n:'Handgun',k:'S',d:'精準半自動',dmg:12,hsm:1.25,dd:[50,125,3],rate:.13,mag:13,res:91,rl:1.06,eq:.2,sp:.005,zf:58,f:520,br:45,bp:12},
 {n:'Uzi',k:'S',d:'高射速衝鋒槍',au:1,dmg:8,hsm:1.25,dd:[50,125,2],rate:.07,mag:27,res:108,rl:1.5,eq:.45,sp:.01,zf:62,f:360,br:30,bp:9},
 {n:'Shorty',k:'S',d:'近距離十彈散射',dmg:7.5,hsm:1.49,pel:10,dd:[10,25,2.5],rate:.12,mag:2,res:18,rl:1.7,eq:.6,sp:.065,f:150,br:12,bp:4},
-{n:'Daggers',k:'S',d:'一次連丟兩把（右手先），可二段跳',dj:1,au:1,burst:2,qi:.1,rate:.6,mag:2,res:60,rl:.15,eq:.6,mv:1.1,pj:{sp:70,g:4,r:.05,len:.25,col:0xc0c8d8,dmg:20,hs:2},fire:(e,w,s)=>{const a=aim(e),sd=s.a%2?1:-1,r=V(Math.cos(e.yaw),0,-Math.sin(e.yaw));shootP(e,a.o.clone().addScaledVector(a.d,.6).addScaledVector(r,.2*sd),a.d,w.pj)},f:700,br:30,bp:10},
+{n:'Daggers',k:'S',d:'一次連丟兩把（右手先），可二段跳',dj:1,au:1,burst:2,qi:.1,rate:.6,mag:2,res:60,rl:.15,eq:.6,mv:1.1,pj:{sp:70,g:4,r:.05,len:.25,col:0xc0c8d8,dmg:20,hs:2},fire:(e,w,s)=>{const a=aim(e),sd=s.a%2?1:-1,r=V(Math.cos(e.yaw),0,-Math.sin(e.yaw));shootP(e,a.o.clone().addScaledVector(a.d,.6).addScaledVector(r,.2*sd),a.d,kdPJ(e,w))},f:700,br:30,bp:10},
 {n:'Warper',k:'S',d:'傳送門槍：左右鍵各放一個門',inf:1,rate:.25,eq:1,f:0,br:0,bp:12,fire:(e)=>portal(e,0),alt:(e,w,s,dn)=>{if(dn&&s.acd<=0){s.acd=.25;portal(e,1)}}},
 {n:'Energy Pistols',k:'S',d:'雙槍無限子彈',au:1,dmg:2.1,hsm:1.25,rate:.03,inf:1,eq:.6,sp:.015,col:0x40e0ff,f:800,br:40,bp:12},
 {n:'Exogun',k:'S',d:'範圍濺射雷射',rate:.28,mag:6,res:22,rl:.65,eq:.7,pj:{sp:60,r:.08,col:0x7dff5a,emi:1,dmg:10,hs:2,splash:{r:6.28,dmg:10}},f:600,br:40,bp:12},
@@ -1223,7 +1291,7 @@ function melee(e,dmg,rng,back){const a=aim(e);let best=null,bd=1e9;
 for(const t of E)if(t.alive&&t.team!==e.team){const tp=V(t.x,t.y+1.1,t.z),dv=tp.clone().sub(a.o),d=Math.hypot(dv.x,dv.z);if(d<rng+.45&&Math.abs(dv.y)<1.9&&dv.normalize().dot(a.d)>.8&&d<bd&&losP(a.o,tp)){bd=d;best=t}}
 if(!best){if(e.isP&&st=='lobby')for(const r of LB_TARGETS)if(r.kind=='bot'&&!r.dead){const p=r.mesh.position,dv=V(p.x-a.o.x,0,p.z-a.o.z),d=dv.length();if(d<rng+.8&&dv.normalize().dot(V(a.d.x,0,a.d.z).normalize())>.8&&Math.abs(p.y+1-a.o.y)<2)dummyFlash(r.mesh,dmg,e.wnm)}return}const ax=e.x-best.x,az=e.z-best.z,l=Math.hypot(ax,az)||1,bs=back&&(-ax*Math.sin(best.yaw)-az*Math.cos(best.yaw))/l<-.5;
 if(bs&&e.isP)bsFx();hurt(best,bs?999:dmg,e,bs?'Knife · Backstab':e.wnm,{from:e,prc:bs});return best}
-function shootP(e,o,d,pj){const q=Object.assign({},pj);let m;if(q.len)m=new T.Mesh(new T.BoxGeometry(q.r*.8,q.r*.8,q.len),mt(q.col,q.emi));else{m=new T.Mesh(PG,mt(q.col,q.emi));m.scale.setScalar(q.r)}
+function shootP(e,o,d,pj){const q=Object.assign({},pj);let m;if(q.km)m=kdProj();else if(q.len)m=new T.Mesh(new T.BoxGeometry(q.r*.8,q.r*.8,q.len),mt(q.col,q.emi));else{m=new T.Mesh(PG,mt(q.col,q.emi));m.scale.setScalar(q.r)}
 m.position.copy(o);sc.add(m);Object.assign(q,{by:e,m,p:o.clone(),v:d.clone().multiplyScalar(q.sp),hit:new Set(),t:0,wn:e.wnm||e.L[e.cur].n});Pr.push(q);return q}
 function inBody(e,p,r){return Math.hypot(p.x-e.x,p.z-e.z)<.5+r&&p.y>e.y-r&&p.y<e.y+(e.sl?1.2:e.cr?1.55:2.12)+r}
 function pHitE(q,e,hs,x){if(q.land){q.land(q,x);return}if(q.boom){boom(x,q.boom,q.by,q.wn);return}if(q.vortex){mkVortex(x,q.by);return}
@@ -1239,7 +1307,7 @@ function updPr(dt){for(let i=Pr.length-1;i>=0;i--){const q=Pr[i],x=q.p;q.t+=dt;l
   if(!dead&&!q.stuck){const b=boxAt(x);if(b||x.y<q.r){if(q.stick){x.copy(o);if(x.y<q.r)x.y=q.r;q.stuck=1;q.v.set(0,0,0)}else if(q.spear&&b){spearStick(o,b);dead=true}else if(q.bnc>0){q.bnc--;if(b){if(Math.abs(o.x-b.x)>=b.w/2){q.v.x*=-.55;x.x=o.x}else if(Math.abs(o.z-b.z)>=b.d/2){q.v.z*=-.55;x.z=o.z}else{q.v.y*=-.45;x.y=o.y;q.v.x*=.75;q.v.z*=.75}}else{x.y=q.r;q.v.y*=-.45;q.v.x*=.75;q.v.z*=.75}}else{pHitW(q,o);dead=true}}}}}
  if(!dead&&q.fuse!=null&&q.t>=q.fuse){if(q.onFuse)q.onFuse(q,x.clone());else boom(x,q.boom,q.by,q.wn);dead=true}
  if(!dead&&(q.t>(q.life||6)||Math.abs(x.x)>40||Math.abs(x.z)>40))dead=true;
- q.m.position.copy(x);if(q.len&&!q.stuck)q.m.lookAt(x.clone().add(q.v));if(dead){sc.remove(q.m);if(q.len)q.m.geometry.dispose();Pr.splice(i,1)}}}
+ q.m.position.copy(x);if(q.len&&!q.stuck)q.m.lookAt(x.clone().add(q.v));if(q.ktr&&!dead)kdTrail(x);if(dead){sc.remove(q.m);if(q.len&&!q.km)q.m.geometry.dispose();Pr.splice(i,1)}}}
 function mkVortex(p,by){const m=new T.Mesh(PG,new T.MeshBasicMaterial({color:0x7a3cff,transparent:true,opacity:.55}));m.position.copy(p);sc.add(m);VX.push({p:p.clone(),by,m,t:4});snd(90,.6,.1,'sine')}
 function updVX(dt){for(let i=VX.length-1;i>=0;i--){const v=VX[i];v.t-=dt;v.m.scale.setScalar(.8+Math.sin(v.t*12)*.15);
  for(const e of E)if(e.alive&&!e.net&&e.team!==v.by.team){const dx=v.p.x-e.x,dy=v.p.y-(e.y+1),dz=v.p.z-e.z,d=Math.hypot(dx,dy,dz);if(d<12&&d>.6){const a=40*dt/d;e.vx+=dx*a;e.vz+=dz*a;if(dy>0)e.vy=Math.max(e.vy,dy*2);e.sl=false}}
@@ -1308,7 +1376,7 @@ function rel(e){const w=e.L[e.cur],s=e.S[e.cur];if(w.norl||(w.res!=null&&!(s.r>0
 // per-skin FX hooks (Sniper skins etc): reuse SKBYID entries' reloadFx/fireFx/inspFx, local player only.
 function skRelFx(e,w){if(!e.isP||!w)return;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.reloadFx)try{S.reloadFx()}catch(err){console.error(err)}}
 function skFireFx(e,w){if(!e.isP||!w)return false;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.fireFx){try{S.fireFx(muz(e))}catch(err){console.error(err)}return true}return false}
-function skInspFx(e){if(!e||!e.isP||!e.alive)return;const w=e.L[e.cur];const S=w&&SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.inspFx)try{S.inspFx(muz(e))}catch(err){console.error(err)}}
+function skInspFx(e){if(!e||!e.isP||!e.alive)return;const w=e.L[e.cur];const S=w&&SKBYID[skinKey(e,w)];e.inspV=null;if(S&&S.weapon==w.n&&S.insp2&&(keys.KeyW||keys.KeyA||keys.KeyS||keys.KeyD))e.inspV=S.insp2;if(S&&S.weapon==w.n&&S.inspFx)try{S.inspFx(muz(e))}catch(err){console.error(err)}}
 function fireW(e,w,s,x){if(GHA)return;if(NET&&!GH)nf(e,'w',e.L.indexOf(w),x);if(w.lim&&!w.selfLim)s.c--;if(w.mag&&!w.inf&&!s.bm)s.a--;if(w.heat){s.h+=w.heat;if(s.h>=1){s.h=1;s.ov=1}}
 s.lf=e.age;e.shotT=BT;e.wnm=w.n;if(e.isP){P.rk=(rnd()-.5)*2;P.insp=0;if(w.k=='M'&&!w.au){P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk=w.n=='Riot Shield'?'s':w.n=='Maul'?'h':'n';if(w.n=='Maul')P.sw=P.swT=.6}if(w.k=='U'&&w.lim&&w.n!='Medkit')P.thr=.45}(w.fire||(w.pj?fProj:fGun))(e,w,s,x||{});e.cd=w.rate*(e.isP?1:DF[cfg.d].rm*(1+rnd()*.3));e.kick=1;if(!skFireFx(e,w)&&w.f)snd(w.f,.08,.05);
 if(w.burst){s.q=w.burst-1;s.qt=w.qi||.07;s.qs=0}if(w.mag&&!w.inf&&s.a<=0)rel(e)}
@@ -1324,7 +1392,7 @@ if(w.achg&&alt&&s.chg&&e.frz<=0)s.ch=Math.min(1,s.ch+dt/w.achg);if(w.alt){if(alt
 e.ptg=trig;e.pal=alt}
 function swE(e,i){if(i===e.cur||!e.alive||e.frz>0)return;const o=e.S[e.cur];o.rl=0;o.q=0;o.ch=0;o.bm=0;if(e.L[e.cur].alt&&e.pal)e.L[e.cur].alt(e,e.L[e.cur],o,false);e.pal=false;e.cur=i;e.zoom=false;e.dfl=false;e.shd=false;e.cd=Math.max(e.cd,e.L[i].eq||(i==0?1:.25));skDrawFx(e,e.L[i]);if(e.isP)setVM();else setHold(e)}
 // fire a skin's unique draw/equip flourish once (local player only, melee weapons w/ an equipped non-default skin). Not for every attack swing - only on an actual weapon-switch.
-function skDrawFx(e,w){if(!e.isP||!w||w.k!='M')return;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.drawFx)try{S.drawFx(muz(e))}catch(err){console.error(err)}}
+function skDrawFx(e,w){if(!e.isP||!w)return;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.drawFx)try{S.drawFx(muz(e))}catch(err){console.error(err)}}
 function spdMul(e){const w=e.L[e.cur];return(e.frz>0?0:1)*(e.slow>0?.5:1)*(w.n=='Chainsaw'&&e.altH?1.85:w.mv||(w.k=='M'?1.15:1))*(e.buff>0?1.25:1)*(e.shd?.8:1)}
 function phys(e,dt,wx,wz){move(e,wx+e.vx*dt,wz+e.vz*dt);const og=onGround(e),fr=og&&e.vy<=0?Math.max(0,1-9*dt):Math.max(0,1-(e.isP?.06:.4)*dt);e.vx*=fr;e.vz*=fr;
 e.vy-=22*dt;e.y+=e.vy*dt;const g=ground(e.x,e.z,e.y);if(e.y<=g&&e.vy<=0){e.y=g;e.vy=0;e.djd=0;if(e.djs)e.djs.clear()}}
@@ -1509,8 +1577,8 @@ const RC={'Sniper':.35,'Shotgun':.28,'RPG':.25,'Revolver':.22,'Shorty':.3,'Flare
 function kf(p,k){if(p<=k[0][0])return k[0][1];for(let i=1;i<k.length;i++)if(p<=k[i][0]){const a=k[i-1],b=k[i],u=(p-a[0])/(b[0]-a[0]),q=u*u*(3-2*u);return a[1]+(b[1]-a[1])*q}return k[k.length-1][1]}
 function setVM(ow,own){while(vm.children.length)vm.remove(vm.children[0]);const w=ow||P.L[P.cur],wk=wrapKey(own||P,w),sk=skinKey(own||P,w),h=new T.Group();vm.add(h);let u={},fl=null,mm=null,m2=null,la=null,mag=null,arrow=null;
 if(w.n=='Fists'){u.fa=[];for(const sd of[1,-1]){const a=arm(h,[sd*.27,.02,0],sd*.34,1.05);a.rotation.z=-sd*.5;a.scale.setScalar(1.2);B(a,.088,.094,.115,0,.002,-.008,0x16161c);a.userData.rest=a.position.clone();a.userData.rr=a.rotation.clone();a.userData.sd=sd;u.fa.push(a)}}
-else{const m=model(w,wk,sk);mm=m;u=m.userData;h.add(m);arm(h,[0,-.01,.035],.32,.5);
- if(u.dual){m2=model(w,wk,sk);m2.position.set(-.34,0,0);h.add(m2);arm(h,[-.34,-.01,.035],-.32,.5)}else if(u.fore)la=arm(h,u.fore,-.85,.55);
+else{const m=model(w,wk,sk);mm=m;u=m.userData;h.add(m);const a1=arm(h,[0,-.01,.035],.32,.5);
+ if(u.dual){m2=model(w,wk,sk);m2.position.set(-.34,0,0);h.add(m2);const a2=arm(h,[-.34,-.01,.035],-.32,.5);if(u.kd&&m2.userData.piv){const sp=.07;m.position.x=sp;a1.position.x+=sp;m2.position.x=-.34-sp;a2.position.x-=sp;u.piv.rotation.set(0,-1,1.28);m2.userData.piv.rotation.set(0,1,-1.28);u.ka=[a1,a2];u.kar=[a1.position.clone(),a2.position.clone()];u.kx=[m.position.x,m2.position.x]}}else if(u.fore)la=arm(h,u.fore,-.85,.55);
  if(w.n=='Maul'){const pv=new T.Group();h.remove(m);pv.add(m);h.add(pv);pv.rotation.set(.3,0,-.85);la=arm(h,[.22,.17,.04],-.5,.35)}
  if(RS[w.n]=='mag'){let by=-.015;if(u.mag)mag=u.mag;else for(const c of m.children)if(c.isMesh&&c.position.y<by&&c.position.z>-.35&&c.position.z<.15){by=c.position.y;mag=c}if(!mag)mag=B(m,.036,.06,.04,0,-.075,.035,0x1f2024)}
  if(w.n=='Bow'){arrow=m.children.filter(c=>c.isMesh&&[0x6b4a2e,0xb9bec7,0xffffff].includes(c.material.color.getHex()));for(const a of arrow)a.userData.z0=a.position.z}
@@ -1518,7 +1586,7 @@ else{const m=model(w,wk,sk);mm=m;u=m.userData;h.add(m);arm(h,[0,-.01,.035],.32,.
 const top=mm?new T.Box3().setFromObject(mm).max.y:.1,sc2=w.k=='U'?.5:.62;h.scale.setScalar(sc2);
 const base=w.n=='Bow'?[.08,-.15,-.46]:w.n=='Gunblade'?[.22,-.3,-.5]:w.k=='M'?(w.n=='Fists'?[0,-.12,-.4]:w.n=='Maul'?[.08,-.22,-.5]:[.2,-.24,-.5]):w.k=='U'?[.18,-.17,-.46]:w.k=='S'?[.18,-.15,-.46]:[.2,-.2,-.52];
 const skI=sk&&SKBYID[sk];const insp=(skI&&skI.weapon==w.n&&skI.insp)||(w.n=='Fists'?'knuck':w.n=='Revolver'||w.n=='Handgun'||w.n=='Flare Gun'?'twirl':w.n=='Knife'||w.n=='Daggers'?'side':w.n=='Maul'?'mlift':w.k=='S'?'sturn':w.k=='M'?'swing':w.k=='U'?'toss':'turn');
-vm.userData={wk,sk,h,u,w,fl,m:mm,m2,la,laRest:la?la.position.clone():null,mag,magY:mag?mag.position.y:0,arrow,base,fa:u.fa,brx:w.k=='M'&&w.n!='Fists'&&w.n!='Riot Shield'&&w.n!='Maul'?-.75:0,bry:w.k=='M'?0:.04,...(w.n=='Gunblade'?{brx:.45}:{}),brz:w.n=='Bow'?1.15:0,adsY:-.012-top*sc2,insp};P.eq=.35;P.insp=0}
+vm.userData={wk,sk,h,u,w,fl,m:mm,m2,la,laRest:la?la.position.clone():null,mag,magY:mag?mag.position.y:0,arrow,base,fa:u.fa,brx:w.k=='M'&&w.n!='Fists'&&w.n!='Riot Shield'&&w.n!='Maul'?-.75:0,bry:w.k=='M'?0:.04,...(w.n=='Gunblade'?{brx:.45}:{}),brz:w.n=='Bow'?1.15:0,adsY:-.012-top*sc2,insp,kx:u.kx};P.eq=.35;P.insp=0;P.inspV=null;P.kst=P.krl=0}
 let bob=0;
 function animVM(dt){const sT=!P.alive&&(st=='play'||st=='end')?spec():null;if(sT){specVM(sT,dt);return}if(vm.userData.spec){setVM();P.eq=0}
 if(P.qmT>0){P.qmT-=dt;if(P.qmT<=0)setVM()}const U=vm.userData,{h,u,w,fl}=U;if(!h)return;const s=P.qmT>0?P.S[2]:P.S[P.cur];
@@ -1528,7 +1596,7 @@ const adsT=P.zoom&&w.zf&&!w.scope&&P.alive?1:0;P.ads=(P.ads||0)+(adsT-(P.ads||0)
 let b0=U.base;if(w.n=='Riot Shield')b0=P.shd?[.04,-.15,-.55]:[.3,-.34,-.62];let px=b0[0],py=b0[1],pz=b0[2],rx=U.brx,ry=U.bry,rz=U.brz;
 px+=(0-px)*A;py+=(U.adsY-py)*A;pz+=(-.44-pz)*A;rx*=1-A;ry*=1-A;rz*=1-A*(w.n=='Bow'?.3:1);
 const bs=1-A*.8;px+=Math.sin(bob)*.008*bs;py+=Math.abs(Math.cos(bob))*.01*bs;if(P.sl){rz-=.18;py-=.04}
-if(P.eq>0&&w.n!='Knife'){const e=1-P.eq/.35,q=e*e*(3-2*e);py-=(1-q)*.22;rx-=(1-q)*.9}
+if(P.eq>0&&w.n!='Knife'){const e=1-P.eq/.35,q=e*e*(3-2*e);if(u.kd){const r=1-Math.sqrt(q);px+=r*.14;py-=r*.3;rz-=r*1.3;ry+=r*.55;rx+=r*.35}else{py-=(1-q)*.22;rx-=(1-q)*.9}}
 let mo=0,mh=false,lo=null;
 if(s.rl>0&&w.rl&&P.qmT<=0){const p=1-s.rl/w.rl,t=RS[w.n]||'mag';
  if(t=='mag'){rz+=kf(p,[[0,0],[.15,.4],[.82,.4],[1,0]]);rx+=kf(p,[[0,0],[.15,.1],[.82,.1],[.9,.22],[1,0]]);py+=kf(p,[[0,0],[.15,.04],[.82,.04],[1,0]]);px-=kf(p,[[0,0],[.15,.04],[.82,.04],[1,0]]);mo=kf(p,[[.18,0],[.34,-.35],[.56,-.35],[.78,0]]);mh=p>.36&&p<.55;lo=kf(p,[[0,0],[.15,1],[.34,1],[.45,.3],[.56,1],[.8,1],[.95,0]])}
@@ -1539,8 +1607,10 @@ if(s.rl>0&&w.rl&&P.qmT<=0){const p=1-s.rl/w.rl,t=RS[w.n]||'mag';
  else if(t=='rocket'){py+=kf(p,[[0,0],[.2,-.14],[.8,-.14],[1,0]]);rx+=kf(p,[[0,0],[.2,-.35],[.8,-.35],[1,0]]);lo=kf(p,[[.2,0],[.35,1],[.7,1],[.8,0]])}
  else if(t=='dag'){py+=kf(p,[[0,0],[.3,-.12],[.6,-.12],[1,0]]);rx+=kf(p,[[0,0],[.3,-.4],[.6,-.4],[1,0]])}
  else if(t=='box'){py+=kf(p,[[0,0],[.2,-.1],[.8,-.1],[1,0]]);rz+=kf(p,[[0,0],[.2,.3],[.8,.3],[1,0]]);lo=kf(p,[[.2,0],[.4,1],[.7,1],[.85,0]])}}
-if(P.insp>0){const p=1-P.insp/2.4,t=U.insp;
+if(P.insp>0){const p=1-P.insp/2.4,t=P.inspV||U.insp;
  if(t=='twirl'||t=='sturn'||t=='side'||t=='knuck'){}
+ else if(t=='keyspin'){py+=kf(p,[[0,0],[.3,.03],[.9,.03],[1,0]]);rx+=kf(p,[[.28,0],[.4,.12],[.6,.12],[.7,0]])}
+ else if(t=='keytoss'){ry+=kf(p,[[0,0],[.15,.12],[.55,.12],[.62,-.1],[.8,-.1],[1,0]]);py+=kf(p,[[.52,0],[.58,-.03],[.66,0]])}
  else if(t=='pxflip'){rx+=kf(p,[[0,0],[.15,.9],[.4,.9],[.55,0],[1,0]]);ry+=kf(p,[[0,0],[.15,.25],[.4,.25],[.55,0],[1,0]]);py+=kf(p,[[0,0],[.15,.05],[.4,.05],[1,0]])}
  else if(t=='void'){ry+=kf(p,[[0,0],[.2,.5],[.8,.5],[1,0]]);rz+=kf(p,[[0,0],[.2,.15],[.8,.15],[1,0]]);if(u.ring)u.ring.rotation.z+=dt*9}
  else if(t=='heavy'){py-=kf(p,[[0,0],[.3,.1],[.7,.1],[1,0]]);rx+=kf(p,[[0,0],[.3,.35],[.7,.35],[1,0]])}
@@ -1569,7 +1639,8 @@ if(U.m){let my=0,mx=0,mry=0,mrz=0;const MO=U.insp;
   else if(MO=='sturn'||MO=='side'){mry=kf(p,[[0,0],[.2,1.15],[.45,1.15],[.62,-1.15],[.85,-1.15],[1,0]]);mrz=kf(p,[[0,0],[.2,.3],[.45,.3],[.62,-.3],[.85,-.3],[1,0]])}}
  if(w.n=='Knife'&&P.eq>0){const q=1-P.eq/.35;my=Math.sin(q*PI)*.42;mx=-q*PI*2}
  for(const [mm,sg] of [[U.m,1],[U.m2,-1]])if(mm){mm.position.y=my;mm.rotation.set(mx,mry*sg,mrz*sg)}
-}
+ if(u.kd)kdVM(U,u,s,dt);else P.kdF=0}
+if(KPS)psU(KPS,dt);
 if(U.mag){U.mag.position.y=U.magY+mo;U.mag.visible=!mh}
 if(U.la){if(lo!=null&&lo>0){const t2=U.mag?V(U.mag.position.x,U.magY-.06+mo,U.mag.position.z+.02):V(U.laRest.x,U.laRest.y-.15,U.laRest.z+.06);U.la.position.lerpVectors(U.laRest,t2,lo)}else U.la.position.copy(U.laRest)}
 if(U.arrow){const c=s.ch||0;for(const a of U.arrow)a.position.z=a.userData.z0+c*.16}
@@ -1705,7 +1776,7 @@ function mkLobbyDecor(g){const a=[];LB_PADS.length=0;LB_TARGETS.length=0;LB.spin
  // Win Streaks LIVE board (west wall) + Mega Key Bundle ad (east wall)
  {const t=cvTex(1024,576,()=>{});drawStreakBoard(t);add(plane(g,8,4.5,-13.95,4,18,PI/2,new T.MeshBasicMaterial({map:t})));LB.board=t}
  {const t=cvTex(768,448,(cx,W,H)=>{const gd=cx.createLinearGradient(0,0,W,H);gd.addColorStop(0,'#ffcf3a');gd.addColorStop(1,'#a8530a');cx.fillStyle=gd;cx.fillRect(0,0,W,H);cx.font='900 150px '+FNT;cx.textAlign='center';cx.textBaseline='middle';cx.fillText('🔑',W/2,H*.36);
-  cx.fillStyle='#fff';cx.strokeStyle='#5a2a00';cx.lineWidth=10;cx.font='900 64px '+FNT;cx.strokeText('MEGA KEY BUNDLE',W/2,H*.72);cx.fillText('MEGA KEY BUNDLE',W/2,H*.72);cx.font='800 36px '+FNT;cx.fillText('敬請期待 · Coming soon',W/2,H*.88)});
+  cx.fillStyle='#fff';cx.strokeStyle='#5a2a00';cx.lineWidth=10;cx.font='900 64px '+FNT;cx.strokeText('MEGA KEY BUNDLE',W/2,H*.72);cx.fillText('MEGA KEY BUNDLE',W/2,H*.72);cx.font='800 36px '+FNT;cx.fillText('Shop → Keys · 用 🪙 金幣購買',W/2,H*.88)});
   add(plane(g,6,3.5,4.45,4.2,26,-PI/2,new T.MeshBasicMaterial({map:t})))}
  // hologram trophy
  {const h=new T.Group();h.position.set(-9,0,13);g.add(h);add(h);Cy(h,1,.5,0,.25,0,0x2b2642);Cy(h,1.05,.06,0,.52,0,CY,1);const hm=new T.MeshBasicMaterial({color:CY,transparent:true,opacity:.45,depthWrite:false});
@@ -2075,8 +2146,8 @@ function sha256js(str){const K=SHA_K.K,by=new TextEncoder().encode(str),l=by.len
   H=[a,b,c,d,e,f,g,h].map((v,j)=>(v+H[j])|0)}
  return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('')}
 async function pwHash(u,pw,salt){const s=salt+'|'+u+'|'+pw;try{if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}}catch(_){}return sha256js(s)}
-function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_W.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],seenUpd:[],claimedUpd:[],wraps:['bc'],wrap:{},wrapInv:{},wrapFav:[],fins:['fc'],fin:{},finFav:[],skins:[],skin:{},skinFav:[],tickets:0,crates:{},passT:[],giftLog:[],giftClaimed:[],set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1}}}
-function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_W.slice();for(const k of['seenUpd','claimedUpd','wraps','wrapFav','fins','finFav','skins','skinFav','passT','giftLog','giftClaimed'])if(!Array.isArray(p[k]))p[k]=[];p.giftClaimed=p.giftClaimed.filter(x=>typeof x=='string').slice(-200);p.giftLog=p.giftLog.filter(x=>x&&typeof x=='object'&&(x.d=='s'||x.d=='r')).slice(0,40);for(const k of['wrap','wrapInv','fin','skin','crates'])if(Array.isArray(p[k])||!p[k])p[k]={};p.tickets=Math.max(0,Math.floor(+p.tickets||0));for(const k in p.crates){const v=Math.floor(+p.crates[k]||0);if(!CRBYID[k]||!(v>0))delete p.crates[k];else p.crates[k]=v}p.passT=p.passT.filter((x,i,a)=>typeof x=='number'&&a.indexOf(x)===i);
+function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_W.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],seenUpd:[],claimedUpd:[],wraps:['bc'],wrap:{},wrapInv:{},wrapFav:[],fins:['fc'],fin:{},finFav:[],skins:[],skin:{},skinFav:[],tickets:0,gold:0,crates:{},passT:[],giftLog:[],giftClaimed:[],set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1}}}
+function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_W.slice();for(const k of['seenUpd','claimedUpd','wraps','wrapFav','fins','finFav','skins','skinFav','passT','giftLog','giftClaimed'])if(!Array.isArray(p[k]))p[k]=[];p.giftClaimed=p.giftClaimed.filter(x=>typeof x=='string').slice(-200);p.giftLog=p.giftLog.filter(x=>x&&typeof x=='object'&&(x.d=='s'||x.d=='r')).slice(0,40);for(const k of['wrap','wrapInv','fin','skin','crates'])if(Array.isArray(p[k])||!p[k])p[k]={};p.tickets=Math.max(0,Math.floor(+p.tickets||0));p.gold=Math.max(0,Math.floor(+p.gold||0));for(const k in p.crates){const v=Math.floor(+p.crates[k]||0);if(!CRBYID[k]||!(v>0))delete p.crates[k];else p.crates[k]=v}p.passT=p.passT.filter((x,i,a)=>typeof x=='number'&&a.indexOf(x)===i);
  p.wraps=p.wraps.filter((x,i,a)=>typeof x=='string'&&WBYID[x]&&a.indexOf(x)===i);if(!p.wraps.includes('bc'))p.wraps.unshift('bc');p.wrapFav=p.wrapFav.filter(x=>WBYID[x]);for(const n in p.wrap){const v=p.wrap[n];if(v!=='?'&&!p.wraps.includes(v))delete p.wrap[n]}
  p.fins=p.fins.filter((x,i,a)=>typeof x=='string'&&FBYID[x]&&a.indexOf(x)===i);if(!p.fins.includes('fc'))p.fins.unshift('fc');p.finFav=p.finFav.filter(x=>FBYID[x]);for(const n in p.fin){const v=p.fin[n];if(v!=='?'&&!p.fins.includes(v))delete p.fin[n]}if(p.codes.includes('deathsmilexux'))for(const x of FINS)if(!p.fins.includes(x.id))p.fins.push(x.id);
  p.skins=p.skins.filter((x,i,a)=>typeof x=='string'&&SKBYID[x]&&a.indexOf(x)===i);if(p.codes.includes('deathsmilexux'))for(const x of SKINS)if(!p.skins.includes(x.id))p.skins.push(x.id);p.skinFav=p.skinFav.filter(x=>SKBYID[x]);for(const n in p.skin){const v=p.skin[n];if(v!=='?'&&!(SKBYID[v]&&SKBYID[v].weapon==n&&p.skins.includes(v)))delete p.skin[n]}return p}
@@ -2209,14 +2280,16 @@ function toast(t,c){const d=document.createElement('div');d.textContent=t;if(c)d
 function applyProfile(){LS=PF.lo.map((n,k)=>{if(n=='Random')return -1;const i=GP[k][1].findIndex(w=>w.n==n);return i>=0&&isUnl(n)?i:0});try{$('#nick').value=accName()}catch(_){}if(typeof applySettings=='function')applySettings()}
 function saveLoadout(){if(!PF)return;PF.lo=LS.map((i,k)=>i<0?'Random':GP[k][1][i].n);saveP()}
 // ---- XP / levels / rewards ----
-function addXP(n){PF.xp+=Math.max(0,Math.round(n));let up=0;while(PF.xp>=xpReq(PF.lv)){PF.xp-=xpReq(PF.lv);PF.lv++;up++}if(up){const lv=PF.lv;setTimeout(()=>{toast('⬆️ LEVEL UP！等級 '+lv,'#ffc93c');snd(660,.15,.06,'sine');setTimeout(()=>snd(990,.2,.06,'sine'),150)},500)}return up}
+// gold 金幣 earn rates: per finished match (+win bonus, +per elimination), per daily task claimed, per level gained
+const GOLD_R={play:10,win:15,kill:2,daily:10,lv:25};
+function addXP(n){PF.xp+=Math.max(0,Math.round(n));let up=0;while(PF.xp>=xpReq(PF.lv)){PF.xp-=xpReq(PF.lv);PF.lv++;up++}if(up){PF.gold=(PF.gold||0)+up*GOLD_R.lv;const lv=PF.lv;setTimeout(()=>{toast('⬆️ LEVEL UP！等級 '+lv+'　🪙 +'+up*GOLD_R.lv,'#ffc93c');snd(660,.15,.06,'sine');setTimeout(()=>snd(990,.2,.06,'sine'),150)},500)}return up}
 function dailyReset(){if(!PF)return;const d=today();if(PF.daily.day!==d)PF.daily={day:d,pd:0,el:0,wd:0,cl:[]}}
 function loginStreak(){const L=PF.login,d=today(),y=today(new Date(Date.now()-864e5));if(L.last===d)return;L.streak=L.last===y?(L.streak%7)+1:1;L.last=d}
 function baseWn(wn){return String(wn||'').split(' ·')[0]}
 function creditKill(wn,hs){if(!PF)return;const n=baseWn(wn);if(WBN(n))PF.wk[n]=(PF.wk[n]||0)+1;if(hs&&P)P.hsk=(P.hsk||0)+1}
 function awardMatch(won){if(!PF||!P)return null;const k=P.k||0,hs=P.hsk||0,xp=(won?100:40)+k*10+hs*5,s=PF.st;s.m++;if(won){s.w++;s.streak++;s.best=Math.max(s.best,s.streak)}else{s.l++;s.streak=0}s.k+=k;s.d+=P.dth||0;s.hs+=hs;
- for(const w of P.L||[])if(w&&w.n)PF.wu[w.n]=(PF.wu[w.n]||0)+1;dailyReset();PF.daily.pd++;PF.daily.el+=k;if(won)PF.daily.wd++;const keys=won?1:0;PF.keys+=keys;const lv0=PF.lv,up=addXP(xp);saveNow();return{xp,keys,lv0,up,k,hs}}
-function rewardHTML(a){if(!a)return'';const r=xpReq(PF.lv);return'<b style="color:#9b8cff">+'+a.xp+' XP</b>（'+(a.k?'擊殺 '+a.k+' ×10':'無擊殺')+(a.hs?'、爆頭擊殺 '+a.hs+' ×5':'')+'）'+(a.keys?'　<b style="color:#ffd23f">+'+a.keys+' 🔑</b>':'')+(a.up?'<br><b style="color:#ffc93c">⬆️ 升級到 Lv '+PF.lv+'！</b>':'')+'<br>Lv '+PF.lv+'　'+PF.xp+' / '+r+' XP<div class="xpb"><i style="width:'+Math.min(100,PF.xp/r*100)+'%"></i></div>'}
+ for(const w of P.L||[])if(w&&w.n)PF.wu[w.n]=(PF.wu[w.n]||0)+1;dailyReset();PF.daily.pd++;PF.daily.el+=k;if(won)PF.daily.wd++;const keys=won?1:0;PF.keys+=keys;const gold=GOLD_R.play+(won?GOLD_R.win:0)+k*GOLD_R.kill;PF.gold=(PF.gold||0)+gold;const lv0=PF.lv,up=addXP(xp);saveNow();return{xp,keys,gold,lv0,up,k,hs}}
+function rewardHTML(a){if(!a)return'';const r=xpReq(PF.lv);return'<b style="color:#9b8cff">+'+a.xp+' XP</b>（'+(a.k?'擊殺 '+a.k+' ×10':'無擊殺')+(a.hs?'、爆頭擊殺 '+a.hs+' ×5':'')+'）'+(a.keys?'　<b style="color:#ffd23f">+'+a.keys+' 🔑</b>':'')+(a.gold?'　<b style="color:#ffcf40" id="orgold">+'+a.gold+' 🪙</b>':'')+(a.up?'<br><b style="color:#ffc93c">⬆️ 升級到 Lv '+PF.lv+'！（🪙 +'+a.up*GOLD_R.lv+'）</b>':'')+'<br>Lv '+PF.lv+'　'+PF.xp+' / '+r+' XP<div class="xpb"><i style="width:'+Math.min(100,PF.xp/r*100)+'%"></i></div>'}
 var LBC={yaw:0,pitch:-.25,dist:8};
 function lobbyFP(){return LB.inRange}
 function hubTP(){return st=='lobby'&&!LB.inRange}
@@ -2273,6 +2346,7 @@ function redeem(){const c=$('#codeIn').value.trim().toLowerCase(),m=$('#codeMsg'
  const already=()=>{m.style.color='#ffc93c';m.textContent='這個代碼已經兌換過了'};
  if(c==='deathsmilexux'){if(PF.codes.includes(c)){if(WRAPS.every(x=>PF.wraps.includes(x.id))&&FINS.every(x=>PF.fins.includes(x.id))&&SKINS.every(x=>PF.skins.includes(x.id)))return already();for(const x of WRAPS)if(!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！新增解鎖全部武器包裝、死亡特效與皮膚';toast('🎉 全部包裝與死亡特效已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}PF.codes.push(c);let n=0;for(const w of ALLW())if(!PF.unl.includes(w.n)){PF.unl.push(w.n);n++}for(const x of WRAPS)if(!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已解鎖全部武器、包裝、死亡特效與皮膚（新增武器 '+n+' 把）';toast('🎉 代碼兌換成功：全部武器已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='skintest'){if(PF.codes.includes(c))return already();PF.codes.push(c);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已獲得全部測試皮膚（'+SKINS.map(x=>x.name).join('、')+'）';toast('🎨 已獲得全部皮膚！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
+ if(c==='goldtest'){if(PF.codes.includes(c))return already();PF.codes.push(c);PF.gold=(PF.gold||0)+5000;saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 🪙 5000 金幣（測試用）';toast('🪙 +5000 金幣','#ffcf40');snd(880,.15,.06,'sine');renderLUI();if(PANEL=='Shop')PRENDER.Shop();return}
  if(c==='skinscases'){if(PF.codes.includes(c))return already();PF.codes.push(c);PF.crates.scase=crHeld('scase')+1;saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 1 個皮膚箱 Skin Case（已放進 🎒 背包）';toast('📦 皮膚箱 Skin Case ×1 已放進背包','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(CODE_KEYS[c]!=null){if(PF.codes.includes(c))return already();PF.codes.push(c);const n=CODE_KEYS[c];giveKeys(n,'代碼 '+c);m.style.color='#35d07f';m.textContent='✅ 兌換成功！+'+n+' 🔑';return}
  if(c==='ommgggwhatisthis'){if(PF.codes.includes(c))return already();PF.codes.push(c);const locked=ALLW().filter(w=>!PF.unl.includes(w.n));
@@ -2375,14 +2449,14 @@ function renderSkin(){if(!SKNM||!PF||!WSEL)return;const w=WSEL,own=id=>PF.skins.
 var LUIt=0;
 function syncLUI(){{const lr=st=='lobby'&&LB.inRange&&!PANEL?'block':'none',el2=$('#leaveRange');if(el2.style.display!==lr)el2.style.display=lr}if(CRO&&st!=='lobby')croEnd();const hub=st=='lobby'&&!!PF&&!(typeof LB!=='undefined'&&LB.inRange),on=hub&&!CRO;const el=$('#lui');if(el.style.display!==(on?'block':'none')){el.style.display=on?'block':'none';if(on)renderLUI()}updAuto(on);document.body.classList.toggle('lbhub',hub);const inr=st=='lobby'&&LB.inRange;document.body.classList.toggle('inrange',inr);{const lp=$('#lprompt'),d=st=='lobby'&&!PANEL&&!RAON&&!CRO?'block':'none';if(lp.style.display!==d)lp.style.display=d}}
 function claimable(){if(!PF)return{t:0,p:0};dailyReset();let t=0;for(const d of DAILY)if(PF.daily[d.k]>=d.g&&!PF.daily.cl.includes(d.k))t++;if(PF.login.cl!==today())t++;for(const c of CONTRACTS){const s=ctState(c);if(s.p>=s.g)t++}let p=0;for(let l=1;l<=Math.min(PF.lv,PASS_MAX);l++)if(!PF.pass.includes(l)||(passT(l)&&!PF.passT.includes(l)))p++;return{t,p}}
-function renderLUI(){if(!PF)return;const r=xpReq(PF.lv);$('#llvn').textContent=PF.lv;$('#llname').textContent=accName();$('#llxp').style.width=Math.min(100,PF.xp/r*100)+'%';$('#llxpt').textContent='Lv '+PF.lv+' · '+PF.xp+' / '+r+' XP';$('#lkeyn').textContent=PF.keys;$('#ltkn').textContent=PF.tickets;{const bp=$('#bpbadge'),n=crTot();bp.style.display=n?'block':'none';bp.textContent=n}
+function renderLUI(){if(!PF)return;const r=xpReq(PF.lv);$('#llvn').textContent=PF.lv;$('#llname').textContent=accName();$('#llxp').style.width=Math.min(100,PF.xp/r*100)+'%';$('#llxpt').textContent='Lv '+PF.lv+' · '+PF.xp+' / '+r+' XP';$('#lkeyn').textContent=PF.keys;$('#ltkn').textContent=PF.tickets;$('#lgdn').textContent=PF.gold|0;{const bp=$('#bpbadge'),n=crTot();bp.style.display=n?'block':'none';bp.textContent=n}
  {const fg=$('#lgrant');if(fg){if(PF.freeGrant&&PF.freeGrant.length){fg.style.display='block';fg.innerHTML='🎁 免費獲得：'+PF.freeGrant.map(esc).join('、')+'<button id="lgrantX">✕</button>';const xb=$('#lgrantX');if(xb)xb.onclick=()=>{PF.freeGrant=[];saveP();renderLUI()}}else fg.style.display='none'}}
  dailyReset();$('#ltlist').innerHTML=DAILY.map(d=>{const v=Math.min(d.g,PF.daily[d.k]),dn=v>=d.g;return'<div class="tk'+(dn?' done':'')+'">'+d.n+' <b>'+v+'/'+d.g+'</b><span class="r">'+(PF.daily.cl.includes(d.k)?'✔':d.r+' 🔑')+'</span><div class="pb"><i style="width:'+v/d.g*100+'%"></i></div></div>'}).join('');
  {const ub=$('#ubadge');if(ub)ub.style.display=updUnclaimed()?'block':'none'}{const gb=$('#gfbadge'),n=inCloud()?GIFT.pend.length:0;if(gb){gb.style.display=n?'block':'none';gb.textContent=n}}const c=claimable();for(const[id,n]of[['#tbadge',c.t],['#pbadge',c.p]]){const b=$(id);b.style.display=n?'block':'none';b.textContent=n}renderPList()}
 function renderPList(){if(!PF)return;const rows=['<div>⭐ <span class="lvb">'+PF.lv+'</span>'+esc(accName())+(PF.st.streak>1?' 🔥'+PF.st.streak:'')+'</div>'];if(typeof LPX!=='undefined')for(const id in LPX){const q=LPX[id];rows.push('<div>👤 <span class="lvb">'+(q.lv||1)+'</span>'+esc(q.name)+(q.streak>1?' 🔥'+q.streak:'')+'</div>')}$('#lplist').innerHTML='<div style="color:#9fb0e0;font-size:11px">PLAYERS · '+rows.length+'</div>'+rows.join('')}
 $('#lbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p=='upd'){openUpd();return}if(b.dataset.p=='gift'){giftOpen();return}const m={pack:'Pack',wpn:'Wpn',tasks:'Tasks',shop:'Shop',pass:'Pass',set:'Set',event:'Event'}[b.dataset.p];if(m)openPanel(m)};
 $('#lonline').onclick=()=>{$('#onl').style.display='flex';if(!NET){$('#onA').style.display='block';$('#onB').style.display='none';onMsgUI('')}};
-$('#lkeyAdd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};$('#ltk').onclick=()=>openPanel('Pass');
+$('#lkeyAdd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};$('#ltk').onclick=()=>openPanel('Pass');$('#lgd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};
 $('#toDuels').onclick=()=>{if(typeof toDuels=='function')toDuels()};
 $('#llv').onclick=()=>{if(typeof openProfile=='function')openProfile()};
 // ---- tasks / contracts / pass data ----
@@ -2422,7 +2496,7 @@ PRENDER.Tasks=()=>{dailyReset();let h='<h3 style="margin-top:0">📅 Daily Tasks
  for(let i=1;i<=7;i++){const cur=i==PF.login.streak,got=i<PF.login.streak||(cur&&PF.login.cl===today());h+='<div class="'+(cur?'on':'')+(got&&!cur?' past':'')+'">Day '+i+'<b style="font-size:22px">'+LOGIN_R[i-1]+' 🔑</b>'+(cur?(PF.login.cl===today()?'✔':'<button class="gbtn" id="loginCl" style="padding:2px 8px;font-size:11px">領取</button>'):got?'✔':'')+'</div>'}
  h+='</div><h3>📜 Contracts（武器擊殺合約）</h3>';for(const c of CONTRACTS){const s=ctState(c),u=isUnl(c.w),ok=s.p>=s.g,w=WBN(c.w);h+='<div class="pcard"><img src="'+icon(w)+'" style="width:56px;height:34px;object-fit:contain"><div style="flex:1"><div>用 '+c.w+' 擊殺 '+s.g+' 人'+(s.t?' · 第 '+(s.t+1)+' 階':'')+(u?'':' <span style="color:#ffc93c;font-size:12px">（需先解鎖）</span>')+'</div><div class="pb" style="margin-top:4px"><i style="width:'+Math.min(100,s.p/s.g*100)+'%"></i></div><div class="sub2" style="color:#9fb0e0;font-size:12px">'+Math.min(s.p,s.g)+' / '+s.g+'</div></div><button class="gbtn" data-ct="'+c.w+'"'+(ok?'':' disabled')+'>'+s.r+' 🔑</button></div>'}
  $('#tasksBody').innerHTML=h;
- for(const b of $('#tasksBody').querySelectorAll('[data-dk]'))b.onclick=()=>{const d=DAILY.find(x=>x.k==b.dataset.dk);if(PF.daily[d.k]>=d.g&&!PF.daily.cl.includes(d.k)){PF.daily.cl.push(d.k);giveKeys(d.r,d.n);PRENDER.Tasks()}};
+ for(const b of $('#tasksBody').querySelectorAll('[data-dk]'))b.onclick=()=>{const d=DAILY.find(x=>x.k==b.dataset.dk);if(PF.daily[d.k]>=d.g&&!PF.daily.cl.includes(d.k)){PF.daily.cl.push(d.k);PF.gold=(PF.gold||0)+GOLD_R.daily;giveKeys(d.r,d.n+'　🪙 +'+GOLD_R.daily);PRENDER.Tasks()}};
  const lc=$('#loginCl');if(lc)lc.onclick=()=>{if(PF.login.cl===today())return;PF.login.cl=today();giveKeys(LOGIN_R[(PF.login.streak||1)-1],'連續登入');PRENDER.Tasks()};
  for(const b of $('#tasksBody').querySelectorAll('[data-ct]'))b.onclick=()=>{const c=CONTRACTS.find(x=>x.w==b.dataset.ct),s=ctState(c);if(s.p<s.g)return;PF.ct[c.w]={t:s.t+1,b:PF.wk[c.w]||0};giveKeys(s.r,c.w+' 合約');PRENDER.Tasks()}};
 // ---- Pass ----
@@ -2440,17 +2514,51 @@ var SHOPT='home';function shopTab(t){SHOPT=t;PRENDER.Shop()}
 function dailyDeals(){const lk=ALLW().filter(w=>!isUnl(w.n));let s=0;for(const ch of today()+ACCT)s=(s*31+ch.charCodeAt(0))>>>0;const out=[];const a=lk.slice();while(out.length<3&&a.length){s=(s*1103515245+12345)>>>0;out.push(a.splice(s%a.length,1)[0])}return out}
 function buyW(names,price,label){if(PF.keys<price){toast('🔑 鑰匙不足');return}PF.keys-=price;for(const n of names)if(!PF.unl.includes(n))PF.unl.push(n);saveNow();toast('🛒 購買成功：'+label,'#35d07f');snd(880,.12,.06,'sine');renderLUI();PRENDER.Shop()}
 PRENDER.Shop=()=>{const T2=[['home','Home'],['crates','📦 Crates 箱子'],['bundles','Bundles'],['daily','Daily'],['keys','Keys'],['more','More']];$('#shopTabs').innerHTML=T2.map(([k,n])=>'<button data-st="'+k+'" class="'+(SHOPT==k?'on':'')+'">'+n+'</button>').join('');for(const b of $('#shopTabs').children)b.onclick=()=>shopTab(b.dataset.st);
- $('#skeys').textContent='　🔑 '+PF.keys+'　🎫 '+PF.tickets;let h='';const soon=t=>'<div class="cd" style="opacity:.75"><h4>'+t+'</h4><div class="soon">Robux 付費項目 · 敬請期待</div></div>';
+ $('#skeys').textContent='　🔑 '+PF.keys+'　🎫 '+PF.tickets+'　🪙 '+(PF.gold|0);let h='';const soon=t=>'<div class="cd" style="opacity:.75"><h4>'+t+'</h4><div class="soon">Robux 付費項目 · 敬請期待</div></div>';
  const wcard=(w,price,old)=>'<div class="cd"><img src="'+icon(w)+'" style="width:100%;height:80px;object-fit:contain"><h4>'+w.n+'</h4><div class="sub2">'+CATN[wcat(w)]+'</div>'+(isUnl(w.n)?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bw="'+w.n+'" data-pr="'+price+'"'+(PF.keys>=price?'':' disabled')+'>'+(old?'<s style="opacity:.6">'+old+'</s> ':'')+'🔑 '+price+'</button>')+'</div>';
- if(SHOPT=='home'){h='<div class="cards"><div class="cd" style="grid-column:span 2;background:linear-gradient(135deg,#6a3cff,#2a1a6a)"><h4>🎫 Season Pass · Season 1</h4><div class="sub2" style="color:#e0d8ff">升級領取免費鑰匙獎勵（30 級）</div><button class="bbtn" id="shPass" style="margin-top:10px">查看 Pass</button></div><div class="cd" style="background:linear-gradient(135deg,#d0408a,#4a1a7a)"><h4>📦 開箱 Crates</h4><div class="sub2" style="color:#ffd8f0">包裝箱 · 死亡特效箱 · 皮膚箱<br>不會開到重複</div><button class="bbtn" id="shCr" style="margin-top:10px">查看箱子</button></div><div class="cd" style="background:linear-gradient(135deg,#d99a14,#6a4a0a)"><h4>🔑 Mega Key Bundle</h4><div class="soon" style="color:#ffe9b0">Robux · 敬請期待</div></div></div><h3>🔥 今日特價 Daily</h3><div class="cards">'+dailyDeals().map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>'}
+ if(SHOPT=='home'){h='<div class="cards"><div class="cd" style="grid-column:span 2;background:linear-gradient(135deg,#6a3cff,#2a1a6a)"><h4>🎫 Season Pass · Season 1</h4><div class="sub2" style="color:#e0d8ff">升級領取免費鑰匙獎勵（30 級）</div><button class="bbtn" id="shPass" style="margin-top:10px">查看 Pass</button></div><div class="cd" style="background:linear-gradient(135deg,#d0408a,#4a1a7a)"><h4>📦 開箱 Crates</h4><div class="sub2" style="color:#ffd8f0">包裝箱 · 死亡特效箱 · 皮膚箱<br>不會開到重複</div><button class="bbtn" id="shCr" style="margin-top:10px">查看箱子</button></div><div class="cd" style="background:linear-gradient(135deg,#d99a14,#6a4a0a)"><h4>🔑 鑰匙組合包 Key Bundles</h4><div class="sub2" style="color:#ffe9b0">用 🪙 金幣購買 · 傳奇包送限定 鑰匙雙刃</div><button class="bbtn" id="shKb" style="margin-top:10px">查看組合包</button></div></div><h3>🔥 今日特價 Daily</h3><div class="cards">'+dailyDeals().map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>'}
  else if(SHOPT=='bundles'){h='<div class="cards">'+BUNDLES.map((b,i)=>{const need=b.w.filter(n=>!isUnl(n)),price=Math.max(1,Math.round(need.reduce((s,n)=>s+wCost(n),0)*.8));return'<div class="cd"><h4>'+b.e+' '+b.n+'</h4><div class="row" style="gap:2px;margin:6px 0">'+b.w.map(n=>'<img src="'+icon(WBN(n))+'" title="'+n+'" style="width:46%;height:42px;object-fit:contain;background:#0003;border-radius:6px;'+(isUnl(n)?'opacity:.4':'')+'">').join('')+'</div><div class="sub2">'+b.w.join(' · ')+'</div>'+(need.length?'<button class="gbtn" style="width:100%;margin-top:6px" data-bb="'+i+'" data-pr="'+price+'"'+(PF.keys>=price?'':' disabled')+'>🔑 '+price+'（8 折，只算未擁有的）</button>':'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 全部擁有</div>')+'</div>'}).join('')+'</div>'}
  else if(SHOPT=='crates')h='<div class="note" style="margin-bottom:8px">外觀道具改由開箱取得：買下的箱子會放進 🎒 背包，打開時保證開到你還沒擁有的物品（不會重複）。點箱子可以查看內容和機率。</div><div class="cards crcards">'+CRATES.map(C=>{const l=crLeft(C).length,hd=crHeld(C.id);return'<div class="cd crcd" data-crt="'+C.id+'"><img src="'+crArt(C.id)+'" alt="">'+(hd?'<b class="crn">🎒×'+hd+'</b>':'')+'<h4>'+C.name+'</h4><div class="sub2">'+C.en+' · Lootbox · 剩 '+l+' / '+C.pool().length+' 個</div>'+(l?'<div class="crpr">'+C.price+' '+CURI[C.cur]+'</div>':'<div class="crpr off">已全部擁有</div>')+'</div>'}).join('')+'</div><div class="note" style="margin-top:10px">🎫 皮膚票只能從 Season Pass 通行證的免費獎勵取得 · 你有 🔑 '+PF.keys+' · 🎫 '+PF.tickets+'</div>';
  else if(SHOPT=='daily'){const d=dailyDeals();h=d.length?'<div class="note">每天換一批，75 折（只會出現你還沒解鎖的武器）</div><div class="cards">'+d.map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>':'<div class="cd">🎉 你已經擁有全部武器！</div>'}
- else if(SHOPT=='keys')h='<div class="note">鑰匙可以從每日任務、連續登入、合約、Season Pass 和勝場獲得；🎫 皮膚票只能從 Season Pass 取得。</div><div class="cards">'+soon('🔑 ×50 Key Pack')+soon('🔑 ×150 Key Pack')+soon('🔑 ×500 Mega Key Bundle')+'</div>';
+ else if(SHOPT=='keys')h='<div class="note" style="margin-bottom:8px">🪙 金幣：每場比賽 +'+GOLD_R.play+'、勝利再 +'+GOLD_R.win+'、每次淘汰 +'+GOLD_R.kill+'，每日任務 +'+GOLD_R.daily+'，升級 +'+GOLD_R.lv+'。你有 🪙 <b>'+(PF.gold|0)+'</b>　點組合包查看內容（可重複購買，箱子會放進 🎒 背包）</div><div class="kbcards">'+KBUNDLES.map((b,i)=>kbCard(b,i)).join('')+'</div>';
  else h='<div class="cards"><div class="cd"><h4>🎟️ Codes 兌換代碼</h4><div class="sub2">輸入代碼領取獎勵</div><button class="gbtn" id="shCode" style="margin-top:8px">Redeem a code</button></div><div class="cd"><h4>📋 Tasks</h4><button class="bbtn" id="shTasks" style="margin-top:8px">打開任務</button></div></div>';
- $('#shopBody').innerHTML=h;const g=id=>$('#shopBody').querySelector(id);if(g('#shPass'))g('#shPass').onclick=()=>openPanel('Pass');if(g('#shCr'))g('#shCr').onclick=()=>shopTab('crates');for(const c of $('#shopBody').querySelectorAll('[data-crt]'))c.onclick=()=>crDlg(c.dataset.crt,'buy');if(g('#shCode'))g('#shCode').onclick=()=>openPanel('Code');if(g('#shTasks'))g('#shTasks').onclick=()=>openPanel('Tasks');
+ $('#shopBody').innerHTML=h;const g=id=>$('#shopBody').querySelector(id);if(g('#shPass'))g('#shPass').onclick=()=>openPanel('Pass');if(g('#shCr'))g('#shCr').onclick=()=>shopTab('crates');if(g('#shKb'))g('#shKb').onclick=()=>shopTab('keys');for(const c of $('#shopBody').querySelectorAll('[data-kb]'))c.onclick=()=>kbDlg(+c.dataset.kb);for(const c of $('#shopBody').querySelectorAll('[data-crt]'))c.onclick=()=>crDlg(c.dataset.crt,'buy');if(g('#shCode'))g('#shCode').onclick=()=>openPanel('Code');if(g('#shTasks'))g('#shTasks').onclick=()=>openPanel('Tasks');
  for(const b of $('#shopBody').querySelectorAll('[data-bw]'))b.onclick=()=>buyW([b.dataset.bw],+b.dataset.pr,b.dataset.bw);
  for(const b of $('#shopBody').querySelectorAll('[data-bb]'))b.onclick=()=>{const bd=BUNDLES[+b.dataset.bb];buyW(bd.w,+b.dataset.pr,bd.n)}};
+// ===== Keys shop 鑰匙組合包: repeatable bundles paid in 🪙 gold (PF.gold). Crates go to the 🎒 backpack (PF.crates).
+// {id,zh,en,gold,keys,cr:{crateId:n},rw:random wraps,rf:random finishers,skin:'skinId' (exclusive; owned -> 10 🎫),red:1 = red theme}
+const KBUNDLES=[
+ {id:'kb1',zh:'鑰匙組合包',en:'Key Bundle',gold:60,keys:10,art:'🔑'},
+ {id:'kb2',zh:'大型鑰匙組合包',en:'Mega Key Bundle',gold:200,keys:40,cr:{wbox:1},art:'🔑🔑'},
+ {id:'kb3',zh:'超級鑰匙組合包',en:'Super Key Bundle',gold:380,keys:90,cr:{wbox:3,fpack:1},rw:1,art:'🔑🔑🔑'},
+ {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:1600,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,art:'💰🔑'},
+ {id:'kb5',zh:'傳奇鑰匙組合包',en:'Legendary Key Bundle',gold:3700,keys:1100,cr:{wbox:40,fpack:15,scase:1},rw:20,rf:3,skin:'dg_key',red:1,art:'👑🔑'}];
+const KB_WRAPK=5,KB_FINK=10,KB_SKINT=10;
+function kbItems(b){const o=[['🔑','鑰匙 Keys','',b.keys]];for(const c in b.cr||{}){const C=CRBYID[c];o.push(['<img src="'+crArt(c)+'">',C.name+' '+C.en,'放進 🎒 背包',b.cr[c]])}
+ if(b.rw)o.push(['🎨❔','隨機包裝 Random Wrap','開出未擁有的（全擁有則換 🔑 '+KB_WRAPK+'）',b.rw]);if(b.rf)o.push(['✨❔','隨機死亡特效 Random Finisher','開出未擁有的（全擁有則換 🔑 '+KB_FINK+'）',b.rf]);
+ if(b.skin&&SKBYID[b.skin]){const S=SKBYID[b.skin];o.push(['<img src="'+(S.id=='dg_key'&&kdArt()||skinIcon(WBN(S.weapon),S.id))+'">',S.name,'限定皮膚 Exclusive Skin · '+S.weapon+(ownSkin(S.id)?'（已擁有 → 🎫 '+KB_SKINT+'）':''),1])}return o}
+function kbCard(b,i){const ok=(PF.gold|0)>=b.gold,S=b.skin&&SKBYID[b.skin];return'<div class="kbcd'+(b.red?' red':'')+'" data-kb="'+i+'">'+(S?'<span class="kbx">限定 EXCLUSIVE</span>':'')+'<div class="kbart">'+(S?'<img src="'+(S.id=='dg_key'&&kdArt()||skinIcon(WBN(S.weapon),S.id))+'">':b.art)+'</div><h4>'+b.zh+'</h4><div class="kbe">'+b.en+'</div><div class="kbn">+'+b.keys+' 🔑</div>'+(b.cr||b.rw||b.rf||S?'<div class="kbe">+ 箱子與更多獎勵</div>':'<div class="kbe">&nbsp;</div>')+'<div class="kbpr'+(ok?'':' off')+'">🪙 '+b.gold+'</div></div>'}
+function kbDlgClose(){$('#kbDlg').style.display='none'}
+function kbDlg(i){const b=KBUNDLES[i];if(!b||!PF)return;const ok=(PF.gold|0)>=b.gold,bx=$('#kbBox');bx.className='kbbox'+(b.red?' red':'');
+ bx.innerHTML='<h3>'+b.zh+'<br><small style="font-size:13px;color:#ccd">'+b.en+'</small></h3><div class="kbl">'+kbItems(b).map(([ic,nm,sub,n])=>'<div class="kbrow"><div class="ic">'+ic+'</div><div class="nm">'+nm+(sub?'<small>'+sub+'</small>':'')+'</div><b>×'+n+'</b></div>').join('')+'</div>'+
+  '<div class="kbbtns"><button class="no" id="kbNo">✖</button><button class="ok" id="kbOk"'+(ok?'':' disabled')+'>🪙 '+b.gold+'</button></div><div class="kbmsg" id="kbMsg">'+(ok?'':'🪙 金幣不足：你有 '+(PF.gold|0)+'，還差 '+(b.gold-(PF.gold|0))+'（打比賽、每日任務、升級可獲得金幣）')+'</div>';
+ $('#kbDlg').style.display='flex';$('#kbNo').onclick=kbDlgClose;$('#kbOk').onclick=()=>{if(kbBuy(i)){kbDlgClose();if(PANEL=='Shop')PRENDER.Shop()}}}
+$('#kbDlg').addEventListener('click',e=>{if(e.target.id=='kbDlg')kbDlgClose()});
+for(const ev of['mousedown','touchstart','wheel'])$('#kbDlg').addEventListener(ev,e=>e.stopPropagation(),{passive:true});
+function kbRand(k){const L=k=='wrap'?WRAPS.filter(x=>x.id!='bc'&&!PF.wraps.includes(x.id)):FINS.filter(x=>x.id!='fc'&&!PF.fins.includes(x.id));return L.length?L[Math.floor(Math.random()*L.length)].id:null}
+// buy bundle i: returns a summary object (null when blocked). Grants everything, then saves once.
+function kbBuy(i){const b=KBUNDLES[i];if(!b||!PF)return null;const g=PF.gold|0;
+ if(g<b.gold){toast('🪙 金幣不足（還差 '+(b.gold-g)+'）','#ff6a6a');snd(200,.15,.05);const m=$('#kbMsg');if(m)m.textContent='🪙 金幣不足：還差 '+(b.gold-g);return null}
+ PF.gold=g-b.gold;PF.keys+=b.keys;let nc=0;const r={keys:b.keys,cr:{},w:[],f:[],ck:0,tk:0,skin:null};
+ for(const c in b.cr||{}){PF.crates[c]=crHeld(c)+b.cr[c];r.cr[c]=b.cr[c];nc+=b.cr[c]}
+ for(let j=0;j<(b.rw||0);j++){const id=kbRand('wrap');if(id){PF.wraps.push(id);r.w.push(id)}else r.ck+=KB_WRAPK}
+ for(let j=0;j<(b.rf||0);j++){const id=kbRand('fin');if(id){PF.fins.push(id);r.f.push(id)}else r.ck+=KB_FINK}
+ if(b.skin&&SKBYID[b.skin]){if(PF.skins.includes(b.skin)){PF.tickets+=KB_SKINT;r.tk=KB_SKINT}else{PF.skins.push(b.skin);r.skin=b.skin}}
+ PF.keys+=r.ck;saveNow();renderLUI();
+ toast('🛒 購買成功：'+b.zh+'　🔑 +'+(b.keys+r.ck)+(nc?'　📦 ×'+nc:'')+(r.w.length?'　🎨 ×'+r.w.length:'')+(r.f.length?'　✨ ×'+r.f.length:'')+(r.skin?'　🗡️ '+SKBYID[r.skin].name:''),'#35d07f');
+ if(r.ck)setTimeout(()=>toast('已擁有全部包裝／死亡特效，多出的換成 🔑 +'+r.ck+' 鑰匙','#ffd23f'),350);
+ if(r.tk)setTimeout(()=>toast('你已經擁有 '+SKBYID[b.skin].name+'，自動換成 🎫 '+r.tk+' 皮膚票','#ff8a8a'),700);
+ snd(880,.12,.06,'sine');setTimeout(()=>snd(1320,.15,.05,'sine'),120);return r}
 // ===== gifting 送禮 (cloud accounts only; Firestore REST, same session/token refresh as the profile sync) =====
 // names/{lowercase username} = {uid,name,email}: every cloud user writes their own on login -> resolves a recipient @ID (profile card handle) to a uid.
 // gifts/{autoId} = {toUid,toName,fromUid,fromName,kind,item,qty,msg,free,ts}; kind: weapon|crate|keys|tickets|skin|wrap|fin (keys/tickets: item='').
