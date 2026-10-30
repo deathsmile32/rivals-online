@@ -470,6 +470,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
 <div id="pParty" class="pnl"><div class="pbox"><div class="ptitle">👥 Party<span class="note" id="partyNote" style="font-weight:700"></span><button class="xbtn" data-x>✕</button></div>
  <div style="flex:1;display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:14px;min-height:0"><div><div style="font:900 16px system-ui;margin-bottom:6px">Your Party</div><div class="pslots" id="pslots"></div><button id="partyLeave" style="margin-top:8px;display:none">離開隊伍</button></div>
  <div style="display:flex;flex-direction:column;min-height:0"><div class="row"><input id="psearch" type="text" placeholder="🔍 搜尋玩家" style="flex:1;min-width:120px"></div><div class="ptabs" id="ptabs" style="margin-top:8px"><button data-t="all" class="on">All</button><button data-t="fr">Friends</button><button data-t="lb">Lobby</button></div><div class="pscroll" id="plistP"></div></div></div></div></div>
+<div id="pRanked" class="pnl"><div class="pbox"><div class="ptitle">🏆 Ranked 排位賽<span class="note" style="font-weight:700" id="rkNote"></span><button class="xbtn" data-x>✕</button></div><div class="ptabs" id="rkTabs"></div><div class="pscroll" id="rkBody"></div></div></div>
 <div id="pGift" class="pnl"><div class="pbox" style="width:min(660px,96vw)"><div class="ptitle">🎁 送禮 Gift<span class="note" style="font-weight:700" id="gfkeys"></span><button class="xbtn" data-x>✕</button></div><div class="ptabs" id="gfTabs"></div><div class="pscroll" id="giftBody"></div></div></div>
 <div id="pProf" class="pnl"><div class="pcardx" id="profCard"></div><button class="pfx" data-x>✕</button></div>
 <div id="msel"><div id="mstop"><span class="lbl">🗺️ 選擇地圖 <small>Map Vote</small></span><div class="tbox"><svg viewBox="0 0 24 24"><path d="M5 2h14v2h-1.5c0 3.5-2.2 5.6-4 8 1.8 2.4 4 4.5 4 8H19v2H5v-2h1.5c0-3.5 2.2-5.6 4-8-1.8-2.4-4-4.5-4-8H5z"/></svg><span id="mstm">10.0</span></div><span class="md" id="msmd"></span></div><div id="mgrid"></div></div>
@@ -539,13 +540,14 @@ const LB_PILLARS=[[23,6],[27,14],[23,22],[27,28],[27,0]];
 const MAPLIST=['arena','backroom','crossroad','splash','battleground'];
 const MAPNAME={arena:'Arena',backroom:'Backroom',crossroad:'Cross Road',splash:'Splash',battleground:'Battle Ground'};
 const MAPDATA={
- arena:{floor:0xdde2ea,grid:1,wallColor:Wh,bx:[
-  [0,0,6,6,3.3,Wh],[-4.5,0,3,4,2.2,Or],[-7.5,0,3,4,1.1,Or],[4.5,0,3,4,2.2,Or],[7.5,0,3,4,1.1,Or],
-  [-12,-10,8,2,2.2,Rd],[12,10,8,2,2.2,Bl],[-12,10,2,8,2.2,Bl],[12,-10,2,8,2.2,Rd],
-  [-20,0,3,3,1.1,Or],[20,0,3,3,1.1,Or],[0,-14,6,1.5,1.1,Or],[0,14,6,1.5,1.1,Or],[-20,-18,3,3,1.1,Gy],[20,18,3,3,1.1,Gy],
-  [-23,-10,6,6,2.2,Gy],[-23,-5.5,4,3,1.1,Or],[23,10,6,6,2.2,Gy],[23,5.5,4,3,1.1,Or],
-  [-8,-20,3,3,2.2,Bl],[8,20,3,3,2.2,Rd],[8,-20,3,3,2.2,Rd],[-8,20,3,3,2.2,Bl],
-  [-26,22,1.5,1.5,7,Yl],[26,-22,1.5,1.5,7,Yl],[-14,0,2,2,3.3,Wh],[14,0,2,2,3.3,Wh]]},
+ // Arena: floating grey stone box in the sky, long axis = z (spawns at both short ends), symmetric cover + 4 tilted slabs
+ arena:{floor:0x6e7075,grid:0,wallColor:0x8b8e94,bg:0x8ec5f2,fogc:0xd8e8f6,fogn:70,fogf:190,bx:(()=>{const W=0x8b8e94,S=0xb4b7bd,C=0xc4c7cd,D=0x5c5e63;return[
+  [-21,0,2,62,12,W],[21,0,2,62,12,W],[0,-30,44,1,12,W],[0,30,44,1,12,W],
+  [0,0,8,8,5,C],[-10.5,0,7,4,2.6,S],[10.5,0,7,4,2.6,S],
+  [0,-16.5,8,5,3,S],[0,16.5,8,5,3,S],[-12.5,-13.5,9,6,3,S],[12.5,-14,9,5,2.5,S],[-12.5,13.5,9,5,2.5,S],[12.5,13,9,6,3,S],
+  [-18,-21,4,8,.8,D],[18,20,4,10,.8,D],[-17,25,6,4,.6,D],[16,-25,8,4,.6,D]]})(),
+  rot:[[-6,-8.5,9,3.5,3,0xb4b7bd,.55],[6,-8.5,9,3.5,3,0xb4b7bd,-.55],[-6,8.5,9,3.5,3,0xb4b7bd,-.55],[6,8.5,9,3.5,3,0xb4b7bd,.55]],
+  decor:g=>mkClouds(g)},
  backroom:{floor:0x9c7a35,grid:0,wallColor:0xcda75a,bx:[
   [-15,-10,1.5,18,8,0xd9b45c],[15,-10,1.5,18,8,0xd9b45c],[-15,10,1.5,18,8,0xd9b45c],[15,10,1.5,18,8,0xd9b45c],
   [0,-19,14,1.5,8,0xd9b45c],[0,19,14,1.5,8,0xd9b45c],[-7,0,1.5,10,8,0xd9b45c],[7,0,1.5,10,8,0xd9b45c],
@@ -569,11 +571,17 @@ const MAPDATA={
   [-14,-14,4,4,1,0x3f8fe0],[14,14,4,4,1,0x3f8fe0],[-14,14,4,4,1,0x3f8fe0],[14,-14,4,4,1,0x3f8fe0]],
   decor:g=>{const a=[],P4=[[-24,-24],[24,24],[-24,24],[24,-24]];for(const[x,z]of P4){a.push(Cy(g,.5,5,x,2.5,z,0x7a5230));a.push(Sp(g,2.4,x,5.2,z,0x3fa24a))}
    a.push(B(g,.3,2.2,.3,-4,5.1,-4,0xd6413f));a.push(B(g,.3,2.2,.3,4,5.1,-4,0xf2cf3a));return a}},
- battleground:{floor:0x5a6450,grid:0,wallColor:0x7a7f88,bx:[
-  [-15,-15,10,10,5,0x6b4fa0],[15,15,10,10,5,0xc7a86a],[-15,15,10,10,4,0xc7a86a],[15,-15,10,10,4,0x6b4fa0],
-  [0,-4,6,3,1,0x8a8f98],[0,0,6,3,2,0x8a8f98],[0,4,6,3,3,0x8a8f98],
-  [-8,0,2,2,1.5,0x6b4fa0],[8,0,2,2,1.5,0xc7a86a],[0,-18,3,3,2,0x6b4fa0],[0,18,3,3,2,0xc7a86a],
-  [-22,0,2,6,2,0xc7a86a],[22,0,2,6,2,0x6b4fa0]]},
+ // Battle Ground: floating green square with tall white walls, cream bases at both ends, mauve centre wall
+ battleground:{floor:0x8fcf86,grid:0,wallColor:0xe9eaee,bg:0x8ec5f2,fogc:0xd8e8f6,fogn:70,fogf:190,bx:(()=>{const W=0xe9eaee,Wb=0xd9dbe0,Cr=0xf1e6cf,Bu=0x8193e3,Lb=0xaec6ef;return[
+  [-27,0,2,56,12,W],[27,0,2,56,12,W],[0,-27,56,2,12,W],[0,27,56,2,12,W],
+  [-25,-12,2,4,12,Wb],[-25,12,2,4,12,Wb],[25,-12,2,4,12,Wb],[25,12,2,4,12,Wb],[-12,-25.2,4,2,12,Wb],[12,25.2,4,2,12,Wb],
+  [0,-18,22,4,1.2,Cr],[0,-13.5,6,5,1.2,Cr],[0,18,22,4,1.2,Cr],[0,13.5,6,5,1.2,Cr],
+  [1,-1,26,4,4.5,0xc7a6ad],[3,5,4.5,8,3,0xf2a37f],
+  [-17,9.6,4.5,11.5,2,Lb],[16.6,-12.4,4,13,2,Lb],[-5,-8.3,5,8,3,Bu]]})(),
+  rot:[[-22,-22,11,3,12,0xe9eaee,.785],[22,22,11,3,12,0xe9eaee,.785],[-22,22,11,3,12,0xe9eaee,-.785],[22,-22,11,3,12,0xe9eaee,-.785],
+   [-8,-14,7,3,1.2,0xf1e6cf,.7],[8,-14,7,3,1.2,0xf1e6cf,-.7],[-8,14,7,3,1.2,0xf1e6cf,-.7],[8,14,7,3,1.2,0xf1e6cf,.7],
+   [-12,-12.8,5,4,2.5,0x8193e3,.6],[12,10.2,5,4,2.5,0x8193e3,.6]],
+  decor:g=>mkClouds(g)},
  lobby:{floor:0x1a1828,grid:0,wallColor:0x221e36,bg:0x0a0914,fogc:0x100d1c,fogn:30,fogf:100,bx:(()=>{const LW=0x2b2642,H=999,RW=0xf4f6fa,a=[
   [-14.5,19.5,1,23,8,LW,H],[14.5,12,1,8,8,LW,H],[14.5,25.5,1,11,8,LW,H],[-8.75,7.5,11.5,1,8,LW,H],[8.75,7.5,11.5,1,8,LW,H],
   [-3.5,2,1,11,8,LW,H],[3.5,2,1,11,8,LW,H],[-17.25,-3.5,28.5,1,8,LW,H],[17.25,-3.5,28.5,1,8,LW,H],
@@ -587,10 +595,16 @@ function buildMap(key){finClear();clearMapGeo();const M=MAPDATA[key]||MAPDATA.ar
  fl0.material.color.setHex(M.floor);gr.visible=!!M.grid;sc.background.setHex(M.bg||0x9fd0ff);sc.fog.color.setHex(M.fogc||0xcfe6ff);sc.fog.near=M.fogn||35;sc.fog.far=M.fogf||110;
  const full=BND.map(b=>b.concat([M.wallColor||Wh])).concat(M.bx);
  for(const[x,z,w,d,h,c,hc]of full){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:c}));m.position.set(x,h/2,z);sc.add(m);walls.push(m);boxes.push({x,z,w,d,h:hc||h})}
+ for(const[x,z,w,d,h,c,ry]of M.rot||[]){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:c}));m.position.set(x,h/2,z);m.rotation.y=ry;sc.add(m);walls.push(m);
+  const n=Math.max(2,Math.ceil(w/1.5)),L=w/n,cs=Math.cos(ry),sn=Math.sin(ry),bw=(Math.abs(L*cs)+Math.abs(d*sn))*.85,bd=(Math.abs(L*sn)+Math.abs(d*cs))*.85;
+  for(let k=0;k<n;k++){const u=-w/2+(k+.5)*L;boxes.push({x:x+u*cs,z:z-u*sn,w:bw,d:bd,h})}}
  for(const[x,z,w,d]of BND)boxes.push({x,z,w,d,h:999});
  solid.push(...walls,fl0);
  if(M.decor)decor=M.decor(sc)||[];
  sc.updateMatrixWorld(true);if(NAV){if(key!=='lobby')navBuild();else NAV.key=''}}
+// soft clouds floating around/below the sky maps
+function mkClouds(g){const a=[],m=new T.MeshLambertMaterial({color:0xffffff,emissive:0xb8c8dc,emissiveIntensity:.45});let sd=7;const r=()=>(sd=(sd*9301+49297)%233280)/233280;
+ for(let i=0;i<26;i++){const ang=i/26*Math.PI*2+r()*.2,R2=48+r()*40,y=-14+r()*22;for(let j=0;j<3;j++){const c=new T.Mesh(new T.SphereGeometry(4+r()*5,10,8),m);c.scale.set(1.6,.55,1.1);c.position.set(Math.cos(ang)*R2+(j-1)*6,y+r()*2,Math.sin(ang)*R2+r()*4);g.add(c);a.push(c)}}return a}
 let curMap='arena';
 buildMap('arena');
 
@@ -1234,7 +1248,7 @@ u.aR.add(e.hold);e.hold.traverse(o=>o.userData.ent=e)}
 
 function pick(a){return a[Math.floor(rnd()*a.length)]}
 function setup(){for(const e of E)sc.remove(e.mesh);E=[];const n=cfg.n,pool=NM.slice().sort(()=>rnd()-.5);
-for(let t=0;t<2;t++)for(let i=0;i<n;i++){const e={team:t,i,isP:!t&&!i,name:'你',k:0,dth:0,td:0,hsk:0,lv:1+Math.floor(rnd()*60)};if(!e.isP)e.name=pool.pop();e.mesh=mkBody(t);e.mesh.traverse(o=>o.userData.ent=e);sc.add(e.mesh);E.push(e);if(e.isP)P=e;
+for(let t=0;t<2;t++)for(let i=0;i<(t&&cfg.ne?cfg.ne:n);i++){const e={team:t,i,isP:!t&&!i,name:'你',k:0,dth:0,td:0,hsk:0,lv:1+Math.floor(rnd()*60)};if(!e.isP)e.name=pool.pop();e.mesh=mkBody(t);e.mesh.traverse(o=>o.userData.ent=e);sc.add(e.mesh);E.push(e);if(e.isP)P=e;
  e.tag=mkTag(e.mesh,2.6);e.tag.userData.draw(tagText(e.isP?accName():e.name,e.isP?(PF?PF.lv:1):e.lv,e.isP&&PF&&PF.st?PF.st.streak:0))}
 assignPersonalities()}
 const PERS=['aggr','def','hide'];
@@ -1662,7 +1676,7 @@ function paintFx(){const p=$('#paint');p.innerHTML='';for(let i=0;i<6;i++){const
 
 // ===== round flow =====
 function endRound(w,sc){st='end';tm=2.5;rndW=w;if(sc)score=sc.slice();else score[w]++;if(NET&&NET.host)netSend({t:'re',w,sc:score,r:NET.round});const won=w===P.team,rb=$('#rb');rb.className=won?'won':'lost';rb.innerHTML='ROUND<b>'+(won?'WON':'LOST')+'</b>';rb.style.display='block'}
-function showOver(w,why){let aw=null;if(P&&w>=0){SESSTATS.matches++;if(w===P.team)SESSTATS.wins++;else SESSTATS.losses++;SESSTATS.kills+=P.k||0;aw=awardMatch(w===P.team)}$('#orew').innerHTML=rewardHTML(aw);st='over';document.exitPointerLock&&document.exitPointerLock();$('#pause').style.display='none';$('#lo').style.display='none';$('#ot').textContent=w<0||!P?(why||'對戰結束'):(w===P.team?'🏆 你的隊伍獲勝！':'💀 敵方獲勝')+(why?'（'+why+'）':'');$('#again').textContent=NET?'回到大廳':'再來一場';$('#tomenu').textContent=NET?'離開房間':'回到大廳';$('#over').style.display='flex';if(NET)NET.inGame=false}
+function showOver(w,why){let aw=null;if(P&&w>=0){SESSTATS.matches++;if(w===P.team)SESSTATS.wins++;else SESSTATS.losses++;SESSTATS.kills+=P.k||0;aw=awardMatch(w===P.team);aw&&(aw.rk=rkFinish(w===P.team))}else if(cfg.ranked&&PF&&PF.rk.pend){PF.rk.pend=null;saveNow()}$('#orew').innerHTML=rewardHTML(aw)+rkResHTML(aw&&aw.rk);st='over';document.exitPointerLock&&document.exitPointerLock();$('#pause').style.display='none';$('#lo').style.display='none';$('#ot').textContent=w<0||!P?(why||'對戰結束'):(w===P.team?'🏆 你的隊伍獲勝！':'💀 敵方獲勝')+(why?'（'+why+'）':'');$('#again').textContent=NET?'回到大廳':'再來一場';$('#tomenu').textContent=NET?'離開房間':'回到大廳';$('#over').style.display='flex';if(NET)NET.inGame=false}
 function begin(){respawn();st='count';tm=3;rt=90;msg('');sp=0;$('#rb').style.display='none'}
 function openLo(){if(NET&&st=='count'){NET.midLo=1;mL=mR=false;showLo();$('#lo').style.display='flex';$('#lot').textContent='倒數結束前選好，按「準備完成」';document.exitPointerLock&&document.exitPointerLock();return}E.forEach(e=>e.mesh.visible=false);st='lo';tm=10;mL=mR=false;if(P)P.zoom=false;showLo();document.exitPointerLock&&document.exitPointerLock()}
 function showLo(){RAON=false;$('#rwrow').style.display='none';$('#lo').style.display='flex';$('#rdy').textContent='準備完成';$('#lonl').style.color='#ffc93c';GP.forEach(([id,arr],k)=>{const box=$('#'+id);box.innerHTML='';if(LS[k]>=0&&!isUnl(arr[LS[k]].n))LS[k]=0;
@@ -1685,7 +1699,7 @@ function mapThumb(k){if(MTHUMB[k]!=null)return MTHUMB[k];const M=MAPDATA[k];let 
  g.traverse(o=>{if(o.geometry)o.geometry.dispose()});f.material.dispose()}catch(err){try{IR.setSize(160,96)}catch(_){}url=''}return MTHUMB[k]=url}
 function showMapSel(voters,cb){MS={tm:10,votes:{},bots:voters.map(v=>Object.assign({at:1+rnd()*6.5},v)),cb,done:0,pick:null};if(cfg.mapPick)MS.votes.me=cfg.map<0?'rand':MAPLIST[cfg.map]||'rand';
  st='msel';paused=false;mL=mR=false;keys={};RAON=false;document.exitPointerLock&&document.exitPointerLock();for(const id of['#menu','#over','#lo','#pause','#onl'])$(id).style.display='none';$('#hud').style.display='none';closePanels();lobbyPrompt('');
- $('#msmd').textContent=(cfg.n||1)+'v'+(cfg.n||1)+' · '+['簡單','普通','困難'][cfg.d||0]+(NET?' · 線上（房主決定）':'');
+ $('#msmd').textContent=(cfg.ranked?'🏆 排位 · ':'')+(cfg.n||1)+'v'+(cfg.ne||cfg.n||1)+' · '+['簡單','普通','困難'][cfg.d||0]+(NET?' · 線上（房主決定）':'');
  const gd=$('#mgrid');gd.innerHTML=MSORD.map(k=>k=='rand'?'<div class="mcd rnd" data-k="rand"><div class="msh">'+SHUF+'</div><div class="mvb"></div><div class="mnm">Random<span></span></div></div>':(()=>{const u=mapThumb(k),M=MAPDATA[k],hx=c=>'#'+(c>>>0).toString(16).padStart(6,'0');return'<div class="mcd" data-k="'+k+'" style="background:linear-gradient(160deg,'+hx(M.bg||0x9fd0ff)+','+hx(M.wallColor||Wh)+' 45%,'+hx(M.floor)+')">'+(u?'<img src="'+u+'" alt="">':'')+'<div class="mvb"></div><div class="mnm">'+MAPNAME[k]+'<span></span></div></div>'})()).join('');
  for(const c of gd.children){const go=e=>{e.preventDefault();if(!MS||MS.done)return;MS.votes.me=c.dataset.k;if(MS.tm>3)MS.tm=3;snd(700,.06,.04);updMapSel()};c.addEventListener('click',go);c.addEventListener('touchstart',go,{passive:false})}
  $('#mstm').textContent='10.0';$('#msel').style.display='flex';updMapSel()}
@@ -1836,7 +1850,7 @@ function mkLobbyPlayer(){const pk=(a,k)=>{const w=a[LS[k]<0?0:LS[k]];return w&&i
  e.L=[pk(PRI,0),pk(SEC,1),pk(MEL,2),pk(UTL,3)];e.S=mkS(e.L);e.cur=0;e.eh=1.75;e.tx=e.x;e.ty=e.y;e.tz=e.z;e.tyaw=e.yaw;
  E=[e];P=e;wlFill(e.L);
  setVM();setHold(e);sc.updateMatrixWorld(true)}
-function enterLobby(){for(const e of E)if(e&&e.mesh)sc.remove(e.mesh);E=[];clearWorldSafe();curMap='lobby';buildMap('lobby');mkLobbyPlayer();LB.inRange=false;LB.pad=null;lobbyPrompt('');
+function enterLobby(){if(cfg.ranked){rkAbandon();rkLeave()}for(const e of E)if(e&&e.mesh)sc.remove(e.mesh);E=[];clearWorldSafe();curMap='lobby';buildMap('lobby');mkLobbyPlayer();LB.inRange=false;LB.pad=null;lobbyPrompt('');
  st='lobby';tm=0;rt=0;paused=false;if(typeof giftPoll=='function')setTimeout(()=>giftPoll(1),700);if(NET)NET.inGame=false;document.exitPointerLock&&document.exitPointerLock();if(typeof LBC!=='undefined'){LBC.yaw=0;LBC.pitch=-.25}
  $('#menu').style.display='none';$('#onl').style.display='none';$('#over').style.display='none';$('#pause').style.display='none';$('#lo').style.display='none';$('#rb').style.display='none';
  $('#hud').style.display='block';$('#lobbyMenuBtn').style.display='none';msg('');wasNearShop=false;closePanels();renderLUI();if(typeof onRangeChange=='function')onRangeChange(false)}
@@ -1894,7 +1908,7 @@ $('#go').onclick=()=>{$('#menu').style.display='none';$('#hud').style.display='b
 $('#lobbyMenuBtn').onclick=()=>{document.exitPointerLock&&document.exitPointerLock();mL=mR=false;$('#lobbyMenuBtn').style.display='none';$('#menu').style.display='flex';st='menu'};
 $('#backLobby').onclick=()=>{enterLobby()};
 $('#rdy').onclick=()=>{if(RAON){rangeReady();return}ready()};
-$('#again').onclick=()=>{$('#over').style.display='none';if(NET){enterLobby();return}paused=false;startMatch()};
+$('#again').onclick=()=>{$('#over').style.display='none';if(NET){enterLobby();return}paused=false;if(cfg.ranked){rkQueue(cfg.ranked);return}startMatch()};
 $('#tomenu').onclick=()=>{$('#over').style.display='none';if(NET)netLeave();enterLobby()};
 $('#pause').onclick=e=>{if(e.target.id=='pleave'){netLeave();$('#pause').style.display='none';enterLobby();return}paused=false;$('#pause').style.display='none';lock()};
 document.addEventListener('pointerlockchange',()=>{if(!MOBILE&&document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end'||(st=='lobby'&&lobbyFP()))&&!chatOn&&!PANEL&&!(NET&&NET.midLo)){paused=true;mL=mR=false;keys={};$('#pzt').textContent=NET?'線上對戰進行中（遊戲不會暫停）':'已暫停';$('#pleave').style.display=NET?'inline-block':'none';$('#pause').style.display='flex'}});
@@ -2116,7 +2130,7 @@ $('#lcin').addEventListener('keydown',e=>{if(e.code=='Enter'){chatSend(e.target.
 
 // ===== accounts / profile (browser-local localStorage, plus optional Firebase cloud accounts below) =====
 var ACCT=null,PF=null,ACCDB=null;
-const START_W=['Assault Rifle','Handgun','Fists','Grenade','Spear'];
+const RK_FMT_K=['1v1','2v2','1v2','2v1'];const START_W=['Assault Rifle','Handgun','Fists','Grenade','Spear'],START_LO=['Assault Rifle','Handgun','Fists','Grenade'];
 // key costs: authoritative numbers from the wiki (user-provided). Weapons not explicitly listed there follow the
 // stated fallback rule: 300 for a high-end/special-mechanic weapon (multi-shot alt-fire, dual-wield, freeze/elemental,
 // AoE, unique traversal, etc. — in the spirit of the 300–475 tier), otherwise 50 for an ordinary weapon.
@@ -2147,8 +2161,8 @@ function sha256js(str){const K=SHA_K.K,by=new TextEncoder().encode(str),l=by.len
   H=[a,b,c,d,e,f,g,h].map((v,j)=>(v+H[j])|0)}
  return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('')}
 async function pwHash(u,pw,salt){const s=salt+'|'+u+'|'+pw;try{if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}}catch(_){}return sha256js(s)}
-function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_W.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],seenUpd:[],claimedUpd:[],wraps:['bc'],wrap:{},wrapInv:{},wrapFav:[],fins:['fc'],fin:{},finFav:[],skins:[],skin:{},skinFav:[],tickets:0,gold:0,crates:{},passT:[],giftLog:[],giftClaimed:[],set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1}}}
-function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_W.slice();for(const k of['seenUpd','claimedUpd','wraps','wrapFav','fins','finFav','skins','skinFav','passT','giftLog','giftClaimed'])if(!Array.isArray(p[k]))p[k]=[];p.giftClaimed=p.giftClaimed.filter(x=>typeof x=='string').slice(-200);p.giftLog=p.giftLog.filter(x=>x&&typeof x=='object'&&(x.d=='s'||x.d=='r')).slice(0,40);for(const k of['wrap','wrapInv','fin','skin','crates'])if(Array.isArray(p[k])||!p[k])p[k]={};p.tickets=Math.max(0,Math.floor(+p.tickets||0));p.gold=Math.max(0,Math.floor(+p.gold||0));for(const k in p.crates){const v=Math.floor(+p.crates[k]||0);if(!CRBYID[k]||!(v>0))delete p.crates[k];else p.crates[k]=v}p.passT=p.passT.filter((x,i,a)=>typeof x=='number'&&a.indexOf(x)===i);
+function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_LO.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],seenUpd:[],claimedUpd:[],wraps:['bc'],wrap:{},wrapInv:{},wrapFav:[],fins:['fc'],fin:{},finFav:[],skins:[],skin:{},skinFav:[],tickets:0,gold:0,crates:{},passT:[],giftLog:[],giftClaimed:[],rk:{rp:0,m:0,w:0,day:'',best:0,pend:null},set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1}}}
+function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_LO.slice();for(const k of['seenUpd','claimedUpd','wraps','wrapFav','fins','finFav','skins','skinFav','passT','giftLog','giftClaimed'])if(!Array.isArray(p[k]))p[k]=[];p.giftClaimed=p.giftClaimed.filter(x=>typeof x=='string').slice(-200);p.giftLog=p.giftLog.filter(x=>x&&typeof x=='object'&&(x.d=='s'||x.d=='r')).slice(0,40);for(const k of['wrap','wrapInv','fin','skin','crates'])if(Array.isArray(p[k])||!p[k])p[k]={};p.tickets=Math.max(0,Math.floor(+p.tickets||0));p.gold=Math.max(0,Math.floor(+p.gold||0));{const r=p.rk=Object.assign({rp:0,m:0,w:0,day:'',best:0,pend:null},p.rk&&typeof p.rk=='object'?p.rk:{});for(const k of['rp','m','w','best'])r[k]=Math.max(0,Math.floor(+r[k]||0));if(typeof r.day!='string')r.day='';if(!r.pend||typeof r.pend!='object'||!RK_FMT_K.includes(r.pend.f))r.pend=null}for(const k in p.crates){const v=Math.floor(+p.crates[k]||0);if(!CRBYID[k]||!(v>0))delete p.crates[k];else p.crates[k]=v}p.passT=p.passT.filter((x,i,a)=>typeof x=='number'&&a.indexOf(x)===i);
  p.wraps=p.wraps.filter((x,i,a)=>typeof x=='string'&&WBYID[x]&&a.indexOf(x)===i);if(!p.wraps.includes('bc'))p.wraps.unshift('bc');p.wrapFav=p.wrapFav.filter(x=>WBYID[x]);for(const n in p.wrap){const v=p.wrap[n];if(v!=='?'&&!p.wraps.includes(v))delete p.wrap[n]}
  p.fins=p.fins.filter((x,i,a)=>typeof x=='string'&&FBYID[x]&&a.indexOf(x)===i);if(!p.fins.includes('fc'))p.fins.unshift('fc');p.finFav=p.finFav.filter(x=>FBYID[x]);for(const n in p.fin){const v=p.fin[n];if(v!=='?'&&!p.fins.includes(v))delete p.fin[n]}if(p.codes.includes('deathsmilexux'))for(const x of FINS)if(!p.fins.includes(x.id))p.fins.push(x.id);
  p.skins=p.skins.filter((x,i,a)=>typeof x=='string'&&SKBYID[x]&&a.indexOf(x)===i);if(p.codes.includes('deathsmilexux'))for(const x of SKINS)if(!p.skins.includes(x.id))p.skins.push(x.id);p.skinFav=p.skinFav.filter(x=>SKBYID[x]);for(const n in p.skin){const v=p.skin[n];if(v!=='?'&&!(SKBYID[v]&&SKBYID[v].weapon==n&&p.skins.includes(v)))delete p.skin[n]}return p}
@@ -2482,13 +2496,87 @@ function giveKeys(n,why){PF.keys+=n;saveNow();toast('🔑 +'+n+' 鑰匙'+(why?' 
 // ---- Play ----
 function renderPlay(){const pc=$('#playCards');pc.innerHTML='';const cols=['#2f9e4f','#2a6fe0','#d99a14','#c62828','#8e3cff'];
  for(let n=1;n<=5;n++){const b=document.createElement('button');b.className='cd mcard';b.style.background='linear-gradient('+cols[n-1]+','+cols[n-1]+'88)';b.innerHTML=n+'v'+n+'<small>'+(n==1?'單挑 Duel':'組隊 Team')+'</small>';b.onclick=()=>playMode(n);pc.appendChild(b)}
- const rk=document.createElement('button');rk.className='cd mcard';rk.style.background='linear-gradient(#4a4f66,#2a2d3c)';rk.innerHTML='🏆<small>Ranked · 敬請期待</small>';rk.onclick=()=>toast('🏆 Ranked 排位賽 敬請期待！');pc.appendChild(rk);
+ const rk=document.createElement('button');rk.className='cd mcard';rk.style.background='linear-gradient(#4a4f66,#2a2d3c)';{const t=rkCur();rk.innerHTML='<img src="'+rkIcon(t.i)+'" style="width:40px;height:40px"><small>Ranked · '+(rkLocked()?'🔒 Lv '+RK_LV:t.en)+'</small>';if(!rkLocked())rk.style.background='linear-gradient(#6a3cff,#2a1a6a)'}rk.onclick=rkOpen;pc.appendChild(rk);
  const dn=['簡單','普通','困難'],pd=$('#pdifs');pd.innerHTML='';dn.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;b.className=cfg.d==i?'on':'';b.onclick=()=>{cfg.d=i;renderPlay()};pd.appendChild(b)});
  const pm=$('#pmaps');pm.innerHTML='';MAPLIST.concat([null]).forEach((k,i)=>{const b=document.createElement('button');b.textContent=k?MAPNAME[k]:'🎲 Random';const v=k?i:-1;b.className=cfg.map==v?'on':'';b.onclick=()=>{cfg.map=v;cfg.mapPick=1;renderPlay()};pm.appendChild(b)});
  $('#playNote').textContent=NET?'　線上房間 '+NET.code+'：由房主帶隊伍對戰機器人':'　對戰機器人（單機）'}
-function playMode(n){closePanels();if(NET){if(typeof onlinePlay=='function')onlinePlay(n);return}cfg.n=n;goMatch()}
+function playMode(n){closePanels();rkLeave();if(NET){if(typeof onlinePlay=='function')onlinePlay(n);return}cfg.n=n;goMatch()}
 function goMatch(){$('#hud').style.display='block';$('#lobbyMenuBtn').style.display='none';paused=false;msg('');startMatch()}
 PRENDER.Play=renderPlay;$('#playBtn').onclick=()=>openPanel('Play');
+
+// ===== Ranked 排位賽 (vs bots; Lv 50+) =====
+// PF.rk={rp,m,w,day,best,pend}. Win: +5..+25 (less the higher you are), ×1.5 when outnumbered (1v2), ×0.6 when you outnumber (2v1).
+// Loss: −8..−20 (more the higher you are), ×0.5 for 1v2, ×1.25 for 2v1; the first ranked match of each day never loses RP.
+// Leaving a ranked match early (pend still set) counts as a normal loss. Cloud accounts publish {name,rp} to ranked/{uid}
+// for the global top-200 board; Arch Nemesis = Nemesis (3600+) AND inside that top 200.
+const RK_LV=50,RK_TIERS=[['Bronze','青銅','#cd7f3e'],['Silver','白銀','#c8d2de'],['Gold','黃金','#f2c23c'],['Platinum','白金','#4fe0c0'],['Diamond','鑽石','#58b4ff'],['Onyx','黑曜','#a678ff']];
+const RK_FMT={'1v1':{n:1,ne:1,w:1,l:1,zh:'1v1 單挑',e:'⚔️'},'2v2':{n:2,ne:2,w:1,l:1,zh:'2v2 雙人',e:'👥'},'1v2':{n:1,ne:2,w:1.5,l:.5,zh:'1v2 以寡敵眾',e:'🔥'},'2v1':{n:2,ne:1,w:.6,l:1.25,zh:'2v1 以多打少',e:'🛡️'}};
+var RKLB={t:0,list:[],busy:false,err:'',me:-1},RKT='play';
+function rkP(){return PF.rk}
+function rkTier(rp,m,arch){if(!m)return{i:-1,en:'Unranked',zh:'未定級',col:'#9aa3b5',lo:0,hi:0};
+ if(rp>=3600)return arch?{i:19,en:'Arch Nemesis',zh:'至尊宿敵',col:'#ffcf3a',lo:3600,hi:null}:{i:18,en:'Nemesis',zh:'宿敵',col:'#ff3b5c',lo:3600,hi:null};
+ const i=Math.floor(rp/200),T=RK_TIERS[Math.floor(i/3)],n=i%3+1;return{i,en:T[0]+' '+n,zh:T[1]+' '+n,col:T[2],lo:i*200,hi:i*200+199}}
+function rkArch(){return!!(PF&&inCloud()&&RKLB.me>=0&&RKLB.me<200&&PF.rk.rp>=3600)}
+function rkCur(){const r=PF.rk;return rkTier(r.rp,r.m,rkArch())}
+const RKIC={};
+function rkIcon(i){if(RKIC[i])return RKIC[i];const g=i<0?-1:i>=18?i:Math.floor(i/3),s=i<0||i>=18?0:i%3,c=i<0?'#9aa3b5':i==18?'#ff3b5c':i==19?'#ffcf3a':RK_TIERS[g][2],K='#10131f',DK='#00000055',LT='#ffffff88';let b='';
+ const P=(pts,f,sw)=>b+='<polygon points="'+pts+'" fill="'+(f||c)+'" stroke="'+K+'" stroke-width="'+(sw||2.5)+'" stroke-linejoin="round"/>',
+  L=(d,col,w)=>b+='<path d="'+d+'" fill="none" stroke="'+(col||K)+'" stroke-width="'+(w||2)+'" stroke-linecap="round" stroke-linejoin="round"/>',
+  C=(r,f,st)=>b+='<circle cx="32" cy="32" r="'+r+'" fill="'+(f||'none')+'" stroke="'+(st||K)+'" stroke-width="3"/>',
+  tri=()=>{P('32,1 36,7 28,7');P('63,32 57,36 57,28');P('32,63 28,57 36,57');P('1,32 7,28 7,36')},
+  dtri=()=>{P('8,8 16,10 10,16');P('56,8 54,16 48,10');P('56,56 48,54 54,48');P('8,56 10,48 16,54')},
+  wings=(y)=>{P('20,'+y+' 2,'+(y-10)+' 6,'+(y+4)+' 1,'+(y+8)+' 20,'+(y+12));P('44,'+y+' 62,'+(y-10)+' 58,'+(y+4)+' 63,'+(y+8)+' 44,'+(y+12))};
+ if(g==-1){C(25,'#262b3a',c);C(12,'none',c)}
+ else if(g==0){if(s==2){P('2,18 8,18 8,46 2,46');P('56,18 62,18 62,46 56,46');P('20,52 44,52 44,60 20,60');P('20,4 44,4 44,12 20,12')}P('12,12 52,12 52,52 12,52');if(s==0)P('22,24 42,24 42,40 22,40',DK);else{L('M12 12L52 52M52 12L12 52');P('25,25 39,25 39,39 25,39',DK)}}
+ else if(g==1){if(s==2)tri();P('32,6 58,32 32,58 6,32');if(s==0)P('32,18 46,32 32,46 18,32',DK);else{P('32,16 36,28 48,32 36,36 32,48 28,36 16,32 28,28',LT,2);L('M32 6L32 58M6 32L58 32',K,1.5)}}
+ else if(g==2){if(s==2)dtri();P('32,3 40,24 61,32 40,40 32,61 24,40 3,32 24,24');if(s==0)P('32,24 40,32 32,40 24,32',DK);else{P('32,22 35,29 42,32 35,35 32,42 29,35 22,32 29,29',LT,2);L('M24 24L40 40M40 24L24 40',K,1.5)}}
+ else if(g==3){if(s==2)P('8,48 32,24 56,48 56,34 32,10 8,34',DK);P('6,16 32,42 58,16 58,30 32,56 6,30');if(s>=1)L('M12 24L32 44L52 24',LT,2.5)}
+ else if(g==4){if(s==2){P('10,20 1,14 4,30 10,28');P('54,20 63,14 60,30 54,28')}P('18,10 46,10 58,24 32,58 6,24');L('M6 24L58 24');if(s>=1)L('M18 10L24 24L32 58L40 24L46 10M24 24L32 10L40 24',K,1.6)}
+ else if(g==5){if(s==2){P('18,30 4,20 8,36 18,40');P('46,30 60,20 56,36 46,40')}P('32,3 47,30 32,61 17,30');L('M32 3L32 61',K,1.6);if(s>=1)L('M17 30L32 38L47 30M24 16L32 22L40 16',K,1.5)}
+ else{wings(24);P('20,18 44,18 44,40 32,52 20,40');P('26,24 38,24 38,37 32,43 26,37',DK);if(g==19){P('20,16 22,4 28,11 32,2 36,11 42,4 44,16','#ffcf3a');}}
+ return RKIC[i]='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'+b+'</svg>')}
+function rkImg(t,sz){return'<img src="'+rkIcon(t.i)+'" alt="" style="width:'+sz+'px;height:'+sz+'px;vertical-align:middle;filter:drop-shadow(0 0 6px '+t.col+'88)">'}
+function rkDelta(rp,f,won,first){const F=RK_FMT[f]||RK_FMT['1v1'],x=Math.min(rp,3600)/3600;if(won)return Math.max(f=='2v1'?3:5,Math.round((25-20*x)*F.w));if(first)return 0;return-Math.max(3,Math.round((8+12*x)*F.l))}
+function rkFirst(){return PF.rk.day!==today()}
+function rkLocked(){return PF.lv<RK_LV&&!FREE()}
+function rkApply(won,f,first){const r=PF.rk,t0=rkCur(),d=rkDelta(r.rp,f,won,first);r.rp=Math.max(0,r.rp+d);r.m++;if(won)r.w++;r.day=today();r.best=Math.max(r.best,r.rp);r.pend=null;saveNow();rkPush();return{d,f,won,first,t0,t1:rkCur()}}
+function rkAbandon(){if(!PF||!PF.rk||!PF.rk.pend)return;const a=rkApply(false,PF.rk.pend.f||'1v1',false);toast('🏳️ 中途離開排位賽，算輸一場：'+a.d+' RP','#ff8a8a')}
+function rkQueue(f){if(!PF)return;const F=RK_FMT[f];if(!F)return;if(NET){toast('線上房間中不能打排位');return}if(rkLocked()){toast('🔒 排位賽 Lv '+RK_LV+' 解鎖');return}rkAbandon();
+ if(!cfg.ranked){cfg.d0=cfg.d;cfg.m0=cfg.map;cfg.mp0=cfg.mapPick}const rp=PF.rk.rp;cfg.ranked=f;cfg.n=F.n;cfg.ne=F.ne;cfg.d=rp<1200?0:rp<2400?1:2;cfg.mapPick=0;cfg.map=-1;
+ PF.rk.pend={f,t:Date.now()};saveNow();closePanels();goMatch()}
+function rkLeave(){if(cfg.ranked){cfg.ranked=0;cfg.ne=0;if(cfg.d0!=null){cfg.d=cfg.d0;cfg.map=cfg.m0;cfg.mapPick=cfg.mp0}cfg.d0=null}}
+function rkFinish(won){if(!cfg.ranked||!PF)return null;const f=cfg.ranked;return rkApply(won,f,rkFirst())}
+function rkResHTML(a){if(!a)return'';const up=a.t1.i>a.t0.i,dn=a.t1.i<a.t0.i;
+ return'<div style="margin-top:10px;padding:10px;border-radius:12px;background:#ffffff10;border:2px solid '+a.t1.col+'"><div style="font-weight:900;font-size:15px">🏆 排位賽 Ranked · '+RK_FMT[a.f].zh+'</div>'+
+  '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px">'+rkImg(a.t1,54)+'<div style="text-align:left"><div style="font-weight:900;font-size:18px;color:'+a.t1.col+'">'+a.t1.en+'</div><div>'+a.t1.zh+' · '+PF.rk.rp+' RP</div></div>'+
+  '<div style="font:900 26px system-ui;color:'+(a.d>0?'#35d07f':a.d<0?'#ff6a6a':'#ffd23f')+'">'+(a.d>0?'+':'')+a.d+'</div></div>'+
+  (a.first&&!a.won?'<div class="note" style="color:#ffd23f">🛡️ 今天第一場排位，輸了不扣分</div>':'')+(up?'<div style="color:#ffd23f;font-weight:900">⬆️ 升段！</div>':dn?'<div style="color:#ff8a8a;font-weight:900">⬇️ 降段了</div>':'')+'</div>'}
+async function rkPush(){if(!inCloud()||!PF)return;try{await fsCall('/ranked/'+encodeURIComponent(CLOUD.uid),'PATCH',fsEnc({name:CLOUD.name,rp:PF.rk.rp,t:Date.now()}));RKLB.t=0}catch(_){}}
+async function rkLoad(force){if(!inCloud()||RKLB.busy)return;if(!force&&Date.now()-RKLB.t<180000)return;RKLB.busy=true;RKLB.err='';
+ try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:'ranked'}],orderBy:[{field:{fieldPath:'rp'},direction:'DESCENDING'}],limit:200}});const L=[];
+  for(const x of Array.isArray(r)?r:[]){if(!x||!x.document)continue;const d=fsDec(x.document.fields);d.uid=String(x.document.name).split('/').pop();if(typeof d.name=='string'&&Number.isFinite(d.rp))L.push(d)}
+  RKLB.list=L;RKLB.me=L.findIndex(d=>d.uid===CLOUD.uid);RKLB.t=Date.now()}catch(e){RKLB.err=e&&e.status===403?'排行榜還沒開放（管理員需要更新 Firebase 規則）':'讀取排行榜失敗，稍後再試'}
+ finally{RKLB.busy=false;if(PANEL=='Ranked')renderRanked();renderLUI()}}
+function rkOpen(){if(!PF)return;rkAbandon();RKT='play';openPanel('Ranked');rkLoad()}
+function renderRanked(){if(!PF)return;const r=PF.rk,t=rkCur(),body=$('#rkBody');
+ $('#rkTabs').innerHTML=[['play','🏆 排位'],['tiers','📜 段位表'],['lb','🌍 全球排行']].map(([k,n])=>'<button class="'+(RKT==k?'on':'')+'" data-rt="'+k+'">'+n+'</button>').join('');
+ for(const b of $('#rkTabs').children)b.onclick=()=>{RKT=b.dataset.rt;renderRanked();if(RKT=='lb')rkLoad(true)};
+ $('#rkNote').textContent='　See how good you actually are!';let h='';
+ if(RKT=='play'){const nt=r.m&&r.rp<3600?rkTier(Math.floor(r.rp/200)*200+200,1,0):null,pc=r.m&&r.rp<3600?(r.rp%200)/2:100;
+  h='<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;padding:6px 4px 12px">'+rkImg(t,104)+'<div style="flex:1;min-width:200px"><div style="font:900 28px system-ui;color:'+t.col+'">'+t.en+'</div><div style="font-weight:800">'+t.zh+(r.m?'　·　'+r.rp+' RP':'　·　打一場排位就會定級')+'</div>'+
+   (nt?'<div class="xpb" style="margin-top:8px"><i style="width:'+pc+'%;background:'+t.col+'"></i></div><div class="note">距離 '+nt.en+' 還差 '+(nt.lo-r.rp)+' RP</div>':'')+
+   '<div class="note">排位 '+r.m+' 場 · 勝 '+r.w+' 場'+(r.m?' · 勝率 '+Math.round(r.w/r.m*100)+'%':'')+' · 最高 '+r.best+' RP'+(inCloud()&&RKLB.me>=0?' · 全球第 '+(RKLB.me+1)+' 名':'')+'</div></div></div>';
+  if(rkLocked())h+='<div class="cd" style="text-align:center;font-weight:900;font-size:17px">🔒 排位賽在 Lv '+RK_LV+' 解鎖（你現在 Lv '+PF.lv+'）</div>';
+  else if(NET)h+='<div class="cd" style="text-align:center;font-weight:800">線上房間中不能打排位，先離開房間</div>';
+  else{const first=rkFirst();h+=(first?'<div class="note" style="color:#ffd23f;font-weight:800;margin-bottom:6px">🛡️ 今天第一場排位：輸了不扣分！</div>':'')+'<div class="cards">'+Object.keys(RK_FMT).map(f=>{const F=RK_FMT[f],w=rkDelta(r.rp,f,true,first),l=rkDelta(r.rp,f,false,first);
+    return'<div class="cd" style="text-align:center"><h4>'+F.e+' '+F.zh+'</h4><div class="sub2">你這隊 '+F.n+' 人 · 對手 '+F.ne+' 個機器人</div><div style="margin:8px 0;font-weight:900"><span style="color:#35d07f">贏 +'+w+'</span>　<span style="color:'+(l?'#ff6a6a':'#ffd23f')+'">輸 '+(l||'±0')+'</span></div><button class="gbtn" data-rq="'+f+'">開始排位</button></div>'}).join('')+'</div>'+
+   '<div class="note" style="margin-top:6px">對手是機器人（之後會開放真人排位）。段位越高，機器人越強、贏的分越少、輸的分越多。中途離開算輸。</div>'}}
+ else if(RKT=='tiers'){const T=[rkTier(0,0)];for(let i=0;i<18;i++)T.push(rkTier(i*200,1,0));T.push(rkTier(3600,1,0),rkTier(3600,1,1));
+  h='<div class="note">Lv '+RK_LV+' 以上才能打排位</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:6px">'+T.map(x=>'<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:12px;background:#ffffff0d;border:2px solid '+(x.i===t.i?x.col:'transparent')+'">'+rkImg(x,44)+'<div><div style="font-weight:900;color:'+x.col+'">'+x.en+'</div><div class="note" style="margin:0">'+x.zh+' · '+(x.i<0?'還沒打過排位':x.i==19?'全球排名前 200':x.hi==null?x.lo+' RP 以上':x.lo+' ~ '+x.hi+' RP')+'</div></div></div>').join('')+'</div>'}
+ else{if(!inCloud())h='<div class="cd">🌍 全球排行榜需要登入雲端帳號</div>';else if(RKLB.err)h='<div class="cd">'+esc(RKLB.err)+'</div>';else if(RKLB.busy&&!RKLB.list.length)h='<div class="cd">讀取中…</div>';
+  else h='<div class="note">全球排名前 200（每 3 分鐘更新）·前 200 名而且達到 Nemesis 就是 Arch Nemesis</div>'+(RKLB.list.length?RKLB.list.map((d,k)=>{const x=rkTier(d.rp,1,k<200&&d.rp>=3600);return'<div style="display:flex;align-items:center;gap:10px;padding:5px 10px;border-radius:10px;margin:3px 0;background:'+(d.uid===CLOUD.uid?'#3b7bff44':'#ffffff0a')+'"><b style="width:38px;text-align:right">#'+(k+1)+'</b>'+rkImg(x,30)+'<span style="flex:1;font-weight:800">'+esc(d.name)+'</span><span style="color:'+x.col+';font-weight:900">'+d.rp+' RP</span></div>'}).join(''):'<div class="cd">還沒有人打排位，搶第一名吧！</div>')}
+ body.innerHTML=h;for(const b of body.querySelectorAll('[data-rq]'))b.onclick=()=>rkQueue(b.dataset.rq)}
+PRENDER.Ranked=renderRanked;
 // ---- Backpack ----
 var PKT='crates';
 PRENDER.Pack=()=>{const ct=crTot();let h='<div class="ptabs"><button data-pt="crates" class="'+(PKT=='crates'?'on':'')+'">📦 箱子 Crates'+(ct?' ×'+ct:'')+'</button><button data-pt="wpn" class="'+(PKT=='wpn'?'on':'')+'">🔫 武器 Weapons</button></div>';
@@ -2888,7 +2976,7 @@ function renderProfile(){if(!PF)return;const s=PF.st,wr=s.m?(s.w/s.m*100):0,nm=a
  const face='<div class="pfav" style="background:#f2cf9a;position:relative;overflow:hidden"><i style="position:absolute;left:30px;top:38px;width:9px;height:13px;background:#111"></i><i style="position:absolute;right:30px;top:38px;width:9px;height:13px;background:#111"></i><i style="position:absolute;left:34px;top:62px;width:28px;height:4px;border-radius:2px;background:#5a3a22"></i><i style="position:absolute;left:0;right:0;bottom:0;height:12px;background:#3d7bef"></i></div>';
  $('#profCard').innerHTML='<div class="pfl">'+face+'<div style="font-size:26px;line-height:1">🏆</div><div class="pfbig">'+s.w.toLocaleString('en-US')+'</div><div class="pfsm">wins</div><div class="pfbig" style="font-size:22px">'+(Math.round(wr*10)/10)+'%</div><div class="pfsm">win rate</div><div class="pfdots"><i class="on"></i><i></i></div></div>'+
   '<div class="pfr"><div class="pfname">'+esc(nm)+' <span style="font-size:16px;vertical-align:middle" title="'+(MOBILE?'Mobile':'PC')+'">'+(MOBILE?'📱':'🖥️')+'</span></div><div class="pfh">@'+esc(nm.toLowerCase())+'</div>'+
-  '<div class="pfst"><div><div class="bdg lv">'+PF.lv+'</div>Level</div><div><div class="bdg fl">'+s.streak+'</div>Streak</div><div><div class="bdg rk"></div>Unranked</div></div>'+
+  '<div class="pfst"><div><div class="bdg lv">'+PF.lv+'</div>Level</div><div><div class="bdg fl">'+s.streak+'</div>Streak</div><div><img src="'+rkIcon(rkCur().i)+'" style="width:46px;height:46px"><br>'+rkCur().en+'</div></div>'+
   '<div class="pfmw">Most Played Weapons</div><div class="pftiles">'+mp.map(n=>{const w=WBN(n);return'<div class="pftile">'+(w?'<img src="'+icon(w)+'">':'<span style="font-size:26px;margin-top:10px">'+WEMO.P+'</span>')+'<span>'+esc(n)+'</span></div>'}).join('')+'</div>'+
   '<div style="margin-top:auto;padding-top:10px;font:700 11.5px system-ui;color:#9aa1c2">對戰 '+s.m+' · 勝 '+s.w+' · 敗 '+s.l+' · 擊殺 '+s.k+' · K/D '+(s.d?(s.k/s.d).toFixed(2):s.k)+' · 最高連勝 '+s.best+' · 武器 '+ALLW().filter(w=>isUnl(w.n)).length+'/'+ALLW().length+' · 🔑 '+PF.keys+'</div></div>';
  fitProfile()}
