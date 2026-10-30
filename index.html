@@ -1131,7 +1131,7 @@ const PRI=[
  alt:altCd(4,(e)=>{const a=aim(e);for(let i=0;i<10;i++)puff(muz(e),spr(a.d,.25).multiplyScalar(16),0xffffff,.35,.8);snd(250,.25,.08,'sawtooth');
   for(const t of E)if(t.alive&&t.team!==e.team){const dv=V(t.x,t.y+1,t.z).sub(a.o),d=dv.length();if(d<7&&dv.normalize().dot(a.d)>.6)push(e,t,{ax:a.d.x*20,az:a.d.z*20,vy:7})}
   for(const q of Pr)if(q.by.team!==e.team&&q.p.distanceTo(a.o)<6){q.v.copy(a.d).multiplyScalar(q.v.length()+5);q.by=e;q.hit.clear()}}),bAlt:(b,s,d)=>d<5&&rnd()<.03},
-{n:'Grenade Launcher',k:'P',d:'左鍵碰到就爆，右鍵反彈一次再爆',rate:.6,mag:6,res:18,rl:1.8,eq:1,mv:.9,pj:{sp:26,g:18},fire:(e,w,s,x)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:26,g:18,r:.1,col:0x5a5a2a,bnc:x.b?1:0,life:4,boom:{r:14,dmg:40}})},alt:(e,w,s,dn)=>{if(dn)tryF(e,w,s,{b:1})},bAlt:()=>rnd()<.01,f:160,br:30,bp:14},
+{n:'Grenade Launcher',k:'P',d:'左鍵碰到就爆，右鍵反彈一次再爆',rate:.6,mag:6,res:18,rl:1.8,eq:1,mv:.9,pj:{sp:26,g:18},fire:(e,w,s,x)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:26,g:18,r:.1,col:0x5a5a2a,bnc:x.b?1:0,life:4,direct:50,boom:{r:14,dmg:40,flat:1}})},alt:(e,w,s,dn)=>{if(dn)tryF(e,w,s,{b:1})},bAlt:()=>rnd()<.01,f:160,br:30,bp:14},
 {n:'Minigun',k:'P',d:'300 發不能換彈，預熱後高速開火',norl:1,au:1,spin:.8,dmg:8,hsm:1.25,dd:[50,200,4],rate:.05,mag:300,eq:1,sp:.045,mv:.75,f:420,br:45,bp:14},
 {n:'Paintball Gun',k:'P',d:'下墜漆彈，干擾視野',au:1,rate:.15,mag:16,res:32,rl:2.4,eq:.8,mv:.9,sp:.015,pj:{sp:45,g:10,r:.07,col:0xff3fa0,emi:1,dmg:22,hs:1,paint:1},zf:55,f:500,br:40,bp:14},
 {n:'Crossbow',k:'P',d:'穿透弩箭，可開鏡',rate:1,mag:1,res:19,rl:1.15,eq:1.15,mv:1.05,pj:{sp:110,g:2,r:.06,len:.6,col:0x222222,dmg:37.5,hs:2,pierce:1},zf:38,scope:1,f:650,br:80,bp:22},
@@ -1152,7 +1152,7 @@ const SEC=[
 {n:'Warper',k:'S',d:'傳送門槍：左右鍵各放一個門',inf:1,rate:.25,eq:1,f:0,br:0,bp:12,fire:(e)=>portal(e,0),alt:(e,w,s,dn)=>{if(dn&&s.acd<=0){s.acd=.25;portal(e,1)}}},
 {n:'Energy Pistols',k:'S',d:'雙槍無限子彈',au:1,dmg:2.1,hsm:1.25,rate:.03,inf:1,eq:.6,sp:.015,col:0x40e0ff,f:800,br:40,bp:12},
 {n:'Exogun',k:'S',d:'範圍濺射雷射',rate:.28,mag:6,res:22,rl:.65,eq:.7,pj:{sp:60,r:.08,col:0x7dff5a,emi:1,dmg:10,hs:2,splash:{r:6.28,dmg:10}},f:600,br:40,bp:12},
-{n:'Slingshot',k:'S',d:'連發彈弓，擊退敵人',au:1,rate:.1,inf:1,eq:.45,mv:1.1,pj:{sp:50,g:14,r:.08,col:0xe0302a,dmg:8,hs:1.5,bnc:2,kb:.5},f:300,br:35,bp:12},
+{n:'Slingshot',k:'S',d:'連發彈弓，擊退敵人，300 發打完不能補',au:1,norl:1,mag:300,rate:.1,eq:.45,mv:1.1,pj:{sp:50,g:14,r:.08,col:0xe0302a,dmg:8,hs:1.5,bnc:2,kb:.5},f:300,br:35,bp:12},
 {n:'Flare Gun',k:'S',d:'燃燒彈，落點整個比分都在燒',rate:.25,mag:1,res:1,rl:.77,eq:1.3,mv:1.1,f:240,br:40,bp:12,pj:{sp:55,g:6},
  fire:(e)=>{const a=aim(e),fcol=e.team===P.team?0x3dff6a:0xe04848;shootP(e,a.o.clone().addScaledVector(a.d,.6),a.d,{sp:55,g:6,r:.08,col:fcol,emi:1,dmg:25,hs:1.5,burn:50,fa:1});if(a.d.y<-.6){e.vy=Math.max(e.vy,11);e.vx-=a.d.x*7;e.vz-=a.d.z*7;e.sl=false}}},
 {n:'Revolver',k:'S',d:'高傷害，右鍵連開（Fan the Hammer）',dmg:30,hsm:1.33,dd:[75,200,8],rate:.4,mag:6,res:36,rl:1.8,eq:.6,mv:.95,sp:.005,qi:.15,f:200,br:50,bp:14,an:'連開',
@@ -1183,7 +1183,7 @@ const UTL=[
 {n:'Flashbang',k:'U',d:'看著它的人會白屏 3 秒 ×2',lim:2,rate:.5,eq:.5,f:200,fire:(e)=>throwU(e,{sp:18,g:20,r:.1,col:0x2c5a2c,bnc:99,fuse:1.5,onFuse:(q,x)=>flashAt(x)})},
 {n:'Freeze Ray',k:'U',d:'冰凍彈，範圍凍結 3 秒，冷卻 50 秒',lim:1,cdr:50,eq:.5,rate:.6,f:900,fire:(e)=>{const a=aim(e);shootP(e,a.o.clone().addScaledVector(a.d,.6),spr(a.d,.009),{sp:40,g:10,r:.12,col:0x9fe0ff,emi:1,land:(q,x)=>iceBurst(x,q.by,16,3,0)})}},
 {n:'Molotov',k:'U',d:'落點濺射 10 傷害，地上燒火 7 秒，冷卻 30 秒',lim:1,cdr:30,eq:.5,rate:.8,f:200,fire:(e)=>throwU(e,{sp:18,g:18,r:.1,col:0x2e6a3a,land:(q,x)=>{boom(x,{r:7.6,dmg:10,kb:0},q.by,'Molotov');fireArea(x,q.by,7.6,7,'Molotov',25)}})},
-{n:'Satchel',k:'U',d:'黏住後右鍵遙控引爆 ×3，連環爆炸',lim:3,rate:.5,eq:0,f:200,an:'引爆',fire:(e)=>throwU(e,{sp:16,g:18,r:.12,col:0x3e5a3a,stick:1,sat:1,life:999,boom:{r:12,dmg:25,kb:1.2}}),alt:(e,w,s,dn)=>{if(dn)detonate(e)}},
+{n:'Satchel',k:'U',d:'黏住後右鍵遙控引爆 ×3，連環爆炸',lim:3,rate:.5,eq:0,f:200,an:'引爆',fire:(e)=>throwU(e,{sp:16,g:18,r:.12,col:0x3e5a3a,stick:1,sat:1,life:999,direct:25,boom:{r:12,dmg:25,kb:1.2,flat:1}}),alt:(e,w,s,dn)=>{if(dn)detonate(e)}},
 {n:'Smoke Grenade',k:'U',d:'煙霧遮蔽視線並滅火 ×3',lim:3,rate:.5,eq:.5,f:200,fire:(e)=>throwU(e,{sp:18,g:20,r:.1,col:0x8d939c,bnc:99,fuse:1,onFuse:(q,x)=>smoke(x)})},
 {n:'War Horn',k:'U',d:'全隊加速 25% 持續 6 秒，冷卻 45 秒',lim:1,cdr:45,eq:.4,rate:1,f:0,fire:(e)=>horn(e)}];
 for(const w of MEL){if(!w.fire)w.fire=(e,w)=>{melee(e,w.dmg,w.rg,0)};w.inf=1}
@@ -1314,10 +1314,10 @@ if(dm>0){if(q.burn)burn(e,q.burn,q.by,q.wn);if(q.paint&&!fxT(e,{paint:2.2}))e.pa
 if(q.splash)boom(x,{r:q.splash.r,dmg:q.splash.dmg,kb:0,col:q.col,sz:.6,skip:e},q.by,q.wn);if(q.fa)fireArea(x,q.by,8,999)}
 function pHitW(q,x){if(q.land){q.land(q,x);return}if(q.fa)fireArea(x,q.by,8,999);if(q.boom)boom(x,q.boom,q.by,q.wn);else if(q.vortex)mkVortex(x,q.by);else if(q.splash)boom(x,{r:q.splash.r,dmg:q.splash.dmg,kb:0,col:q.col,sz:.6},q.by,q.wn)}
 function updPr(dt){for(let i=Pr.length-1;i>=0;i--){const q=Pr[i],x=q.p;q.t+=dt;let dead=false;
- if(q.stuck){if(q.det){boom(x,q.boom,q.by,q.wn);if(q.sat)for(const r2 of Pr)if(r2!==q&&r2.sat&&r2.stuck&&!r2.det&&r2.p.distanceTo(x)<(q.boom.r||12)*1.4)r2.det=1;dead=true}}
+ if(q.stuck){if(q.det){if(q.direct&&q.stickE&&q.stickE.alive&&q.stickE.team!==q.by.team)hurt(q.stickE,q.direct,q.by,q.wn,{prc:1});boom(x,q.boom,q.by,q.wn);if(q.sat)for(const r2 of Pr)if(r2!==q&&r2.sat&&r2.stuck&&!r2.det&&r2.p.distanceTo(x)<(q.boom.r||12)*1.4)r2.det=1;dead=true}}
  else{const n=Math.max(1,Math.ceil(q.v.length()*dt/.35)),h=dt/n;
  for(let k=0;k<n&&!dead&&!q.stuck;k++){const o=x.clone();q.v.y-=(q.g||0)*h;x.addScaledVector(q.v,h);
-  if(q.dmg!=null||q.boom||q.land||q.vortex||q.stick)for(const e of E)if(e.alive&&e.team!==q.by.team&&!q.hit.has(e)&&inBody(e,x,q.r)){if(q.stick){x.copy(o);q.stuck=1;q.v.set(0,0,0);break}q.hit.add(e);pHitE(q,e,x.y>e.y+(e.sl?.9:e.cr?1.2:1.6),x.clone());if(!q.pierce){dead=true;break}}
+  if(q.dmg!=null||q.boom||q.land||q.vortex||q.stick)for(const e of E)if(e.alive&&e.team!==q.by.team&&!q.hit.has(e)&&inBody(e,x,q.r)){if(q.stick){x.copy(o);q.stuck=1;q.v.set(0,0,0);q.stickE=e;break}q.hit.add(e);pHitE(q,e,x.y>e.y+(e.sl?.9:e.cr?1.2:1.6),x.clone());if(!q.pierce){dead=true;break}}
   if(!dead&&!q.stuck){const b=boxAt(x);if(b||x.y<q.r){if(q.stick){x.copy(o);if(x.y<q.r)x.y=q.r;q.stuck=1;q.v.set(0,0,0)}else if(q.spear&&b){spearStick(o,b);dead=true}else if(q.bnc>0){q.bnc--;if(b){if(Math.abs(o.x-b.x)>=b.w/2){q.v.x*=-.55;x.x=o.x}else if(Math.abs(o.z-b.z)>=b.d/2){q.v.z*=-.55;x.z=o.z}else{q.v.y*=-.45;x.y=o.y;q.v.x*=.75;q.v.z*=.75}}else{x.y=q.r;q.v.y*=-.45;q.v.x*=.75;q.v.z*=.75}}else{pHitW(q,o);dead=true}}}}}
  if(!dead&&q.fuse!=null&&q.t>=q.fuse){if(q.onFuse)q.onFuse(q,x.clone());else boom(x,q.boom,q.by,q.wn);dead=true}
  if(!dead&&(q.t>(q.life||6)||Math.abs(x.x)>40||Math.abs(x.z)>40))dead=true;
@@ -2328,7 +2328,7 @@ function renderWpn(){const L=$('#wlist'),sy=L.scrollTop;L.innerHTML='';if(!WSEL)
  GP.forEach(([,arr],k)=>{const h=document.createElement('h4');h.textContent=CATN[k]+(curLo(k)=='Random'?' · 🎲':'');L.appendChild(h);
   for(const w of arr){const b=document.createElement('button'),u=isUnl(w.n),eq=curLo(k)===w.n;b.className='wit'+(w===WSEL?' sel':'')+(u?'':' locked')+(eq?' eq':'');b.innerHTML='<img src="'+icon(w)+'"><span>'+w.n+'</span>'+(u?(eq?'<span class="lk" style="color:#35d07f">✔</span>':''):'<span class="lk">🔒 '+(NOBUY[w.n]?'—':wCost(w.n)+' 🔑')+'</span>');b.onclick=()=>{WSEL=w;renderWpn()};L.appendChild(b)}});
  L.scrollTop=sy;$('#wkeys').textContent='　🔑 '+(PF?PF.keys:0);renderWInfo();setWModel(WSEL,PF?wShowKey(WSEL):'',PF?skEq(WSEL):'')}
-const WDMG={'Bow':'30–60','Grenade Launcher':40,'Grenade':75,'RPG':'100 / 50','Flamethrower':'85/s','Flare Gun':25,'Daggers':'20 ×2','Spear':'15 / 25','Medkit':'+70 HP','Molotov':'10 + 火','Satchel':25,'Subspace Tripmine':150,'Warper':'—','Jump Pad':'—','Grappler':'—','Warpstone':'—','Flashbang':'致盲','Smoke Grenade':'—','War Horn':'—','Freeze Ray':'凍結','Gunblade':45,'Riot Shield':25};
+const WDMG={'Bow':'30–60','Grenade Launcher':'90 / 40','Grenade':75,'RPG':'100 / 50','Flamethrower':'85/s','Flare Gun':25,'Daggers':'20 ×2','Spear':'15 / 25','Medkit':'+70 HP','Molotov':'10 + 火','Satchel':'50 / 25','Subspace Tripmine':150,'Warper':'—','Jump Pad':'—','Grappler':'—','Warpstone':'—','Flashbang':'致盲','Smoke Grenade':'—','War Horn':'—','Freeze Ray':'凍結','Gunblade':45,'Riot Shield':25};
 function wMetrics(w){const pj=w.pj||{};let d=WDMG[w.n]!=null?WDMG[w.n]:w.dmg!=null?+(w.dmg*(w.pel||1)).toFixed(1):pj.dmg!=null?pj.dmg:pj.boom?pj.boom.dmg:'—';const dn=typeof d=='number'?d:parseFloat(d)||0;
  const rows=[['傷害 DMG',d,Math.min(1,dn/100)]];if(w.rate)rows.push(['射速 RPM',Math.round(60/w.rate),Math.min(1,60/w.rate/1000)]);
  if(w.k=='M')rows.push(['距離 Range',w.rg?w.rg+' m':'—',Math.min(1,(w.rg||0)/4.5)]);else if(w.k!='U')rows.push(['彈匣 Mag',w.inf||!w.mag?'∞':w.mag,w.inf?1:Math.min(1,(w.mag||0)/60)]);
