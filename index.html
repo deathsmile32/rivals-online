@@ -806,7 +806,7 @@ const SKINS=[
  inspFx:p=>skBurst(p,8,[0xe0302a,0xffffff],1.3,.3,.04),
  reloadFx:()=>{for(let i=0;i<4;i++)setTimeout(()=>snd(1800+rnd()*600,.03,.03,'triangle'),i*35);setTimeout(()=>snd(900,.06,.05,'sine'),160)},
  fireFx:p=>{skBurst(p,9,[0xe0302a,0xffffff],1.6,.3,.045);snd(1300,.08,.05,'sine');setTimeout(()=>snd(1700,.1,.05,'triangle'),70)}},
-{id:'dg_key',weapon:'Daggers',name:'鑰匙雙刃 Key Daggers',rarity:'legendary',ex:1,how:'傳奇鑰匙組合包限定 Legendary Key Bundle Exclusive',insp:'keyspin',insp2:'keytoss',build:kdBuild,
+{id:'dg_key',weapon:'Daggers',name:'鑰匙雙刃 Key Daggers',rarity:'legendary',ex:1,how:'極致鑰匙組合包限定 Ultra Key Bundle Exclusive',insp:'keyspin',insp2:'keytoss',build:kdBuild,
  drawFx:()=>{P.kdF=1;snd(2600,.025,.07,'square');snd(1300,.03,.04,'square');[520,700,940,1260].forEach((f,i)=>setTimeout(()=>snd(f,.09,.035,'sine'),40+i*45))},
  inspFx:()=>{if(P.inspV=='keytoss'){snd(420,.12,.04,'triangle');setTimeout(()=>snd(760,.18,.03,'triangle'),120);[300,520,760,1000].forEach(t=>setTimeout(()=>snd(3200,.03,.025,'sine'),t))}
   else{[90,190,290,390,490,590].forEach((t,i)=>setTimeout(()=>snd(1900+(i%2)*500,.022,.05,'square'),t));setTimeout(()=>{snd(620,.05,.06,'square');setTimeout(()=>snd(1240,.12,.04,'sine'),60)},930);setTimeout(()=>snd(2640,.25,.03,'sine'),1700)}},
@@ -816,7 +816,18 @@ const SKINS=[
  build:g=>{const Gd=0xd8b23a,Gd2=0xa8841f,Di=0x9fe8ff;B(g,.05,.06,.25,0,.1,-.06,Gd2);B(g,.046,.045,.2,0,.06,-.04,Gd);B(g,.046,.13,.065,0,0,.03,Gd,{rx:-.22});
  Sp(g,.022,0,.135,-.14,Di,1);B(g,.01,.012,.15,0,.1,-.19,Di,{e:1});return{}},
  drawFx:p=>{skBurst(p,9,[0xd8b23a,0x9fe8ff,0xffffff],2,.3,.045);snd(1500,.08,.05,'sine')},
- fireFx:p=>{skBurst(p,5,[0xd8b23a,0x9fe8ff],1.8,.16,.035);snd(1800,.04,.045,'sine')}}
+ fireFx:p=>{skBurst(p,5,[0xd8b23a,0x9fe8ff],1.8,.16,.035);snd(1800,.04,.045,'sine')}},
+// original key-themed sniper (own design): key-ring stock, padlock magazine, gold/silver two-tone
+{id:'sn_locksmith',weapon:'Sniper',name:'鎖匠 Locksmith',rarity:'legendary',ex:1,how:'傳奇鑰匙組合包限定 Legendary Key Bundle Exclusive',insp:'heavy',flashColor:0xffd23f,flashScale:1.4,
+ build:g=>{const Gd=0xe0b830,Gd2=0xb38c1c,Sv=0xc9ced6,Dk=0x1c1c22;
+ B(g,.07,.1,.5,0,.08,-.08,Gd);Cz(g,.02,.02,.5,0,.09,-.58,Gd2);Cz(g,.034,.034,.06,0,.09,-.84,Sv);for(const z of[-.4,-.52,-.64])Cz(g,.026,.026,.015,0,.09,z,Sv);
+ Cz(g,.038,.038,.3,0,.17,-.1,Sv);Cz(g,.045,.045,.03,0,.17,-.26,Gd);Cz(g,.045,.045,.03,0,.17,.06,Gd);B(g,.03,.05,.03,0,.135,-.1,Gd2);
+ B(g,.045,.12,.055,0,0,.03,Dk,GRIP);B(g,.05,.07,.2,0,.07,.2,Gd);
+ const ring=new T.Mesh(UT,mt(Gd));ring.scale.set(.085,.085,.09);ring.rotation.y=PI/2;ring.position.set(0,.07,.37);g.add(ring);
+ const mg=new T.Group();B(mg,.06,.075,.065,0,-.03,-.16,Sv);const sh=new T.Mesh(UT,mt(Sv));sh.scale.set(.024,.024,.03);sh.rotation.y=PI/2;sh.position.set(0,.01,-.16);mg.add(sh);Sp(mg,.009,.031,-.03,-.16,Dk);g.add(mg);
+ return{fore:[0,.09,-.86],mag:mg}},
+ reloadFx:()=>{snd(1750,.025,.06,'square');setTimeout(()=>snd(2350,.03,.06,'square'),80);setTimeout(()=>snd(900,.08,.05,'sine'),180)},
+ fireFx:p=>{skBurst(p,12,[0xffd23f,0xffffff,0xc9ced6],2.4,.28,.06);snd(60,.3,.14,'sawtooth');snd(2093,.2,.03,'sine')}}
 ];
 const SKBYID=Object.fromEntries(SKINS.map(x=>[x.id,x])),skinsFor=wn=>SKINS.filter(x=>x.weapon==wn);
 function model(w,wk,sk,ch){const g=new T.Group();const S=sk&&SKBYID[sk]&&SKBYID[sk].weapon==w.n?SKBYID[sk]:null;const u=(S?S.build:MD[w.n]||(()=>({})))(g)||{};g.userData=u;if(wk)try{applyWrap(g,w,wk)}catch(e){console.error(e)}if(ch)applyCharm(g,w,ch);return g}
@@ -2865,8 +2876,8 @@ const KBUNDLES=[
  {id:'keyper',zh:'Keyper 划算鑰匙包',en:'Keyper Bundle',gold:140,keys:35,skin:'hg_keyper',art:'🔑💎'},
  {id:'kb2',zh:'大型鑰匙組合包',en:'Mega Key Bundle',gold:200,keys:40,cr:{wbox:1},art:'🔑🔑'},
  {id:'kb3',zh:'超級鑰匙組合包',en:'Super Key Bundle',gold:380,keys:90,cr:{wbox:3,fpack:1},rw:1,art:'🔑🔑🔑'},
- {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:1600,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,art:'💰🔑'},
- {id:'kb5',zh:'傳奇鑰匙組合包',en:'Legendary Key Bundle',gold:3700,keys:1100,cr:{wbox:40,fpack:15,scase:1},rw:20,rf:3,skin:'dg_key',red:1,art:'👑🔑'}];
+ {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:1600,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,skin:'dg_key',art:'💰🔑'},
+ {id:'kb5',zh:'傳奇鑰匙組合包',en:'Legendary Key Bundle',gold:3700,keys:1100,cr:{wbox:40,fpack:15,scase:1},rw:20,rf:3,skin:'sn_locksmith',red:1,art:'👑🔑'}];
 const KB_WRAPK=5,KB_FINK=10,KB_SKINT=10;
 function kbItems(b){const o=[['🔑','鑰匙 Keys','',b.keys]];for(const c in b.cr||{}){const C=CRBYID[c];o.push(['<img src="'+crArt(c)+'">',C.name+' '+C.en,'放進 🎒 背包',b.cr[c]])}
  if(b.rw)o.push(['🎨❔','隨機包裝 Random Wrap','開出未擁有的（全擁有則換 🔑 '+KB_WRAPK+'）',b.rw]);if(b.rf)o.push(['✨❔','隨機死亡特效 Random Finisher','開出未擁有的（全擁有則換 🔑 '+KB_FINK+'）',b.rf]);
