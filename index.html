@@ -444,6 +444,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
   <button data-p="shop"><b>🛒</b><span data-i18n="lbShop">Shop</span></button>
   <button data-p="pass"><b>🎫</b><span data-i18n="lbPass">Pass</span><span class="badge" id="pbadge"></span></button>
   <button data-p="ach"><b>🏆</b><span data-i18n="lbAch">Achievements</span><span class="badge" id="achbadge"></span></button>
+  <button data-p="stats"><b>📊</b><span data-i18n="lbStats">Stats</span></button>
   <button data-p="set"><b>⚙️</b><span data-i18n="lbSet">Settings</span></button>
   <button data-p="event"><b>🎃</b><span data-i18n="lbEvent">Event</span></button>
   <button data-p="upd" title="更新內容"><b>📢</b><span data-i18n="lbUpd">更新</span><span class="badge" id="ubadge"></span></button>
@@ -468,6 +469,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
 <div id="pShop" class="pnl"><div class="pbox"><div class="ptitle">🛒 <span data-i18n="ptShop">Shop</span><span class="note" style="font-weight:700" id="skeys"></span><button class="xbtn" data-x>✕</button></div><div class="ptabs" id="shopTabs"></div><div class="pscroll" id="shopBody"></div></div></div>
 <div id="pPass" class="pnl"><div class="pbox"><div class="ptitle">🎫 <span data-i18n="ptPass">Season Pass</span><button class="xbtn" data-x>✕</button></div><div class="pscroll" id="passBody"></div></div></div>
 <div id="pAch" class="pnl"><div class="pbox"><div class="ptitle">🏆 <span data-i18n="ptAch">Achievements</span><button class="xbtn" data-x>✕</button></div><div class="pscroll" id="achBody"></div></div></div>
+<div id="pStats" class="pnl"><div class="pbox"><div class="ptitle">📊 <span data-i18n="ptStats">Stats</span><button class="xbtn" data-x>✕</button></div><div class="pscroll" id="statsBody"></div></div></div>
 <div id="pSet" class="pnl"><div class="pbox sm" style="width:min(560px,94vw)"><div class="ptitle">⚙️ Settings<button class="xbtn" data-x>✕</button></div><div class="pscroll" id="setBody"></div></div></div>
 <div id="pEvent" class="pnl"><div class="pbox sm"><div class="ptitle">🎃 Event<button class="xbtn" data-x>✕</button></div><div style="font:800 15px system-ui;line-height:1.7">🎃 Halloween 活動<br><span class="soon">活動任務與限定獎勵 敬請期待！</span><br><span class="note">大廳裡的南瓜與箱子是本季的裝飾 👻</span></div></div></div>
 <div id="pUpd" class="pnl"><button class="xbtn" id="updX" data-x title="關閉">✕</button><div id="updDeck"></div><div id="updDots"></div></div>
@@ -2331,8 +2333,8 @@ function accStart(k,rem,isNew){if(CLOUD.live){CLOUD.live=false;CLOUD=newCloud(CL
  try{if(rem)localStorage.setItem('rvl_session',k);else localStorage.removeItem('rvl_session');sessionStorage.setItem('rvl_session',k)}catch(_){}
  accEnter(isNew)}
 // ===== 語言 Language：目前只翻譯大廳主選單（[data-i18n] 標記的元素），其他畫面仍為中文 =====
-const I18N={en:{lbPack:'Backpack',lbWpn:'Weapons',lbTasks:'Tasks',lbShop:'Shop',lbPass:'Pass',lbLbrd:'Leaderboards',lbSet:'Settings',lbEvent:'Event',lbUpd:'Updates',lbGift:'Gift',lbEmote:'Emotes',lbAch:'Achievements',toDuels:'To Duels ➜',ptPack:'Backpack',ptWpn:'Weapons',ptTasks:'Tasks',ptShop:'Shop',ptPass:'Season Pass',ptParty:'Party',ptEmote:'Emotes',ptAch:'Achievements'},
- zh:{lbPack:'背包',lbWpn:'武器',lbTasks:'任務',lbShop:'商店',lbPass:'通行證',lbLbrd:'排行榜',lbSet:'設定',lbEvent:'活動',lbUpd:'更新',lbGift:'送禮',lbEmote:'表情',lbAch:'成就',toDuels:'前往決鬥 ➜',ptPack:'背包',ptWpn:'武器',ptTasks:'任務',ptShop:'商店',ptPass:'通行證 Season Pass',ptParty:'隊伍',ptEmote:'表情 Emotes',ptAch:'成就 Achievements'}};
+const I18N={en:{lbPack:'Backpack',lbWpn:'Weapons',lbTasks:'Tasks',lbShop:'Shop',lbPass:'Pass',lbLbrd:'Leaderboards',lbSet:'Settings',lbEvent:'Event',lbUpd:'Updates',lbGift:'Gift',lbEmote:'Emotes',lbAch:'Achievements',lbStats:'Stats',toDuels:'To Duels ➜',ptPack:'Backpack',ptWpn:'Weapons',ptTasks:'Tasks',ptShop:'Shop',ptPass:'Season Pass',ptParty:'Party',ptEmote:'Emotes',ptAch:'Achievements',ptStats:'Stats'},
+ zh:{lbPack:'背包',lbWpn:'武器',lbTasks:'任務',lbShop:'商店',lbPass:'通行證',lbLbrd:'排行榜',lbSet:'設定',lbEvent:'活動',lbUpd:'更新',lbGift:'送禮',lbEmote:'表情',lbAch:'成就',lbStats:'戰績',toDuels:'前往決鬥 ➜',ptPack:'背包',ptWpn:'武器',ptTasks:'任務',ptShop:'商店',ptPass:'通行證 Season Pass',ptParty:'隊伍',ptEmote:'表情 Emotes',ptAch:'成就 Achievements',ptStats:'戰績 Stats'}};
 function applyLang(){if(!PF)return;const d=I18N[PF.lang=='en'?'en':'zh'];for(const el of document.querySelectorAll('[data-i18n]')){const k=el.dataset.i18n;if(d[k])el.textContent=d[k]}}
 function accEnter(isNew,msg){dailyReset();loginStreak();applyProfile();applyLang();saveP();$('#auth').style.display='none';enterLobby();toast((isNew?'🎉 帳號建立成功，':'👋 歡迎回來，')+accName()+'！','#2fbf71');if(msg)setTimeout(()=>toast(msg,'#4fc3f7'),700);setSync(CLOUD.st||'busy')}
 function accLogout(){saveP();if(typeof giftReset=='function')giftReset();if(NET)netLeave();if(inCloud()){const S=CLOUD;S.live=false;S.snap=PF;if(S.dirty)cloudFlush(true,S);CLOUD=newCloud(S);cloudForget();setSync('')}ACCT=null;PF=null;try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}if(typeof closePanels=='function')closePanels();showAuth()}
@@ -2582,7 +2584,7 @@ function renderLUI(){if(!PF)return;const r=xpReq(PF.lv);$('#llvn').textContent=P
  dailyReset();$('#ltlist').innerHTML=DAILY.map(d=>{const v=Math.min(d.g,PF.daily[d.k]),dn=v>=d.g;return'<div class="tk'+(dn?' done':'')+'">'+d.n+' <b>'+v+'/'+d.g+'</b><span class="r">'+(PF.daily.cl.includes(d.k)?'✔':d.r+' 🔑')+'</span><div class="pb"><i style="width:'+v/d.g*100+'%"></i></div></div>'}).join('');
  {const ub=$('#ubadge');if(ub)ub.style.display=updUnclaimed()?'block':'none'}{const gb=$('#gfbadge'),n=inCloud()?GIFT.pend.length:0;if(gb){gb.style.display=n?'block':'none';gb.textContent=n}}const c=claimable();for(const[id,n]of[['#tbadge',c.t],['#pbadge',c.p]]){const b=$(id);b.style.display=n?'block':'none';b.textContent=n}{const ab=$('#achbadge'),n=achClaimable();if(ab){ab.style.display=n?'block':'none';ab.textContent=n}}renderPList()}
 function renderPList(){if(!PF)return;const rows=['<div>⭐ <span class="lvb">'+PF.lv+'</span>'+esc(accName())+(PF.st.streak>1?' 🔥'+PF.st.streak:'')+'</div>'];if(typeof LPX!=='undefined')for(const id in LPX){const q=LPX[id];rows.push('<div>👤 <span class="lvb">'+(q.lv||1)+'</span>'+esc(q.name)+(q.streak>1?' 🔥'+q.streak:'')+'</div>')}$('#lplist').innerHTML='<div style="color:#9fb0e0;font-size:11px">PLAYERS · '+rows.length+'</div>'+rows.join('')}
-$('#lbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p=='upd'){openUpd();return}if(b.dataset.p=='gift'){giftOpen();return}const m={pack:'Pack',wpn:'Wpn',tasks:'Tasks',shop:'Shop',pass:'Pass',set:'Set',event:'Event',ach:'Ach'}[b.dataset.p];if(m)openPanel(m)};
+$('#lbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p=='upd'){openUpd();return}if(b.dataset.p=='gift'){giftOpen();return}const m={pack:'Pack',wpn:'Wpn',tasks:'Tasks',shop:'Shop',pass:'Pass',set:'Set',event:'Event',ach:'Ach',stats:'Stats'}[b.dataset.p];if(m)openPanel(m)};
 $('#lonline').onclick=()=>{$('#onl').style.display='flex';if(!NET){$('#onA').style.display='block';$('#onB').style.display='none';onMsgUI('')}};
 $('#lkeyAdd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};$('#ltk').onclick=()=>openPanel('Pass');$('#lgd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};
 $('#toDuels').onclick=()=>{if(typeof toDuels=='function')toDuels()};
@@ -2761,6 +2763,15 @@ PRENDER.Ach=()=>{const done=PF.ach.length;let h='<div class="note" style="margin
  for(const a of ACHV){const v=Math.min(a.get(PF),a.goal),got=PF.ach.includes(a.id),ok=!got&&v>=a.goal;
   h+='<div class="cd'+(got?'':'')+'" style="'+(got?'opacity:.75':'')+'"><div style="width:100%;height:50px;display:flex;align-items:center;justify-content:center;font-size:28px">'+a.icon+'</div><h4>'+a.zh+'</h4><div class="sub2">'+a.en+'</div><div class="pb" style="margin-top:6px"><i style="width:'+(v/a.goal*100)+'%"></i></div><div class="sub2" style="font-size:11px;margin-top:2px">'+v+' / '+a.goal+'</div>'+(got?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已領取</div>':ok?'<button class="gbtn" style="width:100%;margin-top:6px" data-ach="'+a.id+'">🔑 領取 +'+a.rw+'</button>':'<div class="sub2" style="margin-top:6px;color:#9fb0e0">🔑 '+a.rw+'</div>')+'</div>'}
  h+='</div>';$('#achBody').innerHTML=h;for(const b of $('#achBody').querySelectorAll('[data-ach]'))b.onclick=()=>claimAch(b.dataset.ach)};
+// ---- Stats / 戰績 ----
+PRENDER.Stats=()=>{const s=PF.st,wr=s.m?Math.round(s.w/s.m*100):0,kd=s.d?(s.k/s.d).toFixed(2):s.k.toFixed(2),hsp=s.k?Math.round(s.hs/s.k*100):0;
+ let fav='—';{let mx=0;for(const n in PF.wk)if(PF.wk[n]>mx){mx=PF.wk[n];fav=n}}
+ const row=(ic,lb,v)=>'<div class="cd" style="text-align:center"><div style="font-size:24px">'+ic+'</div><div style="font-size:22px;font-weight:900;margin-top:4px">'+v+'</div><div class="sub2">'+lb+'</div></div>';
+ let h='<div class="row" style="align-items:center;gap:14px;margin-bottom:10px"><div style="font:900 18px system-ui">⭐ Lv '+PF.lv+'　'+esc(accName())+'</div></div><div class="cards">';
+ h+=row('🎮','場次 Matches',s.m)+row('🏅','勝場 Wins',s.w)+row('📉','敗場 Losses',s.l)+row('📈','勝率 Win Rate',wr+'%');
+ h+=row('⚔️','擊殺 Kills',s.k)+row('💀','死亡 Deaths',s.d)+row('⚖️','K/D',kd)+row('🎯','爆頭率 HS%',hsp+'%');
+ h+=row('🔥','最佳連勝 Best Streak',s.best)+row('🏆','成就 Achievements',PF.ach.length+' / '+ACHV.length)+row('🤝','好友 Friends',PF.friends.length)+row('🔫','最愛武器 Favorite',fav);
+ h+='</div>';$('#statsBody').innerHTML=h};
 // ---- Shop ----
 const BUNDLES=[{n:'Starter 新手包',e:'🎁',w:['Burst Rifle','Uzi','Knife','Flashbang']},{n:'Sharpshooter 神射手',e:'🎯',w:['Sniper','Revolver','Katana','Smoke Grenade']},{n:'Demolition 爆破專家',e:'💥',w:['RPG','Grenade Launcher','Molotov','Satchel']},{n:'Melee Master 近戰大師',e:'⚔️',w:['Scythe','Battle Axe','Chainsaw','Riot Shield']},{n:'Mobility 機動包',e:'🌀',w:['Daggers','Warper','Warpstone','Exogun']}];
 var SHOPT='home';function shopTab(t){SHOPT=t;PRENDER.Shop()}
