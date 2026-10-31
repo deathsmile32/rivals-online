@@ -433,19 +433,20 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
  <div id="llv" title="個人資料"><div class="nm"><span class="lvb" id="llvn">1</span><span id="llname">Player</span><span id="llsync" style="display:none;font:700 10px system-ui;margin-left:7px;vertical-align:middle"></span></div><div class="xpb2"><i id="llxp"></i></div><div style="font:700 11px system-ui;color:#c9cfee;margin-top:3px" id="llxpt"></div></div>
  <div id="lkeys" title="鑰匙">🔑 <span id="lkeyn">0</span><button id="lkeyAdd" title="取得鑰匙">+</button><span id="ltk" title="皮膚票 Skin Tickets（從 Season Pass 取得）">🎫 <span id="ltkn">0</span></span><span id="lgd" title="金幣 Gold（打比賽、每日任務、升級獲得 · 可買鑰匙組合包）">💰 <span id="lgdn">0</span></span></div>
  <div id="lgrant"></div>
- <div id="ltasks"><h4>📋 Daily Tasks</h4><div id="ltlist"></div><button id="toDuels">To Duels ➜</button></div>
+ <div id="ltasks"><h4>📋 Daily Tasks</h4><div id="ltlist"></div><button id="toDuels" data-i18n="toDuels">To Duels ➜</button></div>
  <div id="lplist"></div>
  <div id="lplay"><button id="playBtn">Play</button><button id="avBtn" title="隊伍 Party">🙂<span id="avPlus">+</span></button></div>
  <div id="lbar">
-  <button data-p="pack"><b>🎒</b>Backpack<span class="badge" id="bpbadge"></span></button>
-  <button data-p="wpn"><b>🔫</b>Weapons</button>
-  <button data-p="tasks"><b>📋</b>Tasks<span class="badge" id="tbadge"></span></button>
-  <button data-p="shop"><b>🛒</b>Shop</button>
-  <button data-p="pass"><b>🎫</b>Pass<span class="badge" id="pbadge"></span></button>
-  <button data-p="set"><b>⚙️</b>Settings</button>
-  <button data-p="event"><b>🎃</b>Event</button>
-  <button data-p="upd" title="更新內容"><b>📢</b>更新<span class="badge" id="ubadge"></span></button>
-  <button data-p="gift" title="送禮 Gift"><b>🎁</b>送禮<span class="badge" id="gfbadge"></span></button>
+  <button data-p="pack"><b>🎒</b><span data-i18n="lbPack">Backpack</span><span class="badge" id="bpbadge"></span></button>
+  <button data-p="wpn"><b>🔫</b><span data-i18n="lbWpn">Weapons</span></button>
+  <button data-p="tasks"><b>📋</b><span data-i18n="lbTasks">Tasks</span><span class="badge" id="tbadge"></span></button>
+  <button data-p="shop"><b>🛒</b><span data-i18n="lbShop">Shop</span></button>
+  <button data-p="pass"><b>🎫</b><span data-i18n="lbPass">Pass</span><span class="badge" id="pbadge"></span></button>
+  <button data-p="lbrd"><b>🏆</b><span data-i18n="lbLbrd">排行榜</span></button>
+  <button data-p="set"><b>⚙️</b><span data-i18n="lbSet">Settings</span></button>
+  <button data-p="event"><b>🎃</b><span data-i18n="lbEvent">Event</span></button>
+  <button data-p="upd" title="更新內容"><b>📢</b><span data-i18n="lbUpd">更新</span><span class="badge" id="ubadge"></span></button>
+  <button data-p="gift" title="送禮 Gift"><b>🎁</b><span data-i18n="lbGift">送禮</span><span class="badge" id="gfbadge"></span></button>
  </div>
  <button id="lonline">🌐 線上房間</button>
 </div>
@@ -471,6 +472,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
  <div style="flex:1;display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:14px;min-height:0"><div><div style="font:900 16px system-ui;margin-bottom:6px">Your Party</div><div class="pslots" id="pslots"></div><button id="partyLeave" style="margin-top:8px;display:none">離開隊伍</button></div>
  <div style="display:flex;flex-direction:column;min-height:0"><div class="row"><input id="psearch" type="text" placeholder="🔍 搜尋玩家" style="flex:1;min-width:120px"></div><div class="ptabs" id="ptabs" style="margin-top:8px"><button data-t="all" class="on">All</button><button data-t="fr">Friends</button><button data-t="lb">Lobby</button></div><div class="pscroll" id="plistP"></div></div></div></div></div>
 <div id="pRanked" class="pnl"><div class="pbox"><div class="ptitle">🏆 Ranked 排位賽<span class="note" style="font-weight:700" id="rkNote"></span><button class="xbtn" data-x>✕</button></div><div class="ptabs" id="rkTabs"></div><div class="pscroll" id="rkBody"></div></div></div>
+<div id="pLbrd" class="pnl"><div class="pbox"><div class="ptitle">🏆 排行榜 Leaderboards<button class="xbtn" data-x>✕</button></div><div class="ptabs" id="lbrdTabs"></div><div class="pscroll" id="lbrdBody"></div></div></div>
 <div id="pGift" class="pnl"><div class="pbox" style="width:min(660px,96vw)"><div class="ptitle">🎁 送禮 Gift<span class="note" style="font-weight:700" id="gfkeys"></span><button class="xbtn" data-x>✕</button></div><div class="ptabs" id="gfTabs"></div><div class="pscroll" id="giftBody"></div></div></div>
 <div id="pProf" class="pnl"><div class="pcardx" id="profCard"></div><button class="pfx" data-x>✕</button></div>
 <div id="msel"><div id="mstop"><span class="lbl">🗺️ 選擇地圖 <small>Map Vote</small></span><div class="tbox"><svg viewBox="0 0 24 24"><path d="M5 2h14v2h-1.5c0 3.5-2.2 5.6-4 8 1.8 2.4 4 4.5 4 8H19v2H5v-2h1.5c0-3.5 2.2-5.6 4-8-1.8-2.4-4-4.5-4-8H5z"/></svg><span id="mstm">10.0</span></div><span class="md" id="msmd"></span></div><div id="mgrid"></div></div>
@@ -2161,8 +2163,8 @@ function sha256js(str){const K=SHA_K.K,by=new TextEncoder().encode(str),l=by.len
   H=[a,b,c,d,e,f,g,h].map((v,j)=>(v+H[j])|0)}
  return H.map(v=>(v>>>0).toString(16).padStart(8,'0')).join('')}
 async function pwHash(u,pw,salt){const s=salt+'|'+u+'|'+pw;try{if(window.crypto&&crypto.subtle){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}}catch(_){}return sha256js(s)}
-function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_LO.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],seenUpd:[],claimedUpd:[],wraps:['bc'],wrap:{},wrapInv:{},wrapFav:[],fins:['fc'],fin:{},finFav:[],skins:[],skin:{},skinFav:[],tickets:0,gold:0,crates:{},passT:[],giftLog:[],giftClaimed:[],rk:{rp:0,m:0,w:0,day:'',best:0,pend:null,pw:0},set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1}}}
-function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_LO.slice();for(const k of['seenUpd','claimedUpd','wraps','wrapFav','fins','finFav','skins','skinFav','passT','giftLog','giftClaimed'])if(!Array.isArray(p[k]))p[k]=[];p.giftClaimed=p.giftClaimed.filter(x=>typeof x=='string').slice(-200);p.giftLog=p.giftLog.filter(x=>x&&typeof x=='object'&&(x.d=='s'||x.d=='r')).slice(0,40);for(const k of['wrap','wrapInv','fin','skin','crates'])if(Array.isArray(p[k])||!p[k])p[k]={};p.tickets=Math.max(0,Math.floor(+p.tickets||0));p.gold=Math.max(0,Math.floor(+p.gold||0));{const r=p.rk=Object.assign({rp:0,m:0,w:0,day:'',best:0,pend:null,pw:0},p.rk&&typeof p.rk=='object'?p.rk:{});for(const k of['rp','m','w','best','pw'])r[k]=Math.max(0,Math.floor(+r[k]||0));if(typeof r.day!='string')r.day='';if(!r.pend||typeof r.pend!='object'||!RK_FMT_K.includes(r.pend.f))r.pend=null}for(const k in p.crates){const v=Math.floor(+p.crates[k]||0);if(!CRBYID[k]||!(v>0))delete p.crates[k];else p.crates[k]=v}p.passT=p.passT.filter((x,i,a)=>typeof x=='number'&&a.indexOf(x)===i);
+function newProf(){return{lv:1,xp:0,keys:0,unl:START_W.slice(),lo:START_LO.slice(),st:{m:0,w:0,l:0,k:0,d:0,hs:0,streak:0,best:0},wk:{},wu:{},daily:{day:'',pd:0,el:0,wd:0,cl:[]},login:{last:'',streak:0,cl:''},ct:{},pass:[],codes:[],freeGrant:[],seenUpd:[],claimedUpd:[],wraps:['bc'],wrap:{},wrapInv:{},wrapFav:[],fins:['fc'],fin:{},finFav:[],skins:[],skin:{},skinFav:[],tickets:0,gold:0,crates:{},passT:[],giftLog:[],giftClaimed:[],rk:{rp:0,m:0,w:0,day:'',best:0,pend:null,pw:0},set:{ms:1,ts:1,ads:1,cc:'#ffffff',cz:6,shake:1,af:-1,aa:-1},friends:[],lang:'zh',shRef:{day:'',n:0}}}
+function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(const k in d)if(p[k]==null||typeof p[k]!==typeof d[k])p[k]=d[k];for(const o of['st','set','daily','login','shRef'])for(const k in d[o])if(p[o][k]==null)p[o][k]=d[o][k];if(p.shRef.day!==today())p.shRef={day:today(),n:0};for(const n of START_W)if(!p.unl.includes(n))p.unl.push(n);if(!Array.isArray(p.lo)||p.lo.length!==4)p.lo=START_LO.slice();for(const k of['seenUpd','claimedUpd','wraps','wrapFav','fins','finFav','skins','skinFav','passT','giftLog','giftClaimed','friends'])if(!Array.isArray(p[k]))p[k]=[];p.friends=p.friends.filter(x=>x&&typeof x=='object'&&typeof x.uid=='string'&&typeof x.name=='string').filter((x,i,a)=>a.findIndex(y=>y.uid===x.uid)===i).slice(0,100);if(p.lang!=='en'&&p.lang!=='zh')p.lang='zh';p.giftClaimed=p.giftClaimed.filter(x=>typeof x=='string').slice(-200);p.giftLog=p.giftLog.filter(x=>x&&typeof x=='object'&&(x.d=='s'||x.d=='r')).slice(0,40);for(const k of['wrap','wrapInv','fin','skin','crates'])if(Array.isArray(p[k])||!p[k])p[k]={};p.tickets=Math.max(0,Math.floor(+p.tickets||0));p.gold=Math.max(0,Math.floor(+p.gold||0));{const r=p.rk=Object.assign({rp:0,m:0,w:0,day:'',best:0,pend:null,pw:0},p.rk&&typeof p.rk=='object'?p.rk:{});for(const k of['rp','m','w','best','pw'])r[k]=Math.max(0,Math.floor(+r[k]||0));if(typeof r.day!='string')r.day='';if(!r.pend||typeof r.pend!='object'||!RK_FMT_K.includes(r.pend.f))r.pend=null}for(const k in p.crates){const v=Math.floor(+p.crates[k]||0);if(!CRBYID[k]||!(v>0))delete p.crates[k];else p.crates[k]=v}p.passT=p.passT.filter((x,i,a)=>typeof x=='number'&&a.indexOf(x)===i);
  p.wraps=p.wraps.filter((x,i,a)=>typeof x=='string'&&WBYID[x]&&a.indexOf(x)===i);if(!p.wraps.includes('bc'))p.wraps.unshift('bc');p.wrapFav=p.wrapFav.filter(x=>WBYID[x]);for(const n in p.wrap){const v=p.wrap[n];if(v!=='?'&&!p.wraps.includes(v))delete p.wrap[n]}
  p.fins=p.fins.filter((x,i,a)=>typeof x=='string'&&FBYID[x]&&a.indexOf(x)===i);if(!p.fins.includes('fc'))p.fins.unshift('fc');p.finFav=p.finFav.filter(x=>FBYID[x]);for(const n in p.fin){const v=p.fin[n];if(v!=='?'&&!p.fins.includes(v))delete p.fin[n]}if(p.codes.includes('deathsmilexux'))for(const x of FINS)if(!p.fins.includes(x.id))p.fins.push(x.id);
  p.skins=p.skins.filter((x,i,a)=>typeof x=='string'&&SKBYID[x]&&a.indexOf(x)===i);if(p.codes.includes('deathsmilexux'))for(const x of SKINS)if(!p.skins.includes(x.id))p.skins.push(x.id);p.skinFav=p.skinFav.filter(x=>SKBYID[x]);for(const n in p.skin){const v=p.skin[n];if(v!=='?'&&!(SKBYID[v]&&SKBYID[v].weapon==n&&p.skins.includes(v)))delete p.skin[n]}return p}
@@ -2223,7 +2225,8 @@ function cloudProbe(){if(!fbOn())return Promise.resolve(false);if(CLOUD.ok===tru
  if(!CLOUD.probe){const p=fbFetch('https://identitytoolkit.googleapis.com/v1/accounts:lookup'+fbKey(),{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'},6000).then(()=>true,e=>!(e&&e.net)).then(ok=>{if(CLOUD.probe===p)CLOUD.probe=null;if(CLOUD.ok!==true)CLOUD.ok=ok;authModeUI();return CLOUD.ok});CLOUD.probe=p}return CLOUD.probe}
 function newSess(j,name,rem){return Object.assign(newCloud(CLOUD),{ok:true,uid:j.localId,id:j.idToken,rt:j.refreshToken,exp:Date.now()+(+j.expiresIn||3600)*1000-60000,name,rem:!!rem})}
 const MIG_MSG='☁️ 已把這台裝置的進度上傳到雲端帳號';
-function cloudBegin(S,name,prof,upd,push,isNew,msg){if(typeof giftReset=='function')giftReset();S.name=name;S.live=true;S.synced=S.upd=upd||0;CLOUD=S;ACCT='c:'+S.uid;PF=fixProf(prof);
+async function cloudBegin(S,name,prof,upd,push,isNew,msg){if(await checkBan(S.uid)){$('#amsg').textContent='🚫 此帳號已被永久封鎖（Permanently Banned）';return}
+ if(typeof giftReset=='function')giftReset();S.name=name;S.live=true;S.synced=S.upd=upd||0;CLOUD=S;ACCT='c:'+S.uid;PF=fixProf(prof);
  try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}cloudRemember(S);
  accEnter(isNew,msg);if(push)cloudFlush();else setSync('busy')}
 async function cloudLoad(S,name,mig){const d=await fsGet(S),c=ccGet()[S.uid];let prof,upd=0,push=false,msg='';
@@ -2269,7 +2272,11 @@ async function accSignIn(name,pw,rem){accLoad();const k=String(name||'').trim().
 function accStart(k,rem,isNew){if(CLOUD.live){CLOUD.live=false;CLOUD=newCloud(CLOUD)}ACCT=k;PF=fixProf(ACCDB.users[k].prof);ACCDB.users[k].prof=PF;
  try{if(rem)localStorage.setItem('rvl_session',k);else localStorage.removeItem('rvl_session');sessionStorage.setItem('rvl_session',k)}catch(_){}
  accEnter(isNew)}
-function accEnter(isNew,msg){dailyReset();loginStreak();applyProfile();saveP();$('#auth').style.display='none';enterLobby();toast((isNew?'🎉 帳號建立成功，':'👋 歡迎回來，')+accName()+'！','#2fbf71');if(msg)setTimeout(()=>toast(msg,'#4fc3f7'),700);setSync(CLOUD.st||'busy')}
+// ===== 語言 Language：目前只翻譯大廳主選單（[data-i18n] 標記的元素），其他畫面仍為中文 =====
+const I18N={en:{lbPack:'Backpack',lbWpn:'Weapons',lbTasks:'Tasks',lbShop:'Shop',lbPass:'Pass',lbLbrd:'Leaderboards',lbSet:'Settings',lbEvent:'Event',lbUpd:'Updates',lbGift:'Gift',toDuels:'To Duels ➜'},
+ zh:{lbPack:'Backpack',lbWpn:'Weapons',lbTasks:'Tasks',lbShop:'Shop',lbPass:'Pass',lbLbrd:'排行榜',lbSet:'Settings',lbEvent:'Event',lbUpd:'更新',lbGift:'送禮',toDuels:'To Duels ➜'}};
+function applyLang(){if(!PF)return;const d=I18N[PF.lang=='en'?'en':'zh'];for(const el of document.querySelectorAll('[data-i18n]')){const k=el.dataset.i18n;if(d[k])el.textContent=d[k]}}
+function accEnter(isNew,msg){dailyReset();loginStreak();applyProfile();applyLang();saveP();$('#auth').style.display='none';enterLobby();toast((isNew?'🎉 帳號建立成功，':'👋 歡迎回來，')+accName()+'！','#2fbf71');if(msg)setTimeout(()=>toast(msg,'#4fc3f7'),700);setSync(CLOUD.st||'busy')}
 function accLogout(){saveP();if(typeof giftReset=='function')giftReset();if(NET)netLeave();if(inCloud()){const S=CLOUD;S.live=false;S.snap=PF;if(S.dirty)cloudFlush(true,S);CLOUD=newCloud(S);cloudForget();setSync('')}ACCT=null;PF=null;try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}if(typeof closePanels=='function')closePanels();showAuth()}
 function showAuth(){st='menu';paused=false;document.exitPointerLock&&document.exitPointerLock();for(const id of['#hud','#menu','#onl','#over','#pause','#lo'])$(id).style.display='none';$('#lobbyMenuBtn').style.display='none';if(typeof syncLUI=='function')syncLUI();
  $('#auth').style.display='flex';$('#amsg').textContent='';$('#ap').value='';$('#ap2').value='';accLoad();const us=Object.values(ACCDB.users);
@@ -2479,7 +2486,7 @@ function renderLUI(){if(!PF)return;const r=xpReq(PF.lv);$('#llvn').textContent=P
  dailyReset();$('#ltlist').innerHTML=DAILY.map(d=>{const v=Math.min(d.g,PF.daily[d.k]),dn=v>=d.g;return'<div class="tk'+(dn?' done':'')+'">'+d.n+' <b>'+v+'/'+d.g+'</b><span class="r">'+(PF.daily.cl.includes(d.k)?'✔':d.r+' 🔑')+'</span><div class="pb"><i style="width:'+v/d.g*100+'%"></i></div></div>'}).join('');
  {const ub=$('#ubadge');if(ub)ub.style.display=updUnclaimed()?'block':'none'}{const gb=$('#gfbadge'),n=inCloud()?GIFT.pend.length:0;if(gb){gb.style.display=n?'block':'none';gb.textContent=n}}const c=claimable();for(const[id,n]of[['#tbadge',c.t],['#pbadge',c.p]]){const b=$(id);b.style.display=n?'block':'none';b.textContent=n}renderPList()}
 function renderPList(){if(!PF)return;const rows=['<div>⭐ <span class="lvb">'+PF.lv+'</span>'+esc(accName())+(PF.st.streak>1?' 🔥'+PF.st.streak:'')+'</div>'];if(typeof LPX!=='undefined')for(const id in LPX){const q=LPX[id];rows.push('<div>👤 <span class="lvb">'+(q.lv||1)+'</span>'+esc(q.name)+(q.streak>1?' 🔥'+q.streak:'')+'</div>')}$('#lplist').innerHTML='<div style="color:#9fb0e0;font-size:11px">PLAYERS · '+rows.length+'</div>'+rows.join('')}
-$('#lbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p=='upd'){openUpd();return}if(b.dataset.p=='gift'){giftOpen();return}const m={pack:'Pack',wpn:'Wpn',tasks:'Tasks',shop:'Shop',pass:'Pass',set:'Set',event:'Event'}[b.dataset.p];if(m)openPanel(m)};
+$('#lbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p=='upd'){openUpd();return}if(b.dataset.p=='gift'){giftOpen();return}const m={pack:'Pack',wpn:'Wpn',tasks:'Tasks',shop:'Shop',pass:'Pass',set:'Set',event:'Event',lbrd:'Lbrd'}[b.dataset.p];if(m)openPanel(m)};
 $('#lonline').onclick=()=>{$('#onl').style.display='flex';if(!NET){$('#onA').style.display='block';$('#onB').style.display='none';onMsgUI('')}};
 $('#lkeyAdd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};$('#ltk').onclick=()=>openPanel('Pass');$('#lgd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};
 $('#toDuels').onclick=()=>{if(typeof toDuels=='function')toDuels()};
@@ -2487,7 +2494,12 @@ $('#llv').onclick=()=>{if(typeof openProfile=='function')openProfile()};
 // ---- tasks / contracts / pass data ----
 const DAILY=[{k:'pd',n:'Play duels',g:5,r:1},{k:'el',n:'Eliminations',g:15,r:2},{k:'wd',n:'Win duels',g:2,r:3}];
 const LOGIN_R=[1,1,2,2,3,3,5];
-const CONTRACTS=[{w:'Assault Rifle',g:20,r:3},{w:'Handgun',g:15,r:3},{w:'Fists',g:8,r:3},{w:'Grenade',g:5,r:3},{w:'Shotgun',g:12,r:4},{w:'Sniper',g:10,r:4},{w:'Revolver',g:12,r:4},{w:'Katana',g:10,r:4}];
+const CONTRACTS=[{w:'Assault Rifle',g:20,r:3},{w:'Handgun',g:15,r:3},{w:'Fists',g:8,r:3},{w:'Grenade',g:5,r:3},{w:'Shotgun',g:12,r:4},{w:'Sniper',g:10,r:4},{w:'Revolver',g:12,r:4},{w:'Katana',g:10,r:4},
+// 武器任務 Weapon missions：補齊剩下所有武器（排除沒有擊殺判定的純輔助道具：Medkit/Jump Pad/Grappler/Warpstone/Flashbang/Freeze Ray/Smoke Grenade/War Horn/Warper）
+{w:'Burst Rifle',g:18,r:3},{w:'Bow',g:10,r:4},{w:'RPG',g:6,r:4},{w:'Distortion',g:14,r:3},{w:'Permafrost',g:12,r:3},{w:'Energy Rifle',g:18,r:3},{w:'Flamethrower',g:12,r:3},{w:'Grenade Launcher',g:8,r:4},{w:'Minigun',g:16,r:3},{w:'Paintball Gun',g:14,r:3},{w:'Crossbow',g:9,r:4},{w:'Gunblade',g:12,r:3},{w:'Wildcat',g:16,r:3},
+{w:'Uzi',g:16,r:3},{w:'Shorty',g:10,r:3},{w:'Daggers',g:10,r:3},{w:'Energy Pistols',g:16,r:3},{w:'Exogun',g:10,r:3},{w:'Slingshot',g:14,r:3},{w:'Flare Gun',g:6,r:4},{w:'Spray',g:14,r:3},
+{w:'Knife',g:10,r:3},{w:'Battle Axe',g:10,r:3},{w:'Scythe',g:10,r:3},{w:'Maul',g:8,r:3},{w:'Spear',g:6,r:3},{w:'Trowel',g:8,r:3},{w:'Chainsaw',g:10,r:3},{w:'Riot Shield',g:8,r:3},
+{w:'Molotov',g:5,r:4},{w:'Satchel',g:5,r:4},{w:'Subspace Tripmine',g:5,r:4}];
 function ctState(c){const s=PF.ct[c.w]||{t:0,b:0};return{g:c.g*(s.t+1),p:Math.max(0,(PF.wk[c.w]||0)-s.b),t:s.t,r:c.r+s.t*2}}
 const PASS_MAX=30;function passR(l){return l==1?3:l%10==0?10:l%5==0?5:2}
 // skin-ticket 🎫 rewards on the FREE track (the only ticket source). Claimed separately in PF.passT so accounts that already claimed a tier's keys can still claim its tickets.
@@ -2513,12 +2525,13 @@ async function lbLoad(LB,coll,field,force){if(!inCloud()||LB.busy)return;if(!for
  try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:coll}],orderBy:[{field:{fieldPath:field},direction:'DESCENDING'}],limit:200}});const L=[];
   for(const x of Array.isArray(r)?r:[]){if(!x||!x.document)continue;const d=fsDec(x.document.fields);d.uid=String(x.document.name).split('/').pop();if(typeof d.name=='string'&&Number.isFinite(d[field]))L.push(d)}
   LB.list=L;LB.me=L.findIndex(d=>d.uid===CLOUD.uid);LB.t=Date.now()}catch(e){LB.err=e&&e.status===403?'排行榜還沒開放（管理員需要更新 Firebase 規則）':'讀取排行榜失敗，稍後再試'}
- finally{LB.busy=false;if(PANEL=='Ranked')renderRanked();renderLUI()}}
+ finally{LB.busy=false;if(PANEL=='Ranked')renderRanked();else if(PANEL=='Lbrd')renderLbrd();renderLUI()}}
 function lvlLoad(force){return lbLoad(LVLB,'levels','lv',force)}
 function stLoad(force){return lbLoad(STLB,'streaks','streak',force)}
+function banBtn(uid,name){return isAdmin()&&uid!==CLOUD.uid?'<button class="banbtn" data-bu="'+uid+'" data-bn="'+encodeURIComponent(name||'')+'" title="管理員：永久封鎖此帳號">🚫</button>':''}
 function lbHTML(LB,field,ic,unit){if(!inCloud())return'<div class="cd">🌍 排行榜需要登入雲端帳號</div>';if(LB.err)return'<div class="cd">'+esc(LB.err)+'</div>';if(LB.busy&&!LB.list.length)return'<div class="cd">讀取中…</div>';
  if(!LB.list.length)return'<div class="cd">還沒有資料，搶第一名吧！</div>';
- return'<div class="note">全球前 200 名（每 3 分鐘更新）</div>'+LB.list.map((d,k)=>'<div style="display:flex;align-items:center;gap:10px;padding:5px 10px;border-radius:10px;margin:3px 0;background:'+(d.uid===CLOUD.uid?'#3b7bff44':'#ffffff0a')+'"><b style="width:38px;text-align:right">#'+(k+1)+'</b><span style="font-size:20px">'+ic+'</span><span style="flex:1;font-weight:800">'+esc(d.name)+'</span><span style="color:#ffd23f;font-weight:900">'+d[field]+' '+unit+'</span></div>').join('')}
+ return'<div class="note">全球前 200 名（每 3 分鐘更新）</div>'+LB.list.map((d,k)=>'<div style="display:flex;align-items:center;gap:10px;padding:5px 10px;border-radius:10px;margin:3px 0;background:'+(d.uid===CLOUD.uid?'#3b7bff44':'#ffffff0a')+'"><b style="width:38px;text-align:right">#'+(k+1)+'</b><span style="font-size:20px">'+ic+'</span><span style="flex:1;font-weight:800">'+esc(d.name)+'</span><span style="color:#ffd23f;font-weight:900">'+d[field]+' '+unit+'</span>'+banBtn(d.uid,d.name)+'</div>').join('')}
 // ===== Ranked 排位賽 (vs bots; Lv 50+) =====
 // PF.rk={rp,m,w,day,best,pend}. Win: +5..+25 (less the higher you are), ×1.5 when outnumbered (1v2), ×0.6 when you outnumber (2v1).
 // Loss: −8..−20 (more the higher you are), ×0.5 for 1v2, ×1.25 for 2v1; the first ranked match of each day never loses RP.
@@ -2584,7 +2597,7 @@ async function rkLoad(force){if(!inCloud()||RKLB.busy)return;if(!force&&Date.now
  try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:'ranked'}],orderBy:[{field:{fieldPath:'rp'},direction:'DESCENDING'}],limit:200}});const L=[];
   for(const x of Array.isArray(r)?r:[]){if(!x||!x.document)continue;const d=fsDec(x.document.fields);d.uid=String(x.document.name).split('/').pop();if(typeof d.name=='string'&&Number.isFinite(d.rp))L.push(d)}
   RKLB.list=L;RKLB.me=L.findIndex(d=>d.uid===CLOUD.uid);RKLB.t=Date.now()}catch(e){RKLB.err=e&&e.status===403?'排行榜還沒開放（管理員需要更新 Firebase 規則）':'讀取排行榜失敗，稍後再試'}
- finally{RKLB.busy=false;if(PANEL=='Ranked')renderRanked();renderLUI()}}
+ finally{RKLB.busy=false;if(PANEL=='Ranked')renderRanked();else if(PANEL=='Lbrd')renderLbrd();renderLUI()}}
 function rkOpen(){if(!PF)return;rkAbandon();RKT='play';openPanel('Ranked');rkLoad()}
 function renderRanked(){if(!PF)return;const r=PF.rk,t=rkCur(),body=$('#rkBody');
  $('#rkTabs').innerHTML=[['play','🏆 排位'],['tiers','📜 段位表'],['lb','🌍 排位排行'],['lvl','🧑 等級排行'],['streak','🔥 連勝排行']].map(([k,n])=>'<button class="'+(RKT==k?'on':'')+'" data-rt="'+k+'">'+n+'</button>').join('');
@@ -2605,11 +2618,20 @@ function renderRanked(){if(!PF)return;const r=PF.rk,t=rkCur(),body=$('#rkBody');
  else if(RKT=='tiers'){const T=[rkTier(0,0)];for(let i=0;i<18;i++)T.push(rkTier(i*200,1,0));T.push(rkTier(3600,1,0),rkTier(3600,1,1));
   h='<div class="note">Lv '+RK_LV+' 以上才能打排位</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:6px">'+T.map(x=>'<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:12px;background:#ffffff0d;border:2px solid '+(x.i===t.i?x.col:'transparent')+'">'+rkImg(x,44)+'<div><div style="font-weight:900;color:'+x.col+'">'+x.en+'</div><div class="note" style="margin:0">'+x.zh+' · '+(x.i<0?'還沒打過排位':x.i==19?'全球排名前 200':x.hi==null?x.lo+' RP 以上':x.lo+' ~ '+x.hi+' RP')+'</div></div></div>').join('')+'</div>'}
  else if(RKT=='lb'){if(!inCloud())h='<div class="cd">🌍 全球排行榜需要登入雲端帳號</div>';else if(RKLB.err)h='<div class="cd">'+esc(RKLB.err)+'</div>';else if(RKLB.busy&&!RKLB.list.length)h='<div class="cd">讀取中…</div>';
-  else h='<div class="note">全球排名前 200（每 3 分鐘更新）·前 200 名而且達到 Nemesis 就是 Arch Nemesis</div>'+(RKLB.list.length?RKLB.list.map((d,k)=>{const x=rkTier(d.rp,1,k<200&&d.rp>=3600);return'<div style="display:flex;align-items:center;gap:10px;padding:5px 10px;border-radius:10px;margin:3px 0;background:'+(d.uid===CLOUD.uid?'#3b7bff44':'#ffffff0a')+'"><b style="width:38px;text-align:right">#'+(k+1)+'</b>'+rkImg(x,30)+'<span style="flex:1;font-weight:800">'+esc(d.name)+'</span><span style="color:'+x.col+';font-weight:900">'+d.rp+' RP</span></div>'}).join(''):'<div class="cd">還沒有人打排位，搶第一名吧！</div>')}
+  else h='<div class="note">全球排名前 200（每 3 分鐘更新）·前 200 名而且達到 Nemesis 就是 Arch Nemesis</div>'+(RKLB.list.length?RKLB.list.map((d,k)=>{const x=rkTier(d.rp,1,k<200&&d.rp>=3600);return'<div style="display:flex;align-items:center;gap:10px;padding:5px 10px;border-radius:10px;margin:3px 0;background:'+(d.uid===CLOUD.uid?'#3b7bff44':'#ffffff0a')+'"><b style="width:38px;text-align:right">#'+(k+1)+'</b>'+rkImg(x,30)+'<span style="flex:1;font-weight:800">'+esc(d.name)+'</span><span style="color:'+x.col+';font-weight:900">'+d.rp+' RP</span>'+banBtn(d.uid,d.name)+'</div>'}).join(''):'<div class="cd">還沒有人打排位，搶第一名吧！</div>')}
  else if(RKT=='lvl')h=lbHTML(LVLB,'lv','⭐','級');
  else h=lbHTML(STLB,'streak','🔥','連勝')
  body.innerHTML=h;for(const b of body.querySelectorAll('[data-rq]'))b.onclick=()=>rkQueue(b.dataset.rq)}
 PRENDER.Ranked=renderRanked;
+// ===== 大廳直接排行榜入口 Lobby-direct leaderboards (same data as the Ranked panel's tabs, reachable without queueing) =====
+var LBT='rp';
+function renderLbrd(){$('#lbrdTabs').innerHTML=[['rp','🏆 排位 RP'],['lvl','🧑 等級'],['streak','🔥 連勝']].map(([k,n])=>'<button class="'+(LBT==k?'on':'')+'" data-lt="'+k+'">'+n+'</button>').join('');
+ for(const b of $('#lbrdTabs').children)b.onclick=()=>{LBT=b.dataset.lt;renderLbrd();if(LBT=='rp')rkLoad(true);if(LBT=='lvl')lvlLoad(true);if(LBT=='streak')stLoad(true)};
+ let h='';if(LBT=='rp'){if(!inCloud())h='<div class="cd">🌍 全球排行榜需要登入雲端帳號</div>';else if(RKLB.err)h='<div class="cd">'+esc(RKLB.err)+'</div>';else if(RKLB.busy&&!RKLB.list.length)h='<div class="cd">讀取中…</div>';
+  else h='<div class="note">全球排名前 200（每 3 分鐘更新）·前 200 名而且達到 Nemesis 就是 Arch Nemesis</div>'+(RKLB.list.length?RKLB.list.map((d,k)=>{const x=rkTier(d.rp,1,k<200&&d.rp>=3600);return'<div style="display:flex;align-items:center;gap:10px;padding:5px 10px;border-radius:10px;margin:3px 0;background:'+(d.uid===CLOUD.uid?'#3b7bff44':'#ffffff0a')+'"><b style="width:38px;text-align:right">#'+(k+1)+'</b>'+rkImg(x,30)+'<span style="flex:1;font-weight:800">'+esc(d.name)+'</span><span style="color:'+x.col+';font-weight:900">'+d.rp+' RP</span>'+banBtn(d.uid,d.name)+'</div>'}).join(''):'<div class="cd">還沒有人打排位，搶第一名吧！</div>')}
+ else if(LBT=='lvl')h=lbHTML(LVLB,'lv','⭐','級');else h=lbHTML(STLB,'streak','🔥','連勝');
+ $('#lbrdBody').innerHTML=h}
+PRENDER.Lbrd=()=>{renderLbrd();if(LBT=='rp')rkLoad();if(LBT=='lvl')lvlLoad();if(LBT=='streak')stLoad()};
 // ---- Backpack ----
 var PKT='crates';
 PRENDER.Pack=()=>{const ct=crTot();let h='<div class="ptabs"><button data-pt="crates" class="'+(PKT=='crates'?'on':'')+'">📦 箱子 Crates'+(ct?' ×'+ct:'')+'</button><button data-pt="wpn" class="'+(PKT=='wpn'?'on':'')+'">🔫 武器 Weapons</button></div>';
@@ -2643,7 +2665,13 @@ PRENDER.Pass=()=>{const r=xpReq(PF.lv);let h='<div class="row" style="align-item
 // ---- Shop ----
 const BUNDLES=[{n:'Starter 新手包',e:'🎁',w:['Burst Rifle','Uzi','Knife','Flashbang']},{n:'Sharpshooter 神射手',e:'🎯',w:['Sniper','Revolver','Katana','Smoke Grenade']},{n:'Demolition 爆破專家',e:'💥',w:['RPG','Grenade Launcher','Molotov','Satchel']},{n:'Melee Master 近戰大師',e:'⚔️',w:['Scythe','Battle Axe','Chainsaw','Riot Shield']},{n:'Mobility 機動包',e:'🌀',w:['Daggers','Warper','Warpstone','Exogun']}];
 var SHOPT='home';function shopTab(t){SHOPT=t;PRENDER.Shop()}
-function dailyDeals(){const lk=ALLW().filter(w=>!isUnl(w.n)&&!NOBUY[w.n]);let s=0;for(const ch of today()+ACCT)s=(s*31+ch.charCodeAt(0))>>>0;const out=[];const a=lk.slice();while(out.length<3&&a.length){s=(s*1103515245+12345)>>>0;out.push(a.splice(s%a.length,1)[0])}return out}
+function dailyDeals(){const lk=ALLW().filter(w=>!isUnl(w.n)&&!NOBUY[w.n]);let s=0;for(const ch of today()+ACCT+'|'+shRefN())s=(s*31+ch.charCodeAt(0))>>>0;const out=[];const a=lk.slice();while(out.length<3&&a.length){s=(s*1103515245+12345)>>>0;out.push(a.splice(s%a.length,1)[0])}return out}
+// 商店每日特價可以花 💰 金幣提前重新整理，每天第一次免費，之後費用遞增（50/100/200/400/800），午夜重置
+const SHREF_COST=[0,50,100,200,400,800];
+function shRefN(){return PF.shRef&&PF.shRef.day===today()?PF.shRef.n:0}
+function shRefCost(){return SHREF_COST[Math.min(shRefN(),SHREF_COST.length-1)]}
+function shRefDo(){const n=shRefN(),cost=SHREF_COST[Math.min(n,SHREF_COST.length-1)];if(!FREE()&&(PF.gold|0)<cost){toast('💰 金幣不足，還差 '+(cost-(PF.gold|0)),'#ff6a6a');return}
+ if(!FREE())PF.gold-=cost;PF.shRef={day:today(),n:n+1};saveNow();toast(n?'🔄 已重新整理（花費 💰 '+cost+'）':'🔄 已重新整理（今天第一次免費）','#35d07f');snd(700,.1,.06,'sine');renderLUI();PRENDER.Shop()}
 function buyW(names,price,label){const fr=FREE();if(!fr&&PF.keys<price){toast('🔑 鑰匙不足');return}if(!fr)PF.keys-=price;for(const n of names)if(!PF.unl.includes(n))PF.unl.push(n);saveNow();toast('🛒 購買成功：'+label,'#35d07f');snd(880,.12,.06,'sine');renderLUI();PRENDER.Shop()}
 PRENDER.Shop=()=>{const T2=[['home','Home'],['crates','📦 Crates 箱子'],['bundles','Bundles'],['daily','Daily'],['keys','Keys'],['more','More']];$('#shopTabs').innerHTML=T2.map(([k,n])=>'<button data-st="'+k+'" class="'+(SHOPT==k?'on':'')+'">'+n+'</button>').join('');for(const b of $('#shopTabs').children)b.onclick=()=>shopTab(b.dataset.st);$('#skeys').insertAdjacentHTML('beforebegin',FREE()?'<span class="note" style="color:#35d07f;font-weight:900">　👑 管理員：全部免費</span>':'');
  $('#skeys').textContent='　🔑 '+PF.keys+'　🎫 '+PF.tickets+'　💰 '+(PF.gold|0);let h='';const soon=t=>'<div class="cd" style="opacity:.75"><h4>'+t+'</h4><div class="soon">Robux 付費項目 · 敬請期待</div></div>';
@@ -2651,10 +2679,10 @@ PRENDER.Shop=()=>{const T2=[['home','Home'],['crates','📦 Crates 箱子'],['bu
  if(SHOPT=='home'){h='<div class="cards"><div class="cd" style="grid-column:span 2;background:linear-gradient(135deg,#6a3cff,#2a1a6a)"><h4>🎫 Season Pass · Season 1</h4><div class="sub2" style="color:#e0d8ff">升級領取免費鑰匙獎勵（30 級）</div><button class="bbtn" id="shPass" style="margin-top:10px">查看 Pass</button></div><div class="cd" style="background:linear-gradient(135deg,#d0408a,#4a1a7a)"><h4>📦 開箱 Crates</h4><div class="sub2" style="color:#ffd8f0">包裝箱 · 死亡特效箱 · 皮膚箱<br>不會開到重複</div><button class="bbtn" id="shCr" style="margin-top:10px">查看箱子</button></div><div class="cd" style="background:linear-gradient(135deg,#d99a14,#6a4a0a)"><h4>🔑 鑰匙組合包 Key Bundles</h4><div class="sub2" style="color:#ffe9b0">用 💰 金幣購買 · 傳奇包送限定 鑰匙雙刃</div><button class="bbtn" id="shKb" style="margin-top:10px">查看組合包</button></div></div><h3>🔥 今日特價 Daily</h3><div class="cards">'+dailyDeals().map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>'}
  else if(SHOPT=='bundles'){h='<div class="cards">'+BUNDLES.map((b,i)=>{const need=b.w.filter(n=>!isUnl(n)),price=Math.max(1,Math.round(need.reduce((s,n)=>s+wCost(n),0)*.8));return'<div class="cd"><h4>'+b.e+' '+b.n+'</h4><div class="row" style="gap:2px;margin:6px 0">'+b.w.map(n=>'<img src="'+icon(WBN(n))+'" title="'+n+'" style="width:46%;height:42px;object-fit:contain;background:#0003;border-radius:6px;'+(isUnl(n)?'opacity:.4':'')+'">').join('')+'</div><div class="sub2">'+b.w.join(' · ')+'</div>'+(need.length?'<button class="gbtn" style="width:100%;margin-top:6px" data-bb="'+i+'" data-pr="'+price+'"'+((FREE()||PF.keys>=price)?'':' disabled')+'>🔑 '+price+'（8 折，只算未擁有的）</button>':'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 全部擁有</div>')+'</div>'}).join('')+'</div>'}
  else if(SHOPT=='crates')h='<div class="note" style="margin-bottom:8px">外觀道具改由開箱取得：買下的箱子會放進 🎒 背包，打開時保證開到你還沒擁有的物品（不會重複）。點箱子可以查看內容和機率。</div><div class="cards crcards">'+CRATES.map(C=>{const l=crLeft(C).length,hd=crHeld(C.id);return'<div class="cd crcd" data-crt="'+C.id+'"><img src="'+crArt(C.id)+'" alt="">'+(hd?'<b class="crn">🎒×'+hd+'</b>':'')+'<h4>'+C.name+'</h4><div class="sub2">'+C.en+' · Lootbox · 剩 '+l+' / '+C.pool().length+' 個</div>'+(l?'<div class="crpr">'+C.price+' '+CURI[C.cur]+'</div>':'<div class="crpr off">已全部擁有</div>')+'</div>'}).join('')+'</div><div class="note" style="margin-top:10px">🎫 皮膚票只能從 Season Pass 通行證的免費獎勵取得 · 你有 🔑 '+PF.keys+' · 🎫 '+PF.tickets+'</div>';
- else if(SHOPT=='daily'){const d=dailyDeals();h=d.length?'<div class="note">每天換一批，75 折（只會出現你還沒解鎖的武器）</div><div class="cards">'+d.map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>':'<div class="cd">🎉 你已經擁有全部武器！</div>'}
+ else if(SHOPT=='daily'){const d=dailyDeals(),rc=shRefCost();h='<div class="note" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">每天換一批，75 折（只會出現你還沒解鎖的武器）<button class="bbtn" id="shRefBtn" style="margin-left:auto">🔄 重新整理'+(rc?'　💰 '+rc:'　(今天免費)')+'</button></div>';h+=d.length?'<div class="cards">'+d.map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>':'<div class="cd">🎉 你已經擁有全部武器！</div>'}
  else if(SHOPT=='keys')h='<div class="note" style="margin-bottom:8px">💰 金幣：每場比賽 +'+GOLD_R.play+'、勝利再 +'+GOLD_R.win+'、每次淘汰 +'+GOLD_R.kill+'，每日任務 +'+GOLD_R.daily+'，升級 +'+GOLD_R.lv+'。你有 💰 <b>'+(PF.gold|0)+'</b>　點組合包查看內容（可重複購買，箱子會放進 🎒 背包）</div><div class="kbcards">'+KBUNDLES.map((b,i)=>kbCard(b,i)).join('')+'</div>';
  else h='<div class="cards"><div class="cd"><h4>🎟️ Codes 兌換代碼</h4><div class="sub2">輸入代碼領取獎勵</div><button class="gbtn" id="shCode" style="margin-top:8px">Redeem a code</button></div><div class="cd"><h4>📋 Tasks</h4><button class="bbtn" id="shTasks" style="margin-top:8px">打開任務</button></div></div>';
- $('#shopBody').innerHTML=h;const g=id=>$('#shopBody').querySelector(id);if(g('#shPass'))g('#shPass').onclick=()=>openPanel('Pass');if(g('#shCr'))g('#shCr').onclick=()=>shopTab('crates');if(g('#shKb'))g('#shKb').onclick=()=>shopTab('keys');for(const c of $('#shopBody').querySelectorAll('[data-kb]'))c.onclick=()=>kbDlg(+c.dataset.kb);for(const c of $('#shopBody').querySelectorAll('[data-crt]'))c.onclick=()=>crDlg(c.dataset.crt,'buy');if(g('#shCode'))g('#shCode').onclick=()=>openPanel('Code');if(g('#shTasks'))g('#shTasks').onclick=()=>openPanel('Tasks');
+ $('#shopBody').innerHTML=h;const g=id=>$('#shopBody').querySelector(id);if(g('#shPass'))g('#shPass').onclick=()=>openPanel('Pass');if(g('#shCr'))g('#shCr').onclick=()=>shopTab('crates');if(g('#shKb'))g('#shKb').onclick=()=>shopTab('keys');for(const c of $('#shopBody').querySelectorAll('[data-kb]'))c.onclick=()=>kbDlg(+c.dataset.kb);for(const c of $('#shopBody').querySelectorAll('[data-crt]'))c.onclick=()=>crDlg(c.dataset.crt,'buy');if(g('#shCode'))g('#shCode').onclick=()=>openPanel('Code');if(g('#shTasks'))g('#shTasks').onclick=()=>openPanel('Tasks');if(g('#shRefBtn'))g('#shRefBtn').onclick=shRefDo;
  for(const b of $('#shopBody').querySelectorAll('[data-bw]'))b.onclick=()=>buyW([b.dataset.bw],+b.dataset.pr,b.dataset.bw);
  for(const b of $('#shopBody').querySelectorAll('[data-bb]'))b.onclick=()=>{const bd=BUNDLES[+b.dataset.bb];buyW(bd.w,+b.dataset.pr,bd.n)}};
 // ===== Keys shop 鑰匙組合包: repeatable bundles paid in 💰 gold (PF.gold). Crates go to the 🎒 backpack (PF.crates).
@@ -2712,6 +2740,11 @@ function tokEmail(){try{const p=JSON.parse(atob(String(CLOUD.id).split('.')[1].r
 const isAdmin=()=>inCloud()&&tokEmail()===ADMIN_EMAIL;
 // admin account buys everything in the shop for free (weapons, bundles, crates)
 function FREE(){try{return!!PF&&isAdmin()}catch(_){return false}}
+// ===== 永久封鎖 Permanent ban (admin-only; anti-cheat enforcement). bans/{uid} doc existing = banned.
+// Checked once at cloud login (cloudBegin); a banned account is signed out before any profile loads.
+async function checkBan(uid){try{await fsCall('/bans/'+uid,'GET');return true}catch(e){return false}}
+async function banPlayer(uid,name){if(!isAdmin()||!uid)return;try{await fsCall('/bans/'+uid,'PATCH',fsEnc({name:String(name||''),by:CLOUD.name||'',ts:Date.now()}));toast('🚫 已永久封鎖 '+(name||uid),'#ff6a6a');snd(140,.3,.08,'sawtooth')}catch(e){toast('封鎖失敗（檢查 Firebase 規則）','#ff6a6a')}}
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest('.banbtn');if(!b)return;e.stopPropagation();const nm=decodeURIComponent(b.dataset.bn||'');if(confirm('⚠️ 永久封鎖「'+nm+'」？此帳號將無法再登入。'))banPlayer(b.dataset.bu,nm)});
 async function giftReg(){if(!inCloud())return;const k=CLOUD.name.toLowerCase(),key=CLOUD.uid+'|'+k;if(GIFT.reg===key)return;
  try{await fsCall('/names/'+encodeURIComponent(k),'PATCH',fsEnc({uid:CLOUD.uid,name:CLOUD.name,email:tokEmail()}));GIFT.reg=key}catch(_){}}
 async function giftFind(raw){const k=String(raw||'').trim().replace(/^@/,'').toLowerCase();if(!k)throw'請輸入對方的 ID';if(!NAME_RE.test(k))throw'ID 格式不對（3–16 字：英數、底線或中文）';
@@ -2957,8 +2990,10 @@ PRENDER.Set=()=>{const s=PF.set,sl=(k,lab,mn,mx,stp)=>'<div class="setrow"><labe
  h+='<h3>➕ 準心 Crosshair</h3><div class="setrow"><label>顏色 Color</label><div class="row">'+CCOL.map(c=>'<button data-cc="'+c+'" style="width:30px;height:30px;padding:0;border-radius:50%;background:'+c+';border:3px solid '+(s.cc==c?'#fff':'#0000')+'"></button>').join('')+'</div></div>'+sl('cz','大小 Size',2,16,1)+'<div class="setrow"><label>預覽</label><div style="width:60px;height:40px;background:#556;border-radius:6px;position:relative"><div id="xprev" style="position:absolute;left:50%;top:50%;width:'+s.cz+'px;height:'+s.cz+'px;margin:'+(-s.cz/2)+'px;border-radius:50%;background:'+s.cc+';box-shadow:0 0 0 1px #000"></div></div></div>';
  h+='<h3>🎥 畫面</h3><div class="setrow"><label>鏡頭晃動 Camera shake</label><button id="shk" class="'+(s.shake?'on':'')+'">'+(s.shake?'開 ON':'關 OFF')+'</button></div>';
  const af=afOn(),aa=aaOn();h+='<h3>🎯 射擊輔助 Assist</h3><div class="setrow"><label>自動射擊 Auto-fire</label><button id="saf" class="'+(af?'on':'')+'">'+(af?'開 ON':'關 OFF')+'</button></div><div class="setrow"><label>輔助瞄準 Aim assist</label><button id="saa" class="'+(aa?'on':'')+'">'+(aa?'開 ON':'關 OFF')+'</button></div><p class="note" style="font-size:11px;margin-top:0">自動射擊：準心對到敵人時自動開火。輔助瞄準：準心附近有看得到的敵人時，鏡頭會被輕輕吸過去（不會穿牆、不會鎖隊友）。預設：手機兩個都開；電腦兩個都關。</p>';
+ h+='<h3>🌐 Language 語言</h3><div class="setrow"><label>介面語言</label><div class="row"><button id="langZh" class="'+(PF.lang!='en'?'on':'')+'">中文</button><button id="langEn" class="'+(PF.lang=='en'?'on':'')+'">English</button></div></div><p class="note" style="font-size:11px">目前只翻譯大廳主選單；其他頁面（商店、武器說明等）仍為中文，會陸續加上。</p>';
  h+='<h3>👤 帳號</h3><div class="setrow"><label>'+esc(accName())+'</label><button id="logout" style="background:#c62828;border-color:#7a1010">登出 Log out</button></div><p class="note" style="font-size:11px">'+(inCloud()?'☁️ 雲端帳號：設定與進度會自動同步，任何裝置都能登入。':'設定與進度只存在這台裝置的瀏覽器（localStorage）。')+'</p>';
  $('#setBody').innerHTML=h;
+ $('#langZh').onclick=()=>{PF.lang='zh';saveP();applyLang();PRENDER.Set()};$('#langEn').onclick=()=>{PF.lang='en';saveP();applyLang();PRENDER.Set()};
  for(const r of $('#setBody').querySelectorAll('[data-sk]'))r.oninput=()=>{s[r.dataset.sk]=+r.value;r.nextElementSibling.textContent=r.value;applySettings();if(r.dataset.sk=='cz'){const pv=$('#xprev');pv.style.width=pv.style.height=r.value+'px';pv.style.margin=(-r.value/2)+'px'}saveP()};
  for(const b of $('#setBody').querySelectorAll('[data-cc]'))b.onclick=()=>{s.cc=b.dataset.cc;applySettings();saveP();PRENDER.Set()};
  $('#shk').onclick=()=>{s.shake=s.shake?0:1;saveP();PRENDER.Set()};$('#saf').onclick=()=>{s.af=afOn()?0:1;saveP();PRENDER.Set()};$('#saa').onclick=()=>{s.aa=aaOn()?0:1;saveP();PRENDER.Set()};$('#logout').onclick=()=>{closePanels();accLogout()}};
@@ -2993,12 +3028,31 @@ function renderParty(){const mem=NET?partyIds():[],nm=id=>id===NET.me?accName()+
  for(let i=0;i<5;i++){const id=NET?mem[i]:(i?null:'me');h+='<div class="pslot'+(id?' fill':'')+'">'+(id?(i==0?'👑 ':'👤 ')+esc(NET?nm(id):accName()+'（你）'):'<span style="color:#7f88aa">空位 Empty</span>')+'</div>'}$('#pslots').innerHTML=h;
  $('#partyLeave').style.display=NET&&!NET.host&&mem.includes(NET.me)?'block':'none';$('#partyNote').textContent=NET?'　房間 '+NET.code+(NET.host?' · 你是隊長':''):'';
  [...$('#ptabs').children].forEach(b=>b.className=b.dataset.t==PTAB?'on':'');const pl=$('#plistP');
+ if(PTAB=='fr'){renderFriends(pl);return}
  if(!NET){pl.innerHTML='<div class="cd"><h4>還沒有加入線上房間</h4><div class="sub2" style="line-height:1.6">建立或加入房間後，同一個房間的玩家會出現在這裡（也會出現在 3D 大廳裡）。房主（隊長）可以邀請最多 4 位玩家組成 5 人隊伍：按 Play 一起打機器人，或站上 Duels 配對墊對戰其他玩家，空位由機器人補上。</div><button class="bbtn" id="pOnl" style="margin-top:10px">🌐 建立 / 加入房間</button></div>';$('#pOnl').onclick=()=>{closePanels();$('#lonline').click()};return}
- if(PTAB=='fr'){pl.innerHTML='<div class="cd"><h4>Friends 好友</h4><div class="soon">好友系統 敬請期待</div></div>';return}
  const q=($('#psearch').value||'').trim().toLowerCase();let rows=NET.lb.players.filter(p=>p.id!==NET.me&&(!q||p.name.toLowerCase().includes(q)));if(PTAB=='lb')rows=rows.filter(p=>LPX[p.id]);
  pl.innerHTML=rows.length?rows.map(p=>{const inP=mem.includes(p.id);return'<div class="pcard">👤 <span class="lvb">'+(p.lv||1)+'</span>'+esc(p.name)+(LPX[p.id]?' <span style="color:#35d07f;font-size:12px">● 大廳</span>':' <span style="color:#9fb0e0;font-size:12px">對戰中/選單</span>')+(NET.host?(inP?'<button data-pk="'+p.id+'">移除</button>':'<button class="bbtn" data-pi="'+p.id+'"'+(mem.length>=5?' disabled':'')+'>Invite</button>'):(inP?'<span style="margin-left:auto;color:#35d07f">隊友</span>':'<span style="margin-left:auto;color:#9fb0e0;font-size:12px">只有房主能邀請</span>'))+'</div>'}).join(''):'<div class="note">房間裡目前沒有其他玩家。把房號 <b>'+NET.code+'</b> 傳給朋友！</div>';
  for(const b of pl.querySelectorAll('[data-pi]'))b.onclick=()=>{hostInvite(b.dataset.pi);b.disabled=true;b.textContent='已邀請'};
  for(const b of pl.querySelectorAll('[data-pk]'))b.onclick=()=>{NET.lb.party=(NET.lb.party||[]).filter(x=>x!==b.dataset.pk);hostLb()}}
+// ===== 好友系統 Friends: stored in PF.friends=[{uid,name}] (syncs with the rest of the cloud profile); live stats
+// (level/streak/排位 RP) are read from the existing public levels/streaks/ranked leaderboard collections by uid.
+var FRSTAT={};
+async function frFetchStat(uid){if(FRSTAT[uid])return FRSTAT[uid];const o={lv:null,streak:null,rp:null};
+ try{o.lv=fsDec((await fsCall('/levels/'+uid,'GET')).fields).lv}catch(_){}
+ try{o.streak=fsDec((await fsCall('/streaks/'+uid,'GET')).fields).streak}catch(_){}
+ try{o.rp=fsDec((await fsCall('/ranked/'+uid,'GET')).fields).rp}catch(_){}
+ FRSTAT[uid]=o;return o}
+async function frAdd(raw){if(!inCloud()){toast('好友系統需要登入雲端帳號','#ff6a6a');return}
+ try{const d=await giftFind(raw);if(d.uid===CLOUD.uid){toast('不能加自己好友','#ff6a6a');return}if(PF.friends.some(f=>f.uid===d.uid)){toast('已經是好友了');return}
+  PF.friends.push({uid:d.uid,name:d.name});saveNow();toast('✅ 已加好友 '+d.name,'#35d07f');snd(880,.1,.06,'sine');renderParty()}
+ catch(e){toast(typeof e=='string'?e:'找不到這個玩家','#ff6a6a')}}
+function frRemove(uid){PF.friends=PF.friends.filter(f=>f.uid!==uid);saveNow();renderParty()}
+function renderFriends(pl){if(!inCloud()){pl.innerHTML='<div class="cd"><h4>Friends 好友</h4><div class="sub2" style="line-height:1.6">好友系統需要登入雲端帳號才能使用（這樣好友名單可以跨裝置同步，也才能用 ID 查到對方）。</div></div>';return}
+ let h='<div class="cd" style="display:flex;gap:6px;align-items:center"><input id="frAddI" type="text" placeholder="輸入對方的帳號 ID" maxlength="16" style="flex:1;min-width:0"><button class="gbtn" id="frAddB">+ 加好友</button></div>';
+ h+=PF.friends.length?'<div style="margin-top:8px">'+PF.friends.map(f=>'<div class="pcard"><span style="flex:1">👤 '+esc(f.name)+'<span class="note" id="frs_'+f.uid+'" style="margin-left:8px">讀取中…</span></span><button data-frx="'+f.uid+'">移除</button></div>').join('')+'</div>':'<div class="note" style="margin-top:8px">還沒有好友，輸入對方的帳號名稱加好友吧！</div>';
+ pl.innerHTML=h;const go=()=>{const v=$('#frAddI').value;if(v.trim())frAdd(v)};$('#frAddB').onclick=go;$('#frAddI').onkeydown=e=>{if(e.key=='Enter')go()};
+ for(const b of pl.querySelectorAll('[data-frx]'))b.onclick=()=>frRemove(b.dataset.frx);
+ for(const f of PF.friends)frFetchStat(f.uid).then(o=>{const el=document.getElementById('frs_'+f.uid);if(!el)return;const parts=[];if(o.lv)parts.push('Lv '+o.lv);if(o.streak!=null)parts.push('🔥'+o.streak);if(o.rp!=null)parts.push('🏆'+o.rp+' RP');el.textContent=parts.length?'· '+parts.join(' · '):''})}
 PRENDER.Party=renderParty;$('#avBtn').onclick=()=>openPanel('Party');$('#psearch').oninput=renderParty;$('#ptabs').onclick=e=>{const b=e.target.closest('button');if(b){PTAB=b.dataset.t;renderParty()}};
 $('#partyLeave').onclick=()=>{if(NET&&!NET.host){netSend({t:'pleave',id:NET.me});toast('已離開隊伍')}};
 $('#onLobby').onclick=()=>{$('#onl').style.display='none';if(st!=='lobby')enterLobby();toast(NET?'🏠 回到大廳 · 房號 '+NET.code+'（同房間的玩家會出現在大廳）':'🏠 回到大廳')};
