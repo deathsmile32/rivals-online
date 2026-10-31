@@ -827,7 +827,29 @@ const SKINS=[
  const mg=new T.Group();B(mg,.06,.075,.065,0,-.03,-.16,Sv);const sh=new T.Mesh(UT,mt(Sv));sh.scale.set(.024,.024,.03);sh.rotation.y=PI/2;sh.position.set(0,.01,-.16);mg.add(sh);Sp(mg,.009,.031,-.03,-.16,Dk);g.add(mg);
  return{fore:[0,.09,-.86],mag:mg}},
  reloadFx:()=>{snd(1750,.025,.06,'square');setTimeout(()=>snd(2350,.03,.06,'square'),80);setTimeout(()=>snd(900,.08,.05,'sine'),180)},
- fireFx:p=>{skBurst(p,12,[0xffd23f,0xffffff,0xc9ced6],2.4,.28,.06);snd(60,.3,.14,'sawtooth');snd(2093,.2,.03,'sine')}}
+ fireFx:p=>{skBurst(p,12,[0xffd23f,0xffffff,0xc9ced6],2.4,.28,.06);snd(60,.3,.14,'sawtooth');snd(2093,.2,.03,'sine')}},
+// ----- bundle-exclusive skins (Medic / Crafty / Energy bundles; original designs)
+{id:'mk_laptop',weapon:'Medkit',name:'筆電 Laptop',rarity:'epic',ex:1,how:'醫療組合包限定 Medic Bundle Exclusive',
+ build:g=>{const S=0x9aa0aa,D=0x1c1e24;B(g,.22,.02,.15,0,0,0,S);B(g,.18,.004,.09,0,.012,.02,D);B(g,.22,.15,.012,0,.075,-.075,S,{rx:-.25});B(g,.19,.12,.004,0,.077,-.067,0x5ab8ff,{e:1,rx:-.25});B(g,.05,.014,.002,0,.078,-.064,0xff3a3a,{e:1,rx:-.25});B(g,.014,.05,.002,0,.078,-.064,0xff3a3a,{e:1,rx:-.25});return{}},
+ drawFx:p=>{skBurst(p,6,[0x5ab8ff,0xffffff],1.2,.25,.04);snd(880,.06,.04,'sine');setTimeout(()=>snd(1320,.08,.04,'sine'),80)}},
+{id:'ba_sign',weapon:'Battle Axe',name:'路標 Road Sign',rarity:'epic',ex:1,how:'手作組合包限定 Crafty Bundle Exclusive',
+ build:g=>{B(g,.03,.72,.03,0,.2,0,0x9aa0aa);for(const y of[-.1,.3])B(g,.04,.03,.04,0,y,0,0x2a2a2a);const tri=(r,c,x)=>{const m=new T.Mesh(new T.CylinderGeometry(r,r,.016,3),mt(c));m.rotation.set(-PI/2,0,PI/2);m.position.set(x,.52,0);g.add(m)};tri(.22,0xe03a2a,0);tri(.17,0xffd23f,.006);tri(.17,0xffd23f,-.006);for(const s of[-1,1]){B(g,.004,.09,.024,s*.015,.54,0,0x111111);B(g,.004,.022,.024,s*.015,.465,0,0x111111)}return{}},
+ drawFx:p=>{skBurst(p,6,[0xffd23f,0xe03a2a],1.2,.3,.05);snd(300,.08,.06,'square')}},
+{id:'dg_toast',weapon:'Daggers',name:'吐司 Toast',rarity:'rare',ex:1,how:'手作組合包限定 Crafty Bundle Exclusive',
+ build:g=>{const Cr=0xc8843a;B(g,.024,.1,.026,0,0,0,0x5a3a20);B(g,.05,.012,.03,0,.055,0,0x5a3a20);B(g,.014,.2,.1,0,.17,0,Cr);B(g,.016,.18,.082,0,.17,0,0xf0d49a);Sp(g,.035,0,.27,-.03,Cr).scale.set(.22,.7,1);Sp(g,.035,0,.27,.03,Cr).scale.set(.22,.7,1);return{dual:1}},
+ drawFx:p=>{skBurst(p,6,[0xf0d49a,0xc8843a],1,.35,.04);snd(520,.05,.05,'triangle')}},
+{id:'st_pizza',weapon:'Satchel',name:'披薩炸彈 Pizza Box',rarity:'epic',ex:1,how:'手作組合包限定 Crafty Bundle Exclusive',
+ build:g=>{B(g,.2,.045,.2,0,.03,0,0xd8b080);Cy(g,.075,.006,0,.056,0,0xffc040);for(const [x,z] of[[.03,.02],[-.03,.03],[0,-.035],[.035,-.03],[-.035,-.02]])Cy(g,.014,.008,x,.06,z,0xc0302a);Sp(g,.012,.085,.06,.085,0xff2020,1);return{}},
+ drawFx:p=>{skBurst(p,6,[0xffc040,0xc0302a],1,.35,.045);snd(440,.06,.05,'sine')}},
+{id:'ft_spray',weapon:'Flamethrower',name:'髮膠噴霧 Hairspray',rarity:'epic',ex:1,how:'手作組合包限定 Crafty Bundle Exclusive',
+ build:g=>{Cz(g,.06,.06,.34,0,.06,-.14,0xff5aa8);Cz(g,.062,.062,.09,0,.06,-.12,0xffffff);Cz(g,.05,.035,.06,0,.06,-.34,0xffffff);B(g,.022,.022,.04,0,.08,-.38,0x222222);B(g,.045,.12,.055,0,0,.06,0x222222,GRIP);B(g,.03,.05,.05,0,.0,-.04,0x222222);return{fore:[0,.06,-.22]}},
+ drawFx:p=>{skBurst(p,8,[0xff9ad0,0xffffff],1.4,.4,.05);snd(1800,.15,.03,'sawtooth')}},
+{id:'er_plasma',weapon:'Energy Rifle',name:'電漿步槍 Plasma Rifle',rarity:'legendary',ex:1,how:'能量組合包限定 Energy Bundle Exclusive',flashColor:0xff3ad8,
+ build:g=>{const W=0x2a1a3a,K3=0x120a1a,C=0xff3ad8;B(g,.07,.1,.48,0,.09,-.08,W);B(g,.074,.025,.4,0,.1,-.1,C,{e:1});B(g,.05,.065,.18,0,.08,-.42,K3);B(g,.06,.1,.2,0,.06,.25,K3);B(g,.045,.12,.055,0,0,.03,K3,GRIP);Sp(g,.026,0,.08,-.52,C,1);for(const s of[-1,1])B(g,.008,.06,.1,s*.04,.13,-.22,C,{e:1});return{fore:[0,.035,-.3]}},
+ fireFx:p=>{skBurst(p,6,[0xff3ad8,0xffffff],2,.16,.04);snd(1700,.04,.05,'triangle')}},
+{id:'ep_plasma',weapon:'Energy Pistols',name:'電漿雙槍 Plasma Pistols',rarity:'legendary',ex:1,how:'能量組合包限定 Energy Bundle Exclusive',flashColor:0xff3ad8,
+ build:g=>{B(g,.06,.08,.24,0,.09,-.04,0x2a1a3a);B(g,.062,.03,.2,0,.13,-.06,0xff3ad8,{e:1});Cz(g,.03,.03,.02,0,.06,-.15,0xff3ad8,{e:1});B(g,.046,.12,.06,0,0,.03,0x2a1a3a,{rx:-.22});return{dual:1}},
+ fireFx:p=>{skBurst(p,4,[0xff3ad8,0xffffff],1.6,.12,.03);snd(1900,.03,.04,'triangle')}}
 ];
 const SKBYID=Object.fromEntries(SKINS.map(x=>[x.id,x])),skinsFor=wn=>SKINS.filter(x=>x.weapon==wn);
 function model(w,wk,sk,ch){const g=new T.Group();const S=sk&&SKBYID[sk]&&SKBYID[sk].weapon==w.n?SKBYID[sk]:null;const u=(S?S.build:MD[w.n]||(()=>({})))(g)||{};g.userData=u;if(wk)try{applyWrap(g,w,wk)}catch(e){console.error(e)}if(ch)applyCharm(g,w,ch);return g}
@@ -932,14 +954,17 @@ const FINS=[
 {id:'ck',zh:'砸蛋糕',en:'Caked',r:0,p:12,D:3.3,e:'🎂',c:['#ffd0e6','#d94a9a'],how:'從死亡特效箱開出 Finisher Pack'},
 {id:'ch',zh:'粉筆輪廓',en:'Chalked',r:0,p:10,D:3.0,e:'🖍️',c:['#8a90b8','#20243a'],how:'從死亡特效箱開出 Finisher Pack'},
 {id:'fc',zh:'節慶彩帶',en:'Festive Confetti',r:0,p:0,D:2.9,e:'🎉',c:['#ff7a9c','#2ab87a'],how:'起始贈送'},
-{id:'hk',zh:'駭客入侵',en:'Hacked',r:0,p:15,D:2.9,e:'👾',c:['#20ff80','#04281a'],how:'從死亡特效箱開出 Finisher Pack'}];
+{id:'hk',zh:'駭客入侵',en:'Hacked',r:0,p:15,D:2.9,e:'👾',c:['#20ff80','#04281a'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'hr',zh:'愛心滿滿',en:'Hearting',r:2,p:0,D:2.8,e:'💗',c:['#ff8ab8','#8a1a4a'],ex:1,how:'醫療組合包限定 Medic Bundle Exclusive'},
+{id:'er',zh:'擦掉',en:'Erased',r:2,p:0,D:2.6,e:'✏️',c:['#ffe08a','#5a4a2a'],ex:1,how:'手作組合包限定 Crafty Bundle Exclusive'},
+{id:'oc',zh:'超載',en:'Overcharge',r:2,p:0,D:2.6,e:'🔋',c:['#a8f4ff','#1a3a7a'],ex:1,how:'能量組合包限定 Energy Bundle Exclusive'}];
 const FBYID=Object.fromEntries(FINS.map(x=>[x.id,x]));
 // ===== lootboxes 開箱 (crates). Cosmetics come from crates: buying puts one in PF.crates={crateId:count} (the 🎒 backpack); opening grants a random item the player does NOT own yet (no duplicates).
 // To add a crate push {id,name,en,cur:'keys'|'tickets',price,kind:'wrap'|'fin'|'skin',pool:()=>[item ids]} (the 3D model comes from mkCrate(kind)).
 const CURI={keys:'🔑',tickets:'🎫'},CURN={keys:'鑰匙',tickets:'皮膚票'};
 const CRATES=[
  {id:'wbox',name:'包裝箱',en:'Wrap Box',cur:'keys',price:5,kind:'wrap',pool:()=>WRAPS.filter(x=>x.id!='bc'&&!x.ex).map(x=>x.id)},
- {id:'fpack',name:'死亡特效箱',en:'Finisher Pack',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.id!='fc').map(x=>x.id)},
+ {id:'fpack',name:'死亡特效箱',en:'Finisher Pack',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.id!='fc'&&!x.ex).map(x=>x.id)},
  {id:'scase',name:'皮膚箱',en:'Skin Case',cur:'tickets',price:10,kind:'skin',pool:()=>SKINS.filter(x=>!x.ex).map(x=>x.id)},
  {id:'xbox',name:'🎄 聖誕箱',en:'Xmas Crate',cur:'keys',price:20,kind:'wrap',pool:()=>WRAPS.filter(x=>x.id=='xm'||x.id=='xg').map(x=>x.id)}];
 const CRBYID=Object.fromEntries(CRATES.map(c=>[c.id,c]));
@@ -1120,6 +1145,19 @@ hk:{init(f){f.cn=[0x20ff80,0x00e5ff,0xff2bd6,0x20ff80];f.cols=[];for(let i=0;i<7
   if(live&&Math.random()<.6)FE(f,{p:[RR(-1,1),RR(2,3),RR(-1,1)],v:[0,RR(-3,-1.5),0],s:RR(.05,.1),c:0x20ff80,l:.7,m:0});
   if(t>=2.1&&t<2.6){R.g.visible=Math.floor(t*28)%2==0;f.bars.forEach(b=>b.visible=false)}
   if(t>=2.6){if(!st.d){st.d=1;R.g.visible=false;for(let i=0;i<Q(50);i++)FE(f,{p:[RR(-.5,.5),RR(0,2.1),RR(-.3,.3)],v:[RR(-2,2),RR(-1,3),RR(-2,2)],s:RR(.06,.16),c:RP(f.cn),l:RR(.5,1),g:5,b:.3})}}}}};
+FD.hr={init(f){f.hc=[0xff4d8a,0xff8ab8,0xffc0d8]},
+ upd(f,t,dt){const R=f.rig,st=f.st,k=ph(t,0,.6);rigTint(R,0xff8ab8,0xff4d8a,.45*k,1-ph(t,1.8,2.3));R.g.position.y=.6*ez(ph(t,.3,2.2));R.aL.rotation.z=-1.2*k;R.aR.rotation.z=1.2*k;R.hd.rotation.x=-.25*k;
+  if(!st.a){st.a=1;flash(f,[0,1.3,0],0xff8ab8,3,.4);shock(f,.1,0xff4d8a,2.5,.5)}
+  if(t<2.2&&Math.random()<.7)FA2(f,{p:[RR(-.8,.8),RR(.3,2),RR(-.8,.8)],v:[RR(-.2,.2),RR(.8,1.6),RR(-.2,.2)],s:RR(.08,.16),c:RP(f.hc),l:1.2});
+  if(t>=2.2&&!st.b){st.b=1;R.g.visible=false;for(let i=0;i<Q(30);i++)FE(f,{p:[RR(-.4,.4),RR(.5,2),RR(-.3,.3)],v:[RR(-2,2),RR(0,3),RR(-2,2)],s:RR(.08,.15),c:RP(f.hc),l:RR(.6,1.1),g:4})}}};
+FD.er={init(f){},
+ upd(f,t,dt){const R=f.rig,st=f.st,k=ez(ph(t,.25,2.1));rigTint(R,0xd8d0c0,0,0,1-ph(t,1.9,2.4));R.g.scale.set(1,Math.max(.03,1-.97*k),1);
+  if(!st.a){st.a=1;flash(f,[0,1.3,0],0xffe08a,2.6,.35)}
+  if(t<2.1&&Math.random()<.65)FE(f,{p:[RR(-.4,.4),2.1*(1-k)+.1,RR(-.3,.3)],v:[RR(-1,1),RR(.5,1.5),RR(-1,1)],s:[RR(.06,.12),.03,RR(.04,.08)],c:RP([0xff9ab0,0xe8e0d0,0xb8b0a0]),l:1,g:6,b:.3,m:0})}};
+FD.oc={init(f){},
+ upd(f,t,dt){const R=f.rig,st=f.st,c=ph(t,0,1.6);if(t<1.8){glow(R,0x40e0ff,.2+1.2*c);R.g.position.x=RR(-.04,.04)*c;R.g.position.y=.3*ez(ph(t,.2,1.6))}
+  if(t<1.8&&Math.random()<.5)bolt(f,[RR(-.6,.6),RR(0,2.2),RR(-.6,.6)],[RR(-.6,.6),RR(0,2.2),RR(-.6,.6)],0x8af0ff,.03);
+  if(t>=1.8&&!st.a){st.a=1;R.g.visible=false;flash(f,[0,1.3,0],0x8af0ff,5,.4);shock(f,.1,0x40e0ff,4,.6);for(let i=0;i<Q(50);i++)FA2(f,{p:[RR(-.4,.4),RR(.3,2.2),RR(-.3,.3)],v:[RR(-3,3),RR(-1,3),RR(-3,3)],s:RR(.05,.12),c:RP([0x40e0ff,0xffffff,0x8af0ff]),l:RR(.4,.9)})}}};
 FD._={init(f){},upd(f,t,dt){f.rig.g.rotation.y=Math.sin(t*.9)*.45}};
 FD._x={init(f){},upd(f,t,dt){const R=f.rig,k=ez(ph(t,0,.4));R.g.rotation.x=k*(PI/2);R.g.position.set(0,.21*k,-1.06*k);R.aL.rotation.z=-.5*k;R.aR.rotation.z=.5*k;rigOp(R,1-ph(t,1.1,1.6))}};
 // ---- world runtime ----
@@ -2858,10 +2896,10 @@ PRENDER.Shop=()=>{const T2=[['home','Home'],['crates','📦 Crates 箱子'],['bu
  $('#skeys').textContent='　🔑 '+PF.keys+'　🎫 '+PF.tickets+'　💰 '+(PF.gold|0);let h='';const soon=t=>'<div class="cd" style="opacity:.75"><h4>'+t+'</h4><div class="soon">Robux 付費項目 · 敬請期待</div></div>';
  const wcard=(w,price,old)=>'<div class="cd"><img src="'+icon(w)+'" style="width:100%;height:80px;object-fit:contain"><h4>'+w.n+'</h4><div class="sub2">'+CATN[wcat(w)]+'</div>'+(isUnl(w.n)?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bw="'+w.n+'" data-pr="'+price+'"'+((FREE()||PF.keys>=price)?'':' disabled')+'>'+(old?'<s style="opacity:.6">'+old+'</s> ':'')+'🔑 '+price+'</button>')+'</div>';
  if(SHOPT=='home'){h='<div class="cards"><div class="cd" style="grid-column:span 2;background:linear-gradient(135deg,#6a3cff,#2a1a6a)"><h4>🎫 Season Pass · Season 1</h4><div class="sub2" style="color:#e0d8ff">升級領取免費鑰匙獎勵（30 級）</div><button class="bbtn" id="shPass" style="margin-top:10px">查看 Pass</button></div><div class="cd" style="background:linear-gradient(135deg,#d0408a,#4a1a7a)"><h4>📦 開箱 Crates</h4><div class="sub2" style="color:#ffd8f0">包裝箱 · 死亡特效箱 · 皮膚箱<br>不會開到重複</div><button class="bbtn" id="shCr" style="margin-top:10px">查看箱子</button></div><div class="cd" style="background:linear-gradient(135deg,#d99a14,#6a4a0a)"><h4>🔑 鑰匙組合包 Key Bundles</h4><div class="sub2" style="color:#ffe9b0">用 💰 金幣購買 · 傳奇包送限定 鑰匙雙刃</div><button class="bbtn" id="shKb" style="margin-top:10px">查看組合包</button></div></div><h3>🔥 今日特價 Daily</h3><div class="cards">'+dailyDeals().map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>'}
- else if(SHOPT=='bundles'){h='<div class="cards">'+BUNDLES.map((b,i)=>{const need=b.w.filter(n=>!isUnl(n)),price=Math.max(1,Math.round(need.reduce((s,n)=>s+wCost(n),0)*.8));return'<div class="cd"><h4>'+b.e+' '+b.n+'</h4><div class="row" style="gap:2px;margin:6px 0">'+b.w.map(n=>'<img src="'+icon(WBN(n))+'" title="'+n+'" style="width:46%;height:42px;object-fit:contain;background:#0003;border-radius:6px;'+(isUnl(n)?'opacity:.4':'')+'">').join('')+'</div><div class="sub2">'+b.w.join(' · ')+'</div>'+(need.length?'<button class="gbtn" style="width:100%;margin-top:6px" data-bb="'+i+'" data-pr="'+price+'"'+((FREE()||PF.keys>=price)?'':' disabled')+'>🔑 '+price+'（8 折，只算未擁有的）</button>':'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 全部擁有</div>')+'</div>'}).join('')+'</div>'}
+ else if(SHOPT=='bundles'){h='<h3 style="margin-top:0">✨ 限定組合包 Exclusive Bundles（💰 金幣購買）</h3><div class="kbcards">'+KBUNDLES.map((b,i)=>b.sp?kbCard(b,i):'').join('')+'</div><h3>🔫 武器組合包 Weapon Bundles</h3><div class="cards">'+BUNDLES.map((b,i)=>{const need=b.w.filter(n=>!isUnl(n)),price=Math.max(1,Math.round(need.reduce((s,n)=>s+wCost(n),0)*1.2));return'<div class="cd"><h4>'+b.e+' '+b.n+'</h4><div class="row" style="gap:2px;margin:6px 0">'+b.w.map(n=>'<img src="'+icon(WBN(n))+'" title="'+n+'" style="width:46%;height:42px;object-fit:contain;background:#0003;border-radius:6px;'+(isUnl(n)?'opacity:.4':'')+'">').join('')+'</div><div class="sub2">'+b.w.join(' · ')+'</div>'+(need.length?'<button class="gbtn" style="width:100%;margin-top:6px" data-bb="'+i+'" data-pr="'+price+'"'+((FREE()||PF.keys>=price)?'':' disabled')+'>🔑 '+price+'（只算未擁有的）</button>':'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 全部擁有</div>')+'</div>'}).join('')+'</div>'}
  else if(SHOPT=='crates'){const DC=dealCrate();h='<div class="note" style="margin-bottom:8px">外觀道具改由開箱取得：買下的箱子會放進 🎒 背包，打開時保證開到你還沒擁有的物品（不會重複）。點箱子可以查看內容和機率。</div><div class="cards crcards">'+CRATES.map(C=>{const l=crLeft(C).length,hd=crHeld(C.id),deal=DC&&DC.id===C.id;return'<div class="cd crcd" data-crt="'+C.id+'">'+(deal&&l?'<b style="position:absolute;left:10px;top:8px;font:900 13px system-ui;color:#fff;background:#ff6a3d;padding:2px 8px;border-radius:8px">🔥 今日特惠</b>':'')+(hd?'<b class="crn">🎒×'+hd+'</b>':'')+'<img src="'+crArt(C.id)+'" alt=""><h4>'+C.name+'</h4><div class="sub2">'+C.en+' · Lootbox · 剩 '+l+' / '+C.pool().length+' 個</div>'+(l?'<div class="crpr">'+(deal?'<s style="opacity:.55;font-size:.8em">'+C.price+'</s> ':'')+crPrice(C)+' '+CURI[C.cur]+'</div>':'<div class="crpr off">已全部擁有</div>')+'</div>'}).join('')+'</div><div class="note" style="margin-top:10px">🎫 皮膚票只能從 Season Pass 通行證的免費獎勵取得 · 你有 🔑 '+PF.keys+' · 🎫 '+PF.tickets+'</div>'}
  else if(SHOPT=='daily'){const d=dailyDeals(),rc=shRefCost();h='<div class="note" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">每天換一批，75 折（只會出現你還沒解鎖的武器）<button class="bbtn" id="shRefBtn" style="margin-left:auto">🔄 重新整理'+(rc?'　💰 '+rc:'　(今天免費)')+'</button></div>';h+=d.length?'<div class="cards">'+d.map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>':'<div class="cd">🎉 你已經擁有全部武器！</div>'}
- else if(SHOPT=='keys')h='<div class="note" style="margin-bottom:8px">💰 金幣：每場比賽 +'+GOLD_R.play+'、勝利再 +'+GOLD_R.win+'、每次淘汰 +'+GOLD_R.kill+'，每日任務 +'+GOLD_R.daily+'，升級 +'+GOLD_R.lv+'。你有 💰 <b>'+(PF.gold|0)+'</b>　點組合包查看內容（可重複購買，箱子會放進 🎒 背包）</div><div class="kbcards">'+KBUNDLES.map((b,i)=>kbCard(b,i)).join('')+'</div>';
+ else if(SHOPT=='keys')h='<div class="note" style="margin-bottom:8px">💰 金幣：每場比賽 +'+GOLD_R.play+'、勝利再 +'+GOLD_R.win+'、每次淘汰 +'+GOLD_R.kill+'，每日任務 +'+GOLD_R.daily+'，升級 +'+GOLD_R.lv+'。你有 💰 <b>'+(PF.gold|0)+'</b>　點組合包查看內容（可重複購買，箱子會放進 🎒 背包）</div><div class="kbcards">'+KBUNDLES.map((b,i)=>b.sp?'':kbCard(b,i)).join('')+'</div>';
  else h='<div class="cards"><div class="cd"><h4>🎟️ Codes 兌換代碼</h4><div class="sub2">輸入代碼領取獎勵</div><button class="gbtn" id="shCode" style="margin-top:8px">Redeem a code</button></div><div class="cd"><h4>📋 Tasks</h4><button class="bbtn" id="shTasks" style="margin-top:8px">打開任務</button></div></div><h3>🔮 吊飾 Charms</h3><div class="note" style="margin-bottom:8px">武器掛飾，純外觀，掛在你自己視角看到的武器上</div><div class="cards">'+CHARMS.filter(c=>c.p>0).map(c=>'<div class="cd"><div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:30px">🔮</div><h4>'+c.zh+'</h4><div class="sub2">'+c.en+'</div>'+(PF.charms.includes(c.id)?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bc="'+c.id+'"'+((FREE()||PF.keys>=c.p)?'':' disabled')+'>🔑 '+c.p+'</button>')+'</div>').join('')+'</div>'
  +'<h3>🕺 表情 Emotes</h3><div class="note" style="margin-bottom:8px">大廳跳舞/互動動作，純外觀</div><div class="cards">'+EMOTES.filter(e=>e.p>0).map(e=>'<div class="cd"><div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:30px">🕺</div><h4>'+e.zh+'</h4><div class="sub2">'+e.en+'</div>'+(PF.emotes.includes(e.id)?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-be="'+e.id+'"'+((FREE()||PF.keys>=e.p)?'':' disabled')+'>🔑 '+e.p+'</button>')+'</div>').join('')+'</div>';
  $('#shopBody').innerHTML=h;const g=id=>$('#shopBody').querySelector(id);if(g('#shPass'))g('#shPass').onclick=()=>openPanel('Pass');if(g('#shCr'))g('#shCr').onclick=()=>shopTab('crates');if(g('#shKb'))g('#shKb').onclick=()=>shopTab('keys');for(const c of $('#shopBody').querySelectorAll('[data-kb]'))c.onclick=()=>kbDlg(+c.dataset.kb);for(const c of $('#shopBody').querySelectorAll('[data-crt]'))c.onclick=()=>crDlg(c.dataset.crt,'buy');if(g('#shCode'))g('#shCode').onclick=()=>openPanel('Code');if(g('#shTasks'))g('#shTasks').onclick=()=>openPanel('Tasks');if(g('#shRefBtn'))g('#shRefBtn').onclick=shRefDo;
@@ -2872,17 +2910,22 @@ PRENDER.Shop=()=>{const T2=[['home','Home'],['crates','📦 Crates 箱子'],['bu
 // ===== Keys shop 鑰匙組合包: repeatable bundles paid in 💰 gold (PF.gold). Crates go to the 🎒 backpack (PF.crates).
 // {id,zh,en,gold,keys,cr:{crateId:n},rw:random wraps,rf:random finishers,skin:'skinId' (exclusive; owned -> 10 🎫),red:1 = red theme}
 const KBUNDLES=[
- {id:'kb1',zh:'鑰匙組合包',en:'Key Bundle',gold:60,keys:10,art:'🔑'},
- {id:'keyper',zh:'Keyper 划算鑰匙包',en:'Keyper Bundle',gold:140,keys:35,skin:'hg_keyper',art:'🔑💎'},
- {id:'kb2',zh:'大型鑰匙組合包',en:'Mega Key Bundle',gold:200,keys:40,cr:{wbox:1},art:'🔑🔑'},
- {id:'kb3',zh:'超級鑰匙組合包',en:'Super Key Bundle',gold:380,keys:90,cr:{wbox:3,fpack:1},rw:1,art:'🔑🔑🔑'},
- {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:1600,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,skin:'dg_key',art:'💰🔑'},
- {id:'kb5',zh:'傳奇鑰匙組合包',en:'Legendary Key Bundle',gold:3700,keys:1100,cr:{wbox:40,fpack:15,scase:1},rw:20,rf:3,skin:'sn_locksmith',red:1,art:'👑🔑'}];
-const KB_WRAPK=5,KB_FINK=10,KB_SKINT=10;
+ {id:'kb1',zh:'鑰匙組合包',en:'Key Bundle',gold:90,keys:10,art:'🔑'},
+ {id:'keyper',zh:'Keyper 划算鑰匙包',en:'Keyper Bundle',gold:210,keys:35,skin:'hg_keyper',art:'🔑💎'},
+ {id:'kb2',zh:'大型鑰匙組合包',en:'Mega Key Bundle',gold:300,keys:40,cr:{wbox:1},art:'🔑🔑'},
+ {id:'kb3',zh:'超級鑰匙組合包',en:'Super Key Bundle',gold:570,keys:90,cr:{wbox:3,fpack:1},rw:1,art:'🔑🔑🔑'},
+ {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:2400,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,skin:'dg_key',art:'💰🔑'},
+ {id:'medic',zh:'醫療組合包',en:'Medic Bundle',gold:1400,keys:40,cr:{wbox:3},rw:1,wpn:['Medkit'],skins:['mk_laptop'],fins:['hr'],sp:1,art:'🩹'},
+ {id:'crafty',zh:'手作組合包',en:'Crafty Bundle',gold:850,keys:15,cr:{wbox:5},rw:1,skins:['kb_pencil','ba_sign','dg_toast','st_pizza','ft_spray'],fins:['er'],sp:1,art:'✏️'},
+ {id:'energy',zh:'能量組合包',en:'Energy Bundle',gold:1200,keys:30,cr:{wbox:5},rw:1,wpn:['Energy Rifle','Energy Pistols'],skins:['er_plasma','ep_plasma'],fins:['oc'],sp:1,art:'⚡'},
+ {id:'kb5',zh:'傳奇鑰匙組合包',en:'Legendary Key Bundle',gold:5550,keys:1100,cr:{wbox:40,fpack:15,scase:1},rw:20,rf:3,skin:'sn_locksmith',red:1,art:'👑🔑'}];
+const KB_WRAPK=5,KB_FINK=10,KB_SKINT=10,kbSk=b=>(b.skins||[]).concat(b.skin?[b.skin]:[]).filter(x=>SKBYID[x]);
 function kbItems(b){const o=[['🔑','鑰匙 Keys','',b.keys]];for(const c in b.cr||{}){const C=CRBYID[c];o.push(['<img src="'+crArt(c)+'">',C.name+' '+C.en,'放進 🎒 背包',b.cr[c]])}
  if(b.rw)o.push(['🎨❔','隨機包裝 Random Wrap','開出未擁有的（全擁有則換 🔑 '+KB_WRAPK+'）',b.rw]);if(b.rf)o.push(['✨❔','隨機死亡特效 Random Finisher','開出未擁有的（全擁有則換 🔑 '+KB_FINK+'）',b.rf]);
- if(b.skin&&SKBYID[b.skin]){const S=SKBYID[b.skin];o.push(['<img src="'+(S.id=='dg_key'&&kdArt()||skinIcon(WBN(S.weapon),S.id))+'">',S.name,'限定皮膚 Exclusive Skin · '+S.weapon+(ownSkin(S.id)?'（已擁有 → 🎫 '+KB_SKINT+'）':''),1])}return o}
-function kbCard(b,i){const ok=FREE()||(PF.gold|0)>=b.gold,S=b.skin&&SKBYID[b.skin];return'<div class="kbcd'+(b.red?' red':'')+'" data-kb="'+i+'">'+(S?'<span class="kbx">限定 EXCLUSIVE</span>':'')+'<div class="kbart">'+(S?'<img src="'+(S.id=='dg_key'&&kdArt()||skinIcon(WBN(S.weapon),S.id))+'">':b.art)+'</div><h4>'+b.zh+'</h4><div class="kbe">'+b.en+'</div><div class="kbn">+'+b.keys+' 🔑</div>'+(b.cr||b.rw||b.rf||S?'<div class="kbe">+ 箱子與更多獎勵</div>':'<div class="kbe">&nbsp;</div>')+'<div class="kbpr'+(ok?'':' off')+'">💰 '+b.gold+'</div></div>'}
+ for(const n of b.wpn||[]){const w=WBN(n);if(w)o.push(['<img src="'+icon(w)+'">',n,'武器 Weapon'+(isUnl(n)?'（已擁有）':''),1])}
+ for(const id of kbSk(b)){const S=SKBYID[id];o.push(['<img src="'+(S.id=='dg_key'&&kdArt()||skinIcon(WBN(S.weapon),S.id))+'">',S.name,'限定皮膚 Exclusive Skin · '+S.weapon+(ownSkin(S.id)?'（已擁有 → 🎫 '+KB_SKINT+'）':''),1])}
+ for(const id of b.fins||[]){const F=FBYID[id];if(F)o.push([F.e,F.zh+' '+F.en,'限定死亡特效 Exclusive Finisher'+(PF.fins.includes(id)?'（已擁有 → 🔑 '+KB_FINK+'）':''),1])}return o}
+function kbCard(b,i){const ok=FREE()||(PF.gold|0)>=b.gold,S=!b.sp&&b.skin&&SKBYID[b.skin];return'<div class="kbcd'+(b.red?' red':'')+'" data-kb="'+i+'">'+(S||kbSk(b).length?'<span class="kbx">限定 EXCLUSIVE</span>':'')+'<div class="kbart">'+(S?'<img src="'+(S.id=='dg_key'&&kdArt()||skinIcon(WBN(S.weapon),S.id))+'">':b.art)+'</div><h4>'+b.zh+'</h4><div class="kbe">'+b.en+'</div><div class="kbn">+'+b.keys+' 🔑</div>'+(b.cr||b.rw||b.rf||S||b.sp?'<div class="kbe">+ '+(b.sp?kbSk(b).length+' 款皮膚、武器與更多':'箱子與更多獎勵')+'</div>':'<div class="kbe">&nbsp;</div>')+'<div class="kbpr'+(ok?'':' off')+'">💰 '+b.gold+'</div></div>'}
 function kbDlgClose(){$('#kbDlg').style.display='none'}
 function kbDlg(i){const b=KBUNDLES[i];if(!b||!PF)return;const ok=FREE()||(PF.gold|0)>=b.gold,bx=$('#kbBox');bx.className='kbbox'+(b.red?' red':'');
  bx.innerHTML='<h3>'+b.zh+'<br><small style="font-size:13px;color:#ccd">'+b.en+'</small></h3><div class="kbl">'+kbItems(b).map(([ic,nm,sub,n])=>'<div class="kbrow"><div class="ic">'+ic+'</div><div class="nm">'+nm+(sub?'<small>'+sub+'</small>':'')+'</div><b>×'+n+'</b></div>').join('')+'</div>'+
@@ -2890,7 +2933,7 @@ function kbDlg(i){const b=KBUNDLES[i];if(!b||!PF)return;const ok=FREE()||(PF.gol
  $('#kbDlg').style.display='flex';$('#kbNo').onclick=kbDlgClose;$('#kbOk').onclick=()=>{if(kbBuy(i)){kbDlgClose();if(PANEL=='Shop')PRENDER.Shop()}}}
 $('#kbDlg').addEventListener('click',e=>{if(e.target.id=='kbDlg')kbDlgClose()});
 for(const ev of['mousedown','touchstart','wheel'])$('#kbDlg').addEventListener(ev,e=>e.stopPropagation(),{passive:true});
-function kbRand(k){const L=k=='wrap'?WRAPS.filter(x=>x.id!='bc'&&!PF.wraps.includes(x.id)):FINS.filter(x=>x.id!='fc'&&!PF.fins.includes(x.id));return L.length?L[Math.floor(Math.random()*L.length)].id:null}
+function kbRand(k){const L=k=='wrap'?WRAPS.filter(x=>x.id!='bc'&&!x.ex&&!PF.wraps.includes(x.id)):FINS.filter(x=>x.id!='fc'&&!x.ex&&!PF.fins.includes(x.id));return L.length?L[Math.floor(Math.random()*L.length)].id:null}
 // buy bundle i: returns a summary object (null when blocked). Grants everything, then saves once.
 function kbBuy(i){const b=KBUNDLES[i];if(!b||!PF)return null;const g=PF.gold|0;
  if(!FREE()&&g<b.gold){toast('💰 金幣不足（還差 '+(b.gold-g)+'）','#ff6a6a');snd(200,.15,.05);const m=$('#kbMsg');if(m)m.textContent='💰 金幣不足：還差 '+(b.gold-g);return null}
@@ -2898,11 +2941,13 @@ function kbBuy(i){const b=KBUNDLES[i];if(!b||!PF)return null;const g=PF.gold|0;
  for(const c in b.cr||{}){PF.crates[c]=crHeld(c)+b.cr[c];r.cr[c]=b.cr[c];nc+=b.cr[c]}
  for(let j=0;j<(b.rw||0);j++){const id=kbRand('wrap');if(id){PF.wraps.push(id);r.w.push(id)}else r.ck+=KB_WRAPK}
  for(let j=0;j<(b.rf||0);j++){const id=kbRand('fin');if(id){PF.fins.push(id);r.f.push(id)}else r.ck+=KB_FINK}
- if(b.skin&&SKBYID[b.skin]){if(PF.skins.includes(b.skin)){PF.tickets+=KB_SKINT;r.tk=KB_SKINT}else{PF.skins.push(b.skin);r.skin=b.skin}}
+ r.sk=[];r.wn=[];r.fn=[];for(const n of b.wpn||[])if(WBN(n)&&!isUnl(n)){PF.unl.push(n);r.wn.push(n)}
+ for(const id of kbSk(b)){if(PF.skins.includes(id)){PF.tickets+=KB_SKINT;r.tk+=KB_SKINT}else{PF.skins.push(id);r.sk.push(id);if(!r.skin)r.skin=id}}
+ for(const id of b.fins||[])if(FBYID[id]){if(PF.fins.includes(id))r.ck+=KB_FINK;else{PF.fins.push(id);r.fn.push(id)}}
  PF.keys+=r.ck;saveNow();renderLUI();
- toast('🛒 購買成功：'+b.zh+'　🔑 +'+(b.keys+r.ck)+(nc?'　📦 ×'+nc:'')+(r.w.length?'　🎨 ×'+r.w.length:'')+(r.f.length?'　✨ ×'+r.f.length:'')+(r.skin?'　🗡️ '+SKBYID[r.skin].name:''),'#35d07f');
+ toast('🛒 購買成功：'+b.zh+'　🔑 +'+(b.keys+r.ck)+(nc?'　📦 ×'+nc:'')+(r.w.length?'　🎨 ×'+r.w.length:'')+(r.f.length?'　✨ ×'+r.f.length:'')+(r.wn.length?'　🔫 '+r.wn.join('、'):'')+(r.sk.length?'　🎨 '+r.sk.map(x=>SKBYID[x].name).join('、'):'')+(r.fn.length?'　💀 ×'+r.fn.length:''),'#35d07f');
  if(r.ck)setTimeout(()=>toast('已擁有全部包裝／死亡特效，多出的換成 🔑 +'+r.ck+' 鑰匙','#ffd23f'),350);
- if(r.tk)setTimeout(()=>toast('你已經擁有 '+SKBYID[b.skin].name+'，自動換成 🎫 '+r.tk+' 皮膚票','#ff8a8a'),700);
+ if(r.tk)setTimeout(()=>toast('重複的皮膚自動換成 🎫 '+r.tk+' 皮膚票','#ff8a8a'),700);
  snd(880,.12,.06,'sine');setTimeout(()=>snd(1320,.15,.05,'sine'),120);return r}
 // ===== gifting 送禮 (cloud accounts only; Firestore REST, same session/token refresh as the profile sync) =====
 // names/{lowercase username} = {uid,name,email}: every cloud user writes their own on login -> resolves a recipient @ID (profile card handle) to a uid.
