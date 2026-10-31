@@ -2914,11 +2914,11 @@ const KBUNDLES=[
  {id:'keyper',zh:'Keyper 划算鑰匙包',en:'Keyper Bundle',gold:210,keys:35,skin:'hg_keyper',art:'🔑💎'},
  {id:'kb2',zh:'大型鑰匙組合包',en:'Mega Key Bundle',gold:300,keys:40,cr:{wbox:1},art:'🔑🔑'},
  {id:'kb3',zh:'超級鑰匙組合包',en:'Super Key Bundle',gold:570,keys:90,cr:{wbox:3,fpack:1},rw:1,art:'🔑🔑🔑'},
- {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:2400,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,skin:'dg_key',art:'💰🔑'},
+ {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:2499,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,skin:'dg_key',art:'💰🔑'},
  {id:'medic',zh:'醫療組合包',en:'Medic Bundle',gold:1400,keys:40,cr:{wbox:3},rw:1,wpn:['Medkit'],skins:['mk_laptop'],fins:['hr'],sp:1,art:'🩹'},
  {id:'crafty',zh:'手作組合包',en:'Crafty Bundle',gold:850,keys:15,cr:{wbox:5},rw:1,skins:['kb_pencil','ba_sign','dg_toast','st_pizza','ft_spray'],fins:['er'],sp:1,art:'✏️'},
  {id:'energy',zh:'能量組合包',en:'Energy Bundle',gold:1200,keys:30,cr:{wbox:5},rw:1,wpn:['Energy Rifle','Energy Pistols'],skins:['er_plasma','ep_plasma'],fins:['oc'],sp:1,art:'⚡'},
- {id:'kb5',zh:'傳奇鑰匙組合包',en:'Legendary Key Bundle',gold:5550,keys:1100,cr:{wbox:40,fpack:15,scase:1},rw:20,rf:3,skin:'sn_locksmith',red:1,art:'👑🔑'}];
+ {id:'kb5',zh:'傳奇鑰匙組合包',en:'Legendary Key Bundle',gold:4999,keys:1100,cr:{wbox:40,fpack:15,scase:1},rw:20,rf:3,skin:'sn_locksmith',red:1,art:'👑🔑'}];
 const KB_WRAPK=5,KB_FINK=10,KB_SKINT=10,kbSk=b=>(b.skins||[]).concat(b.skin?[b.skin]:[]).filter(x=>SKBYID[x]);
 function kbItems(b){const o=[['🔑','鑰匙 Keys','',b.keys]];for(const c in b.cr||{}){const C=CRBYID[c];o.push(['<img src="'+crArt(c)+'">',C.name+' '+C.en,'放進 🎒 背包',b.cr[c]])}
  if(b.rw)o.push(['🎨❔','隨機包裝 Random Wrap','開出未擁有的（全擁有則換 🔑 '+KB_WRAPK+'）',b.rw]);if(b.rf)o.push(['✨❔','隨機死亡特效 Random Finisher','開出未擁有的（全擁有則換 🔑 '+KB_FINK+'）',b.rf]);
