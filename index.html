@@ -811,7 +811,12 @@ const SKINS=[
  inspFx:()=>{if(P.inspV=='keytoss'){snd(420,.12,.04,'triangle');setTimeout(()=>snd(760,.18,.03,'triangle'),120);[300,520,760,1000].forEach(t=>setTimeout(()=>snd(3200,.03,.025,'sine'),t))}
   else{[90,190,290,390,490,590].forEach((t,i)=>setTimeout(()=>snd(1900+(i%2)*500,.022,.05,'square'),t));setTimeout(()=>{snd(620,.05,.06,'square');setTimeout(()=>snd(1240,.12,.04,'sine'),60)},930);setTimeout(()=>snd(2640,.25,.03,'sine'),1700)}},
  reloadFx:()=>{P.krl=.32;P.kfl=1;snd(1750,.025,.06,'square');setTimeout(()=>snd(2350,.025,.06,'square'),70)},
- fireFx:()=>{P.kst=.36;kdArc(1);snd(950,.07,.05,'triangle');snd(2093,.22,.035,'sine');setTimeout(()=>{kdArc(-1);snd(820,.07,.05,'triangle');snd(2637,.22,.03,'sine')},100)}}
+ fireFx:()=>{P.kst=.36;kdArc(1);snd(950,.07,.05,'triangle');snd(2093,.22,.035,'sine');setTimeout(()=>{kdArc(-1);snd(820,.07,.05,'triangle');snd(2637,.22,.03,'sine')},100)}},
+{id:'hg_keyper',weapon:'Handgun',name:'Keyper 鎏金手槍',rarity:'legendary',ex:1,how:'Keyper 划算鑰匙包限定 Keyper Bundle Exclusive',
+ build:g=>{const Gd=0xd8b23a,Gd2=0xa8841f,Di=0x9fe8ff;B(g,.05,.06,.25,0,.1,-.06,Gd2);B(g,.046,.045,.2,0,.06,-.04,Gd);B(g,.046,.13,.065,0,0,.03,Gd,{rx:-.22});
+ Sp(g,.022,0,.135,-.14,Di,1);B(g,.01,.012,.15,0,.1,-.19,Di,{e:1});return{}},
+ drawFx:p=>{skBurst(p,9,[0xd8b23a,0x9fe8ff,0xffffff],2,.3,.045);snd(1500,.08,.05,'sine')},
+ fireFx:p=>{skBurst(p,5,[0xd8b23a,0x9fe8ff],1.8,.16,.035);snd(1800,.04,.045,'sine')}}
 ];
 const SKBYID=Object.fromEntries(SKINS.map(x=>[x.id,x])),skinsFor=wn=>SKINS.filter(x=>x.weapon==wn);
 function model(w,wk,sk,ch){const g=new T.Group();const S=sk&&SKBYID[sk]&&SKBYID[sk].weapon==w.n?SKBYID[sk]:null;const u=(S?S.build:MD[w.n]||(()=>({})))(g)||{};g.userData=u;if(wk)try{applyWrap(g,w,wk)}catch(e){console.error(e)}if(ch)applyCharm(g,w,ch);return g}
@@ -2857,7 +2862,7 @@ PRENDER.Shop=()=>{const T2=[['home','Home'],['crates','📦 Crates 箱子'],['bu
 // {id,zh,en,gold,keys,cr:{crateId:n},rw:random wraps,rf:random finishers,skin:'skinId' (exclusive; owned -> 10 🎫),red:1 = red theme}
 const KBUNDLES=[
  {id:'kb1',zh:'鑰匙組合包',en:'Key Bundle',gold:60,keys:10,art:'🔑'},
- {id:'keyper',zh:'Keyper 划算鑰匙包',en:'Keyper Bundle',gold:140,keys:35,art:'🔑💎'},
+ {id:'keyper',zh:'Keyper 划算鑰匙包',en:'Keyper Bundle',gold:140,keys:35,skin:'hg_keyper',art:'🔑💎'},
  {id:'kb2',zh:'大型鑰匙組合包',en:'Mega Key Bundle',gold:200,keys:40,cr:{wbox:1},art:'🔑🔑'},
  {id:'kb3',zh:'超級鑰匙組合包',en:'Super Key Bundle',gold:380,keys:90,cr:{wbox:3,fpack:1},rw:1,art:'🔑🔑🔑'},
  {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:1600,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,art:'💰🔑'},
