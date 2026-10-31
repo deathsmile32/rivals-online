@@ -381,6 +381,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
   <button id="tbZoom" title="開鏡/縮放"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l6 6M10 7v6M7 10h6"/></svg></button>
   <button id="tbBoard" title="計分板"><svg viewBox="0 0 24 24"><path class="f" d="M2.5 21v-7h6v7zM9 21V8h6v13zM15.5 21v-10h6v10z"/></svg></button>
   <button id="tbEmote" title="展示武器"><svg viewBox="0 0 24 24"><circle class="f" cx="13" cy="3.8" r="2.2"/><path d="M12.5 7.5l-1.5 6 4.5 3 1 5M11 13.5L6 20M12.2 8.5L7 10l-2.5-3M12.7 8.5l3.8 2.5 3.5-2"/></svg></button>
+  <button id="tbDance" title="表情 Emotes"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.3"/><path class="f" d="M12 8c-1.3 0-2.2.9-2.6 2L7 15l1.6 1 2-4.2.6 2.2-2 6.5 1.8.6 2-6 2 6 1.8-.6-2-6.5.6-2.2 2 4.2 1.6-1-2.4-5c-.4-1.1-1.3-2-2.6-2z"/></svg></button>
  </div>
  <div id="tOrient">📱↔️<br>請將裝置橫向以獲得最佳體驗<br><span style="font-size:13px;opacity:.75">Rotate to landscape for best experience</span></div>
 </div>
@@ -462,6 +463,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
  <h3>難度（機器人）</h3><div class="row" id="pdifs"></div><h3>地圖</h3><div class="row" id="pmaps"></div></div></div></div>
 <div id="pPack" class="pnl"><div class="pbox"><div class="ptitle">🎒 Backpack<button class="xbtn" data-x>✕</button></div><div class="pscroll" id="packBody"></div></div></div>
 <div id="pTasks" class="pnl"><div class="pbox"><div class="ptitle">📋 Tasks<button class="xbtn" data-x>✕</button></div><div class="pscroll" id="tasksBody"></div></div></div>
+<div id="pEmote" class="pnl"><div class="pbox"><div class="ptitle">🕺 表情 Emotes<button class="xbtn" data-x>✕</button></div><div class="pscroll" id="emoteBody"></div></div></div>
 <div id="pShop" class="pnl"><div class="pbox"><div class="ptitle">🛒 Shop<span class="note" style="font-weight:700" id="skeys"></span><button class="xbtn" data-x>✕</button></div><div class="ptabs" id="shopTabs"></div><div class="pscroll" id="shopBody"></div></div></div>
 <div id="pPass" class="pnl"><div class="pbox"><div class="ptitle">🎫 Season Pass<button class="xbtn" data-x>✕</button></div><div class="pscroll" id="passBody"></div></div></div>
 <div id="pSet" class="pnl"><div class="pbox sm" style="width:min(560px,94vw)"><div class="ptitle">⚙️ Settings<button class="xbtn" data-x>✕</button></div><div class="pscroll" id="setBody"></div></div></div>
@@ -1254,12 +1256,25 @@ const leg=s=>{const pv=new T.Group();pv.position.set(s*.21,.8,0);g.add(pv);pt(.3
 const arm=s=>{const pv=new T.Group();pv.position.set(s*.6,1.6,0);g.add(pv);pt(.34,.8,.34,0,-.38,0,sk,pv);return pv};
 const lL=leg(-1),lR=leg(1);pt(.82,.82,.42,0,1.21,0,mat);const aL=arm(-1),aR=arm(1);
 const hd=pt(.5,.5,.5,0,1.87,0,sk);hd.userData.head=1;for(const s of[-1,1]){const ey=pt(.08,.1,.02,s*.11,1.92,-.26,new T.MeshBasicMaterial({color:0x111111}));ey.userData.head=1}
-const ice=new T.Mesh(new T.BoxGeometry(1.3,2.35,1.1),new T.MeshLambertMaterial({color:0x9fe0ff,transparent:true,opacity:.45}));ice.position.y=1.15;ice.raycast=()=>{};ice.visible=false;g.add(ice);g.userData={lL,lR,aL,aR,mat,ice};return g}
+const ice=new T.Mesh(new T.BoxGeometry(1.3,2.35,1.1),new T.MeshLambertMaterial({color:0x9fe0ff,transparent:true,opacity:.45}));ice.position.y=1.15;ice.raycast=()=>{};ice.visible=false;g.add(ice);g.userData={lL,lR,aL,aR,mat,ice,hd};return g}
 const TWOH=new Set(['Maul','Battle Axe','Scythe','Spear','Chainsaw','Fists']);
 function isTwo(w){return w.k=='P'||w.k=='S'||TWOH.has(w.n)}
-function animBody(e,dt,mvd){const spd=mvd/Math.max(dt,1e-3),u=e.mesh.userData,w=e.L[e.cur];e.ph=(e.ph||0)+dt*spd*1.6;const swg=Math.min(1,spd/4)*.7,k=(e.kick||0)*.3,p=Math.max(-1,Math.min(1,e.pitch||0));u.lL.rotation.x=Math.sin(e.ph)*swg;u.lR.rotation.x=-Math.sin(e.ph)*swg;
+function animBody(e,dt,mvd){const spd=mvd/Math.max(dt,1e-3),u=e.mesh.userData,w=e.L[e.cur];
+ if(e.emoteId){const em=EMBYID[e.emoteId];if(em&&spd<.3&&!(e===P&&(mL||mR))){e.emoteT+=dt;if(e.emoteT>=em.dur){emoteCancel(e)}else{em.pose(u,e.mesh,e.emoteT);return}}else emoteCancel(e)}
+ e.ph=(e.ph||0)+dt*spd*1.6;const swg=Math.min(1,spd/4)*.7,k=(e.kick||0)*.3,p=Math.max(-1,Math.min(1,e.pitch||0));u.lL.rotation.x=Math.sin(e.ph)*swg;u.lR.rotation.x=-Math.sin(e.ph)*swg;
  if(st=='lobby'&&!(e.x>8.4&&e.z>-3&&e.z<30.5)){u.aR.rotation.set(Math.sin(e.ph)*swg*.8,0,.07);u.aL.rotation.set(-Math.sin(e.ph)*swg*.8,0,-.07);e.kick=0;return}// lobby hub: no weapon → arms hang by the thighs, natural walk swing
  u.aR.rotation.set(PI/2+p-k,0,0);if(w&&isTwo(w))u.aL.rotation.set(PI/2+p-k,0,w.n=='Fists'?0:.75);else u.aL.rotation.set(-Math.sin(e.ph)*swg*.8,0,0);e.kick=Math.max(0,(e.kick||0)-dt*6)}
+const EMOTES=[
+{id:'wave',zh:'揮手',en:'Wave',dur:1.8,pose:(u,g,et)=>{u.aR.rotation.set(-2.15+Math.sin(et*9)*.35,0,.3);u.aL.rotation.set(Math.sin(et*2)*.08,0,0);u.lL.rotation.x=u.lR.rotation.x=0}},
+{id:'clap',zh:'拍手',en:'Clap',dur:1.6,pose:(u,g,et)=>{const c=Math.abs(Math.sin(et*7));u.aR.rotation.set(-1.3,0,-.5-c*.4);u.aL.rotation.set(-1.3,0,.5+c*.4);u.lL.rotation.x=u.lR.rotation.x=0}},
+{id:'victory',zh:'勝利舞',en:'Victory Dance',dur:2.6,pose:(u,g,et)=>{const s=Math.sin(et*6);u.aR.rotation.set(-2.4,0,s*.5);u.aL.rotation.set(-2.4,0,-s*.5);u.lL.rotation.x=-Math.abs(s)*.4;u.lR.rotation.x=-Math.abs(Math.sin(et*6+PI))*.4}},
+{id:'shrug',zh:'肩膀聳肩',en:'Shoulder Shrug',dur:1.6,pose:(u,g,et)=>{const s=Math.sin(et*8);u.aR.rotation.set(-.3+s*.25,0,.15);u.aL.rotation.set(-.3-s*.25,0,-.15);u.lL.rotation.x=u.lR.rotation.x=0}},
+{id:'scoot',zh:'滑步',en:'Scoot',dur:2.2,pose:(u,g,et)=>{const s=Math.sin(et*5);u.aR.rotation.set(-.6,0,-.3+s*.2);u.aL.rotation.set(-.6,0,.3-s*.2);u.lL.rotation.x=s*.5;u.lR.rotation.x=-s*.5}},
+{id:'nod',zh:'點頭律動',en:'Head Bob',dur:1.8,pose:(u,g,et)=>{const s=Math.sin(et*7);u.aR.rotation.set(-.15,0,.1+s*.1);u.aL.rotation.set(-.15,0,-.1-s*.1);if(u.hd)u.hd.rotation.x=s*.25;u.lL.rotation.x=u.lR.rotation.x=0}}
+];
+const EMBYID=Object.fromEntries(EMOTES.map(x=>[x.id,x]));
+function emotePlay(e,id){const em=EMBYID[id];if(!em||!e||!e.alive)return;e.emoteId=id;e.emoteT=0;e.emoteDur=em.dur;if(e===P)closePanels()}
+function emoteCancel(e){if(!e)return;e.emoteId=null;e.emoteT=0;const u=e.mesh&&e.mesh.userData;if(u&&u.hd)u.hd.rotation.x=0}
 function setHold(e){const u=e.mesh.userData;if(e.hold)u.aR.remove(e.hold);const w=e.L[e.cur];e.hold=model(w,wrapKey(e,w),skinKey(e,w),charmKey(e,w));e.hold.scale.setScalar(1.35);
 e.hold.position.set(0,-.74,.05);e.hold.rotation.x=w.k=='M'?-PI/2-.5:-PI/2;
 u.aR.add(e.hold);e.hold.traverse(o=>o.userData.ent=e)}
@@ -1947,7 +1962,7 @@ const x=s*Math.cos(P.yaw)-f*Math.sin(P.yaw),z=-s*Math.sin(P.yaw)-f*Math.cos(P.ya
 function dblJump(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||P.sl)return;let w=P.L[P.cur];if(P.qmT>0&&P.L[2].dj&&!P.djs.has(P.L[2].n))w=P.L[2];if(!w.dj||onGround(P)||P.djs.has(w.n))return;P.djs.add(w.n);P.vy=7.5;puff(V(P.x,P.y,P.z),V(0,-1,0),0xffffff,.3,1);snd(600,.08,.04)}
 function qmelee(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qm||0)>performance.now()||P.cur==2)return;const w=P.L[2];if(w.can&&!w.can(P,P.S[2]))return;P.qm=performance.now()+500;P.wnm=w.n;if(NET)netFire('m',2);w.fire(P,w,P.S[2],{});P.kick=1;P.qmT=.4;setVM(w);P.eq=0;P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk='n';snd(800,.09,.06);skDrawFx(P,w)}
 function qutil(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qu||0)>performance.now())return;const w=P.L[3],s=P.S[3];if(w.can?!w.can(P,s):(w.lim&&s.c<=0))return;if(w.lim&&!w.selfLim)s.c--;P.qu=performance.now()+400;P.wnm=w.n;if(NET)netFire('u',3);w.fire(P,w,s,{});if(w.f)snd(w.f,.08,.05)}
-addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyM'&&st=='lobby'&&LB.inRange&&!e.repeat)leaveRange();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyV'&&!e.repeat&&P.alive){P.insp=2.4;skInspFx(P)}const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！');if(e.code=='KeyQ'&&!e.repeat&&st=='lobby'&&LB.inRange&&LB.trashPrompt&&!RAON)showRangeLo()});
+addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyM'&&st=='lobby'&&LB.inRange&&!e.repeat)leaveRange();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyV'&&!e.repeat&&P.alive){P.insp=2.4;skInspFx(P)}if(e.code=='KeyB'&&!e.repeat&&P.alive&&!PANEL)openPanel('Emote');const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！');if(e.code=='KeyQ'&&!e.repeat&&st=='lobby'&&LB.inRange&&LB.trashPrompt&&!RAON)showRangeLo()});
 addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('button,input,.pnl,#lui,.ov,#leaveRange'))return;if(PANEL)return;if(!MOBILE&&!paused&&!chatOn&&document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end'||(st=='lobby'&&lobbyFP())))lock()});
 addEventListener('keyup',e=>keys[e.code]=0);
 addEventListener('wheel',e=>{if(PANEL)return;if(hubTP()){LBC.dist=Math.max(3,Math.min(16,LBC.dist+(e.deltaY>0?.9:-.9)));return}if(live())swE(P,(P.cur+(e.deltaY>0?1:3))%4)});
@@ -1991,6 +2006,7 @@ if(MOBILE){
  btnTouch($('#tbZoom'),()=>{if(!live()||!P.alive)return;const w=P.L[P.cur];if(w.zf)P.zoom=!P.zoom});
  btnTouch($('#tbBoard'),()=>{keys.Tab=keys.Tab?0:1});
  btnTouch($('#tbEmote'),()=>{if(live()&&P.alive){P.insp=2.4;skInspFx(P)}});
+ btnTouch($('#tbDance'),()=>{if(P&&P.alive)openPanel('Emote')});
  setInterval(()=>{if(!P)return;const w=P.L&&P.L[P.cur];$('#tbSpec').classList.toggle('off',!!P.alive);$('#tbZoom').classList.toggle('off',!(w&&w.zf));$('#tbZoom').classList.toggle('press',!!P.zoom&&!!(w&&w.zf));$('#tbBoard').classList.toggle('press',!!keys.Tab)},200);
  // shooting range: the prompt and the weapon-name label open the free weapon menu (no Q key on touch)
  const wnEl=$('#wn');wnEl.addEventListener('touchstart',e=>{if(st=='lobby'&&LB.inRange&&!RAON&&!PANEL){e.preventDefault();showRangeLo()}},{passive:false});
@@ -2705,6 +2721,7 @@ function shRefDo(){const n=shRefN(),cost=SHREF_COST[Math.min(n,SHREF_COST.length
  if(!FREE())PF.gold-=cost;PF.shRef={day:today(),n:n+1};saveNow();toast(n?'🔄 已重新整理（花費 💰 '+cost+'）':'🔄 已重新整理（今天第一次免費）','#35d07f');snd(700,.1,.06,'sine');renderLUI();PRENDER.Shop()}
 function buyW(names,price,label){const fr=FREE();if(!fr&&PF.keys<price){toast('🔑 鑰匙不足');return}if(!fr)PF.keys-=price;for(const n of names)if(!PF.unl.includes(n))PF.unl.push(n);saveNow();toast('🛒 購買成功：'+label,'#35d07f');snd(880,.12,.06,'sine');renderLUI();PRENDER.Shop()}
 function buyCharm(id){const C=CHBYID[id];if(!C||PF.charms.includes(id))return;const fr=FREE();if(!fr&&PF.keys<C.p){toast('🔑 鑰匙不足');return}if(!fr)PF.keys-=C.p;PF.charms.push(id);saveNow();toast('🔮 購買成功：'+C.zh,'#35d07f');snd(880,.12,.06,'sine');renderLUI();PRENDER.Shop()}
+PRENDER.Emote=()=>{$('#emoteBody').innerHTML='<div class="note" style="margin-bottom:8px">在大廳使用效果最好；按 B 鍵或點這個面板可以快速打開 Emotes</div><div class="cards">'+EMOTES.map(em=>'<div class="cd"><div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:30px">🕺</div><h4>'+em.zh+'</h4><div class="sub2">'+em.en+'</div><button class="gbtn" style="width:100%;margin-top:6px" data-em="'+em.id+'">▶ 播放</button></div>').join('')+'</div>';for(const b of $('#emoteBody').querySelectorAll('[data-em]'))b.onclick=()=>{if(!P||!P.alive){toast('復活後才能使用表情');return}emotePlay(P,b.dataset.em)}};
 PRENDER.Shop=()=>{const T2=[['home','Home'],['crates','📦 Crates 箱子'],['bundles','Bundles'],['daily','Daily'],['keys','Keys'],['more','More']];$('#shopTabs').innerHTML=T2.map(([k,n])=>'<button data-st="'+k+'" class="'+(SHOPT==k?'on':'')+'">'+n+'</button>').join('');for(const b of $('#shopTabs').children)b.onclick=()=>shopTab(b.dataset.st);$('#skeys').insertAdjacentHTML('beforebegin',FREE()?'<span class="note" style="color:#35d07f;font-weight:900">　👑 管理員：全部免費</span>':'');
  $('#skeys').textContent='　🔑 '+PF.keys+'　🎫 '+PF.tickets+'　💰 '+(PF.gold|0);let h='';const soon=t=>'<div class="cd" style="opacity:.75"><h4>'+t+'</h4><div class="soon">Robux 付費項目 · 敬請期待</div></div>';
  const wcard=(w,price,old)=>'<div class="cd"><img src="'+icon(w)+'" style="width:100%;height:80px;object-fit:contain"><h4>'+w.n+'</h4><div class="sub2">'+CATN[wcat(w)]+'</div>'+(isUnl(w.n)?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bw="'+w.n+'" data-pr="'+price+'"'+((FREE()||PF.keys>=price)?'':' disabled')+'>'+(old?'<s style="opacity:.6">'+old+'</s> ':'')+'🔑 '+price+'</button>')+'</div>';
