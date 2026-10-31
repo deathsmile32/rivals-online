@@ -442,7 +442,6 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
   <button data-p="tasks"><b>📋</b><span data-i18n="lbTasks">Tasks</span><span class="badge" id="tbadge"></span></button>
   <button data-p="shop"><b>🛒</b><span data-i18n="lbShop">Shop</span></button>
   <button data-p="pass"><b>🎫</b><span data-i18n="lbPass">Pass</span><span class="badge" id="pbadge"></span></button>
-  <button data-p="lbrd"><b>🏆</b><span data-i18n="lbLbrd">排行榜</span></button>
   <button data-p="set"><b>⚙️</b><span data-i18n="lbSet">Settings</span></button>
   <button data-p="event"><b>🎃</b><span data-i18n="lbEvent">Event</span></button>
   <button data-p="upd" title="更新內容"><b>📢</b><span data-i18n="lbUpd">更新</span><span class="badge" id="ubadge"></span></button>
@@ -472,7 +471,6 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
  <div style="flex:1;display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:14px;min-height:0"><div><div style="font:900 16px system-ui;margin-bottom:6px">Your Party</div><div class="pslots" id="pslots"></div><button id="partyLeave" style="margin-top:8px;display:none">離開隊伍</button></div>
  <div style="display:flex;flex-direction:column;min-height:0"><div class="row"><input id="psearch" type="text" placeholder="🔍 搜尋玩家" style="flex:1;min-width:120px"></div><div class="ptabs" id="ptabs" style="margin-top:8px"><button data-t="all" class="on">All</button><button data-t="fr">Friends</button><button data-t="lb">Lobby</button></div><div class="pscroll" id="plistP"></div></div></div></div></div>
 <div id="pRanked" class="pnl"><div class="pbox"><div class="ptitle">🏆 Ranked 排位賽<span class="note" style="font-weight:700" id="rkNote"></span><button class="xbtn" data-x>✕</button></div><div class="ptabs" id="rkTabs"></div><div class="pscroll" id="rkBody"></div></div></div>
-<div id="pLbrd" class="pnl"><div class="pbox"><div class="ptitle">🏆 排行榜 Leaderboards<button class="xbtn" data-x>✕</button></div><div class="ptabs" id="lbrdTabs"></div><div class="pscroll" id="lbrdBody"></div></div></div>
 <div id="pGift" class="pnl"><div class="pbox" style="width:min(660px,96vw)"><div class="ptitle">🎁 送禮 Gift<span class="note" style="font-weight:700" id="gfkeys"></span><button class="xbtn" data-x>✕</button></div><div class="ptabs" id="gfTabs"></div><div class="pscroll" id="giftBody"></div></div></div>
 <div id="pProf" class="pnl"><div class="pcardx" id="profCard"></div><button class="pfx" data-x>✕</button></div>
 <div id="msel"><div id="mstop"><span class="lbl">🗺️ 選擇地圖 <small>Map Vote</small></span><div class="tbox"><svg viewBox="0 0 24 24"><path d="M5 2h14v2h-1.5c0 3.5-2.2 5.6-4 8 1.8 2.4 4 4.5 4 8H19v2H5v-2h1.5c0-3.5 2.2-5.6 4-8-1.8-2.4-4-4.5-4-8H5z"/></svg><span id="mstm">10.0</span></div><span class="md" id="msmd"></span></div><div id="mgrid"></div></div>
@@ -1761,14 +1759,15 @@ function strip(g,w,d,x,z,c,y){return B(g,w,.03,d,x,y==null?.02:y,z,c,{e:1})}
 function pumpkin(g,x,z,s){const a=[];const p=Sp(g,.5*s,x,.42*s,z,0xff7a1a);p.scale.y=.8;a.push(p);a.push(B(g,.08*s,.25*s,.08*s,x,.88*s,z,0x2f7a2a));const f=Sp(g,.12*s,x,.5*s,z-.42*s,0xffe060,1);f.scale.set(1.6,.6,.4);a.push(f);return a}
 function drawCounter(pd){const t=pd.tex,cx=t.userData.cx,W=256,H=128,txt=pd.cnt+'/'+pd.n;if(pd.last===txt)return;pd.last=txt;cx.clearRect(0,0,W,H);cx.fillStyle='rgba(8,10,24,.92)';rr(cx,4,4,W-8,H-8,18);cx.fill();cx.lineWidth=6;cx.strokeStyle=pd.cnt>=pd.n?'#35d07f':pd.s?'#b06bff':'#ffd23f';rr(cx,4,4,W-8,H-8,18);cx.stroke();
  cx.font='900 70px '+FNT;cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle=pd.cnt?'#fff':'#9aa3c8';cx.fillText(txt,W/2,H/2+4);t.needsUpdate=true}
-function drawStreakBoard(t){const cx=t.userData.cx,W=1024,H=576;cx.fillStyle='#0b0a1c';cx.fillRect(0,0,W,H);cx.strokeStyle='#9b4dff';cx.lineWidth=10;cx.strokeRect(5,5,W-10,H-10);
- cx.font='900 58px '+FNT;cx.textBaseline='middle';cx.fillStyle='#fff';cx.textAlign='left';cx.fillText('Win Streaks',40,62);cx.fillStyle='#ff3b3b';cx.beginPath();cx.arc(W-190,62,14,0,7);cx.fill();cx.fillText('LIVE',W-165,62);
- let us=[];try{accLoad();us=Object.values(ACCDB.users).map(u=>({n:u.name,b:(u.prof&&u.prof.st&&u.prof.st.best)||0,w:(u.prof&&u.prof.st&&u.prof.st.w)||0,lv:(u.prof&&u.prof.lv)||1}))}catch(_){}
- try{if(fbOn()){const have=new Set(us.map(u=>String(u.n).toLowerCase())),c=ccGet();for(const id in c){const u=c[id],p=u&&u.prof;if(!p||!u.name||have.has(u.name.toLowerCase()))continue;have.add(u.name.toLowerCase());us.push({n:u.name,b:(p.st&&p.st.best)||0,w:(p.st&&p.st.w)||0,lv:p.lv||1})}}}catch(_){}
- us.sort((a,b)=>b.b-a.b||b.w-a.w);cx.font='800 38px '+FNT;
- if(!us.length){cx.fillStyle='#9aa3c8';cx.fillText('尚無紀錄 — 贏下對戰來上榜！',40,200)}
- us.slice(0,7).forEach((u,i)=>{const y=140+i*60;cx.fillStyle=i==0?'#ffd23f':i==1?'#d6dbe8':i==2?'#e0975a':'#c9cfee';cx.fillText('#'+(i+1),40,y);cx.fillStyle='#fff';cx.fillText(u.n.slice(0,14),130,y);cx.fillStyle='#ff9a3c';cx.textAlign='right';cx.fillText('🔥 '+u.b+'   Lv '+u.lv,W-40,y);cx.textAlign='left'});
- cx.font='600 24px '+FNT;cx.fillStyle='#8088aa';cx.fillText('本機帳號排行（只計算這台裝置上的帳號）',40,H-30);t.needsUpdate=true}
+// 大廳牆上的 3 個全球排行榜大螢幕（排位 RP / 等級 / 連勝），資料來自 RKLB/LVLB/STLB（Firestore 全球排行，每 3 分鐘更新）
+var LBB={};
+function drawLbBoard(t,title,col,list,field,ic,unit){const cx=t.userData.cx,W=1024,H=576;cx.fillStyle='#0b0a1c';cx.fillRect(0,0,W,H);cx.strokeStyle=col;cx.lineWidth=10;cx.strokeRect(5,5,W-10,H-10);
+ cx.font='900 54px '+FNT;cx.textBaseline='middle';cx.fillStyle='#fff';cx.textAlign='left';cx.fillText(title,40,62);cx.fillStyle='#ff3b3b';cx.beginPath();cx.arc(W-190,62,14,0,7);cx.fill();cx.fillStyle='#fff';cx.fillText('LIVE',W-165,62);
+ cx.font='800 38px '+FNT;
+ if(!inCloud())cx.fillStyle='#9aa3c8',cx.fillText('🌍 需要登入雲端帳號',40,200);
+ else if(!list||!list.length){cx.fillStyle='#9aa3c8';cx.fillText('讀取中…',40,200)}
+ else list.slice(0,7).forEach((u,i)=>{const y=140+i*60;cx.fillStyle=i==0?'#ffd23f':i==1?'#d6dbe8':i==2?'#e0975a':'#c9cfee';cx.fillText('#'+(i+1),40,y);cx.fillStyle='#fff';cx.fillText(String(u.name).slice(0,14),130,y);cx.fillStyle=col;cx.textAlign='right';cx.fillText(ic+' '+u[field]+(unit?' '+unit:''),W-40,y);cx.textAlign='left'});
+ cx.font='600 24px '+FNT;cx.fillStyle='#8088aa';cx.fillText('全球排行榜 · 每 3 分鐘更新',40,H-30);t.needsUpdate=true}
 function mkLobbyDecor(g){const a=[];LB_PADS.length=0;LB_TARGETS.length=0;LB.spin=[];LB_CEIL=[];const add=m=>{a.push(m);return m};const PU=0xa64dff,YE=0xffd23f,GR=0x3dff7a,CY=0x4ff0ff;
  // ceilings (dark everywhere, white over the range)
  const ce=add(new T.Mesh(new T.PlaneGeometry(64,64),new T.MeshLambertMaterial({color:0x16131f})));ce.rotation.x=PI/2;ce.position.y=8.02;g.add(ce);LB_CEIL.push(ce);
@@ -1789,8 +1788,11 @@ function mkLobbyDecor(g){const a=[];LB_PADS.length=0;LB_TARGETS.length=0;LB.spin
  add(neonSign(g,'SHOOTING RANGE',4.45,5.4,18,6.4,1.3,-PI/2,'#4ff0ff','#ff5adc'));
  {const t=cvTex(512,64,(cx,W,H)=>{const C=['#ff4040','#ff9a3c','#ffd23f','#3dff7a','#4aa3ff','#9b4dff'];C.forEach((c,i)=>{cx.fillStyle=c;cx.fillRect(i*W/6,0,W/6,H)})});t.wrapS=T.RepeatWrapping;t.repeat.set(2,1);
   const mt2=new T.MeshBasicMaterial({map:t});add(plane(g,2,8,6.5,4,16.02,0,mt2));add(plane(g,2,8,6.5,4,19.98,PI,mt2));const f=add(new T.Mesh(new T.PlaneGeometry(2.2,4),mt2));f.rotation.x=-PI/2;f.rotation.z=PI/2;f.position.set(6.5,.02,18);g.add(f)}
- // Win Streaks LIVE board (west wall) + Mega Key Bundle ad (east wall)
- {const t=cvTex(1024,576,()=>{});drawStreakBoard(t);add(plane(g,8,4.5,-13.95,4,18,PI/2,new T.MeshBasicMaterial({map:t})));LB.board=t}
+ // 3 大排行榜螢幕 (west wall) + Mega Key Bundle ad (east wall)
+ {LBB.rp=cvTex(1024,576,()=>{});drawLbBoard(LBB.rp,'🏆 Ranked RP','#58b4ff',RKLB.list,'rp','🏆','RP');add(plane(g,6.2,4,-13.95,4,12,PI/2,new T.MeshBasicMaterial({map:LBB.rp})));
+  LBB.lvl=cvTex(1024,576,()=>{});drawLbBoard(LBB.lvl,'⭐ 等級排行','#ffd23f',LVLB.list,'lv','⭐','級');add(plane(g,6.2,4,-13.95,4,19.5,PI/2,new T.MeshBasicMaterial({map:LBB.lvl})));
+  LBB.streak=cvTex(1024,576,()=>{});drawLbBoard(LBB.streak,'🔥 連勝排行','#ff9a3c',STLB.list,'streak','🔥','連勝');add(plane(g,6.2,4,-13.95,4,27,PI/2,new T.MeshBasicMaterial({map:LBB.streak})));
+  rkLoad();lvlLoad();stLoad()}
  {const t=cvTex(768,448,(cx,W,H)=>{const gd=cx.createLinearGradient(0,0,W,H);gd.addColorStop(0,'#ffcf3a');gd.addColorStop(1,'#a8530a');cx.fillStyle=gd;cx.fillRect(0,0,W,H);cx.font='900 150px '+FNT;cx.textAlign='center';cx.textBaseline='middle';cx.fillText('🔑',W/2,H*.36);
   cx.fillStyle='#fff';cx.strokeStyle='#5a2a00';cx.lineWidth=10;cx.font='900 64px '+FNT;cx.strokeText('MEGA KEY BUNDLE',W/2,H*.72);cx.fillText('MEGA KEY BUNDLE',W/2,H*.72);cx.font='800 36px '+FNT;cx.fillText('Shop → Keys · 用 💰 金幣購買',W/2,H*.88)});
   add(plane(g,6,3.5,4.45,4.2,26,-PI/2,new T.MeshBasicMaterial({map:t})))}
@@ -2486,7 +2488,7 @@ function renderLUI(){if(!PF)return;const r=xpReq(PF.lv);$('#llvn').textContent=P
  dailyReset();$('#ltlist').innerHTML=DAILY.map(d=>{const v=Math.min(d.g,PF.daily[d.k]),dn=v>=d.g;return'<div class="tk'+(dn?' done':'')+'">'+d.n+' <b>'+v+'/'+d.g+'</b><span class="r">'+(PF.daily.cl.includes(d.k)?'✔':d.r+' 🔑')+'</span><div class="pb"><i style="width:'+v/d.g*100+'%"></i></div></div>'}).join('');
  {const ub=$('#ubadge');if(ub)ub.style.display=updUnclaimed()?'block':'none'}{const gb=$('#gfbadge'),n=inCloud()?GIFT.pend.length:0;if(gb){gb.style.display=n?'block':'none';gb.textContent=n}}const c=claimable();for(const[id,n]of[['#tbadge',c.t],['#pbadge',c.p]]){const b=$(id);b.style.display=n?'block':'none';b.textContent=n}renderPList()}
 function renderPList(){if(!PF)return;const rows=['<div>⭐ <span class="lvb">'+PF.lv+'</span>'+esc(accName())+(PF.st.streak>1?' 🔥'+PF.st.streak:'')+'</div>'];if(typeof LPX!=='undefined')for(const id in LPX){const q=LPX[id];rows.push('<div>👤 <span class="lvb">'+(q.lv||1)+'</span>'+esc(q.name)+(q.streak>1?' 🔥'+q.streak:'')+'</div>')}$('#lplist').innerHTML='<div style="color:#9fb0e0;font-size:11px">PLAYERS · '+rows.length+'</div>'+rows.join('')}
-$('#lbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p=='upd'){openUpd();return}if(b.dataset.p=='gift'){giftOpen();return}const m={pack:'Pack',wpn:'Wpn',tasks:'Tasks',shop:'Shop',pass:'Pass',set:'Set',event:'Event',lbrd:'Lbrd'}[b.dataset.p];if(m)openPanel(m)};
+$('#lbar').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p=='upd'){openUpd();return}if(b.dataset.p=='gift'){giftOpen();return}const m={pack:'Pack',wpn:'Wpn',tasks:'Tasks',shop:'Shop',pass:'Pass',set:'Set',event:'Event'}[b.dataset.p];if(m)openPanel(m)};
 $('#lonline').onclick=()=>{$('#onl').style.display='flex';if(!NET){$('#onA').style.display='block';$('#onB').style.display='none';onMsgUI('')}};
 $('#lkeyAdd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};$('#ltk').onclick=()=>openPanel('Pass');$('#lgd').onclick=()=>{openPanel('Shop');if(typeof shopTab=='function')shopTab('keys')};
 $('#toDuels').onclick=()=>{if(typeof toDuels=='function')toDuels()};
@@ -2525,7 +2527,7 @@ async function lbLoad(LB,coll,field,force){if(!inCloud()||LB.busy)return;if(!for
  try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:coll}],orderBy:[{field:{fieldPath:field},direction:'DESCENDING'}],limit:200}});const L=[];
   for(const x of Array.isArray(r)?r:[]){if(!x||!x.document)continue;const d=fsDec(x.document.fields);d.uid=String(x.document.name).split('/').pop();if(typeof d.name=='string'&&Number.isFinite(d[field]))L.push(d)}
   LB.list=L;LB.me=L.findIndex(d=>d.uid===CLOUD.uid);LB.t=Date.now()}catch(e){LB.err=e&&e.status===403?'排行榜還沒開放（管理員需要更新 Firebase 規則）':'讀取排行榜失敗，稍後再試'}
- finally{LB.busy=false;if(PANEL=='Ranked')renderRanked();else if(PANEL=='Lbrd')renderLbrd();renderLUI()}}
+ finally{LB.busy=false;if(PANEL=='Ranked')renderRanked();if(coll=='levels'&&LBB.lvl)drawLbBoard(LBB.lvl,'⭐ 等級排行','#ffd23f',LVLB.list,'lv','⭐','級');if(coll=='streaks'&&LBB.streak)drawLbBoard(LBB.streak,'🔥 連勝排行','#ff9a3c',STLB.list,'streak','🔥','連勝');renderLUI()}}
 function lvlLoad(force){return lbLoad(LVLB,'levels','lv',force)}
 function stLoad(force){return lbLoad(STLB,'streaks','streak',force)}
 function banBtn(uid,name){return isAdmin()&&uid!==CLOUD.uid?'<button class="banbtn" data-bu="'+uid+'" data-bn="'+encodeURIComponent(name||'')+'" title="管理員：永久封鎖此帳號">🚫</button>':''}
@@ -2597,7 +2599,7 @@ async function rkLoad(force){if(!inCloud()||RKLB.busy)return;if(!force&&Date.now
  try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:'ranked'}],orderBy:[{field:{fieldPath:'rp'},direction:'DESCENDING'}],limit:200}});const L=[];
   for(const x of Array.isArray(r)?r:[]){if(!x||!x.document)continue;const d=fsDec(x.document.fields);d.uid=String(x.document.name).split('/').pop();if(typeof d.name=='string'&&Number.isFinite(d.rp))L.push(d)}
   RKLB.list=L;RKLB.me=L.findIndex(d=>d.uid===CLOUD.uid);RKLB.t=Date.now()}catch(e){RKLB.err=e&&e.status===403?'排行榜還沒開放（管理員需要更新 Firebase 規則）':'讀取排行榜失敗，稍後再試'}
- finally{RKLB.busy=false;if(PANEL=='Ranked')renderRanked();else if(PANEL=='Lbrd')renderLbrd();renderLUI()}}
+ finally{RKLB.busy=false;if(PANEL=='Ranked')renderRanked();if(LBB.rp)drawLbBoard(LBB.rp,'🏆 Ranked RP','#58b4ff',RKLB.list,'rp','🏆','RP');renderLUI()}}
 function rkOpen(){if(!PF)return;rkAbandon();RKT='play';openPanel('Ranked');rkLoad()}
 function renderRanked(){if(!PF)return;const r=PF.rk,t=rkCur(),body=$('#rkBody');
  $('#rkTabs').innerHTML=[['play','🏆 排位'],['tiers','📜 段位表'],['lb','🌍 排位排行'],['lvl','🧑 等級排行'],['streak','🔥 連勝排行']].map(([k,n])=>'<button class="'+(RKT==k?'on':'')+'" data-rt="'+k+'">'+n+'</button>').join('');
@@ -2623,15 +2625,6 @@ function renderRanked(){if(!PF)return;const r=PF.rk,t=rkCur(),body=$('#rkBody');
  else h=lbHTML(STLB,'streak','🔥','連勝')
  body.innerHTML=h;for(const b of body.querySelectorAll('[data-rq]'))b.onclick=()=>rkQueue(b.dataset.rq)}
 PRENDER.Ranked=renderRanked;
-// ===== 大廳直接排行榜入口 Lobby-direct leaderboards (same data as the Ranked panel's tabs, reachable without queueing) =====
-var LBT='rp';
-function renderLbrd(){$('#lbrdTabs').innerHTML=[['rp','🏆 排位 RP'],['lvl','🧑 等級'],['streak','🔥 連勝']].map(([k,n])=>'<button class="'+(LBT==k?'on':'')+'" data-lt="'+k+'">'+n+'</button>').join('');
- for(const b of $('#lbrdTabs').children)b.onclick=()=>{LBT=b.dataset.lt;renderLbrd();if(LBT=='rp')rkLoad(true);if(LBT=='lvl')lvlLoad(true);if(LBT=='streak')stLoad(true)};
- let h='';if(LBT=='rp'){if(!inCloud())h='<div class="cd">🌍 全球排行榜需要登入雲端帳號</div>';else if(RKLB.err)h='<div class="cd">'+esc(RKLB.err)+'</div>';else if(RKLB.busy&&!RKLB.list.length)h='<div class="cd">讀取中…</div>';
-  else h='<div class="note">全球排名前 200（每 3 分鐘更新）·前 200 名而且達到 Nemesis 就是 Arch Nemesis</div>'+(RKLB.list.length?RKLB.list.map((d,k)=>{const x=rkTier(d.rp,1,k<200&&d.rp>=3600);return'<div style="display:flex;align-items:center;gap:10px;padding:5px 10px;border-radius:10px;margin:3px 0;background:'+(d.uid===CLOUD.uid?'#3b7bff44':'#ffffff0a')+'"><b style="width:38px;text-align:right">#'+(k+1)+'</b>'+rkImg(x,30)+'<span style="flex:1;font-weight:800">'+esc(d.name)+'</span><span style="color:'+x.col+';font-weight:900">'+d.rp+' RP</span>'+banBtn(d.uid,d.name)+'</div>'}).join(''):'<div class="cd">還沒有人打排位，搶第一名吧！</div>')}
- else if(LBT=='lvl')h=lbHTML(LVLB,'lv','⭐','級');else h=lbHTML(STLB,'streak','🔥','連勝');
- $('#lbrdBody').innerHTML=h}
-PRENDER.Lbrd=()=>{renderLbrd();if(LBT=='rp')rkLoad();if(LBT=='lvl')lvlLoad();if(LBT=='streak')stLoad()};
 // ---- Backpack ----
 var PKT='crates';
 PRENDER.Pack=()=>{const ct=crTot();let h='<div class="ptabs"><button data-pt="crates" class="'+(PKT=='crates'?'on':'')+'">📦 箱子 Crates'+(ct?' ×'+ct:'')+'</button><button data-pt="wpn" class="'+(PKT=='wpn'?'on':'')+'">🔫 武器 Weapons</button></div>';
