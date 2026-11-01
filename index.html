@@ -2185,7 +2185,7 @@ function hostLeave(cid){const id=NET.cid[cid];if(!id)return;delete NET.cid[cid];
  if(NET.inGame&&st!=='over'&&NET.roster&&NET.roster.some(r=>r.id===id)){NET.roster=NET.roster.filter(r=>r.id!==id);const a=NET.roster.filter(p=>p.team===0).length,b=NET.roster.length-a;if(!a||!b){const w=a?0:1;netSend({t:'ov',w,why:'對手離開了'});showOver(w,'對手離開了')}}}
 function hostStart(){const L=NET.lb,a=L.players.filter(p=>p.team===0).length;if(!a||a===L.players.length)return;const roster=L.players.map(p=>({id:p.id,name:p.name,team:p.team,lv:p.id===NET.me?(PF?PF.lv:1):(p.lv||1)}));onlineMapVote(roster,L.win)}
 // online: only the host sees the map vote (bots in the roster vote too); clients get the result in the 'st' message
-function onlineMapVote(roster,win){const me=roster.find(r=>r.id===NET.me);cfg.n=Math.max(...[0,1].map(t=>roster.filter(r=>r.team===t).length));showMapSel(roster.filter(r=>r.bot).map(r=>({id:r.id,name:r.name,team:me&&r.team===me.team?0:1})),k=>{if(!NET||!NET.host){enterLobby();return}NET.rdy=new Set();NET.wt=16;netSend({t:'st',roster,win,map:k});enterGame(roster,win,k)})}
+function onlineMapVote(roster,win,rk){const me=roster.find(r=>r.id===NET.me);cfg.n=Math.max(...[0,1].map(t=>roster.filter(r=>r.team===t).length));showMapSel(roster.filter(r=>r.bot).map(r=>({id:r.id,name:r.name,team:me&&r.team===me.team?0:1})),k=>{if(!NET||!NET.host){enterLobby();return}NET.rdy=new Set();NET.wt=16;netSend({t:'st',roster,win,map:k,rk:rk||0});enterGame(roster,win,k)})}
 function hostRound(){NET.round++;NET.rdy=new Set(NET.lb.players.map(p=>p.id));netSend({t:'rd',sc:score,r:NET.round});startRound()}
 // ---- client side ----
 function clientMsg(m){if(!m||typeof m!=='object')return;
@@ -2193,7 +2193,7 @@ function clientMsg(m){if(!m||typeof m!=='object')return;
  if(m.t==='full'){onMsgUI('這個房間正在對戰中，請等這場打完再加入');NET.tr.close();NET=null;return}
  if(m.t==='lb'){NET.lb=m.lb;if($('#onB').style.display!=='block'&&!NET.inGame)roomUI();else renderLobby();if(PANEL=='Party')renderParty();return}
  if(m.t==='pinv'){showInvite(String(m.from||'房主').slice(0,14));return}
- if(m.t==='st'){enterGame(m.roster,m.win,m.map);return}
+ if(m.t==='st'){if(m.rk){cfg.ranked=m.rk;const rp=PF&&PF.rk?PF.rk.rp:0;cfg.d=rp<1200?0:rp<2400?1:2}else cfg.ranked=0;enterGame(m.roster,m.win,m.map);return}
  if(m.t==='rd'){if(!NET.inGame)return;NET.round=m.r;score=m.sc.slice();if(st=='lo'||NET.midLo){NET.midLo=0;ready()}startRound();return}
  handleGame(m)}
 function hostGone(){if(!NET)return;const wasGame=NET.inGame&&st!=='over'&&P;let hostTeam=null;if(wasGame){const hp=E.find(e=>e.nid&&e.nid[0]==='h');hostTeam=hp?hp.team:null}
@@ -2748,7 +2748,7 @@ function lbHTML(LB,field,ic,unit){if(!inCloud())return'<div class="cd">🌍 排�
 // Loss: −8..−20 (more the higher you are), ×0.5 for 1v2, ×1.25 for 2v1; the first ranked match of each day never loses RP.
 // Leaving a ranked match early (pend still set) counts as a normal loss. Cloud accounts publish {name,rp} to ranked/{uid}
 // for the global top-200 board; Arch Nemesis = Nemesis (3600+) AND inside that top 200.
-const RK_LV=50,RK_TIERS=[['Bronze','青銅','#cd7f3e'],['Silver','白銀','#c8d2de'],['Gold','黃金','#f2c23c'],['Platinum','白金','#4fe0c0'],['Diamond','鑽石','#58b4ff'],['Onyx','黑曜','#a678ff']];
+const RK_LV=1,RK_TIERS=[['Bronze','青銅','#cd7f3e'],['Silver','白銀','#c8d2de'],['Gold','黃金','#f2c23c'],['Platinum','白金','#4fe0c0'],['Diamond','鑽石','#58b4ff'],['Onyx','黑曜','#a678ff']];
 const RK_FMT={'1v1':{n:1,ne:1,w:1,l:1,zh:'1v1 單挑',e:'⚔️'},'2v2':{n:2,ne:2,w:1,l:1,zh:'2v2 雙人',e:'👥'},'1v2':{n:1,ne:2,w:1.5,l:.5,zh:'1v2 以寡敵眾',e:'🔥'},'2v1':{n:2,ne:1,w:.6,l:1.25,zh:'2v1 以多打少',e:'🛡️'}};
 var RKLB={t:0,list:[],busy:false,err:'',me:-1},RKT='play';
 function rkP(){return PF.rk}
@@ -2791,6 +2791,10 @@ function rkQueue(f){if(!PF)return;const F=RK_FMT[f];if(!F)return;if(NET){toast('
  if(!cfg.ranked){cfg.d0=cfg.d;cfg.m0=cfg.map;cfg.mp0=cfg.mapPick}const rp=PF.rk.rp;cfg.ranked=f;cfg.n=F.n;cfg.ne=F.ne;cfg.d=rp<1200?0:rp<2400?1:2;cfg.mapPick=0;cfg.map=-1;
  PF.rk.pend={f,t:Date.now()};saveNow();closePanels();goMatch()}
 function rkLeave(){if(cfg.ranked){cfg.ranked=0;cfg.ne=0;if(cfg.d0!=null){cfg.d=cfg.d0;cfg.map=cfg.m0;cfg.mapPick=cfg.mp0}cfg.d0=null}}
+function rkQueueOnline(){if(!PF||!NET||!NET.host)return;if(rkLocked()){toast('🔒 排位賽 Lv '+RK_LV+' 解鎖');return}
+ const party=partyIds().filter(id=>id===NET.me||LPX[id]);if(party.length>2){toast('⚠️ 隊伍最多 2 人才能打排位 2v2');return}
+ const rp=PF.rk.rp;cfg.ranked='2v2';cfg.d=rp<1200?0:rp<2400?1:2;PF.rk.pend={f:'2v2',t:Date.now()};saveNow();closePanels();
+ startOnlineMatch(2,party,[],'2v2')}
 function rkFinish(won){if(!cfg.ranked||!PF)return null;const f=cfg.ranked;return rkApply(won,f,rkFirst())}
 function rkResHTML(a){if(!a)return'';
  if(a.placement){const r=PF.rk;
@@ -2822,7 +2826,9 @@ function renderRanked(){if(!PF)return;const r=PF.rk,t=rkCur(),body=$('#rkBody');
    (nt?'<div class="xpb" style="margin-top:8px"><i style="width:'+pc+'%;background:'+t.col+'"></i></div><div class="note">距離 '+nt.en+' 還差 '+(nt.lo-r.rp)+' RP</div>':'')+
    '<div class="note">排位 '+r.m+' 場 · 勝 '+r.w+' 場 · 勝率 '+Math.round(r.w/r.m*100)+'% · 最高 '+r.best+' RP'+(inCloud()&&RKLB.me>=0?' · 全球第 '+(RKLB.me+1)+' 名':'')+'</div></div></div>';
   if(rkLocked())h+='<div class="cd" style="text-align:center;font-weight:900;font-size:17px">🔒 排位賽在 Lv '+RK_LV+' 解鎖（你現在 Lv '+PF.lv+'）</div>';
-  else if(NET)h+='<div class="cd" style="text-align:center;font-weight:800">線上房間中不能打排位，先離開房間</div>';
+  else if(NET){if(!NET.host)h+='<div class="cd" style="text-align:center;font-weight:800">線上房間中只有房主能開排位 2v2，其他模式請先離開房間</div>';
+   else{const party=partyIds().filter(id=>id===NET.me||LPX[id]);h+=party.length>2?'<div class="cd" style="text-align:center;font-weight:800">隊伍超過 2 人，無法打排位 2v2</div>':'<div class="cd" style="text-align:center"><h4>⚔️ 排位 2v2</h4><div class="sub2">你這隊 '+party.length+' 人'+(party.length<2?'（缺 1 位，自動補機器人）':'（跟隊友一起）')+' · 對手 2 個機器人</div><button class="gbtn" id="rkOnlineQ">開始排位 2v2</button></div><div class="note" style="margin-top:6px">其他排位模式（1v1 / 1v2 / 2v1）仍然只能單機打，先離開房間。</div>';
+   setTimeout(()=>{const b=$('#rkOnlineQ');if(b)b.onclick=rkQueueOnline},0)}}
   else{const first=rkFirst();h+=(first?'<div class="note" style="color:#ffd23f;font-weight:800;margin-bottom:6px">🛡️ 今天第一場排位：輸了不扣分！</div>':'')+'<div class="cards">'+Object.keys(RK_FMT).map(f=>{const F=RK_FMT[f],w=rkDelta(r.rp,f,true,first),l=rkDelta(r.rp,f,false,first);
     return'<div class="cd" style="text-align:center"><h4>'+F.e+' '+F.zh+'</h4><div class="sub2">你這隊 '+F.n+' 人 · 對手 '+F.ne+' 個機器人</div><div style="margin:8px 0;font-weight:900"><span style="color:#35d07f">贏 +'+w+'</span>　<span style="color:'+(l?'#ff6a6a':'#ffd23f')+'">輸 '+(l||'±0')+'</span></div><button class="gbtn" data-rq="'+f+'">開始排位</button></div>'}).join('')+'</div>'+
    '<div class="note" style="margin-top:6px">對手是機器人（之後會開放真人排位）。段位越高，機器人越強、贏的分越少、輸的分越多。中途離開算輸。</div>'}}
@@ -3273,9 +3279,9 @@ function netPadCheck(pad,occ,dt){const n=pad.n,s=pad.s;
  const key=[...mine].sort().join()+'|'+opp.slice().sort().join();if(LB.padKey!==key){LB.padKey=key;LB.padT=3}LB.padT-=dt;
  lobbyPrompt('⚔️ '+n+'v'+n+' 即將開始… '+Math.max(1,Math.ceil(LB.padT))+'<br><span style="font-size:14px">空位由機器人補上</span>');
  if(LB.padT<=0){LB.pad=null;LB.padKey='';lobbyPrompt('');startOnlineMatch(n,[...mine],opp)}}
-function startOnlineMatch(n,A,B){if(!NET||!NET.host)return;const pool=NM.slice().sort(()=>rnd()-.5),pl=id=>NET.lb.players.find(p=>p.id===id)||{name:'Player',lv:1},roster=[];let bi=0;
+function startOnlineMatch(n,A,B,rk){if(!NET||!NET.host)return;const pool=NM.slice().sort(()=>rnd()-.5),pl=id=>NET.lb.players.find(p=>p.id===id)||{name:'Player',lv:1},roster=[];let bi=0;
  for(const[t,ids]of[[0,A],[1,B]]){const hs=ids.slice(0,n);for(const id of hs){const p=pl(id);roster.push({id,name:p.name,team:t,lv:id===NET.me?(PF?PF.lv:1):(p.lv||1)})}for(let k=hs.length;k<n;k++)roster.push({id:'b'+(bi++)+rid(3),name:pool.pop(),team:t,lv:1+Math.floor(rnd()*60),bot:1})}
- onlineMapVote(roster,NET.lb.win||5)}
+ onlineMapVote(roster,NET.lb.win||5,rk)}
 function onlinePlay(n){if(!NET.host){toast('👑 線上房間由房主（隊長）開始對戰，請等房主按 Play 或站上配對墊');return}const party=partyIds().filter(id=>id===NET.me||LPX[id]);if(party.length>n){toast('⚠️ 隊伍有 '+party.length+' 人，請選 '+party.length+'v'+party.length+' 以上');return}startOnlineMatch(n,party,[])}
 function hostInvite(id){for(const c in NET.cid)if(NET.cid[c]===id)NET.tr.to(c,{t:'pinv',from:NET.name})}
 function showInvite(from){let d=$('#pinv');if(!d){d=document.createElement('div');d.id='pinv';d.style.cssText='position:fixed;left:50%;top:96px;transform:translateX(-50%);z-index:60;background:#1c2036f5;border:2px solid #4aa3ff;border-radius:12px;padding:12px 18px;color:#fff;font:800 15px system-ui;text-align:center;box-shadow:0 8px 30px #000a';document.body.appendChild(d)}
