@@ -462,6 +462,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
  <button class="gbtn wact" id="codeGo">Redeem 兌換</button><div id="codeMsg" style="min-height:20px;font-weight:800"></div></div></div>
 <div id="pPlay" class="pnl"><div class="pbox"><div class="ptitle">▶ Play<span class="note" id="playNote" style="font-weight:700"></span><button class="xbtn" data-x>✕</button></div>
  <div class="pscroll"><div class="cards" id="playCards"></div>
+ <div id="ltmBox" style="margin:10px 0"></div>
  <h3>難度（機器人）</h3><div class="row" id="pdifs"></div><h3>地圖</h3><div class="row" id="pmaps"></div></div></div></div>
 <div id="pPack" class="pnl"><div class="pbox"><div class="ptitle">🎒 <span data-i18n="ptPack">Backpack</span><button class="xbtn" data-x>✕</button></div><div class="pscroll" id="packBody"></div></div></div>
 <div id="pTasks" class="pnl"><div class="pbox"><div class="ptitle">📋 <span data-i18n="ptTasks">Tasks</span><button class="xbtn" data-x>✕</button></div><div class="pscroll" id="tasksBody"></div></div></div>
@@ -969,6 +970,10 @@ const CRATES=[
  {id:'xbox',name:'🎄 聖誕箱',en:'Xmas Crate',cur:'keys',price:20,kind:'wrap',pool:()=>WRAPS.filter(x=>x.id=='xm'||x.id=='xg').map(x=>x.id)}];
 const CRBYID=Object.fromEntries(CRATES.map(c=>[c.id,c]));
 function dealCrate(){const pool=CRATES.filter(c=>c.id!=='xbox');if(!pool.length)return null;const seed=today().split('-').reduce((a,c)=>a+ +c,0);return pool[seed%pool.length]}
+const LTM=[{id:'bunny',zh:'兔子狙擊戰',e:'🐰',d:'全員低重力，限定武器：狙擊槍／雙管霰彈 or 訊號彈／武士刀——看誰跳得高、狙得準！'},{id:'rng',zh:'RIVALS RNG',e:'🎲',d:'空手上場，按 B 骰武器！骰到什麼就打什麼，刺激的隨機大亂鬥！'},{id:'jug',zh:'機械戰神 1v7',e:'💪',d:'你是血量 3000、手持 Minigun 的機械戰神，單挑 7 名敵人，撐到最後就贏！'}];const LTMBYID={};LTM.forEach(m=>LTMBYID[m.id]=m);
+function ltmToday(){const seed=today().split('-').reduce((a,c)=>a+ +c,0);return LTM[seed%LTM.length]}
+function playLTM(){closePanels();rkLeave();if(NET){toast('線上房間暫不支援限時模式');return}const m=ltmToday();cfg.ltm=m.id;if(m.id=='jug'){cfg.n=1;cfg.ne=7;cfg.win=1}else{cfg.ne=0;cfg.win=5}goMatch()}
+function rngRoll(e){if(!e||!e.alive||cfg.ltm!='rng')return;const k=Math.floor(rnd()*4);e.L[k]=pick(GP[k][1]);e.S=mkS(e.L);e.cur=k;if(e.isP){setVM();if(e.mesh&&typeof setHold=='function')setHold(e);feed('🎲 骰到了 '+e.L[k].n+'！')}else if(typeof setHold=='function')setHold(e)}
 function dealPrice(C){return Math.max(1,Math.round(C.price*.7))}
 function crPrice(C){return(dealCrate()&&dealCrate().id===C.id)?dealPrice(C):C.price}
 
@@ -1368,6 +1373,9 @@ function clearWorld(){finClear();for(const q of Pr)sc.remove(q.m);Pr=[];for(cons
 function respawn(){clearWorld();const n=cfg.n;for(const e of E){Object.assign(e,{x:(e.i-(n-1)/2)*4.5,z:e.team?-24:24,y:0,vy:0,vx:0,vz:0,yaw:e.team?Math.PI:0,pitch:0,hp:150,alive:true,cd:.5,sl:false,sv:0,scd:0,djd:0,pin:null,hl:0,dfl:false,shd:false,zoom:false,kick:0,
  fin:null,finDone:0,burn:0,bacc:0,flash:0,grap:null,shp:500,hr:25,cr:false,slT:0,djs:new Set(),dash:null,lag:0,qmT:0,slow:0,frz:0,frost:0,paint:0,buff:0,ptg:false,pal:false,lastIn:null,seen:0,tt:0,sw:0,sd:1,wn:0,wd:0,tg:null,chg:.7,gcd:3+rnd()*4,age:0,ao:V(),ad:V(0,0,-1),er:0,wnm:'',killer:null});
  if(!e.isP&&!e.net)e.L=botLo(e);botReset(e);
+ if(cfg.ltm=='bunny'){const SN=PRI.find(w=>w.n=='Sniper'),KT=MEL.find(w=>w.n=='Katana'),SC=SEC.filter(w=>w.n=='Shorty'||w.n=='Flare Gun');e.L=[SN,pick(SC),KT,e.L[3]||pick(UTL)]}
+ else if(cfg.ltm=='rng'){const F=MEL.find(w=>w.n=='Fists');e.L=[F,F,F,F]}
+ else if(cfg.ltm=='jug'){e.jug=e.team==0?1:0;if(e.jug){e.hp=3000;const JW=PRI.find(w=>w.n=='Minigun');e.L=[JW,e.L[1],e.L[2],e.L[3]]}}
  e.S=e.L.map(w=>({a:w.mag||0,c:w.lim||0,rl:0,h:0,ov:0,q:0,qt:0,qs:0,sp:0,ch:0,acd:0,out:0,lf:0,rc:0,r:w.res||0}));e.cur=0;
  e.tx=e.x;e.ty=e.y;e.tz=e.z;e.tyaw=e.yaw;e.mesh.position.set(e.x,0,e.z);e.mesh.rotation.set(0,e.yaw,0);e.mesh.scale.set(1,1,1);e.mesh.visible=!e.isP;if(!e.isP)setHold(e)}
 P.eh=1.75;setVM();sc.updateMatrixWorld(true);
@@ -1520,7 +1528,7 @@ function swE(e,i){if(i===e.cur||!e.alive||e.frz>0)return;const o=e.S[e.cur];o.rl
 function skDrawFx(e,w){if(!e.isP||!w)return;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.drawFx)try{S.drawFx(muz(e))}catch(err){console.error(err)}}
 function spdMul(e){const w=e.L[e.cur];return(e.frz>0?0:1)*(e.slow>0?.5:1)*(w.n=='Chainsaw'&&e.altH?1.85:w.mv||(w.k=='M'?1.15:1))*(e.buff>0?1.25:1)*(e.shd?.8:1)}
 function phys(e,dt,wx,wz){move(e,wx+e.vx*dt,wz+e.vz*dt);const og=onGround(e),fr=og&&e.vy<=0?Math.max(0,1-9*dt):Math.max(0,1-(e.isP?.06:.4)*dt);e.vx*=fr;e.vz*=fr;
-e.vy-=22*dt;e.y+=e.vy*dt;const g=ground(e.x,e.z,e.y);if(e.y<=g&&e.vy<=0){e.y=g;e.vy=0;e.djd=0;if(e.djs)e.djs.clear()}}
+e.vy-=(cfg.ltm=='bunny'?8:22)*dt;e.y+=e.vy*dt;const g=ground(e.x,e.z,e.y);if(e.y<=g&&e.vy<=0){e.y=g;e.vy=0;e.djd=0;if(e.djs)e.djs.clear()}}
 function stat(e,dt){if(!e.alive)return;e.age+=dt;
 if(e.net){if(e.pin!=null){e.pin-=dt;if(e.pin<=0){e.pin=null;boom(V(e.x,e.y+1,e.z),{r:16,dmg:75},e,'Grenade')}}e.mesh.userData.ice.visible=e.frz>0;e.mesh.userData.mat.emissive.setHex(e.frz>0?0x2a7fff:e.burn>0?0x5a1a00:0);return}
 for(let i=0;i<4;i++){const w=e.L[i],s=e.S[i];if(s.acd>0)s.acd-=dt;if(s.out>0)s.out-=dt;if(w.cdr&&s.c<w.lim){s.rc+=dt;if(s.rc>=w.cdr){s.rc=0;s.c++}}if(w.regen&&e.age-(s.lf||0)>1)s.a=Math.min(w.mag,s.a+w.regen*dt);if(w.heat){s.h=Math.max(0,s.h-w.cool*dt);if(s.ov&&s.h<=.25)s.ov=0}}
@@ -1788,7 +1796,7 @@ function paintFx(){const p=$('#paint');p.innerHTML='';for(let i=0;i<6;i++){const
 // ===== round flow =====
 function endRound(w,sc){st='end';tm=2.5;rndW=w;if(sc)score=sc.slice();else score[w]++;if(NET&&NET.host)netSend({t:'re',w,sc:score,r:NET.round});const won=w===P.team,rb=$('#rb');rb.className=won?'won':'lost';rb.innerHTML='ROUND<b>'+(won?'WON':'LOST')+'</b>';rb.style.display='block'}
 function showOver(w,why){let aw=null;if(P&&w>=0){SESSTATS.matches++;if(w===P.team)SESSTATS.wins++;else SESSTATS.losses++;SESSTATS.kills+=P.k||0;aw=awardMatch(w===P.team);aw&&(aw.rk=rkFinish(w===P.team))}else if(cfg.ranked&&PF&&PF.rk.pend){PF.rk.pend=null;saveNow()}$('#orew').innerHTML=rewardHTML(aw)+rkResHTML(aw&&aw.rk);st='over';document.exitPointerLock&&document.exitPointerLock();$('#pause').style.display='none';$('#lo').style.display='none';$('#ot').textContent=w<0||!P?(why||'對戰結束'):(w===P.team?'🏆 你的隊伍獲勝！':'💀 敵方獲勝')+(why?'（'+why+'）':'');$('#again').textContent=NET?'回到大廳':'再來一場';$('#tomenu').textContent=NET?'離開房間':'回到大廳';$('#over').style.display='flex';if(NET)NET.inGame=false}
-function begin(){respawn();st='count';tm=3;rt=90;msg('');sp=0;$('#rb').style.display='none'}
+function begin(){respawn();st='count';tm=3;rt=90;msg('');sp=0;$('#rb').style.display='none';if(cfg.ltm=='rng')feed('🎲 空手上場！按 B 骰武器！');else if(cfg.ltm=='jug')feed('💪 你是機械戰神！血量 3000，殲滅所有敵人！');else if(cfg.ltm=='bunny')feed('🐰 低重力生效中！只能用限定武器～')}
 function openLo(){if(NET&&st=='count'){NET.midLo=1;mL=mR=false;showLo();$('#lo').style.display='flex';$('#lot').textContent='倒數結束前選好，按「準備完成」';document.exitPointerLock&&document.exitPointerLock();return}E.forEach(e=>e.mesh.visible=false);st='lo';tm=10;mL=mR=false;if(P)P.zoom=false;showLo();document.exitPointerLock&&document.exitPointerLock()}
 function showLo(){RAON=false;$('#rwrow').style.display='none';$('#lo').style.display='flex';$('#rdy').textContent='準備完成';$('#lonl').style.color='#ffc93c';GP.forEach(([id,arr],k)=>{const box=$('#'+id);box.innerHTML='';if(LS[k]>=0&&!isUnl(arr[LS[k]].n))LS[k]=0;
  const add=(w,i)=>{const b=document.createElement('button');b.dataset.i=i;b.innerHTML=(w.rq?'<span class="rq">?</span>':'<img src="'+icon(w)+'">')+w.n+'<small>'+w.d+'</small>';b.className=i==LS[k]?'on':'';b.onclick=()=>{LS[k]=i;[...box.children].forEach(c=>c.className=+c.dataset.i===i?'on':'')};box.appendChild(b)};
@@ -1810,7 +1818,7 @@ function mapThumb(k){if(MTHUMB[k]!=null)return MTHUMB[k];const M=MAPDATA[k];let 
  g.traverse(o=>{if(o.geometry)o.geometry.dispose()});f.material.dispose()}catch(err){try{IR.setSize(160,96)}catch(_){}url=''}return MTHUMB[k]=url}
 function showMapSel(voters,cb){MS={tm:10,votes:{},bots:voters.map(v=>Object.assign({at:1+rnd()*6.5},v)),cb,done:0,pick:null};if(cfg.mapPick)MS.votes.me=cfg.map<0?'rand':MAPLIST[cfg.map]||'rand';
  st='msel';paused=false;mL=mR=false;keys={};RAON=false;document.exitPointerLock&&document.exitPointerLock();for(const id of['#menu','#over','#lo','#pause','#onl'])$(id).style.display='none';$('#hud').style.display='none';closePanels();lobbyPrompt('');
- $('#msmd').textContent=(cfg.ranked?'🏆 排位 · ':'')+(cfg.n||1)+'v'+(cfg.ne||cfg.n||1)+' · '+['簡單','普通','困難'][cfg.d||0]+(NET?' · 線上（房主決定）':'');
+ $('#msmd').textContent=(cfg.ltm?LTMBYID[cfg.ltm].e+' '+LTMBYID[cfg.ltm].zh+' · ':'')+(cfg.ranked?'🏆 排位 · ':'')+(cfg.n||1)+'v'+(cfg.ne||cfg.n||1)+' · '+['簡單','普通','困難'][cfg.d||0]+(NET?' · 線上（房主決定）':'');
  const gd=$('#mgrid');gd.innerHTML=MSORD.map(k=>k=='rand'?'<div class="mcd rnd" data-k="rand"><div class="msh">'+SHUF+'</div><div class="mvb"></div><div class="mnm">Random<span></span></div></div>':(()=>{const u=mapThumb(k),M=MAPDATA[k],hx=c=>'#'+(c>>>0).toString(16).padStart(6,'0');return'<div class="mcd" data-k="'+k+'" style="background:linear-gradient(160deg,'+hx(M.bg||0x9fd0ff)+','+hx(M.wallColor||Wh)+' 45%,'+hx(M.floor)+')">'+(u?'<img src="'+u+'" alt="">':'')+'<div class="mvb"></div><div class="mnm">'+MAPNAME[k]+'<span></span></div></div>'})()).join('');
  for(const c of gd.children){const go=e=>{e.preventDefault();if(!MS||MS.done)return;MS.votes.me=c.dataset.k;if(MS.tm>3)MS.tm=3;snd(700,.06,.04);updMapSel()};c.addEventListener('click',go);c.addEventListener('touchstart',go,{passive:false})}
  $('#mstm').textContent='10.0';$('#msel').style.display='flex';updMapSel()}
@@ -1965,7 +1973,7 @@ function mkLobbyPlayer(){const pk=(a,k)=>{const w=a[LS[k]<0?0:LS[k]];return w&&i
  e.L=[pk(PRI,0),pk(SEC,1),pk(MEL,2),pk(UTL,3)];e.S=mkS(e.L);e.cur=0;e.eh=1.75;e.tx=e.x;e.ty=e.y;e.tz=e.z;e.tyaw=e.yaw;
  E=[e];P=e;wlFill(e.L);
  setVM();setHold(e);sc.updateMatrixWorld(true)}
-function enterLobby(){if(cfg.ranked){rkAbandon();rkLeave()}for(const e of E)if(e&&e.mesh)sc.remove(e.mesh);E=[];clearWorldSafe();curMap='lobby';buildMap('lobby');mkLobbyPlayer();LB.inRange=false;LB.pad=null;lobbyPrompt('');
+function enterLobby(){if(cfg.ranked){rkAbandon();rkLeave()}if(cfg.ltm){cfg.ltm=0;cfg.ne=0;cfg.win=5}for(const e of E)if(e&&e.mesh)sc.remove(e.mesh);E=[];clearWorldSafe();curMap='lobby';buildMap('lobby');mkLobbyPlayer();LB.inRange=false;LB.pad=null;lobbyPrompt('');
  st='lobby';tm=0;rt=0;paused=false;if(typeof giftPoll=='function')setTimeout(()=>giftPoll(1),700);if(NET)NET.inGame=false;document.exitPointerLock&&document.exitPointerLock();if(typeof LBC!=='undefined'){LBC.yaw=0;LBC.pitch=-.25}
  $('#menu').style.display='none';$('#onl').style.display='none';$('#over').style.display='none';$('#pause').style.display='none';$('#lo').style.display='none';$('#rb').style.display='none';
  $('#hud').style.display='block';$('#lobbyMenuBtn').style.display='none';msg('');wasNearShop=false;closePanels();renderLUI();if(typeof onRangeChange=='function')onRangeChange(false)}
@@ -1977,7 +1985,7 @@ if(st=='count'){tm-=dt;msg(Math.ceil(tm));if(tm<=0){if(NET&&NET.midLo)ready();st
 else if(st=='play'){rt-=dt;if(!NET||NET.host){const a=[0,0];if(NET){E.forEach(x=>x.alive&&a[x.team]++);if(!a[0]||!a[1])endRound(a[0]?0:1)}if(st=='play'&&rt<=0){const h=[0,0];E.forEach(e=>e.alive&&(h[e.team]+=e.hp));endRound(h[0]>=h[1]?0:1)}}}
 else if(st=='end'){tm-=dt;if(tm<=0&&(!NET||NET.host)){const W=cfg.win||5;if(score[0]>=W||score[1]>=W){const w=score[0]>=W?0:1;if(NET)netSend({t:'ov',w});showOver(w)}else if(NET)hostRound();else begin()}}
 if(st=='over'||st=='lo')return;
-for(const e of E)stat(e,dt);for(const e of E)if(e.net)netUpd(e,dt);else if(!e.isP||(AUTOP&&st!='lobby'))bot(e,dt);pupd(dt);
+for(const e of E)stat(e,dt);for(const e of E)if(e.net)netUpd(e,dt);else if(!e.isP||(AUTOP&&st!='lobby'))bot(e,dt);if(cfg.ltm=='rng'&&st=='play')for(const e of E)if(e.alive&&!e.isP&&!e.net&&rnd()<dt*.15)rngRoll(e);pupd(dt);
 if(st=='play'||st=='end'||st=='lobby'){updPr(dt);updVX(dt);updJP(dt);updPortals();updMN(dt);updFA(dt);updSM(dt);updTW(dt)}
 const sp0=P.alive?null:spec();for(const e of E){e.mesh.position.set(e.x,e.y,e.z);const tpv=e.isP&&hubTP();if(e.alive){e.mesh.rotation.set(0,tpv?e.myaw:e.yaw,0);e.mesh.scale.y=e.sl?.55:e.cr?.72:1}else{e.mesh.rotation.set(PI/2,e.yaw,0);e.mesh.scale.y=1}e.mesh.visible=(e.isP?tpv:true)&&e!==sp0&&!e.fin}
 if(P&&P.hold)P.hold.visible=!(st=='lobby'&&!LB.inRange)}
@@ -2040,7 +2048,7 @@ const x=s*Math.cos(P.yaw)-f*Math.sin(P.yaw),z=-s*Math.sin(P.yaw)-f*Math.cos(P.ya
 function dblJump(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||P.sl)return;let w=P.L[P.cur];if(P.qmT>0&&P.L[2].dj&&!P.djs.has(P.L[2].n))w=P.L[2];if(!w.dj||onGround(P)||P.djs.has(w.n))return;P.djs.add(w.n);P.vy=7.5;puff(V(P.x,P.y,P.z),V(0,-1,0),0xffffff,.3,1);snd(600,.08,.04)}
 function qmelee(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qm||0)>performance.now()||P.cur==2)return;const w=P.L[2];if(w.can&&!w.can(P,P.S[2]))return;P.qm=performance.now()+500;P.wnm=w.n;if(NET)netFire('m',2);w.fire(P,w,P.S[2],{});P.kick=1;P.qmT=.4;setVM(w);P.eq=0;P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk='n';snd(800,.09,.06);skDrawFx(P,w)}
 function qutil(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qu||0)>performance.now())return;const w=P.L[3],s=P.S[3];if(w.can?!w.can(P,s):(w.lim&&s.c<=0))return;if(w.lim&&!w.selfLim)s.c--;P.qu=performance.now()+400;P.wnm=w.n;if(NET)netFire('u',3);w.fire(P,w,s,{});if(w.f)snd(w.f,.08,.05)}
-addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyM'&&st=='lobby'&&LB.inRange&&!e.repeat)leaveRange();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyV'&&!e.repeat&&P.alive){P.insp=2.4;skInspFx(P)}if(e.code=='KeyT'&&!e.repeat&&P.alive&&!PANEL)openPanel('Emote');const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！');if(e.code=='KeyQ'&&!e.repeat&&st=='lobby'&&LB.inRange&&LB.trashPrompt&&!RAON)showRangeLo()});
+addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyM'&&st=='lobby'&&LB.inRange&&!e.repeat)leaveRange();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat)qmelee();if(e.code=='KeyG'&&!e.repeat)qutil();if(e.code=='KeyB'&&!e.repeat&&cfg.ltm=='rng')rngRoll(P);if(e.code=='KeyV'&&!e.repeat&&P.alive){P.insp=2.4;skInspFx(P)}if(e.code=='KeyT'&&!e.repeat&&P.alive&&!PANEL)openPanel('Emote');const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！');if(e.code=='KeyQ'&&!e.repeat&&st=='lobby'&&LB.inRange&&LB.trashPrompt&&!RAON)showRangeLo()});
 addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('button,input,.pnl,#lui,.ov,#leaveRange'))return;if(PANEL)return;if(!MOBILE&&!paused&&!chatOn&&document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end'||(st=='lobby'&&lobbyFP())))lock()});
 addEventListener('keyup',e=>keys[e.code]=0);
 addEventListener('wheel',e=>{if(PANEL)return;if(hubTP()){LBC.dist=Math.max(3,Math.min(16,LBC.dist+(e.deltaY>0?.9:-.9)));return}if(live())swE(P,(P.cur+(e.deltaY>0?1:3))%4)});
@@ -2702,6 +2710,8 @@ function giveKeys(n,why){PF.keys+=n;saveNow();toast('🔑 +'+n+' 鑰匙'+(why?' 
 function renderPlay(){const pc=$('#playCards');pc.innerHTML='';const cols=['#2f9e4f','#2a6fe0','#d99a14','#c62828','#8e3cff'];
  for(let n=1;n<=5;n++){const b=document.createElement('button');b.className='cd mcard';b.style.background='linear-gradient('+cols[n-1]+','+cols[n-1]+'88)';b.innerHTML=n+'v'+n+'<small>'+(n==1?'單挑 Duel':'組隊 Team')+'</small>';b.onclick=()=>playMode(n);pc.appendChild(b)}
  const rk=document.createElement('button');rk.className='cd mcard';rk.style.background='linear-gradient(#4a4f66,#2a2d3c)';{const t=rkCur();rk.innerHTML='<img src="'+rkIcon(t.i)+'" style="width:40px;height:40px"><small>Ranked · '+(rkLocked()?'🔒 Lv '+RK_LV:rkLabel())+'</small>';if(!rkLocked())rk.style.background='linear-gradient(#6a3cff,#2a1a6a)'}rk.onclick=rkOpen;pc.appendChild(rk);
+ const LM=ltmToday(),lb=document.createElement('button');lb.className='cd mcard';lb.style.background='linear-gradient(#ff8a3c,#b4381a)';lb.innerHTML=LM.e+' '+LM.zh+'<small>今日限時模式</small>';lb.onclick=playLTM;pc.appendChild(lb);
+ $('#ltmBox').innerHTML='<div class="cd" style="background:#ff8a3c22;border:2px solid #ff8a3c88"><b>'+LM.e+' 今日限時模式：'+LM.zh+'</b><div class="note" style="margin-top:4px">'+LM.d+'</div></div>';
  const dn=['簡單','普通','困難'],pd=$('#pdifs');pd.innerHTML='';dn.forEach((t,i)=>{const b=document.createElement('button');b.textContent=t;b.className=cfg.d==i?'on':'';b.onclick=()=>{cfg.d=i;renderPlay()};pd.appendChild(b)});
  const pm=$('#pmaps');pm.innerHTML='';MAPLIST.concat([null]).forEach((k,i)=>{const b=document.createElement('button');b.textContent=k?MAPNAME[k]:'🎲 Random';const v=k?i:-1;b.className=cfg.map==v?'on':'';b.onclick=()=>{cfg.map=v;cfg.mapPick=1;renderPlay()};pm.appendChild(b)});
  $('#playNote').textContent=NET?'　線上房間 '+NET.code+'：由房主帶隊伍對戰機器人':'　對戰機器人（單機）'}
