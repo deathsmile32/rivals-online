@@ -545,8 +545,8 @@ const gr=new T.GridHelper(64,32,0xb8c0d0,0xc8d0de);gr.position.y=.01;sc.add(gr);
 const Wh=0xf2f4f8,Or=0xe8903a,Rd=0xd04545,Bl=0x3f6fd0,Yl=0xf0c020,Gy=0xd5dae4;
 const BND=[[0,-31,64,2,8],[0,31,64,2,8],[-31,0,2,64,8],[31,0,2,64,8]];
 const LB_PILLARS=[[23,6],[27,14],[23,22],[27,28],[27,0]];
-const MAPLIST=['arena','backroom','crossroad','splash','battleground'];
-const MAPNAME={arena:'Arena',backroom:'Backroom',crossroad:'Cross Road',splash:'Splash',battleground:'Battle Ground'};
+const MAPLIST=['arena','backroom','crossroad','splash','battleground','bridge'];
+const MAPNAME={arena:'Arena',backroom:'Backroom',crossroad:'Cross Road',splash:'Splash',battleground:'Battle Ground',bridge:'Bridge'};
 const MAPDATA={
  // Arena: floating grey stone box in the sky, long axis = z (spawns at both short ends), symmetric cover + 4 tilted slabs
  arena:{floor:0x6e7075,grid:0,wallColor:0x8b8e94,bg:0x8ec5f2,fogc:0xd8e8f6,fogn:70,fogf:190,bx:(()=>{const W=0x8b8e94,S=0xb4b7bd,C=0xc4c7cd,D=0x5c5e63;return[
@@ -590,12 +590,23 @@ const MAPDATA={
    [-8,-14,7,3,1.2,0xf1e6cf,.7],[8,-14,7,3,1.2,0xf1e6cf,-.7],[-8,14,7,3,1.2,0xf1e6cf,-.7],[8,14,7,3,1.2,0xf1e6cf,.7],
    [-12,-12.8,5,4,2.5,0x8193e3,.6],[12,10.2,5,4,2.5,0x8193e3,.6]],
   decor:g=>mkClouds(g)},
+ // Bridge (Xmas update): snowy valley, raised stone bridge over a frozen river (z = long axis). Railings have a gap in the
+ // middle to drop down; stairs at both ends; ice/rock cover on the river for flank routes.
+ bridge:{floor:0xe6eef4,grid:0,wallColor:0xc9d6e2,bg:0xa9c9e8,fogc:0xe2edf6,fogn:60,fogf:170,bx:(()=>{const St=0x9aa3ad,St2=0x7d8792,Rl=0x6b4a2e,Ic=0xbfe6f7,Rk=0x8d96a0;return[
+  [0,0,8,22,1.5,St],[0,11.5,8,1,1,St2],[0,12.5,8,1,.5,St2],[0,-11.5,8,1,1,St2],[0,-12.5,8,1,.5,St2],
+  [-3.8,-6.5,.4,9,2.6,Rl],[3.8,-6.5,.4,9,2.6,Rl],[-3.8,6.5,.4,9,2.6,Rl],[3.8,6.5,.4,9,2.6,Rl],
+  [-4.7,-11,1.4,1.4,5,St2],[4.7,-11,1.4,1.4,5,St2],[-4.7,11,1.4,1.4,5,St2],[4.7,11,1.4,1.4,5,St2],
+  [0,-4.5,2.4,1.2,2.6,Rl],[0,4.5,2.4,1.2,2.6,Rl],
+  [-13,-2.5,3,3,2.2,Ic],[13,2.5,3,3,2.2,Ic],[-16,6,4,2,1.4,Ic],[16,-6,4,2,1.4,Ic],[-9.5,4,2,2,1,Rk],[9.5,-4,2,2,1,Rk],[-22,-3,2.5,5,2.5,Ic],[22,3,2.5,5,2.5,Ic],
+  [-9,-20,5,1.5,2.5,St2],[9,-20,5,1.5,2.5,St2],[-9,20,5,1.5,2.5,St2],[9,20,5,1.5,2.5,St2],
+  [-20,-15,6,3,2,Rk],[20,15,6,3,2,Rk],[-21,15,3,6,1.5,Rk],[21,-15,3,6,1.5,Rk]]})(),
+  decor:g=>mkBridgeDecor(g)},
  lobby:{floor:0x1a1828,grid:0,wallColor:0x221e36,bg:0x0a0914,fogc:0x100d1c,fogn:30,fogf:100,bx:(()=>{const LW=0x2b2642,H=999,RW=0xf4f6fa,a=[
   [-14.5,19.5,1,23,8,LW,H],[14.5,12,1,8,8,LW,H],[14.5,25.5,1,11,8,LW,H],[-8.75,7.5,11.5,1,8,LW,H],[8.75,7.5,11.5,1,8,LW,H],
   [-3.5,2,1,11,8,LW,H],[3.5,2,1,11,8,LW,H],[-17.25,-3.5,28.5,1,8,LW,H],[17.25,-3.5,28.5,1,8,LW,H],
   [6.5,15.5,2,1,8,RW,H],[6.5,20.5,2,1,8,RW,H],[8,6.25,1,18.5,8,RW,H],[8,25.75,1,10.5,8,RW,H],
   [-11.5,28.5,1.6,1.6,1.6,0x7a4a24],[-9.8,29.2,1.2,1.2,1.2,0x8a5530],[11.5,9.6,1.6,1.6,1.6,0x7a4a24],[-28,-28,2,2,2,0x7a4a24],[-25.8,-28.5,1.4,1.4,1.4,0x8a5530],[28,-28,2,2,2,0x7a4a24],[28.2,-25.8,1.4,1.4,1.4,0x8a5530]];
-  for(const[x,z]of LB_PILLARS)a.push([x,z,1.4,1.4,8,0xffffff,H]);return a})(),decor:g=>mkLobbyDecor(g)}
+  for(const[x,z]of LB_PILLARS)a.push([x,z,1.4,1.4,8,0xffffff,H]);return a})(),decor:g=>mkLobbyDecor(g).concat(xmasOn()?mkXmasDecor(g):[])}
 };
 const boxes=[],walls=[],solid=[];let decor=[];var LB_CEIL=[];
 function clearMapGeo(){for(const m of walls){sc.remove(m);m.geometry.dispose()}walls.length=0;boxes.length=0;solid.length=0;for(const m of decor){sc.remove(m);if(m.geometry)m.geometry.dispose();if(m.material&&m.material.dispose)m.material.dispose()}decor=[]}
@@ -610,6 +621,33 @@ function buildMap(key){finClear();clearMapGeo();const M=MAPDATA[key]||MAPDATA.ar
  solid.push(...walls,fl0);
  if(M.decor)decor=M.decor(sc)||[];
  sc.updateMatrixWorld(true);if(NAV){if(key!=='lobby')navBuild();else NAV.key=''}}
+// shared Xmas props
+function xTree(g,a,x,z,s){const m=new T.Mesh(new T.CylinderGeometry(.25*s,.3*s,1*s,8),new T.MeshLambertMaterial({color:0x5a3a20}));m.position.set(x,.5*s,z);g.add(m);a.push(m);
+ for(let i=0;i<3;i++){const r=(1.7-i*.45)*s,c=new T.Mesh(new T.ConeGeometry(r,1.6*s,10),new T.MeshLambertMaterial({color:i%2?0x1f7a3c:0x186a32}));c.position.set(x,(1.5+i*1.05)*s,z);g.add(c);a.push(c);
+  for(let k=0;k<6;k++){const an=k/6*PI*2+i*.5,o=new T.Mesh(PG,new T.MeshLambertMaterial({color:[0xe23b3b,0xffd23f,0x3b8be2,0xffffff][(k+i)%4],emissive:0x331100}));o.scale.setScalar(.13*s);o.position.set(x+Math.cos(an)*r*.72,(1.05+i*1.05)*s,z+Math.sin(an)*r*.72);g.add(o);a.push(o)}}
+ const st=new T.Mesh(new T.OctahedronGeometry(.32*s),new T.MeshBasicMaterial({color:0xffe14a}));st.position.set(x,4.55*s,z);g.add(st);a.push(st)}
+function xGift(g,a,x,z,s,c,rb){const b=new T.Mesh(new T.BoxGeometry(s,s*.8,s),new T.MeshLambertMaterial({color:c}));b.position.set(x,s*.4,z);g.add(b);a.push(b);
+ for(const[w,d]of[[s*1.02,s*.18],[s*.18,s*1.02]]){const r=new T.Mesh(new T.BoxGeometry(w,s*.82,d),new T.MeshLambertMaterial({color:rb}));r.position.copy(b.position);g.add(r);a.push(r)}}
+function xIcicles(g,a,x0,x1,y,z,dz){for(let x=x0;x<=x1;x+=.7){const h=.4+((x*7.31)%1+1)%1*.9,c=new T.Mesh(new T.ConeGeometry(.09,h,6),new T.MeshLambertMaterial({color:0xd8f3ff,emissive:0x1a3a4a,transparent:true,opacity:.9}));c.rotation.x=PI;c.position.set(x,y-h/2,z+dz);g.add(c);a.push(c)}}
+var LSNOW=null;
+function xSnow(g,a,x0,x1,z0,z1,top,n){const p=new Float32Array(n*3);for(let i=0;i<n;i++){p[i*3]=x0+Math.random()*(x1-x0);p[i*3+1]=Math.random()*top;p[i*3+2]=z0+Math.random()*(z1-z0)}
+ const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(p,3));const pts=new T.Points(geo,new T.PointsMaterial({color:0xffffff,size:.16,transparent:true,opacity:.9,depthWrite:false}));pts.userData.top=top;g.add(pts);a.push(pts);LSNOW=pts}
+function xmasSnowTick(dt){const s=LSNOW;if(!s||!s.parent)return;const p=s.geometry.attributes.position,A=p.array,top=s.userData.top,t=BT;for(let i=0;i<A.length;i+=3){A[i+1]-=dt*(1.1+(i%7)*.12);A[i]+=Math.sin(t*.8+i)*dt*.25;if(A[i+1]<0)A[i+1]=top}p.needsUpdate=true}
+function mkXmasDecor(g){const a=[];
+ xTree(g,a,-10,21,1);for(const[x,z,c,r]of[[-8.4,22.2,0xe23b3b,0xffd23f],[-11.6,22.4,0x3b8be2,0xffffff],[-10.2,19.2,0x2fbf5a,0xe23b3b],[-8.8,19.8,0xffd23f,0xe23b3b]])xGift(g,a,x,z,.7,c,r);
+ xTree(g,a,-27,-9,.8);xTree(g,a,27,-9,.8);xGift(g,a,-25,-8,.6,0xe23b3b,0xffffff);xGift(g,a,25,-8,.6,0x3b8be2,0xffd23f);
+ xIcicles(g,a,-30,-4,8,-3.5,.55);xIcicles(g,a,4,30,8,-3.5,.55);xIcicles(g,a,-14,-4,8,7.5,.55);
+ for(const[x,z]of[[-13.5,9],[-13.5,30],[2.5,30],[-30,-30],[30,-30],[-30,-4.5],[30,-4.5]]){const m=new T.Mesh(PG,new T.MeshLambertMaterial({color:0xffffff}));m.scale.set(1.6,.45,1.2);m.position.set(x,0,z);g.add(m);a.push(m)}
+ xSnow(g,a,-31,31,-31,31,9,700);return a}
+function mkBridgeDecor(g){const a=[],ice=new T.Mesh(new T.PlaneGeometry(62,16),new T.MeshLambertMaterial({color:0x7cc4ea,emissive:0x0d3048,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}));ice.rotation.x=-PI/2;ice.position.set(0,.06,0);g.add(ice);a.push(ice);
+ for(let i=0;i<14;i++){const c=new T.Mesh(new T.PlaneGeometry(.12,2+((i*3.7)%3)),new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.6}));c.rotation.x=-PI/2;c.rotation.z=(i*1.3)%3;c.position.set(-28+i*4.3,.09,((i*5.1)%12)-6);g.add(c);a.push(c)}
+ for(const s of[-1,1]){const bank=new T.Mesh(new T.BoxGeometry(62,.3,1.2),new T.MeshLambertMaterial({color:0xffffff}));bank.position.set(0,.15,s*8.4);g.add(bank);a.push(bank)}
+ for(const s of[-1,1])for(const z of[-6,0,6]){const ar=new T.Mesh(new T.TorusGeometry(1.6,.28,6,12,PI),new T.MeshLambertMaterial({color:0x8a939d}));ar.rotation.y=PI/2;ar.position.set(s*4.05,0,z);g.add(ar);a.push(ar)}
+ for(const sx of[-1,1])for(const sz of[-1,1]){const pole=new T.Mesh(new T.CylinderGeometry(.08,.08,2.2,6),new T.MeshLambertMaterial({color:0x2a2a30}));pole.position.set(sx*3.5,2.6,sz*9.5);g.add(pole);a.push(pole);
+  const bulb=new T.Mesh(PG,new T.MeshBasicMaterial({color:0xfff1b0}));bulb.scale.setScalar(.22);bulb.position.set(sx*3.5,3.8,sz*9.5);g.add(bulb);a.push(bulb)}
+ for(const[x,z,s]of[[-26,-26,1.1],[26,26,1.1],[-27,24,.9],[27,-24,.9],[-14,-24,.8],[14,24,.8],[-27,-12,.8],[27,12,.8]])xTree(g,a,x,z,s);
+ for(const[x,z]of[[-4.7,-11],[4.7,-11],[-4.7,11],[4.7,11]]){const cap=new T.Mesh(PG,new T.MeshLambertMaterial({color:0xffffff}));cap.scale.set(.85,.3,.85);cap.position.set(x,5.05,z);g.add(cap);a.push(cap)}
+ xSnow(g,a,-30,30,-30,30,14,500);a.push(...mkClouds(g));return a}
 // soft clouds floating around/below the sky maps
 function mkClouds(g){const a=[],m=new T.MeshLambertMaterial({color:0xffffff,emissive:0xb8c8dc,emissiveIntensity:.45});let sd=7;const r=()=>(sd=(sd*9301+49297)%233280)/233280;
  for(let i=0;i<26;i++){const ang=i/26*Math.PI*2+r()*.2,R2=48+r()*40,y=-14+r()*22;for(let j=0;j<3;j++){const c=new T.Mesh(new T.SphereGeometry(4+r()*5,10,8),m);c.scale.set(1.6,.55,1.1);c.position.set(Math.cos(ang)*R2+(j-1)*6,y+r()*2,Math.sin(ang)*R2+r()*4);g.add(c);a.push(c)}}return a}
@@ -1881,6 +1919,16 @@ function paintFx(){const p=$('#paint');p.innerHTML='';for(let i=0;i<6;i++){const
 // ===== round flow =====
 function endRound(w,sc){st='end';tm=2.5;rndW=w;if(sc)score=sc.slice();else score[w]++;if(NET&&NET.host)netSend({t:'re',w,sc:score,r:NET.round});const won=w===P.team,rb=$('#rb');rb.className=won?'won':'lost';rb.innerHTML='ROUND<b>'+(won?'WON':'LOST')+'</b>';rb.style.display='block'}
 function showOver(w,why){let aw=null;if(P&&w>=0){SESSTATS.matches++;if(w===P.team)SESSTATS.wins++;else SESSTATS.losses++;SESSTATS.kills+=P.k||0;aw=awardMatch(w===P.team);aw&&(aw.rk=rkFinish(w===P.team))}else if(cfg.ranked&&PF&&PF.rk.pend){PF.rk.pend=null;saveNow()}$('#orew').innerHTML=rewardHTML(aw)+rkResHTML(aw&&aw.rk);st='over';document.exitPointerLock&&document.exitPointerLock();$('#pause').style.display='none';$('#lo').style.display='none';$('#ot').textContent=w<0||!P?(why||'對戰結束'):(w===P.team?'🏆 你的隊伍獲勝！':'💀 敵方獲勝')+(why?'（'+why+'）':'');$('#again').textContent=NET?'回到大廳':'再來一場';$('#tomenu').textContent=NET?'離開房間':'回到大廳';$('#over').style.display='flex';if(NET)NET.inGame=false}
+// ===== 勝利動畫 Victory animation: ~3 s third-person orbit around the winner doing the Victory Dance under confetti, then the results screen
+var VIC=null;
+function vicStart(w){VIC={t:3.2,T:3.2,w};st='vic';mL=mR=false;vm.visible=false;emoteCancel(P);
+ if(!P.alive){P.alive=true;P.y=Math.max(P.y,0)}P.mesh.visible=true;P.mesh.scale.set(1,1,1);if(P.hold)P.hold.visible=true;if(cam.fov!=75){cam.fov=75;cam.updateProjectionMatrix()}
+ msg('🏆 VICTORY!');$('#rb').style.display='none';[523,659,784,1046].forEach((f,i)=>setTimeout(()=>snd(f,.22,.06,'triangle'),i*120));setTimeout(()=>snd(1318,.5,.05,'sine'),520)}
+function vicTick(dt){if(!VIC){st='end';return}VIC.t-=dt;const el=VIC.T-VIC.t,a=el*.7;
+ cam.position.set(P.x+Math.sin(a)*4.4,P.y+2.2,P.z+Math.cos(a)*4.4);cam.lookAt(P.x,P.y+1.3,P.z);
+ P.mesh.position.set(P.x,P.y,P.z);P.mesh.rotation.set(0,a+PI,0);P.mesh.visible=true;try{EMBYID.victory.pose(P.mesh.userData,P.mesh,el)}catch(_){}
+ if(Math.random()<dt*30)puff(V(P.x+(Math.random()-.5)*4,P.y+3.2+Math.random(),P.z+(Math.random()-.5)*4),V((Math.random()-.5)*2,-1.5-Math.random()*2,(Math.random()-.5)*2),[0xff4d6d,0xffd23f,0x35d07f,0x3b8be2,0xffffff,0xb06aff][(Math.random()*6)|0],1.4,.35);
+ if(VIC.t<=0){const w=VIC.w;VIC=null;st='end';vm.visible=true;msg('');showOver(w)}}
 function begin(){respawn();st='count';tm=3;rt=90;msg('');sp=0;$('#rb').style.display='none';if(cfg.ltm=='rng')feed('🎲 空手上場！按 G 骰武器，F 快速使用備用武器！');else if(cfg.ltm=='jug')feed('💪 你是機械戰神！血量 3000，殲滅所有敵人！');else if(cfg.ltm=='bunny')feed('🐰 低重力生效中！只能用限定武器～');else if(cfg.ltm=='swift')feed('⚡ 只有 1 滴血！左輪＋小刀，小刀右鍵衝刺！')}
 function openLo(){if(NET&&st=='count'){NET.midLo=1;mL=mR=false;showLo();$('#lo').style.display='flex';$('#lot').textContent='倒數結束前選好，按「準備完成」';document.exitPointerLock&&document.exitPointerLock();return}E.forEach(e=>e.mesh.visible=false);st='lo';tm=10;mL=mR=false;if(P)P.zoom=false;showLo();document.exitPointerLock&&document.exitPointerLock()}
 function showLo(){RAON=false;$('#rwrow').style.display='none';$('#lo').style.display='flex';$('#rdy').textContent='準備完成';$('#lonl').style.color='#ffc93c';GP.forEach(([id,arr],k)=>{const box=$('#'+id);box.innerHTML='';if(LS[k]>=0&&!isUnl(arr[LS[k]].n))LS[k]=0;
@@ -1894,11 +1942,11 @@ begin();lock();
 setTimeout(()=>{if(!MOBILE&&document.pointerLockElement!==cv&&!fb&&st!='menu'){paused=true;$('#pause').style.display='flex'}},300)}
 function startMatch(){if(st=='msel')return;score=[0,0];setup();showMapSel(E.filter(e=>!e.isP).map(e=>({id:e.name,name:e.name,team:e.team===P.team?0:1})),k=>{curMap=k;buildMap(curMap);openLo()})}
 // ---- pre-match map vote (Rivals-style): big cards, Random card, 10 s timer, bots vote too; majority wins, ties random ----
-var MS=null;const MTHUMB={},MSORD=['arena','backroom','crossroad','rand','splash','battleground'];
+var MS=null;const MTHUMB={},MSORD=['arena','backroom','crossroad','rand','splash','battleground','bridge'];
 const SHUF='<svg viewBox="0 0 24 24"><path d="M2.5 6.5h4c5 0 6 11 11 11h4M2.5 17.5h4c2 0 3.3-1.8 4.4-4M14 9.5c1.1-1.7 2.2-3 3.5-3h4"/><path d="M18.5 3.5l3 3-3 3M18.5 14.5l3 3-3 3"/></svg>';
 function mapThumb(k){if(MTHUMB[k]!=null)return MTHUMB[k];const M=MAPDATA[k];let url='';try{const g=new T.Scene();g.background=new T.Color(M.bg||0x9fd0ff);g.fog=new T.Fog(M.fogc||0xcfe6ff,70,160);g.add(new T.AmbientLight(0xffffff,.85));const l=new T.DirectionalLight(0xffffff,.65);l.position.set(10,20,6);g.add(l);
  const f=new T.Mesh(new T.PlaneGeometry(64,64),new T.MeshLambertMaterial({color:M.floor}));f.rotation.x=-PI/2;g.add(f);if(M.grid){const gh=new T.GridHelper(64,32,0xb8c0d0,0xc8d0de);gh.position.y=.01;g.add(gh)}
- for(const[x,z,w,d,h,c]of BND.map(b=>b.concat([M.wallColor||Wh])).concat(M.bx))B(g,w,h,d,x,h/2,z,c);if(M.decor)M.decor(g);
+ for(const[x,z,w,d,h,c]of BND.map(b=>b.concat([M.wallColor||Wh])).concat(M.bx))B(g,w,h,d,x,h/2,z,c);if(M.decor){const ks=LSNOW;M.decor(g);LSNOW=ks}
  const cm=new T.PerspectiveCamera(50,16/9,.1,200);cm.position.set(20,k=='backroom'?40:32,27);cm.lookAt(0,0,-1);IR.setSize(384,216);IR.render(g,cm);url=IR.domElement.toDataURL('image/jpeg',.85);IR.setSize(160,96);
  g.traverse(o=>{if(o.geometry)o.geometry.dispose()});f.material.dispose()}catch(err){try{IR.setSize(160,96)}catch(_){}url=''}return MTHUMB[k]=url}
 function showMapSel(voters,cb){MS={tm:10,votes:{},bots:voters.map(v=>Object.assign({at:1+rnd()*6.5},v)),cb,done:0,pick:null};if(cfg.mapPick)MS.votes.me=cfg.map<0?'rand':MAPLIST[cfg.map]||'rand';
@@ -2062,13 +2110,13 @@ function enterLobby(){if(cfg.ranked){rkAbandon();rkLeave()}if(cfg.ltm){cfg.ltm=0
  st='lobby';tm=0;rt=0;paused=false;if(typeof giftPoll=='function')setTimeout(()=>giftPoll(1),700);if(NET)NET.inGame=false;document.exitPointerLock&&document.exitPointerLock();if(typeof LBC!=='undefined'){LBC.yaw=0;LBC.pitch=-.25}
  $('#menu').style.display='none';$('#onl').style.display='none';$('#over').style.display='none';$('#pause').style.display='none';$('#lo').style.display='none';$('#rb').style.display='none';
  $('#hud').style.display='block';$('#lobbyMenuBtn').style.display='none';msg('');wasNearShop=false;closePanels();renderLUI();if(typeof onRangeChange=='function')onRangeChange(false)}
-function tick(dt){BT+=dt;if(st=='msel'){mselTick(dt);return}
-if(st=='lobby'){updLobbyDummies(dt);checkLobbyProx(dt);lpxTick(dt)}
+function tick(dt){BT+=dt;if(st=='vic'){vicTick(dt);return}if(st=='msel'){mselTick(dt);return}
+if(st=='lobby'){updLobbyDummies(dt);checkLobbyProx(dt);lpxTick(dt)}if(st=='lobby'||curMap=='bridge')xmasSnowTick(dt);
 if(st=='lo'){tm-=dt;$('#lot').textContent='請選擇裝備，'+Math.ceil(tm)+' 秒後自動開始';if(tm<=0)ready();return}
 if(st=='wait'){msg('等待其他玩家準備…');if(NET&&NET.host){NET.wt-=dt;if(NET.wt<=0||(NET.roster||NET.lb.players).filter(p=>!p.bot).every(p=>NET.rdy.has(p.id)))hostRound()}return}
 if(st=='count'){tm-=dt;msg(Math.ceil(tm));if(tm<=0){if(NET&&NET.midLo)ready();st='play';msg('開始！');setTimeout(()=>st=='play'&&msg(''),900)}}
 else if(st=='play'){rt-=dt;if(!NET||NET.host){const a=[0,0];if(NET){E.forEach(x=>x.alive&&a[x.team]++);if(!a[0]||!a[1])endRound(a[0]?0:1)}if(st=='play'&&rt<=0){const h=[0,0];E.forEach(e=>e.alive&&(h[e.team]+=e.hp));endRound(h[0]>=h[1]?0:1)}}}
-else if(st=='end'){tm-=dt;if(tm<=0&&(!NET||NET.host)){const W=cfg.win||5;if(score[0]>=W||score[1]>=W){const w=score[0]>=W?0:1;if(NET)netSend({t:'ov',w});showOver(w)}else if(NET)hostRound();else begin()}}
+else if(st=='end'){tm-=dt;if(tm<=0&&(!NET||NET.host)){const W=cfg.win||5;if(score[0]>=W||score[1]>=W){const w=score[0]>=W?0:1;if(NET)netSend({t:'ov',w});if(P&&w===P.team&&P.mesh)vicStart(w);else showOver(w)}else if(NET)hostRound();else begin()}}
 if(st=='over'||st=='lo')return;
 for(const e of E)stat(e,dt);for(const e of E)if(e.net)netUpd(e,dt);else if(!e.isP||(AUTOP&&st!='lobby'))bot(e,dt);if(cfg.ltm=='rng'&&st=='play')for(const e of E)if(e.alive&&!e.isP&&!e.net&&rnd()<dt*.15)rngRoll(e);pupd(dt);
 if(st=='play'||st=='end'||st=='lobby'){updPr(dt);updVX(dt);updJP(dt);updPortals();updMN(dt);updFA(dt);updSM(dt);updTW(dt)}
@@ -2097,7 +2145,7 @@ for(let i=Fx.length-1;i>=0;i--){const f=Fx[i];f.t-=dt;const k=Math.max(0,f.t/f.T
  if(f.t<=0){sc.remove(f.m);if(f.m.geometry!==PG&&f.m.geometry!==FG)f.m.geometry.dispose();f.m.material.dispose();Fx.splice(i,1)}}
 try{finTick(dt)}catch(err){if(!finTick.er){finTick.er=1;console.error(err)}}
 const menu=st=='menu'||st=='over'||st=='lo'||st=='wait'||st=='msel';if(menu){cam.position.set(0,14,0);cam.rotation.set(-.45,performance.now()/6000,0);if(cam.fov!=75){cam.fov=75;cam.updateProjectionMatrix()}}
-R.clear();R.render(sc,cam);if(!menu&&vm.visible&&!(st=='lobby'&&!LB.inRange)){R.clearDepth();R.render(vs,vcam)}
+R.clear();R.render(sc,cam);if(!menu&&st!='vic'&&vm.visible&&!(st=='lobby'&&!LB.inRange)){R.clearDepth();R.render(vs,vcam)}
 try{wpnFrame(dt);syncLUI();if(st=='lobby'&&PF&&(frame.lt=(frame.lt||0)+dt)>1){frame.lt=0;renderPList()}}catch(err){if(!frame.er){frame.er=1;console.error(err)}}}
 if(/[?&]bg=1/.test(location.search))setInterval(frame,20);else(function loop(){requestAnimationFrame(loop);frame()})();
 
