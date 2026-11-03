@@ -2,6 +2,8 @@
 <html lang="zh-Hant"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>競技對決 ARENA</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#100e28"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="ARENA">
 <style>
 :root{color-scheme:dark;--bg:#0f1424;--fg:#eef1ff;--ac:#4aa3ff;--pn:#171d36;--ln:#2c3558;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 html,body{height:100%;margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;overflow:hidden;user-select:none;touch-action:none}
@@ -2534,7 +2536,7 @@ function accStart(k,rem,isNew){if(CLOUD.live){CLOUD.live=false;CLOUD=newCloud(CL
 const I18N={en:{lbPack:'Backpack',lbWpn:'Weapons',lbTasks:'Tasks',lbShop:'Shop',lbPass:'Pass',lbLbrd:'Leaderboards',lbSet:'Settings',lbEvent:'Event',lbUpd:'Updates',lbGift:'Gift',lbEmote:'Emotes',lbAch:'Achievements',lbStats:'Stats',toDuels:'To Duels ➜',ptPack:'Backpack',ptWpn:'Weapons',ptTasks:'Tasks',ptShop:'Shop',ptPass:'Season Pass',ptParty:'Party',ptEmote:'Emotes',ptAch:'Achievements',ptStats:'Stats'},
  zh:{lbPack:'背包',lbWpn:'武器',lbTasks:'任務',lbShop:'商店',lbPass:'通行證',lbLbrd:'排行榜',lbSet:'設定',lbEvent:'活動',lbUpd:'更新',lbGift:'送禮',lbEmote:'表情',lbAch:'成就',lbStats:'戰績',toDuels:'前往決鬥 ➜',ptPack:'背包',ptWpn:'武器',ptTasks:'任務',ptShop:'商店',ptPass:'通行證 Season Pass',ptParty:'隊伍',ptEmote:'表情 Emotes',ptAch:'成就 Achievements',ptStats:'戰績 Stats'}};
 function applyLang(){if(!PF)return;const d=I18N[PF.lang=='en'?'en':'zh'];for(const el of document.querySelectorAll('[data-i18n]')){const k=el.dataset.i18n;if(d[k])el.textContent=d[k]}}
-function accEnter(isNew,msg){dailyReset();loginStreak();applyProfile();applyLang();saveP();$('#auth').style.display='none';enterLobby();toast((isNew?'🎉 帳號建立成功，':'👋 歡迎回來，')+accName()+'！','#2fbf71');if(msg)setTimeout(()=>toast(msg,'#4fc3f7'),700);setSync(CLOUD.st||'busy')}
+function accEnter(isNew,msg){dailyReset();loginStreak();applyProfile();applyLang();saveP();$('#auth').style.display='none';enterLobby();setTimeout(()=>{if(inCloud()&&PF){lvlPush();stPush();if(PF.rk&&PF.rk.m)rkPush()}},2500);toast((isNew?'🎉 帳號建立成功，':'👋 歡迎回來，')+accName()+'！','#2fbf71');if(msg)setTimeout(()=>toast(msg,'#4fc3f7'),700);setSync(CLOUD.st||'busy')}
 function accLogout(){saveP();if(typeof giftReset=='function')giftReset();if(NET)netLeave();if(inCloud()){const S=CLOUD;S.live=false;S.snap=PF;if(S.dirty)cloudFlush(true,S);CLOUD=newCloud(S);cloudForget();setSync('')}ACCT=null;PF=null;try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}if(typeof closePanels=='function')closePanels();showAuth()}
 function showAuth(){st='menu';paused=false;document.exitPointerLock&&document.exitPointerLock();for(const id of['#hud','#menu','#onl','#over','#pause','#lo'])$(id).style.display='none';$('#lobbyMenuBtn').style.display='none';if(typeof syncLUI=='function')syncLUI();
  $('#auth').style.display='flex';$('#amsg').textContent='';$('#ap').value='';$('#ap2').value='';accLoad();const us=Object.values(ACCDB.users);
@@ -2570,7 +2572,7 @@ function creditKill(wn,hs){if(!PF)return;const n=baseWn(wn);if(WBN(n))PF.wk[n]=(
 function awardMatch(won){if(!PF||!P)return null;const k=P.k||0,hs=P.hsk||0,xp=(won?100:40)+k*10+hs*5,s=PF.st;s.m++;if(won){s.w++;s.streak++;s.best=Math.max(s.best,s.streak)}else{s.l++;if(s.streak>0)PF.strRec={n:s.streak};s.streak=0}s.k+=k;s.d+=P.dth||0;s.hs+=hs;
  PF.matchLog.unshift({t:Date.now(),won,k,d:P.dth||0,hs,xp,map:MAPNAME[curMap]||curMap});if(PF.matchLog.length>20)PF.matchLog.length=20;
  for(const w of P.L||[])if(w&&w.n)PF.wu[w.n]=(PF.wu[w.n]||0)+1;dailyReset();PF.daily.pd++;PF.daily.el+=k;if(won)PF.daily.wd++;weeklyReset();PF.weekly.m++;PF.weekly.el+=k;if(won)PF.weekly.wd++;PF.weekly.hs+=hs;const keys=won?1:0;PF.keys+=keys;const gold=GOLD_R.play+(won?GOLD_R.win:0)+k*GOLD_R.kill;PF.gold=(PF.gold||0)+gold;let snow=0;if(xmasOn()&&DAILY.every(d=>PF.daily[d.k]>=d.g)){snow=won?SNOW_WIN:SNOW_LOSS;PF.snow=(PF.snow|0)+snow}
- const lv0=PF.lv,up=addXP(xp);saveNow();return{xp,keys,gold,lv0,up,k,hs,snow}}
+ const lv0=PF.lv,up=addXP(xp);saveNow();if(inCloud()){lvlPush();stPush()}return{xp,keys,gold,lv0,up,k,hs,snow}}
 function rewardHTML(a){if(!a)return'';const r=xpReq(PF.lv);return'<b style="color:#9b8cff">+'+a.xp+' XP</b>（'+(a.k?'擊殺 '+a.k+' ×10':'無擊殺')+(a.hs?'、爆頭擊殺 '+a.hs+' ×5':'')+'）'+(a.keys?'　<b style="color:#ffd23f">+'+a.keys+' 🔑</b>':'')+(a.gold?'　<b style="color:#ffcf40" id="orgold">+'+a.gold+' 💰</b>':'')+(a.snow?'　<b style="color:#9fdcff">+'+a.snow+' ❄️</b>':'')+(a.up?'<br><b style="color:#ffc93c">⬆️ 升級到 Lv '+PF.lv+'！（💰 +'+a.up*GOLD_R.lv+'）</b>':'')+'<br>Lv '+PF.lv+'　'+PF.xp+' / '+r+' XP<div class="xpb"><i style="width:'+Math.min(100,PF.xp/r*100)+'%"></i></div>'}
 var LBC={yaw:0,pitch:-.25,dist:8};
 function lobbyFP(){return LB.inRange}
@@ -3398,18 +3400,27 @@ function croFrame(dt){const O=CRO;if(!O||!P)return;O.t+=dt;const t=O.t,K=CRT,f=O
 // ---- Settings ----
 const CCOL=['#ffffff','#35d07f','#ff4040','#ffd23f','#40e0ff','#ff5ad0'];
 function applySettings(){if(!PF)return;const s=PF.set,c=$('#cross');c.style.background=s.cc;c.style.width=c.style.height=s.cz+'px';c.style.margin=(-s.cz/2)+'px'}
+// ===== 下載到手機 Install as an app (PWA): Android/Chrome uses the browser's install prompt; iPhone/iPad gets Safari instructions
+var PWA_EVT=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();PWA_EVT=e;if(PANEL=='Set')PRENDER.Set()});
+addEventListener('appinstalled',()=>{PWA_EVT=null;toast('📲 已安裝到主畫面！','#35d07f')});
+function pwaInstalled(){return matchMedia('(display-mode: standalone)').matches||matchMedia('(display-mode: fullscreen)').matches||navigator.standalone===true}
+function pwaIOS(){return/iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform=='MacIntel'&&navigator.maxTouchPoints>1)}
+function pwaInstall(){if(pwaInstalled()){toast('✔ 已經是 App 版本了');return}if(PWA_EVT){PWA_EVT.prompt();PWA_EVT.userChoice.finally(()=>{PWA_EVT=null;if(PANEL=='Set')PRENDER.Set()});return}
+ toast(pwaIOS()?'📲 iPhone/iPad：用 Safari 開啟 → 點「分享」⬆️ → 選「加入主畫面」':'📲 用手機的 Chrome 開啟遊戲網址 → 右上角 ⋮ → 「安裝應用程式／加到主畫面」','#4fc3f7')}
+if('serviceWorker' in navigator&&location.protocol=='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 PRENDER.Set=()=>{const s=PF.set,sl=(k,lab,mn,mx,stp)=>'<div class="setrow"><label>'+lab+'</label><input type="range" min="'+mn+'" max="'+mx+'" step="'+stp+'" value="'+s[k]+'" data-sk="'+k+'"><em>'+s[k]+'</em></div>';
  let h='<h3 style="margin-top:0">🖱️ 靈敏度 Sensitivity</h3>'+sl('ms','滑鼠 Mouse',.2,3,.05)+sl('ts','觸控 Touch',.2,3,.05)+sl('ads','開鏡 ADS',.2,2,.05);
  h+='<h3>➕ 準心 Crosshair</h3><div class="setrow"><label>顏色 Color</label><div class="row">'+CCOL.map(c=>'<button data-cc="'+c+'" style="width:30px;height:30px;padding:0;border-radius:50%;background:'+c+';border:3px solid '+(s.cc==c?'#fff':'#0000')+'"></button>').join('')+'</div></div>'+sl('cz','大小 Size',2,16,1)+'<div class="setrow"><label>預覽</label><div style="width:60px;height:40px;background:#556;border-radius:6px;position:relative"><div id="xprev" style="position:absolute;left:50%;top:50%;width:'+s.cz+'px;height:'+s.cz+'px;margin:'+(-s.cz/2)+'px;border-radius:50%;background:'+s.cc+';box-shadow:0 0 0 1px #000"></div></div></div>';
  h+='<h3>🎥 畫面</h3><div class="setrow"><label>鏡頭晃動 Camera shake</label><button id="shk" class="'+(s.shake?'on':'')+'">'+(s.shake?'開 ON':'關 OFF')+'</button></div>';
  const af=afOn(),aa=aaOn();h+='<h3>🎯 射擊輔助 Assist</h3><div class="setrow"><label>自動射擊 Auto-fire</label><button id="saf" class="'+(af?'on':'')+'">'+(af?'開 ON':'關 OFF')+'</button></div><div class="setrow"><label>輔助瞄準 Aim assist</label><button id="saa" class="'+(aa?'on':'')+'">'+(aa?'開 ON':'關 OFF')+'</button></div><p class="note" style="font-size:11px;margin-top:0">自動射擊：準心對到敵人時自動開火。輔助瞄準：準心附近有看得到的敵人時，鏡頭會被輕輕吸過去（不會穿牆、不會鎖隊友）。預設：手機兩個都開；電腦兩個都關。</p>';
  h+='<h3>🌐 Language 語言</h3><div class="setrow"><label>介面語言</label><div class="row"><button id="langZh" class="'+(PF.lang!='en'?'on':'')+'">中文</button><button id="langEn" class="'+(PF.lang=='en'?'on':'')+'">English</button></div></div><p class="note" style="font-size:11px">已翻譯大廳主選單與各面板標題；面板內的詳細文字（商店品項、武器說明等）仍為中文，會陸續加上。</p>';
+ h+='<h3>📲 下載到手機 App</h3><div class="setrow"><label>'+(pwaInstalled()?'✔ 你正在用 App 版本':'安裝到手機／平板主畫面，全螢幕玩、開啟更快')+'</label>'+(pwaInstalled()?'':'<button id="pwaBtn" class="gbtn">📲 下載 App</button>')+'</div>'+(pwaInstalled()||PWA_EVT?'':'<p class="note" style="font-size:11px;margin-top:0">'+(pwaIOS()?'iPhone/iPad：用 Safari 開啟遊戲 → 分享 ⬆️ → 加入主畫面':'Android：用 Chrome 開啟遊戲 → ⋮ → 安裝應用程式')+'</p>');
  h+='<h3>👤 帳號</h3><div class="setrow"><label>'+esc(accName())+'</label><button id="logout" style="background:#c62828;border-color:#7a1010">登出 Log out</button></div><p class="note" style="font-size:11px">'+(inCloud()?'☁️ 雲端帳號：設定與進度會自動同步，任何裝置都能登入。':'設定與進度只存在這台裝置的瀏覽器（localStorage）。')+'</p>';
  $('#setBody').innerHTML=h;
  $('#langZh').onclick=()=>{PF.lang='zh';saveP();applyLang();PRENDER.Set()};$('#langEn').onclick=()=>{PF.lang='en';saveP();applyLang();PRENDER.Set()};
  for(const r of $('#setBody').querySelectorAll('[data-sk]'))r.oninput=()=>{s[r.dataset.sk]=+r.value;r.nextElementSibling.textContent=r.value;applySettings();if(r.dataset.sk=='cz'){const pv=$('#xprev');pv.style.width=pv.style.height=r.value+'px';pv.style.margin=(-r.value/2)+'px'}saveP()};
  for(const b of $('#setBody').querySelectorAll('[data-cc]'))b.onclick=()=>{s.cc=b.dataset.cc;applySettings();saveP();PRENDER.Set()};
- $('#shk').onclick=()=>{s.shake=s.shake?0:1;saveP();PRENDER.Set()};$('#saf').onclick=()=>{s.af=afOn()?0:1;saveP();PRENDER.Set()};$('#saa').onclick=()=>{s.aa=aaOn()?0:1;saveP();PRENDER.Set()};$('#logout').onclick=()=>{closePanels();accLogout()}};
+ $('#shk').onclick=()=>{s.shake=s.shake?0:1;saveP();PRENDER.Set()};$('#saf').onclick=()=>{s.af=afOn()?0:1;saveP();PRENDER.Set()};$('#saa').onclick=()=>{s.aa=aaOn()?0:1;saveP();PRENDER.Set()};{const pb=$('#pwaBtn');if(pb)pb.onclick=pwaInstall}$('#logout').onclick=()=>{closePanels();accLogout()}};
 // ===== online lobby presence, duel pads, party =====
 var LPX={},PTAB='all';
 function lpxUpd(m){if(st!=='lobby'||!NET||!Array.isArray(m.p)||m.id===NET.me)return;let q=LPX[m.id];
