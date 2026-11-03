@@ -915,24 +915,24 @@ const SKINS=[
  build:g=>{B(g,.03,.72,.03,0,.2,0,0x9aa0aa);for(const y of[-.1,.3])B(g,.04,.03,.04,0,y,0,0x2a2a2a);const tri=(r,c,x)=>{const m=new T.Mesh(new T.CylinderGeometry(r,r,.016,3),mt(c));m.rotation.set(-PI/2,0,PI/2);m.position.set(x,.52,0);g.add(m)};tri(.22,0xe03a2a,0);tri(.17,0xffd23f,.006);tri(.17,0xffd23f,-.006);for(const s of[-1,1]){B(g,.004,.09,.024,s*.015,.54,0,0x111111);B(g,.004,.022,.024,s*.015,.465,0,0x111111)}return{}},
  drawFx:p=>{skBurst(p,6,[0xffd23f,0xe03a2a],1.2,.3,.05);snd(300,.08,.06,'square')}},
 {id:'sy_anchor',weapon:'Scythe',name:'船錨 Anchor',rarity:'epic',ex:1,xsc:1,how:'聖誕皮膚箱 Xmas Skin Case',
- build:g=>{const Ir=0x56606c,Ir2=0x3a424c,Rp=0xc9a46a,Br=0xb08a3a;B(g,.03,1.05,.03,0,.35,0,0x3a2a1c);for(const y of[.04,.1,.16,.22])Cy(g,.024,.035,0,y,0,Rp);
+ build:g=>{const Ir=0x1c1d24,Ir2=0x101116,Rp=0xf0f0ea,Br=0x1c1d24;B(g,.03,1.05,.03,0,.35,0,0x14151a);{const rg=new T.Mesh(UT,mt(Ir));rg.scale.set(.05,.05,.05);rg.rotation.y=PI/2;rg.position.set(0,-.24,0);g.add(rg);B(g,.012,.012,.14,0,-.17,0,Ir)}for(const y of[.04,.1,.16,.22])Cy(g,.024,.035,0,y,0,Rp);
   B(g,.044,.3,.044,0,.92,0,Ir);const ring=new T.Mesh(UT,mt(Ir2));ring.scale.set(.07,.07,.07);ring.rotation.y=PI/2;ring.position.set(0,1.12,0);g.add(ring);
   B(g,.03,.03,.24,0,1.02,0,Ir);Sp(g,.024,0,1.02,.12,Ir2);Sp(g,.024,0,1.02,-.12,Ir2);for(const y of[.86,.9,.94]){const rope=new T.Mesh(UT,mt(Rp));rope.scale.set(.034,.034,.05);rope.rotation.x=PI/2;rope.position.set(0,y,0);g.add(rope)}
   Sp(g,.04,0,.76,0,Ir);B(g,.022,.06,.3,0,.76,-.15,Ir,{rx:.25});B(g,.022,.055,.17,0,.82,-.33,Ir,{rx:1});B(g,.024,.11,.1,0,.9,-.38,Br,{rx:.5});
   B(g,.022,.06,.2,0,.77,.1,Ir,{rx:-.3});B(g,.022,.05,.12,0,.83,.22,Ir,{rx:-1});B(g,.024,.09,.08,0,.89,.26,Br,{rx:-.5});return{}},
  drawFx:p=>{skBurst(p,8,[0x9fb6c8,0xffffff,0xc9a46a],1.2,.35,.04);snd(180,.18,.07,'triangle');setTimeout(()=>snd(240,.12,.05,'triangle'),90)}},
 {id:'sy_sakura',weapon:'Scythe',name:'櫻花 Sakura',rarity:'epic',ex:1,xsc:1,how:'聖誕皮膚箱 Xmas Skin Case',
- build:g=>{const Bk=0x4a2c22,Pk=0xffb7d0,Pk2=0xff8fb8,Wt=0xfff0f6;B(g,.026,1.05,.026,0,.35,0,Bk);B(g,.016,.2,.016,.04,.56,0,Bk,{rz:-.55});B(g,.014,.14,.014,-.03,.3,0,Bk,{rz:.6});
+ build:g=>{const Bk=0x5a3020,Pk=0xe048c8,Pk2=0xff8fd8,Wt=0xffb8f0;B(g,.026,1.05,.026,0,.35,0,Bk);B(g,.016,.2,.016,.04,.56,0,Bk,{rz:-.55});B(g,.014,.14,.014,-.03,.3,0,Bk,{rz:.6});
   B(g,.036,.045,.036,0,.86,0,0xd9c2a0);B(g,.012,.07,.36,0,.84,-.2,Pk,{rx:-.35});B(g,.014,.05,.18,0,.74,-.4,Pk2,{rx:-1.1});B(g,.013,.02,.34,0,.877,-.2,Wt,{rx:-.35});
   const fl=(y,z,s)=>{for(let i=0;i<5;i++){const a=i/5*PI*2;Sp(g,.024*s,.02,y+Math.sin(a)*.026*s,z+Math.cos(a)*.026*s,i%2?Pk:Pk2)}Sp(g,.013*s,.04,y,z,0xffe36a,1)};
   fl(.64,.06,1.2);fl(.38,-.05,1);fl(.95,-.04,1.3);fl(.86,-.3,1);fl(.5,.04,.8);fl(.2,.03,.9);fl(.74,-.44,.9);return{}},
  drawFx:p=>{skBurst(p,12,[0xffb7d0,0xff8fb8,0xffffff],1.4,.5,.035);[880,1175,1320].forEach((f,i)=>setTimeout(()=>snd(f,.12,.03,'sine'),i*70))}},
-{id:'sy_ice',weapon:'Scythe',name:'寒冰鐮刀 Ice Scythe',rarity:'legendary',ex:1,how:'寒冰鐮刀組合包限定（聖誕） Ice Scythe Bundle Exclusive',
+{id:'sy_ice',weapon:'Scythe',name:'水晶鐮刀 Crystal Scythe',rarity:'legendary',ex:1,how:'寒冰鐮刀組合包限定（聖誕） Ice Scythe Bundle Exclusive',
  build:g=>{const Ic=0x9fe6ff,Ic2=0x5ab8f0,Wt=0xe8fbff;B(g,.028,1.05,.028,0,.35,0,0x24425f);for(const y of[.1,.4,.68])B(g,.05,.05,.05,0,y,0,Ic,{e:1,rx:.6,ry:.6});
-  B(g,.045,.065,.045,0,.86,0,Wt);for(const[y,z,w,h,r]of[[.87,-.08,.085,.23,-.3],[.83,-.2,.075,.21,-.6],[.77,-.32,.065,.19,-.9],[.7,-.42,.055,.15,-1.2],[.64,-.47,.04,.1,-1.5]])B(g,.016,h,w,0,y,z,Ic,{e:1,rx:r});
+  B(g,.045,.065,.045,0,.86,0,Wt);for(const sd of[-1,1])for(const[y,z,w,h,r]of[[.87,-.08,.085,.23,-.3],[.83,-.2,.075,.21,-.6],[.77,-.32,.065,.19,-.9],[.7,-.42,.055,.15,-1.2],[.64,-.47,.04,.1,-1.5]])B(g,.016,h,w,0,y,z*sd,Ic,{e:1,rx:r*sd});for(let i=0;i<5;i++)B(g,.03,.14+i%2*.06,.03,0,.98,(i-2)*.035,Wt,{e:1,rx:(i-2)*.25});
   B(g,.013,.04,.42,0,.91,-.2,Wt,{rx:-.4});Sp(g,.032,0,.95,0,Ic2,1);for(const[x,z]of[[.03,.02],[-.03,-.02]])B(g,.02,.12,.02,x,1,z,Ic,{e:1,rz:x*8});return{}},
  drawFx:p=>{skBurst(p,14,[0x9fe6ff,0xffffff,0x5ab8f0],1.6,.4,.04);snd(1500,.2,.04,'sine');setTimeout(()=>snd(2200,.25,.03,'sine'),80)}},
-{id:'dg_ice',weapon:'Daggers',name:'寒冰雙刃 Ice Daggers',rarity:'legendary',ex:1,how:'寒冰雙刃組合包限定（聖誕） Ice Daggers Bundle Exclusive',
+{id:'dg_ice',weapon:'Daggers',name:'水晶雙刃 Crystal Daggers',rarity:'legendary',ex:1,how:'寒冰雙刃組合包限定（聖誕） Ice Daggers Bundle Exclusive',
  build:g=>{const Ic=0x9fe6ff,Wt=0xe8fbff;B(g,.024,.1,.026,0,0,0,0x1f3550);B(g,.064,.014,.034,0,.055,0,0x5ab8f0);B(g,.014,.2,.05,0,.17,0,Ic,{e:1});B(g,.012,.09,.04,0,.31,-.006,Ic,{e:1,rx:.45});
   B(g,.016,.05,.03,0,.12,.032,Wt,{rx:.6});B(g,.016,.05,.03,0,.21,-.032,Wt,{rx:-.6});Sp(g,.014,0,-.055,0,0x9fe6ff,1);return{dual:1}},
  drawFx:p=>{skBurst(p,10,[0x9fe6ff,0xffffff],1.2,.35,.035);snd(1800,.12,.04,'sine')}},
@@ -947,6 +947,32 @@ const SKINS=[
  build:g=>{const Gd=0xe8b412,Gd2=0xb88209,Iv=0xf2e8d0;Cz(g,.018,.018,.24,0,.11,-.21,Gd);B(g,.032,.022,.22,0,.136,-.21,Gd2);Cz(g,.042,.042,.08,0,.095,-.05,Gd2);for(let i=0;i<6;i++){const a=i/6*PI*2;Sp(g,.007,Math.cos(a)*.03,.095+Math.sin(a)*.03,-.008,Gd)}
   B(g,.046,.062,.15,0,.08,0,Gd);B(g,.046,.135,.062,0,0,.05,Iv,{rx:-.35});Sp(g,.012,.026,.01,.05,0xd8102c,1);B(g,.015,.032,.03,0,.137,.045,Gd2);Cz(g,.022,.022,.02,0,.11,-.33,Gd2);return{}},
  drawFx:p=>{skBurst(p,10,[0xffd23f,0xffffff],1.2,.4,.035);snd(1568,.12,.03,'sine')}},
+{id:'mo_coffee',weapon:'Molotov',name:'咖啡 Coffee',rarity:'rare',how:'從皮膚箱開出 Unboxed from the Skin Case',
+ build:g=>{const W=0xf4f4f0,Gn=0x3fa85a;Cy(g,.06,.15,0,.075,0,W);Cy(g,.0615,.05,0,.075,0,Gn);Cy(g,.052,.006,0,.149,0,0x6b3a22);const h=new T.Mesh(UT,mt(W));h.scale.set(.035,.035,.04);h.rotation.y=PI/2;h.position.set(0,.08,.065);g.add(h);return{}},
+ drawFx:p=>{skBurst(p,5,[0xffffff,0xd9c8b0],.5,.6,.03);snd(420,.08,.04,'triangle')}},
+{id:'mo_lava',weapon:'Molotov',name:'熔岩燈 Lava Lamp',rarity:'epic',how:'從皮膚箱開出 Unboxed from the Skin Case',
+ build:g=>{const M=0x8a9098;Cz(g,.06,.03,.06,0,.03,0,M,{rx:PI/2});Cy(g,.07,.012,0,.006,0,M);const gl=new T.Mesh(new T.CylinderGeometry(.03,.045,.17,12),new T.MeshPhongMaterial({color:0xff5a20,transparent:true,opacity:.45,emissive:0x5a1000}));gl.position.y=.145;g.add(gl);
+  for(const[y,r]of[[.09,.022],[.13,.016],[.165,.019],[.2,.012]])Sp(g,r,(y*31%1-.5)*.02,y,0,0xffa020,1);Cz(g,.03,.012,.05,0,.255,0,M,{rx:PI/2});return{}},
+ drawFx:p=>{skBurst(p,8,[0xff5a20,0xffa020],.8,.5,.035);snd(300,.18,.04,'sine')}},
+{id:'mo_coals',weapon:'Molotov',name:'熱炭 Hot Coals',rarity:'rare',how:'從皮膚箱開出 Unboxed from the Skin Case',
+ build:g=>{for(const[x,y,z,s]of[[0,.05,0,1],[.05,.03,.035,.75],[-.05,.03,.03,.7],[.03,.03,-.05,.8],[-.04,.025,-.04,.6]]){const r=B(g,.07*s,.06*s,.065*s,x,y,z,0x2a1208,{rx:x*9,ry:z*11});Sp(g,.024*s,x,y+.022*s,z,0xff4a10,1).scale.y=.5}return{}},
+ drawFx:p=>{skBurst(p,8,[0xff8a1a,0xff3a0a],.7,.5,.03);snd(160,.2,.05,'sawtooth')}},
+{id:'mo_torch',weapon:'Molotov',name:'火炬 Torch',rarity:'epic',how:'從皮膚箱開出 Unboxed from the Skin Case',
+ build:g=>{const Ir=0x5a5a62;B(g,.03,.2,.03,0,0,0,0x6b4426);Cy(g,.026,.02,0,.1,0,Ir);for(let i=0;i<6;i++){const a=i/6*PI*2;B(g,.008,.09,.008,Math.cos(a)*.032,.15,Math.sin(a)*.032,Ir,{rz:-Math.cos(a)*.25,rx:Math.sin(a)*.25})}
+  Sp(g,.03,0,.15,0,0xffb020,1);Sp(g,.022,0,.19,0,0xffe27a,1);B(g,.016,.05,.016,0,.215,0,0xff7a1a,{e:1,ry:.6});return{}},
+ drawFx:p=>{skBurst(p,10,[0xffb020,0xff5a1a,0xffe27a],1,.45,.035);snd(220,.15,.05,'sawtooth')}},
+{id:'rv_sheriff',weapon:'Revolver',name:'警長 Sheriff',rarity:'rare',how:'從皮膚箱開出 Unboxed from the Skin Case',
+ build:g=>{const S=0x7d8590,S2=0x5d6470,Wd=0x6a1a1a;Cz(g,.019,.019,.3,0,.11,-.24,S);B(g,.032,.024,.28,0,.133,-.23,S2);Cz(g,.024,.024,.03,0,.11,-.39,S2);Cz(g,.043,.043,.08,0,.095,-.05,S2);for(let i=0;i<6;i++){const a=i/6*PI*2;Sp(g,.006,Math.cos(a)*.03,.095+Math.sin(a)*.03,-.009,0xc9a24a)}
+  B(g,.046,.06,.14,0,.08,0,S);B(g,.048,.15,.064,0,-.01,.05,Wd,{rx:-.3});B(g,.016,.034,.03,0,.137,.045,S2);return{}},
+ drawFx:p=>{skBurst(p,5,[0xc9a24a,0xffffff],.8,.35,.03);snd(900,.06,.04,'square')}},
+{id:'rv_deagle',weapon:'Revolver',name:'沙漠之鷹 Desert Eagle',rarity:'legendary',ex:1,how:'兌換代碼「aight bet!」取得',
+ build:g=>{const Sv=0xb8c2d6,Sv2=0x8e98ac,Bk=0x1c1c22;B(g,.058,.07,.3,0,.115,-.1,Sv);B(g,.06,.02,.3,0,.155,-.1,Sv2);Cz(g,.026,.026,.02,0,.11,-.255,Bk);
+  for(const z of[-.01,.01,.03,.05])B(g,.062,.03,.006,0,.115,z,Sv2);B(g,.05,.05,.26,0,.07,-.08,Sv2);B(g,.05,.15,.075,0,-.02,.03,Sv,{rx:-.22});B(g,.054,.1,.05,0,-.03,.035,Bk,{rx:-.22});B(g,.052,.02,.08,0,-.1,.06,Bk,{rx:-.22});B(g,.012,.02,.02,0,.17,.03,Bk);return{}},
+ drawFx:p=>{skBurst(p,8,[0xb8c2d6,0xffffff],1,.35,.035);snd(700,.08,.05,'square');setTimeout(()=>snd(1200,.05,.04,'square'),70)}},
+{id:'rv_pepper',weapon:'Revolver',name:'胡椒罐槍 Peppergun',rarity:'epic',how:'從皮膚箱開出 Unboxed from the Skin Case',
+ build:g=>{const Bk=0x24242a,Iv=0xe8e2d4;for(let i=0;i<6;i++){const a=i/6*PI*2;Cz(g,.017,.017,.2,Math.cos(a)*.03,.11+Math.sin(a)*.03,-.13,Bk);Sp(g,.006,Math.cos(a)*.03,.11+Math.sin(a)*.03,-.232,0x0a0a0a)}
+  Cz(g,.028,.028,.2,0,.11,-.13,Bk);B(g,.045,.06,.08,0,.09,.0,Bk);Sp(g,.007,.025,.1,-.02,0xd8d8d8,1);B(g,.044,.15,.06,0,-.01,.06,Iv,{rx:-.4});return{}},
+ drawFx:p=>{skBurst(p,6,[0x24242a,0xe8e2d4],.8,.35,.03);snd(600,.07,.04,'square')}},
 {id:'dg_toast',weapon:'Daggers',name:'吐司 Toast',rarity:'rare',ex:1,how:'手作組合包限定 Crafty Bundle Exclusive',
  build:g=>{const Cr=0xc8843a;B(g,.024,.1,.026,0,0,0,0x5a3a20);B(g,.05,.012,.03,0,.055,0,0x5a3a20);B(g,.014,.2,.1,0,.17,0,Cr);B(g,.016,.18,.082,0,.17,0,0xf0d49a);Sp(g,.035,0,.27,-.03,Cr).scale.set(.22,.7,1);Sp(g,.035,0,.27,.03,Cr).scale.set(.22,.7,1);return{dual:1}},
  drawFx:p=>{skBurst(p,6,[0xf0d49a,0xc8843a],1,.35,.04);snd(520,.05,.05,'triangle')}},
@@ -2483,7 +2509,7 @@ function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;for(co
  p.wraps=p.wraps.filter((x,i,a)=>typeof x=='string'&&WBYID[x]&&a.indexOf(x)===i);if(!p.wraps.includes('bc'))p.wraps.unshift('bc');p.wrapFav=p.wrapFav.filter(x=>WBYID[x]);for(const n in p.wrap){const v=p.wrap[n];if(v!=='?'&&!p.wraps.includes(v))delete p.wrap[n]}
  p.fins=p.fins.filter((x,i,a)=>typeof x=='string'&&FBYID[x]&&a.indexOf(x)===i);if(!p.fins.includes('fc'))p.fins.unshift('fc');p.finFav=p.finFav.filter(x=>FBYID[x]);for(const n in p.fin){const v=p.fin[n];if(v!=='?'&&!p.fins.includes(v))delete p.fin[n]}if(p.codes.includes('deathsmilexux'))for(const x of FINS)if(!p.fins.includes(x.id))p.fins.push(x.id);
  p.skins=p.skins.filter((x,i,a)=>typeof x=='string'&&SKBYID[x]&&a.indexOf(x)===i);if(p.codes.includes('deathsmilexux'))for(const x of SKINS)if(!p.skins.includes(x.id))p.skins.push(x.id);p.skinFav=p.skinFav.filter(x=>SKBYID[x]);for(const n in p.skin){const v=p.skin[n];if(v!=='?'&&!(SKBYID[v]&&SKBYID[v].weapon==n&&p.skins.includes(v)))delete p.skin[n]}
- p.charms=p.charms.filter((x,i,a)=>typeof x=='string'&&CHBYID[x]&&a.indexOf(x)===i);if(!p.charms.includes('coin'))p.charms.unshift('coin');if(p.codes.includes('deathsmilexux'))for(const x of CHARMS)if(!p.charms.includes(x.id))p.charms.push(x.id);p.charmFav=p.charmFav.filter(x=>CHBYID[x]);for(const n in p.charm){const v=p.charm[n];if(v!=='?'&&!p.charms.includes(v))delete p.charm[n]}
+ p.charms=p.charms.filter((x,i,a)=>typeof x=='string'&&CHBYID[x]&&a.indexOf(x)===i);if(!p.charms.includes('coin'))p.charms.unshift('coin');if(p.codes.includes('deathsmilexux'))for(const x of CHARMS)if(!x.adm&&!p.charms.includes(x.id))p.charms.push(x.id);p.charmFav=p.charmFav.filter(x=>CHBYID[x]);for(const n in p.charm){const v=p.charm[n];if(v!=='?'&&!p.charms.includes(v))delete p.charm[n]}
  p.emotes=p.emotes.filter((x,i,a)=>typeof x=='string'&&EMBYID[x]&&a.indexOf(x)===i);if(!p.emotes.includes('wave'))p.emotes.unshift('wave');if(p.codes.includes('deathsmilexux'))for(const x of EMOTES)if(!p.emotes.includes(x.id))p.emotes.push(x.id);
  return p}
 function accLoad(){ACCDB=lsGet('rvl_accounts',null);if(!ACCDB||typeof ACCDB!=='object'||!ACCDB.users)ACCDB={v:1,users:{}};return ACCDB}
@@ -2701,7 +2727,8 @@ function lobbyLoadoutRefresh(){if(st!=='lobby'||!P)return;const pk=(a,k)=>{const
 const CODE_KEYS={free:10,bonus:15,chill:20};
 function redeem(){const c=$('#codeIn').value.trim().toLowerCase(),m=$('#codeMsg');if(!PF)return;if(!c){m.style.color='#ff8a8a';m.textContent='請輸入代碼';return}
  const already=()=>{m.style.color='#ffc93c';m.textContent='這個代碼已經兌換過了'};
- if(c==='deathsmilexux'){if(PF.codes.includes(c)){if(WRAPS.every(x=>PF.wraps.includes(x.id))&&FINS.every(x=>PF.fins.includes(x.id))&&SKINS.every(x=>PF.skins.includes(x.id)))return already();for(const x of WRAPS)if(!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！新增解鎖全部武器包裝、死亡特效與皮膚';toast('🎉 全部包裝與死亡特效已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}PF.codes.push(c);let n=0;for(const w of ALLW())if(!PF.unl.includes(w.n)){PF.unl.push(w.n);n++}for(const x of WRAPS)if(!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已解鎖全部武器、包裝、死亡特效與皮膚（新增武器 '+n+' 把）';toast('🎉 代碼兌換成功：全部武器已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
+ if(c==='deathsmilexux'){if(PF.codes.includes(c)){if(WRAPS.every(x=>x.adm||PF.wraps.includes(x.id))&&FINS.every(x=>PF.fins.includes(x.id))&&SKINS.every(x=>PF.skins.includes(x.id)))return already();for(const x of WRAPS)if(!x.adm&&!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！新增解鎖全部武器包裝、死亡特效與皮膚';toast('🎉 全部包裝與死亡特效已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}PF.codes.push(c);let n=0;for(const w of ALLW())if(!PF.unl.includes(w.n)){PF.unl.push(w.n);n++}for(const x of WRAPS)if(!x.adm&&!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已解鎖全部武器、包裝、死亡特效與皮膚（新增武器 '+n+' 把）';toast('🎉 代碼兌換成功：全部武器已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
+ if(c==='aight bet!'){if(PF.codes.includes(c)||PF.skins.includes('rv_deagle'))return already();PF.codes.push(c);PF.skins.push('rv_deagle');saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 沙漠之鷹 Desert Eagle（左輪皮膚）';toast('🔫 獲得 沙漠之鷹 Desert Eagle！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='skintest'){if(PF.codes.includes(c))return already();PF.codes.push(c);for(const x of SKINS)if(!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已獲得全部測試皮膚（'+SKINS.map(x=>x.name).join('、')+'）';toast('🎨 已獲得全部皮膚！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='goldtest'){if(PF.codes.includes(c))return already();PF.codes.push(c);PF.gold=(PF.gold||0)+5000;saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 💰 5000 金幣（測試用）';toast('💰 +5000 金幣','#ffcf40');snd(880,.15,.06,'sine');renderLUI();if(PANEL=='Shop')PRENDER.Shop();return}
  if(c==='skinscases'||c==='skincases'||c==='notcubehead'){if(PF.codes.includes(c))return already();PF.codes.push(c);PF.crates.scase=crHeld('scase')+1;saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 1 個皮膚箱 Skin Case（已放進 🎒 背包）';toast('📦 皮膚箱 Skin Case ×1 已放進背包','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
