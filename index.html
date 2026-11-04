@@ -2683,7 +2683,7 @@ $('#lcin').addEventListener('keydown',e=>{if(e.code=='Enter'){chatSend(e.target.
 
 // ===== accounts / profile (browser-local localStorage, plus optional Firebase cloud accounts below) =====
 var ACCT=null,PF=null,ACCDB=null;
-const RK_FMT_K=['1v1','2v2','1v2','2v1'];const START_W=['Assault Rifle','Handgun','Fists','Grenade','Spear'],START_LO=['Assault Rifle','Handgun','Fists','Grenade'];
+const RK_FMT_K=['1v1','2v2','1v2','2v1','1v10'];const START_W=['Assault Rifle','Handgun','Fists','Grenade','Spear'],START_LO=['Assault Rifle','Handgun','Fists','Grenade'];
 // key costs: authoritative numbers from the wiki (user-provided). Weapons not explicitly listed there follow the
 // stated fallback rule: 300 for a high-end/special-mechanic weapon (multi-shot alt-fire, dual-wield, freeze/elemental,
 // AoE, unique traversal, etc. — in the spirit of the 300–475 tier), otherwise 50 for an ordinary weapon.
@@ -3231,7 +3231,7 @@ function lbHTML(LB,field,ic,unit){if(!inCloud())return'<div class="cd">🌍 排�
 // Leaving a ranked match early (pend still set) counts as a normal loss. Cloud accounts publish {name,rp} to ranked/{uid}
 // for the global top-200 board; Arch Nemesis = Nemesis (3600+) AND inside that top 200.
 const RK_LV=1,RK_TIERS=[['Bronze','青銅','#cd7f3e'],['Silver','白銀','#c8d2de'],['Gold','黃金','#f2c23c'],['Platinum','白金','#4fe0c0'],['Diamond','鑽石','#58b4ff'],['Onyx','黑曜','#a678ff']];
-const RK_FMT={'1v1':{n:1,ne:1,w:1,l:1,zh:'1v1 單挑',e:'⚔️'},'2v2':{n:2,ne:2,w:1,l:1,zh:'2v2 雙人',e:'👥'},'1v2':{n:1,ne:2,w:1.5,l:.5,zh:'1v2 以寡敵眾',e:'🔥'},'2v1':{n:2,ne:1,w:.6,l:1.25,zh:'2v1 以多打少',e:'🛡️'}};
+const RK_FMT={'1v1':{n:1,ne:1,w:1,l:1,zh:'1v1 單挑',e:'⚔️'},'2v2':{n:2,ne:2,w:1,l:1,zh:'2v2 雙人',e:'👥'},'1v2':{n:1,ne:2,w:1.5,l:.5,zh:'1v2 以寡敵眾',e:'🔥'},'2v1':{n:2,ne:1,w:.6,l:1.25,zh:'2v1 以多打少',e:'🛡️'},'1v10':{n:1,ne:10,w:1,l:1,zh:'1v10 管理員之戰',e:'👑',adm:1}};
 var RKLB={t:0,list:[],busy:false,err:'',me:-1},RKT='play';
 function rkP(){return PF.rk}
 function rkTier(rp,m,arch){if(!m)return{i:-1,en:'Unranked',zh:'未定級',col:'#9aa3b5',lo:0,hi:0};
@@ -3260,7 +3260,7 @@ function rkIcon(i){if(RKIC[i])return RKIC[i];const g=i==-2?-2:i<0?-1:i>=18?i:Mat
  else{wings(24);P('20,18 44,18 44,40 32,52 20,40');P('26,24 38,24 38,37 32,43 26,37',DK);if(g==19){P('20,16 22,4 28,11 32,2 36,11 42,4 44,16','#ffcf3a');}}
  return RKIC[i]='data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'+b+'</svg>')}
 function rkImg(t,sz){return'<img src="'+rkIcon(t.i)+'" alt="" style="width:'+sz+'px;height:'+sz+'px;vertical-align:middle;filter:drop-shadow(0 0 6px '+t.col+'88)">'}
-function rkDelta(rp,f,won,first){const F=RK_FMT[f]||RK_FMT['1v1'],x=Math.min(rp,3600)/3600;if(won)return Math.max(f=='2v1'?3:5,Math.round((25-20*x)*F.w));if(first)return 0;return-Math.max(3,Math.round((8+12*x)*F.l))}
+function rkDelta(rp,f,won,first){if(f=='1v10')return won?100:(first?0:-30);const F=RK_FMT[f]||RK_FMT['1v1'],x=Math.min(rp,3600)/3600;if(won)return Math.max(f=='2v1'?3:5,Math.round((25-20*x)*F.w));if(first)return 0;return-Math.max(3,Math.round((8+12*x)*F.l))}
 function placementRP(pw){return Math.max(0,Math.min(2899,Math.round(50+Math.max(0,Math.min(10,pw))/10*2800)))}
 function rkFirst(){return PF.rk.day!==today()}
 function rkLocked(){return PF.lv<RK_LV&&!FREE()}
@@ -3269,7 +3269,7 @@ function rkApply(won,f,first){const r=PF.rk,t0=rkCur(),placement=r.m<10;let d=0,
  else{d=rkDelta(r.rp,f,won,first);r.rp=Math.max(0,r.rp+d);r.m++;if(won)r.w++}
  r.day=today();r.best=Math.max(r.best,r.rp);r.pend=null;rkRewards();saveNow();rkPush();lvlPush();stPush();return{d,f,won,first,t0,t1:rkCur(),placement,justPlaced}}
 function rkAbandon(){if(!PF||!PF.rk||!PF.rk.pend)return;const a=rkApply(false,PF.rk.pend.f||'1v1',false);toast('🏳️ 中途離開排位賽，算輸一場：'+a.d+' RP','#ff8a8a')}
-function rkQueue(f){if(!PF)return;const F=RK_FMT[f];if(!F)return;if(NET){toast('線上房間中不能打排位');return}if(rkLocked()){toast('🔒 排位賽 Lv '+RK_LV+' 解鎖');return}rkAbandon();
+function rkQueue(f){if(!PF)return;const F=RK_FMT[f];if(!F)return;if(F.adm&&!isAdmin()){toast('🔒 1v10 只有管理員能打');return}if(NET){toast('線上房間中不能打排位');return}if(rkLocked()){toast('🔒 排位賽 Lv '+RK_LV+' 解鎖');return}rkAbandon();
  if(!cfg.ranked){cfg.d0=cfg.d;cfg.m0=cfg.map;cfg.mp0=cfg.mapPick}const rp=PF.rk.rp;cfg.ranked=f;cfg.n=F.n;cfg.ne=F.ne;cfg.d=rkDiff(rp);cfg.mapPick=0;cfg.map=-1;
  PF.rk.pend={f,t:Date.now()};saveNow();closePanels();cfg.nt=0;goMatch()}
 function rkLeave(){if(cfg.ranked){cfg.ranked=0;cfg.ne=0;if(cfg.d0!=null){cfg.d=cfg.d0;cfg.map=cfg.m0;cfg.mapPick=cfg.mp0}cfg.d0=null}}
@@ -3314,7 +3314,7 @@ function renderRanked(){if(!PF)return;const r=PF.rk,t=rkCur(),body=$('#rkBody');
   else if(NET){if(!NET.host)h+='<div class="cd" style="text-align:center;font-weight:800">線上房間中只有房主能開排位 2v2，其他模式請先離開房間</div>';
    else{const party=partyIds().filter(id=>id===NET.me||LPX[id]);h+=party.length>2?'<div class="cd" style="text-align:center;font-weight:800">隊伍超過 2 人，無法打排位 2v2</div>':'<div class="cd" style="text-align:center"><h4>⚔️ 排位 2v2</h4><div class="sub2">你這隊 '+party.length+' 人'+(party.length<2?'（缺 1 位，自動補機器人）':'（跟隊友一起）')+' · 對手 2 個機器人</div><button class="gbtn" id="rkOnlineQ">開始排位 2v2</button></div><div class="note" style="margin-top:6px">其他排位模式（1v1 / 1v2 / 2v1）仍然只能單機打，先離開房間。</div>';
    setTimeout(()=>{const b=$('#rkOnlineQ');if(b)b.onclick=rkQueueOnline},0)}}
-  else{const first=rkFirst();h+=(first?'<div class="note" style="color:#ffd23f;font-weight:800;margin-bottom:6px">🛡️ 今天第一場排位：輸了不扣分！</div>':'')+'<div class="cards">'+Object.keys(RK_FMT).map(f=>{const F=RK_FMT[f],w=rkDelta(r.rp,f,true,first),l=rkDelta(r.rp,f,false,first);
+  else{const first=rkFirst();h+=(first?'<div class="note" style="color:#ffd23f;font-weight:800;margin-bottom:6px">🛡️ 今天第一場排位：輸了不扣分！</div>':'')+'<div class="cards">'+Object.keys(RK_FMT).filter(f=>!RK_FMT[f].adm||isAdmin()).map(f=>{const F=RK_FMT[f],w=rkDelta(r.rp,f,true,first),l=rkDelta(r.rp,f,false,first);
     return'<div class="cd" style="text-align:center"><h4>'+F.e+' '+F.zh+'</h4><div class="sub2">你這隊 '+F.n+' 人 · 對手 '+F.ne+' 個機器人</div><div style="margin:8px 0;font-weight:900"><span style="color:#35d07f">贏 +'+w+'</span>　<span style="color:'+(l?'#ff6a6a':'#ffd23f')+'">輸 '+(l||'±0')+'</span></div><button class="gbtn" data-rq="'+f+'">開始排位</button></div>'}).join('')+'</div>'+
    '<div class="note" style="margin-top:6px">對手是機器人（之後會開放真人排位）。段位越高，機器人越強、贏的分越少、輸的分越多。中途離開算輸。</div>'}
   h+='<h3>🎁 排位專屬獎勵</h3><div class="cards">'+RK_REW.map(x=>{const got=rkRewHas(x);return'<div class="cd" style="text-align:center">'+(x.k=='wrap'?'<img src="'+wrapSwatch(x.id)+'" style="width:56px;height:56px;border-radius:10px">':'<div style="font-size:40px">🕺</div>')+'<h4>'+x.n+'</h4><div class="sub2">達到 '+x.t+'（'+x.rp+' RP）</div><div style="margin-top:4px;font-weight:900;color:'+(got?'#35d07f':'#9fb0e0')+'">'+(got?'✔ 已解鎖':'🔒 未解鎖')+'</div></div>'}).join('')+'</div>'}
