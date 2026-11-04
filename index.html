@@ -2190,7 +2190,7 @@ begin();lock();
 setTimeout(()=>{if(!MOBILE&&document.pointerLockElement!==cv&&!fb&&st!='menu'){paused=true;$('#pause').style.display='flex'}},300)}
 function startMatch(){if(st=='msel')return;score=new Array(NT()).fill(0);setup();showMapSel(E.filter(e=>!e.isP).map(e=>({id:e.name,name:e.name,team:e.team===P.team?0:1})),k=>{curMap=k;buildMap(curMap);openLo()})}
 // ---- pre-match map vote (Rivals-style): big cards, Random card, 10 s timer, bots vote too; majority wins, ties random ----
-var MS=null;const MTHUMB={},MSORD=['arena','backroom','crossroad','rand','splash','battleground','bridge'];
+var MS=null;const MTHUMB={},MSORD=['arena','backroom','crossroad','rand','splash','battleground','bridge','construction'];
 const SHUF='<svg viewBox="0 0 24 24"><path d="M2.5 6.5h4c5 0 6 11 11 11h4M2.5 17.5h4c2 0 3.3-1.8 4.4-4M14 9.5c1.1-1.7 2.2-3 3.5-3h4"/><path d="M18.5 3.5l3 3-3 3M18.5 14.5l3 3-3 3"/></svg>';
 function mapThumb(k){if(MTHUMB[k]!=null)return MTHUMB[k];const M=MAPDATA[k];let url='';try{const g=new T.Scene();g.background=new T.Color(M.bg||0x9fd0ff);g.fog=new T.Fog(M.fogc||0xcfe6ff,70,160);g.add(new T.AmbientLight(0xffffff,.85));const l=new T.DirectionalLight(0xffffff,.65);l.position.set(10,20,6);g.add(l);
  const f=new T.Mesh(new T.PlaneGeometry(64,64),new T.MeshLambertMaterial({color:M.floor}));f.rotation.x=-PI/2;g.add(f);if(M.grid){const gh=new T.GridHelper(64,32,0xb8c0d0,0xc8d0de);gh.position.y=.01;g.add(gh)}
