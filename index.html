@@ -1213,7 +1213,7 @@ function msCheck(wn,quiet){if(!PF||!WBN(wn))return;const k=PF.wk[wn]|0,got=[];fo
 const msTxt=(x,wn)=>'🔒 '+wn+' 擊殺 '+((PF&&PF.wk[wn])|0).toLocaleString()+' / '+x.ms.toLocaleString()+' 解鎖（僅限這把武器）';
 // ===== lootboxes 開箱 (crates). Cosmetics come from crates: buying puts one in PF.crates={crateId:count} (the 🎒 backpack); opening grants a random item the player does NOT own yet (no duplicates).
 // To add a crate push {id,name,en,cur:'keys'|'tickets',price,kind:'wrap'|'fin'|'skin',pool:()=>[item ids]} (the 3D model comes from mkCrate(kind)).
-const CURI={keys:'🔑',tickets:'🎫',snow:'❄️'},CURN={keys:'鑰匙',tickets:'皮膚票',snow:'雪花'};
+const CURI={keys:'🔑',tickets:'🎫',snow:'❄️',gold:'💰'},CURN={keys:'鑰匙',tickets:'皮膚票',snow:'雪花',gold:'金幣'};
 // ===== Xmas update: ❄️ snowflakes are event-only. Earned from daily tasks, and per match once all daily tasks are done.
 // They buy the Xmas Crate and Xmas Skin Case, and stop working after XMAS_END.
 const XMAS_END='2027-01-10',SNOW_D={pd:100,el:150,wd:250},SNOW_WIN=40,SNOW_LOSS=10;
@@ -3442,7 +3442,7 @@ const KBUNDLES=[
  {id:'icedg',zh:'寒冰雙刃組合包',en:'Ice Daggers Bundle',gold:2499,keys:0,cr:{xbox:3},snow:4500,skins:['dg_ice'],sp:1,lim:1,art:'🧊'},
  {id:'icecy',zh:'寒冰鐮刀組合包',en:'Ice Scythe Bundle',gold:4999,keys:0,cr:{xbox:3},snow:11000,skins:['sy_ice'],sp:1,lim:1,red:1,art:'❄️'},
  {id:'kb5',zh:'傳奇鑰匙組合包',en:'Legendary Key Bundle',gold:4999,keys:1100,cr:{wbox:40,fpack:15,scase:1},rw:20,rf:3,skin:'sn_locksmith',red:1,art:'👑🔑'}];
-const KB_WRAPK=5,KB_FINK=10,KB_SKINT=10,kbSk=b=>(b.skins||[]).concat(b.skin?[b.skin]:[]).filter(x=>SKBYID[x]);
+const KBBYID=Object.fromEntries(KBUNDLES.map(b=>[b.id,b])),kbGiftable=b=>!!b&&(!b.lim||xmasOn()),KB_WRAPK=5,KB_FINK=10,KB_SKINT=10,kbSk=b=>(b.skins||[]).concat(b.skin?[b.skin]:[]).filter(x=>SKBYID[x]);
 function kbItems(b){const o=b.keys?[['🔑','鑰匙 Keys','',b.keys]]:[];if(b.snow)o.push(['❄️','雪花 Snowflakes','聖誕活動限定貨幣（可買聖誕箱、聖誕皮膚箱）',b.snow]);for(const c in b.cr||{}){const C=CRBYID[c];o.push(['<img src="'+crArt(c)+'">',C.name+' '+C.en,'放進 🎒 背包',b.cr[c]])}
  if(b.rw)o.push(['🎨❔','隨機包裝 Random Wrap','開出未擁有的（全擁有則換 🔑 '+KB_WRAPK+'）',b.rw]);if(b.rf)o.push(['✨❔','隨機死亡特效 Random Finisher','開出未擁有的（全擁有則換 🔑 '+KB_FINK+'）',b.rf]);
  for(const n of b.wpn||[]){const w=WBN(n);if(w)o.push(['<img src="'+icon(w)+'">',n,'武器 Weapon'+(isUnl(n)?'（已擁有）':''),1])}
@@ -3460,7 +3460,8 @@ function kbRand(k){const L=k=='wrap'?WRAPS.filter(x=>x.id!='bc'&&!x.ex&&!PF.wrap
 // buy bundle i: returns a summary object (null when blocked). Grants everything, then saves once.
 function kbBuy(i){const b=KBUNDLES[i];if(!b||!PF)return null;const g=PF.gold|0;if(b.lim&&!xmasOn()){toast('🎄 聖誕限定組合包已下架','#ff6a6a');return null}
  if(!FREE()&&g<b.gold){toast('💰 金幣不足（還差 '+(b.gold-g)+'）','#ff6a6a');snd(200,.15,.05);const m=$('#kbMsg');if(m)m.textContent='💰 金幣不足：還差 '+(b.gold-g);return null}
- PF.gold=FREE()?g:g-b.gold;PF.keys+=b.keys;if(b.snow)PF.snow=(PF.snow|0)+b.snow;let nc=0;const r={keys:b.keys,cr:{},w:[],f:[],ck:0,tk:0,skin:null};
+ PF.gold=FREE()?g:g-b.gold;return kbGrant(b,'🛒 購買成功：')}
+function kbGrant(b,pre){PF.keys+=b.keys;if(b.snow)PF.snow=(PF.snow|0)+b.snow;let nc=0;const r={keys:b.keys,cr:{},w:[],f:[],ck:0,tk:0,skin:null};
  for(const c in b.cr||{}){PF.crates[c]=crHeld(c)+b.cr[c];r.cr[c]=b.cr[c];nc+=b.cr[c]}
  for(let j=0;j<(b.rw||0);j++){const id=kbRand('wrap');if(id){PF.wraps.push(id);r.w.push(id)}else r.ck+=KB_WRAPK}
  for(let j=0;j<(b.rf||0);j++){const id=kbRand('fin');if(id){PF.fins.push(id);r.f.push(id)}else r.ck+=KB_FINK}
@@ -3468,7 +3469,7 @@ function kbBuy(i){const b=KBUNDLES[i];if(!b||!PF)return null;const g=PF.gold|0;i
  for(const id of kbSk(b)){if(PF.skins.includes(id)){PF.tickets+=KB_SKINT;r.tk+=KB_SKINT}else{PF.skins.push(id);r.sk.push(id);if(!r.skin)r.skin=id}}
  for(const id of b.fins||[])if(FBYID[id]){if(PF.fins.includes(id))r.ck+=KB_FINK;else{PF.fins.push(id);r.fn.push(id)}}
  PF.keys+=r.ck;saveNow();renderLUI();
- toast('🛒 購買成功：'+b.zh+(b.keys+r.ck?'　🔑 +'+(b.keys+r.ck):'')+(b.snow?'　❄️ +'+b.snow:'')+(nc?'　📦 ×'+nc:'')+(r.w.length?'　🎨 ×'+r.w.length:'')+(r.f.length?'　✨ ×'+r.f.length:'')+(r.wn.length?'　🔫 '+r.wn.join('、'):'')+(r.sk.length?'　🎨 '+r.sk.map(x=>SKBYID[x].name).join('、'):'')+(r.fn.length?'　💀 ×'+r.fn.length:''),'#35d07f');
+ toast(pre+b.zh+(b.keys+r.ck?'　🔑 +'+(b.keys+r.ck):'')+(b.snow?'　❄️ +'+b.snow:'')+(nc?'　📦 ×'+nc:'')+(r.w.length?'　🎨 ×'+r.w.length:'')+(r.f.length?'　✨ ×'+r.f.length:'')+(r.wn.length?'　🔫 '+r.wn.join('、'):'')+(r.sk.length?'　🎨 '+r.sk.map(x=>SKBYID[x].name).join('、'):'')+(r.fn.length?'　💀 ×'+r.fn.length:''),'#35d07f');
  if(r.ck)setTimeout(()=>toast('已擁有全部包裝／死亡特效，多出的換成 🔑 +'+r.ck+' 鑰匙','#ffd23f'),350);
  if(r.tk)setTimeout(()=>toast('重複的皮膚自動換成 🎫 '+r.tk+' 皮膚票','#ff8a8a'),700);
  snd(880,.12,.06,'sine');setTimeout(()=>snd(1320,.15,.05,'sine'),120);return r}
@@ -3504,12 +3505,13 @@ async function giftFind(raw){const k=String(raw||'').trim().replace(/^@/,'').toL
  if(k===CLOUD.name.toLowerCase())throw'不能送禮給自己';let d;
  try{d=fsDec((await fsCall('/names/'+encodeURIComponent(k),'GET')).fields)}catch(e){if(e&&e.status===404)throw'找不到 @'+k+'（對方需要先用新版登入一次雲端帳號）';throw e}
  if(!d.uid||(d.email&&d.email!==fbEmail(k)))throw'找不到 @'+k;if(d.uid===CLOUD.uid)throw'不能送禮給自己';return{uid:d.uid,name:d.name||k,k}}
-function giftLbl(k,i,q){if(k=='weapon')return'🔫 '+i;if(k=='crate'){const C=CRBYID[i];return'📦 '+(C?C.name+' '+C.en:i)+(q>1?' ×'+q:'')}if(k=='keys')return'🔑 '+q+' 鑰匙';if(k=='tickets')return'🎫 '+q+' 皮膚票';
+const gbId=i=>typeof i=='string'&&i.slice(0,3)=='@b:'?i.slice(3):null;
+function giftLbl(k,i,q){const bi=k=='bundle'?i:k=='crate'?gbId(i):null;if(bi!=null){const b=KBBYID[bi];return'🛍️ '+(b?b.zh+' '+b.en:'組合包')}if(k=='weapon')return'🔫 '+i;if(k=='crate'){const C=CRBYID[i];return'📦 '+(C?C.name+' '+C.en:i)+(q>1?' ×'+q:'')}if(k=='keys')return'🔑 '+q+' 鑰匙';if(k=='tickets')return'🎫 '+q+' 皮膚票';
  if(k=='skin'){const x=SKBYID[i];return'🎨 '+(x?x.name+'（'+x.weapon+' 皮膚）':i)}if(k=='wrap'){const x=WBYID[i];return'🧻 '+(x?x.zh+' '+x.en+' 包裝':i)}if(k=='fin'){const x=FBYID[i];return'💀 '+(x?x.zh+' '+x.en+' 死亡特效':i)}return'?'}
-function giftCost(k,i,q){if(k=='weapon'&&WBN(i))return{cur:'keys',n:wCost(i)};if(k=='crate'&&CRBYID[i])return{cur:CRBYID[i].cur,n:CRBYID[i].price*q};return null}
+function giftCost(k,i,q){if(k=='bundle'){const b=KBBYID[i];return kbGiftable(b)?{cur:'gold',n:b.gold}:null}if(k=='weapon'&&WBN(i))return{cur:'keys',n:wCost(i)};if(k=='crate'&&CRBYID[i])return{cur:CRBYID[i].cur,n:CRBYID[i].price*q};return null}
 function giftOk(g){if(!g||g.toUid!==CLOUD.uid||!GIFT_KINDS.includes(g.kind)||typeof g.item!='string'||!Number.isInteger(g.qty))return false;const k=g.kind,i=g.item,q=g.qty;
  if(g.free===true){if(String(g.fromName||'').toLowerCase()!==ADMIN_NAME||(GIFT.adminUid&&g.fromUid!==GIFT.adminUid))return false}else if(k!='weapon'&&k!='crate')return false;
- if(k=='weapon')return q===1&&!!WBN(i)&&!START_W.includes(i);if(k=='crate')return!!CRBYID[i]&&q>=1&&q<=20;if(k=='keys')return q>=1&&q<=10000;if(k=='tickets')return q>=1&&q<=1000;
+ if(k=='weapon')return q===1&&!!WBN(i)&&!START_W.includes(i);if(k=='crate'&&gbId(i)!=null)return q===1&&!!KBBYID[gbId(i)];if(k=='crate')return!!CRBYID[i]&&q>=1&&q<=20;if(k=='keys')return q>=1&&q<=10000;if(k=='tickets')return q>=1&&q<=1000;
  if(k=='skin')return q===1&&!!SKBYID[i];if(k=='wrap')return q===1&&!!WBYID[i]&&i!='bc';if(k=='fin')return q===1&&!!FBYID[i]&&i!='fc';return false}
 function giftLog(e){PF.giftLog.unshift(e);const n={s:0,r:0};PF.giftLog=PF.giftLog.filter(x=>++n[x.d]<=20)}
 async function giftPoll(force){if(!inCloud()||!PF||GIFT.busy||st!=='lobby')return;if(!force&&Date.now()-GIFT.t<GIFT_POLL_MS)return;GIFT.busy=true;GIFT.t=Date.now();const S=CLOUD;
@@ -3523,7 +3525,7 @@ async function giftPoll(force){if(!inCloud()||!PF||GIFT.busy||st!=='lobby')retur
 setInterval(()=>giftPoll(0),5000);
 async function giftClaim(id){const g=GIFT.pend.find(x=>x.id===id);if(!g||!PF||!inCloud())return;GIFT.pend=GIFT.pend.filter(x=>x.id!==id);if(PF.giftClaimed.includes(id))return;const k=g.kind,i=g.item,q=g.qty;let note='';
  if(k=='weapon'){if(isUnl(i)){const c=wCost(i);PF.keys+=c;note='你已經擁有 '+i+'，自動換成 🔑 '+c+' 鑰匙'}else PF.unl.push(i)}
- else if(k=='crate')PF.crates[i]=crHeld(i)+q;else if(k=='keys')PF.keys+=q;else if(k=='tickets')PF.tickets+=q;
+ else if(k=='crate'&&gbId(i)!=null)kbGrant(KBBYID[gbId(i)],'🎁 收到組合包：');else if(k=='crate')PF.crates[i]=crHeld(i)+q;else if(k=='keys')PF.keys+=q;else if(k=='tickets')PF.tickets+=q;
  else if(crOwns(k,i)){if(k=='skin'){PF.tickets+=10;note='你已經擁有這個皮膚，自動換成 🎫 10 皮膚票'}else{const c=Math.max(5,(k=='wrap'?WBYID[i]:FBYID[i]).p);PF.keys+=c;note='你已經擁有這個外觀，自動換成 🔑 '+c+' 鑰匙'}}else crGrant(k,i);
  PF.giftClaimed.push(id);if(PF.giftClaimed.length>200)PF.giftClaimed.splice(0,PF.giftClaimed.length-200);giftLog({d:'r',n:g.fromName,k,i,q,f:g.free?1:0,m:g.msg||'',t:Date.now()});
  saveP();toast('🎁 已領取 '+giftLbl(k,i,q)+'（來自 '+g.fromName+'）','#35d07f');if(note)setTimeout(()=>toast('ℹ️ '+note,'#ffd23f'),700);snd(880,.12,.06,'sine');renderLUI();if(PANEL=='Gift')PRENDER.Gift();
@@ -3532,14 +3534,14 @@ async function giftClaimAll(){for(const x of GIFT.pend.slice())await giftClaim(x
 async function giftSend(o){if(GIFT.sending||!inCloud()||!PF)return false;const free=isAdmin(),c=free?null:giftCost(o.kind,o.item,o.qty);if(!free&&!c)return false;
  if(c&&PF[c.cur]<c.n){toast(CURI[c.cur]+' '+CURN[c.cur]+'不足（還差 '+(c.n-PF[c.cur])+'）','#ff6a6a');snd(200,.15,.05);return false}
  GIFT.sending=true;if(c){PF[c.cur]-=c.n;saveNow()}renderLUI();
- const doc={toUid:o.to.uid,toName:o.to.name,fromUid:CLOUD.uid,fromName:CLOUD.name,kind:o.kind,item:o.item,qty:o.qty,msg:o.msg,free,ts:Date.now()};
+ const bnd=o.kind=='bundle',doc={toUid:o.to.uid,toName:o.to.name,fromUid:CLOUD.uid,fromName:CLOUD.name,kind:bnd?'crate':o.kind,item:bnd?'@b:'+o.item:o.item,qty:bnd?1:o.qty,msg:o.msg,free,ts:Date.now()};
  try{await giftReg();await fsCall('/gifts','POST',fsEnc(doc));giftLog({d:'s',n:o.to.name,k:o.kind,i:o.item,q:o.qty,f:free?1:0,m:o.msg,t:Date.now()});saveNow();toast('🎁 已送出 '+giftLbl(o.kind,o.item,o.qty)+' 給 '+o.to.name,'#35d07f');snd(990,.12,.06,'sine');return true}
  catch(e){if(c){PF[c.cur]+=c.n;saveNow()}toast('❌ 送禮失敗'+(c?'，已退回 '+c.n+' '+CURI[c.cur]:'')+'：'+fbMsg(e),'#ff6a6a');snd(200,.15,.05);return false}
  finally{GIFT.sending=false;renderLUI()}}
 // ---- UI: 🎁 lobby button -> panel (送禮 / 收到 / 紀錄), confirm dialog, "你收到禮物！" popup ----
 function giftOpen(){if(!inCloud()){toast('送禮需要雲端帳號（請用網站版登入）','#ffc93c');return}GIFT.tab=GIFT.pend.length?'recv':'send';openPanel('Gift');if(Date.now()-GIFT.t>10000)giftPoll(1)}
-const GCATS=[['weapon','🔫 武器'],['crate','📦 箱子'],['keys','🔑 鑰匙',1],['tickets','🎫 皮膚票',1],['skin','🎨 皮膚',1],['wrap','🧻 包裝',1],['fin','💀 死亡特效',1]];
-function giftItems(k,adm){if(k=='weapon')return ALLW().filter(w=>!START_W.includes(w.n)&&(adm||!NOBUY[w.n])).map(w=>[w.n,w.n+(adm?'':' — 🔑 '+wCost(w.n))]);if(k=='crate')return CRATES.map(C=>[C.id,C.name+' '+C.en+(adm?'':' — '+C.price+' '+CURI[C.cur])]);
+const GCATS=[['weapon','🔫 武器'],['crate','📦 箱子'],['bundle','🛍️ 組合包'],['keys','🔑 鑰匙',1],['tickets','🎫 皮膚票',1],['skin','🎨 皮膚',1],['wrap','🧻 包裝',1],['fin','💀 死亡特效',1]];
+function giftItems(k,adm){if(k=='weapon')return ALLW().filter(w=>!START_W.includes(w.n)&&(adm||!NOBUY[w.n])).map(w=>[w.n,w.n+(adm?'':' — 🔑 '+wCost(w.n))]);if(k=='crate')return CRATES.map(C=>[C.id,C.name+' '+C.en+(adm?'':' — '+C.price+' '+CURI[C.cur])]);if(k=='bundle')return KBUNDLES.filter(kbGiftable).map(b=>[b.id,b.zh+' '+b.en+(adm?'':' — 💰 '+b.gold)]);
  if(k=='skin')return SKINS.map(x=>[x.id,x.name+'（'+x.weapon+'）']);if(k=='wrap')return WRAPS.filter(x=>x.id!='bc'&&!x.adm).map(x=>[x.id,x.zh+' '+x.en]);if(k=='fin')return FINS.filter(x=>x.id!='fc').map(x=>[x.id,x.zh+' '+x.en]);return[]}
 const gfQ=k=>k=='crate'||k=='keys'||k=='tickets',gfQmax=(k,adm)=>k=='crate'?(adm?20:10):GIFT_QMAX[k]||1;
 function gfSel(){const adm=isAdmin(),k=GIFT.cat,it=giftItems(k,adm);let i=GIFT.item[k];if(it.length&&!it.some(x=>x[0]===i))i=GIFT.item[k]=it[0][0];if(!it.length)i='';const q=gfQ(k)?Math.max(1,Math.min(gfQmax(k,adm),Math.floor(+GIFT.qty)||1)):1;return{kind:k,item:i,qty:q,msg:String(GIFT.msg||'').trim().slice(0,40)}}
@@ -3557,7 +3559,7 @@ PRENDER.Gift=()=>{if(!PF)return;const adm=isAdmin(),cl=inCloud(),np=GIFT.pend.le
   (gfQ(o.kind)?'<div class="gfrow"><label>數量</label><input id="gfQty" type="number" min="1" max="'+gfQmax(o.kind,adm)+'" value="'+o.qty+'"><span class="note">1–'+gfQmax(o.kind,adm)+'</span></div>':'')+
   '<div class="gfrow"><label>留言</label><input id="gfMsg" type="text" maxlength="40" placeholder="（選填，最多 40 字）" value="'+esc(GIFT.msg)+'"></div>'+
   '<div class="gfcost" id="gfCost">'+gfCostTxt(o)+'</div><button class="gbtn" id="gfGo" style="width:100%;font-size:17px"'+(GIFT.sending?' disabled':'')+'>🎁 送出禮物</button>'+
-  '<div class="note" style="margin-top:8px">你的 ID：<b>@'+esc(CLOUD.name.toLowerCase())+'</b>（個人資料卡上的 @名稱）· 朋友輸入這個 ID 就能送你禮物'+(adm?'':'<br>送武器 = 付那把武器的鑰匙價格；對方已經有那把武器會自動換成鑰匙。送箱子 = 付箱子價格，箱子會放進對方的 🎒 背包。')+'</div>'}
+  '<div class="note" style="margin-top:8px">你的 ID：<b>@'+esc(CLOUD.name.toLowerCase())+'</b>（個人資料卡上的 @名稱）· 朋友輸入這個 ID 就能送你禮物'+(adm?'':'<br>送武器 = 付那把武器的鑰匙價格；對方已經有那把武器會自動換成鑰匙。送箱子 = 付箱子價格，箱子會放進對方的 🎒 背包。送組合包 = 付組合包的 💰 金幣價格，對方會拿到組合包裡的全部東西。')+'</div>'}
  else if(GIFT.tab=='recv')h=(np?GIFT.pend.map(g=>gfRow(g,1)).join('')+'<button class="gbtn" id="gfAll" style="margin-top:6px">全部領取</button> ':'<div class="cd" style="margin-bottom:8px">📭 目前沒有待領取的禮物</div>')+'<button class="bbtn" id="gfRef" style="margin-top:6px">🔄 重新整理</button>';
  else{const col=(d,t)=>{const L=PF.giftLog.filter(x=>x.d==d).slice(0,20);return'<div><h3 style="margin-top:0">'+t+'</h3>'+(L.length?L.map(x=>'<div class="gfit"><div class="t"><b>'+esc(giftLbl(x.k,x.i,x.q))+'</b><span>'+(d=='s'?'給 ':'來自 ')+esc(x.n)+(x.f?' · 👑 免費':'')+' · '+new Date(x.t).toLocaleString('zh-TW',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'})+'</span>'+(x.m?'<span>💬 '+esc(x.m)+'</span>':'')+'</div></div>').join(''):'<div class="note">還沒有紀錄</div>')+'</div>'};
   h='<div class="gfcols">'+col('s','📤 已送出')+col('r','📥 已收到')+'</div>'}
@@ -3574,7 +3576,7 @@ function gfDlg(h){const d=$('#gfDlg');$('#gfBox').innerHTML=h;d.style.display=h?
 async function gfGo(){if(GIFT.sending)return;const o=gfSel();if(!o.item&&!gfQ(o.kind))return;if(!GIFT.to&&!(await gfLookup()))return;const to=GIFT.to,adm=isAdmin(),c=adm?null:giftCost(o.kind,o.item,o.qty);
  if(!adm&&!c)return;if(c&&PF[c.cur]<c.n){toast(CURI[c.cur]+' '+CURN[c.cur]+'不足（還差 '+(c.n-PF[c.cur])+'）','#ff6a6a');snd(200,.15,.05);return}
  gfDlg('<h3>確認送禮</h3><div class="crow"><em>送給</em><b>'+esc(to.name)+'</b>（@'+esc(to.k)+'）</div><div class="crow"><em>禮物</em><b>'+esc(giftLbl(o.kind,o.item,o.qty))+'</b></div>'+(o.msg?'<div class="crow"><em>留言</em>💬 '+esc(o.msg)+'</div>':'')+
-  '<div class="gfcost" style="text-align:center">'+(adm?'👑 管理員免費贈送（不扣任何東西）':'花費 '+CURI[c.cur]+' '+c.n+' '+CURN[c.cur]+'　送出後剩 '+(PF[c.cur]-c.n))+'</div>'+(o.kind=='weapon'?'<div class="note" style="text-align:center">如果對方已經有這把武器，會自動換成 🔑 '+wCost(o.item)+' 鑰匙給他</div>':'')+
+  '<div class="gfcost" style="text-align:center">'+(adm?'👑 管理員免費贈送（不扣任何東西）':'花費 '+CURI[c.cur]+' '+c.n+' '+CURN[c.cur]+'　送出後剩 '+(PF[c.cur]-c.n))+'</div>'+(o.kind=='weapon'?'<div class="note" style="text-align:center">如果對方已經有這把武器，會自動換成 🔑 '+wCost(o.item)+' 鑰匙給他</div>':o.kind=='bundle'?'<div class="note" style="text-align:center">對方會拿到組合包裡的全部東西；已經有的皮膚／特效會照商店規則換成 🎫 或 🔑</div>':'')+
   '<div class="row"><button class="gbtn" id="gfYes">確定送出</button><button id="gfNo">取消</button></div>');
  $('#gfNo').onclick=()=>gfDlg('');$('#gfYes').onclick=async()=>{const y=$('#gfYes');y.disabled=true;y.textContent='送出中…';const ok=await giftSend(Object.assign({to},o));gfDlg('');if(ok){GIFT.msg=''}if(PANEL=='Gift')PRENDER.Gift()}}
 function giftPopup(){const d=$('#gfDlg');if(!inCloud()||st!=='lobby'||CRO||d.style.display=='flex'||$('#crDlg').style.display=='flex'||PANEL=='Gift'||$('#auth').style.display!=='none')return;if(!GIFT.pend.length)return;
