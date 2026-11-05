@@ -989,12 +989,12 @@ const SKINS=[
   else{const at=(t,f)=>setTimeout(()=>{if(P&&P.insp>0&&P.inspV==null)f()},t);at(500,()=>{snd(1800,.03,.06,'square');snd(2600,.05,.04,'sine')});at(3700,()=>{snd(1568,.15,.04,'sine');snd(2093,.2,.03,'sine')});[4000,4400,4850].forEach((t,i)=>at(t,()=>{snd(1200+i*200,.05,.05,'triangle');snd(2400+i*300,.12,.03,'sine')}));at(5200,()=>snd(2637,.2,.035,'sine'));at(5950,()=>{snd(700,.04,.07,'square');setTimeout(()=>snd(1050,.04,.06,'square'),70)});at(6250,()=>snd(820,.04,.06,'square'));at(7330,()=>{snd(950,.07,.05,'triangle');snd(2093,.22,.035,'sine')});at(7450,()=>snd(420,.15,.04,'triangle'));at(7950,()=>{snd(2093,.15,.035,'sine');snd(3136,.2,.025,'sine')})}},
  reloadFx:()=>{P.krl=.32;P.kfl=1;snd(1750,.025,.06,'square');setTimeout(()=>snd(2350,.025,.06,'square'),70)},
  fireFx:()=>{P.kst=.36;kdArc(1);snd(950,.07,.05,'triangle');snd(2093,.22,.035,'sine');setTimeout(()=>{kdArc(-1);snd(820,.07,.05,'triangle');snd(2637,.22,.03,'sine')},100)}},
-{id:'hg_keyper',weapon:'Sniper',name:'Keyper 鑰匙狙擊',rarity:'legendary',ex:1,how:'Keyper 划算鑰匙包限定 Keyper Bundle Exclusive',insp:'heavy',flashColor:0xffd23f,flashScale:1.4,
+{id:'hg_keyper',weapon:'Sniper',name:'Keyper 鑰匙狙擊',rarity:'legendary',ex:1,how:'Keyper 划算鑰匙包限定 Keyper Bundle Exclusive',insp:'keyper',inspT:7,flashColor:0xffd23f,flashScale:1.4,
  build:g=>{const Gd=0xf0c020,G2=0xcf9f12,Dk=0x2a2208,Ln=0xffe27a;
   B(g,.07,.095,.46,0,.08,-.06,Gd);B(g,.056,.025,.4,0,.14,-.06,G2);B(g,.074,.075,.09,0,.092,-.32,Gd);
   Cz(g,.03,.02,.46,0,.095,-.58,Gd);Cz(g,.03,.03,.05,0,.095,-.83,Gd);Cz(g,.016,.016,.012,0,.095,-.857,Dk);
   B(g,.022,.065,.25,0,.05,-.7,Gd);for(const z of[-.61,-.7,-.79])B(g,.022,.1,.062,0,-.03,z,Gd);
-  Cz(g,.032,.032,.26,0,.19,-.06,Gd);Cz(g,.042,.034,.05,0,.19,-.21,Gd);Cz(g,.036,.036,.006,0,.19,-.237,Ln);Cz(g,.01,.01,.004,0,.196,-.241,Dk);B(g,.008,.02,.004,0,.182,-.241,Dk);Cz(g,.036,.03,.04,0,.19,.09,Gd);
+  Cz(g,.032,.032,.26,0,.19,-.06,Gd);Cz(g,.042,.034,.05,0,.19,-.21,Gd);Cz(g,.036,.036,.006,0,.19,-.237,Ln);Cz(g,.01,.01,.004,0,.196,-.241,Dk);B(g,.008,.02,.004,0,.182,-.241,Dk);Cz(g,.036,.03,.04,0,.19,.09,Gd);Cz(g,.029,.029,.006,0,.19,.112,Ln);Cz(g,.009,.009,.004,0,.196,.116,Dk);B(g,.007,.018,.004,0,.183,.116,Dk);
   B(g,.03,.05,.026,0,.145,-.14,G2);B(g,.03,.05,.026,0,.145,.02,G2);Cy(g,.014,.03,0,.235,-.06,G2);B(g,.03,.022,.022,.035,.19,-.06,G2);
   B(g,.07,.014,.014,.045,.1,.07,Gd);Sp(g,.019,.083,.1,.07,Gd);
   const mg=new T.Group();B(mg,.05,.08,.07,0,.0,-.13,G2);B(mg,.054,.014,.074,0,-.035,-.13,Gd);g.add(mg);
@@ -1004,7 +1004,7 @@ const SKINS=[
  drawFx:p=>{skBurst(p,14,[0xffd23f,0xffffff,0xfff2b8],1.6,.4,.045);[1318,1568,2093].forEach((f,i)=>setTimeout(()=>snd(f,.1,.03,'sine'),i*60))},
  inspFx:p=>{[0,300,600].forEach((t,i)=>setTimeout(()=>{if(P&&P.alive)skBurst(muz(P),6,[0xffd23f,0xffffff],.7,.4,.03);snd(1568+i*262,.08,.03,'sine')},t))},
  reloadFx:()=>{snd(1750,.025,.06,'square');setTimeout(()=>snd(2350,.03,.06,'square'),80)},
- fireFx:p=>{skBurst(p,12,[0xffd23f,0xffffff,0xfff2b8],2.4,.3,.05);snd(60,.3,.14,'sawtooth');snd(1760,.25,.03,'sine')}},
+ fireFx:p=>{P.kpT=.8;skBurst(p,12,[0xffd23f,0xffffff,0xfff2b8],2.4,.3,.05);snd(60,.3,.14,'sawtooth');snd(1760,.25,.03,'sine');setTimeout(()=>{snd(700,.04,.07,'square');setTimeout(()=>snd(1050,.04,.06,'square'),90)},260)}},
 // original key-themed sniper (own design): key-ring stock, padlock magazine, gold/silver two-tone
 {id:'sn_locksmith',weapon:'Sniper',name:'鎖匠 Locksmith',rarity:'legendary',ex:1,how:'傳奇鑰匙組合包限定 Legendary Key Bundle Exclusive',insp:'heavy',flashColor:0xffd23f,flashScale:1.4,
  drawFx:p=>{skBurst(p,16,[0xffd23f,0xffffff,0xfff2b8],1.6,.45,.045);[1046,1318,1568,2093].forEach((f,i)=>setTimeout(()=>snd(f,.12,.03,'sine'),i*60))},
@@ -1052,7 +1052,7 @@ const SKINS=[
  build:g=>{const Ic=0x9fe6ff,Wt=0xe8fbff;B(g,.024,.1,.026,0,0,0,0x1f3550);B(g,.064,.014,.034,0,.055,0,0x5ab8f0);B(g,.014,.2,.05,0,.17,0,Ic,{e:1});B(g,.012,.09,.04,0,.31,-.006,Ic,{e:1,rx:.45});
   B(g,.016,.05,.03,0,.12,.032,Wt,{rx:.6});B(g,.016,.05,.03,0,.21,-.032,Wt,{rx:-.6});Sp(g,.014,0,-.055,0,0x9fe6ff,1);return{dual:1}},
  drawFx:p=>{skBurst(p,10,[0x9fe6ff,0xffffff],1.2,.35,.035);snd(1800,.12,.04,'sine')}},
-{id:'ar_akey',weapon:'Assault Rifle',name:'A-Key 鑰匙步槍',rarity:'legendary',ex:1,how:'鑰匙組合包（即將推出 Coming Soon）',insp:'heavy',flashColor:0xffd23f,flashScale:1.3,
+{id:'ar_akey',weapon:'Assault Rifle',name:'A-Key 鑰匙步槍',rarity:'legendary',ex:1,how:'鑰匙組合包（即將推出 Coming Soon）',insp:'akey',inspT:5.5,flashColor:0xffd23f,flashScale:1.3,
  build:g=>{const Gd=0xf0c020,G2=0xcf9f12,Dk=0x2a2208;
   B(g,.075,.1,.32,0,.075,-.02,Gd);B(g,.06,.03,.3,0,.14,-.04,G2);for(const z of[-.12,-.02,.08])B(g,.064,.014,.03,0,.16,z,Gd);B(g,.03,.035,.05,0,.17,.1,Gd);
   B(g,.072,.03,.27,0,.135,-.31,Gd);B(g,.072,.035,.27,0,.04,-.31,Gd);B(g,.072,.13,.04,0,.088,-.43,Gd);B(g,.072,.13,.04,0,.088,-.19,Gd);
@@ -2171,7 +2171,7 @@ const adsT=P.zoom&&w.zf&&!w.scope&&P.alive?1:0;P.ads=(P.ads||0)+(adsT-(P.ads||0)
 let b0=U.base;if(w.n=='Riot Shield')b0=P.shd?[.04,-.15,-.55]:[.3,-.34,-.62];let px=b0[0],py=b0[1],pz=b0[2],rx=U.brx,ry=U.bry,rz=U.brz;
 px+=(0-px)*A;py+=(U.adsY-py)*A;pz+=(-.44-pz)*A;rx*=1-A;ry*=1-A;rz*=1-A*(w.n=='Bow'?.3:1);
 const bs=1-A*.8;px+=Math.sin(bob)*.008*bs;py+=Math.abs(Math.cos(bob))*.01*bs;if(P.sl){rz-=.18;py-=.04}
-if(P.eq>0&&w.n!='Knife'){const e=1-P.eq/.35,q=e*e*(3-2*e);if(u.kd){const r=1-Math.sqrt(q);px+=r*.14;py-=r*.3;rz-=r*1.3;ry+=r*.55;rx+=r*.35}else{py-=(1-q)*.22;rx-=(1-q)*.9}}
+if(P.eq>0&&w.n!='Knife'){const e=1-P.eq/.35,q=e*e*(3-2*e);if(u.kd){const r=1-Math.sqrt(q);px+=r*.14;py-=r*.3;rz-=r*1.3;ry+=r*.55;rx+=r*.35}else if(U.insp=='akey'){rx+=(1-q)*1.3;rz+=(1-q)*.5;py-=(1-q)*.12}else{py-=(1-q)*.22;rx-=(1-q)*.9}}
 let mo=0,mh=false,lo=null;
 if(s.rl>0&&w.rl&&P.qmT<=0){const p=1-s.rl/w.rl,t=RS[w.n]||'mag';
  if(t=='mag'){rz+=kf(p,[[0,0],[.15,.4],[.82,.4],[1,0]]);rx+=kf(p,[[0,0],[.15,.1],[.82,.1],[.9,.22],[1,0]]);py+=kf(p,[[0,0],[.15,.04],[.82,.04],[1,0]]);px-=kf(p,[[0,0],[.15,.04],[.82,.04],[1,0]]);mo=kf(p,[[.18,0],[.34,-.35],[.56,-.35],[.78,0]]);mh=p>.36&&p<.55;lo=kf(p,[[0,0],[.15,1],[.34,1],[.45,.3],[.56,1],[.8,1],[.95,0]])}
@@ -2194,8 +2194,12 @@ if(P.insp>0){const p=1-P.insp/(P.inspT||2.4),t=P.inspV||U.insp;
  else if(t=='flip'){py-=kf(p,[[.38,0],[.45,-.03],[.55,0]]);ry+=kf(p,[[.5,0],[.65,.8],[.85,.8],[1,0]])}
  else if(t=='mlift'){py+=kf(p,[[0,0],[.25,.06],[.8,.06],[1,0]]);rz+=kf(p,[[0,0],[.25,.3],[.5,.3],[.65,-.1],[.85,-.1],[1,0]]);px+=kf(p,[[0,0],[.25,-.05],[.85,-.05],[1,0]])}
  else if(t=='swing'){ry+=kf(p,[[0,0],[.25,1],[.5,1],[.75,-.6],[1,0]]);rz+=kf(p,[[0,0],[.25,.5],[.5,.5],[.75,-.4],[1,0]])}
+ else if(t=='akey'){const T=p*5.5,K=a=>kf(T,a);rz+=K([[0,0],[.5,.35],[2.6,.35],[3,0]]);rx+=K([[0,0],[.5,.3],[2.6,.3],[3,0]]);px-=K([[0,0],[.5,.03],[2.6,.03],[3,0]]);rx+=K([[2.8,0],[3.3,1.1],[4.7,1.1],[5.2,0]]);px-=K([[2.8,0],[3.3,.03],[4.7,.03],[5.2,0]]);py-=K([[2.8,0],[3.3,.06],[4.7,.06],[5.2,0]]);rz+=K([[3.3,0],[3.6,.5],[3.9,-.4],[4.2,.5],[4.5,0]])}
+ else if(t=='keyper'){const T=p*7,K=a=>kf(T,a);py+=K([[0,0],[.5,.04],[6.5,.04],[7,0]]);rx+=K([[0,0],[.5,.15],[2.4,.15],[2.7,0]]);px+=K([[.6,0],[.9,.04],[2.2,.04],[2.6,0]]);py+=K([[.6,0],[.9,.06],[2.2,.06],[2.6,0]]);rx+=K([[.6,0],[.9,.3],[2.2,.3],[2.6,0]]);rz-=K([[.6,0],[.9,.2],[2.2,.2],[2.6,0]]);mo=K([[.9,0],[1.2,-.3],[2,-.3],[2.3,0]]);lo=K([[.7,0],[.9,1],[2.3,1],[2.5,0]]);rx+=K([[2.6,0],[3.1,1.3],[4.7,1.3],[5.1,.85],[5.9,.85],[6.6,0]]);px-=K([[2.6,0],[3.1,.12],[5.9,.12],[6.6,0]]);rz+=K([[3.2,0],[3.6,.45],[4.0,-.45],[4.4,.45],[4.7,0]]);ry+=K([[4.8,0],[5.2,2.9],[5.9,2.9],[6.5,0]]);pz-=K([[4.8,0],[5.2,.05],[5.9,.05],[6.5,0]]);py+=K([[4.8,0],[5.2,.26],[5.9,.26],[6.5,0]]);px-=K([[4.8,0],[5.2,.06],[5.9,.06],[6.5,0]])}
  else if(t=='toss'){py+=kf(p,[[0,0],[.08,-.04],[.14,.03],[.22,0],[.55,0],[.6,-.04],[.7,0]]);ry+=kf(p,[[.62,0],[.75,.7],[.9,.7],[1,0]])}
  else{ry+=kf(p,[[0,0],[.25,.9],[.48,.9],[.6,0],[1,0]]);rz+=kf(p,[[0,0],[.25,.4],[.48,.4],[.6,-.6],[.85,-.6],[1,0]]);px+=kf(p,[[0,0],[.25,-.06],[.85,-.06],[1,0]]);py+=kf(p,[[0,0],[.25,.04],[.85,.04],[1,0]])}}
+if(P.kpT>0){P.kpT=Math.max(0,P.kpT-dt);if(U.insp=='keyper'){const q=1-P.kpT/.8;rz+=kf(q,[[.12,0],[.32,1.1],[.6,1.1],[.85,0]]);rx+=kf(q,[[.12,0],[.32,.16],[.6,.16],[.85,0]]);px-=kf(q,[[.12,0],[.32,.05],[.6,.05],[.85,0]])}}
+if(s.rl>0&&w.rl&&U.insp=='keyper'&&P.qmT<=0){const q=1-s.rl/w.rl;rx+=kf(q,[[0,0],[.15,.5],[.8,.5],[1,0]]);px-=kf(q,[[0,0],[.15,.08],[.8,.08],[1,0]]);rz+=kf(q,[[.3,0],[.42,.5],[.54,-.3],[.66,.5],[.78,0]])}
 if(w.k!='M'){const Rc=RC[w.n]||.07;pz+=k*.05*(1+Rc*3)*(1-A*.5);rx+=k*Rc;rz+=k*(P.rk||0)*.06}
 if(U.fa){const tt=performance.now()/1000;for(const a of U.fa){const sd=a.userData.sd;a.position.copy(a.userData.rest);a.rotation.copy(a.userData.rr);a.position.y+=Math.sin(tt*5+(sd>0?0:PI))*.012;
   if(P.insp>0&&U.insp=='knuck'){const p=1-P.insp/(P.inspT||2.4),e=kf(p,[[0,0],[.14,1],[.86,1],[1,0]]);a.position.x+=-sd*.14*e;a.position.y+=.06*e;a.position.z-=.04*e;a.rotation.z+=sd*.35*e;
@@ -2218,6 +2222,7 @@ if(U.m){let my=0,mx=0,mry=0,mrz=0;const MO=U.insp;
 if(KPS)psU(KPS,dt);
 if(U.mag){U.mag.position.y=U.magY+mo;U.mag.visible=!mh}
 if(U.la){if(lo!=null&&lo>0){const t2=U.mag?V(U.mag.position.x,U.magY-.06+mo,U.mag.position.z+.02):V(U.laRest.x,U.laRest.y-.15,U.laRest.z+.06);U.la.position.lerpVectors(U.laRest,t2,lo)}else U.la.position.copy(U.laRest)}
+if(U.la&&!(P.insp>0))U.la.visible=true;if(U.la&&P.insp>0&&U.insp=='akey'){const T=(1-P.insp/(P.inspT||2.4))*5.5,K=a=>kf(T,a);U.la.position.y+=K([[.5,0],[.9,.13],[2.5,.13],[2.9,0]]);U.la.visible=!(T>3.05&&T<4.9);U.la.position.z-=K([[.5,0],[.9,.12],[2.5,.12],[2.9,0]]);U.la.position.x-=K([[.5,0],[.9,.05],[2.5,.05],[2.9,0]])}
 if(U.arrow){const c=s.ch||0;for(const a of U.arrow)a.position.z=a.userData.z0+c*.16}
 if(U.m)U.m.visible=!(w.n=='Spear'&&s.c<=0)&&!(P.thr>0&&P.thr<.2);
 if(w.n=='Daggers'&&U.m){const rl=s.rl>0&&w.rl?1-s.rl/w.rl:0;U.m.visible=(s.a>=2||rl>.55)&&U.m.userData.kv!==0;if(U.m2)U.m2.visible=(s.a>=1||rl>.55)&&U.m2.userData.kv!==0}
