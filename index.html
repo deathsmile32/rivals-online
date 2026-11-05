@@ -716,11 +716,16 @@ let curMap='arena';
 buildMap('arena');
 
 // ===== model helpers =====
-const MC={};function mt(c,e){const k=c+(e?'e':'');return MC[k]||(MC[k]=new T.MeshLambertMaterial(e?{color:c,emissive:c,emissiveIntensity:.75}:{color:c}))}
-function B(g,w,h,d,x,y,z,c,o){const m=new T.Mesh(new T.BoxGeometry(w,h,d),mt(c,o&&o.e));m.position.set(x,y,z);if(o)m.rotation.set(o.rx||0,o.ry||0,o.rz||0);g.add(m);return m}
-function Cz(g,r1,r2,l,x,y,z,c,o){const m=new T.Mesh(new T.CylinderGeometry(r1,r2,l,12),mt(c,o&&o.e));m.rotation.x=PI/2;m.position.set(x,y,z);g.add(m);return m}
-function Cy(g,r,l,x,y,z,c,o){const m=new T.Mesh(new T.CylinderGeometry(r,r,l,12),mt(c,o&&o.e));m.position.set(x,y,z);g.add(m);return m}
-function Sp(g,r,x,y,z,c,e){const m=new T.Mesh(new T.SphereGeometry(r,12,10),mt(c,e));m.position.set(x,y,z);g.add(m);return m}
+let FINE=0;const MC={},MCF={};function mt(c,e){const k=c+(e?'e':'');if(FINE)return MCF[k]||(MCF[k]=new T.MeshPhongMaterial(e?{color:c,emissive:c,emissiveIntensity:.75,shininess:60,specular:0x3a3a3a}:{color:c,shininess:42,specular:0x2c2c2c}));return MC[k]||(MC[k]=new T.MeshLambertMaterial(e?{color:c,emissive:c,emissiveIntensity:.75}:{color:c}))}
+// bevelled box: 3 segments per axis, inner grid lines pulled out to (half-r), then every vertex is rounded onto radius r around the inner box
+function bevBox(w,h,d){const m=Math.min(w,h,d);if(m<.018)return new T.BoxGeometry(w,h,d);const r=Math.min(m*.2,.016),g=new T.BoxGeometry(w,h,d,3,3,3),P=g.attributes.position,N=g.attributes.normal,Hs=[w/2,h/2,d/2],v=[0,0,0],q=[0,0,0];
+ for(let i=0;i<P.count;i++){v[0]=P.getX(i);v[1]=P.getY(i);v[2]=P.getZ(i);for(let a=0;a<3;a++){const H=Hs[a];if(Math.abs(v[a])<H*.99)v[a]=Math.sign(v[a])*(H-r);q[a]=Math.max(-(H-r),Math.min(H-r,v[a]))}
+  let dx=v[0]-q[0],dy=v[1]-q[1],dz=v[2]-q[2];const l=Math.hypot(dx,dy,dz);if(l>1e-7){dx/=l;dy/=l;dz/=l;P.setXYZ(i,q[0]+dx*r,q[1]+dy*r,q[2]+dz*r);N.setXYZ(i,dx,dy,dz)}else P.setXYZ(i,v[0],v[1],v[2])}
+ P.needsUpdate=N.needsUpdate=true;return g}
+function B(g,w,h,d,x,y,z,c,o){const m=new T.Mesh(FINE?bevBox(w,h,d):new T.BoxGeometry(w,h,d),mt(c,o&&o.e));m.position.set(x,y,z);if(o)m.rotation.set(o.rx||0,o.ry||0,o.rz||0);g.add(m);return m}
+function Cz(g,r1,r2,l,x,y,z,c,o){const m=new T.Mesh(new T.CylinderGeometry(r1,r2,l,FINE?24:12),mt(c,o&&o.e));m.rotation.x=PI/2;m.position.set(x,y,z);g.add(m);return m}
+function Cy(g,r,l,x,y,z,c,o){const m=new T.Mesh(new T.CylinderGeometry(r,r,l,FINE?24:12),mt(c,o&&o.e));m.position.set(x,y,z);g.add(m);return m}
+function Sp(g,r,x,y,z,c,e){const m=new T.Mesh(new T.SphereGeometry(r,FINE?20:12,FINE?16:10),mt(c,e));m.position.set(x,y,z);g.add(m);return m}
 const K=0x232327,K2=0x34363c,MT=0x8d939c,WD=0x8a5530,GRIP={rx:-.28};
 // every model: grip at origin, barrel toward -z, y up. Returns {fore:[x,y,z] left-hand point, dual, spin, sling}
 const MD={
@@ -1041,7 +1046,7 @@ const SKINS=[
  fireFx:p=>{skBurst(p,4,[0xff3ad8,0xffffff],1.6,.12,.03);snd(1900,.03,.04,'triangle')}}
 ];
 const SKBYID=Object.fromEntries(SKINS.map(x=>[x.id,x])),skinsFor=wn=>SKINS.filter(x=>x.weapon==wn);
-function model(w,wk,sk,ch){const g=new T.Group();const S=sk&&SKBYID[sk]&&SKBYID[sk].weapon==w.n?SKBYID[sk]:null;const u=(S?S.build:MD[w.n]||(()=>({})))(g)||{};g.userData=u;if(wk)try{applyWrap(g,w,wk)}catch(e){console.error(e)}if(ch)applyCharm(g,w,ch);return g}
+function model(w,wk,sk,ch){const g=new T.Group();const S=sk&&SKBYID[sk]&&SKBYID[sk].weapon==w.n?SKBYID[sk]:null;let u;FINE=1;try{u=(S?S.build:MD[w.n]||(()=>({})))(g)||{}}finally{FINE=0}g.userData=u;if(wk)try{applyWrap(g,w,wk)}catch(e){console.error(e)}if(ch)applyCharm(g,w,ch);return g}
 // ===== weapon wraps (procedural canvas textures; cosmetic only) =====
 // r: 0 common 1 rare 2 epic 3 legendary · p: key price · g: glow (emissive map) · how: how it is obtained
 const WTILE=.32,WRC=['#7ed957','#28d7e8','#a05cff','#ff4b4b'],WRN=['普通 Common','稀有 Rare','史詩 Epic','傳說 Legendary'];
@@ -1131,7 +1136,7 @@ function wrapSwatch(id){if(WSW[id])return WSW[id];const c=document.createElement
 function wrapMat(id){if(WMT[id])return WMT[id];const t=new T.CanvasTexture(wrapCanvas(id));t.wrapS=t.wrapT=T.RepeatWrapping;t.anisotropy=4;WTX[id]=t;const o={map:t},X=WBYID[id];if(X.g){o.emissive=0xffffff;o.emissiveMap=t;o.emissiveIntensity=X.sh?.18:.32}if(X.mv)WMOV.push([t,X.mv]);return WMT[id]=X.sh?new T.MeshPhongMaterial(Object.assign(o,{shininess:X.sh,specular:X.spc||0xffffff})):new T.MeshLambertMaterial(o)}
 var WMOV=[];function wrapAnim(dt){for(const[t,s]of WMOV){t.offset.x=(t.offset.x+dt*s)%1;t.offset.y=(t.offset.y+dt*s*.55)%1}}
 function wrapUV(o){const g=o.geometry,uv=g.attributes.uv,p=g.parameters,K=1/WTILE;if(!uv||!p)return;
- if(g.type=='BoxGeometry'){const w=p.width*K,h=p.height*K,d=p.depth*K,D=[[d,h],[d,h],[w,d],[w,d],[w,h],[w,h]];for(let f=0;f<6;f++)for(let v=0;v<4;v++){const i=f*4+v;uv.setXY(i,uv.getX(i)*D[f][0]+f*.37,uv.getY(i)*D[f][1]+f*.21)}}
+ if(g.type=='BoxGeometry'){const w=p.width*K,h=p.height*K,d=p.depth*K,D=[[d,h],[d,h],[w,d],[w,d],[w,h],[w,h]];const nf=uv.count/6;for(let i=0;i<uv.count;i++){const f=Math.floor(i/nf);uv.setXY(i,uv.getX(i)*D[f][0]+f*.37,uv.getY(i)*D[f][1]+f*.21)}}
  else if(g.type=='CylinderGeometry'){const n1=((p.radialSegments||8)+1)*((p.heightSegments||1)+1),r=Math.max(p.radiusTop,p.radiusBottom);for(let i=0;i<uv.count;i++){if(i<n1)uv.setXY(i,uv.getX(i)*2*PI*r*K,uv.getY(i)*p.height*K);else uv.setXY(i,uv.getX(i)*2*r*K,uv.getY(i)*2*r*K)}}
  else if(g.type=='SphereGeometry'){for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*2*PI*p.radius*K,uv.getY(i)*PI*p.radius*K)}
  uv.needsUpdate=true}
@@ -2262,15 +2267,16 @@ function drawCounter(pd){const t=pd.tex,cx=t.userData.cx,W=256,H=128,txt=pd.cnt+
  cx.font='900 70px '+FNT;cx.textAlign='center';cx.textBaseline='middle';cx.fillStyle=pd.cnt?'#fff':'#9aa3c8';cx.fillText(txt,W/2,H/2+4);t.needsUpdate=true}
 // 大廳牆上的 3 個全球排行榜大螢幕（排位 RP / 等級 / 連勝），資料來自 RKLB/LVLB/STLB（Firestore 全球排行，每 3 分鐘更新）
 var LBB={};
-function drawLbBoard(t,title,col,list,field,ic,unit){t.userData.lba=[title,col,list,field,ic,unit];const cx=t.userData.cx,W=1024,H=576,NP=list&&list.length?Math.ceil(list.length/7):1;if((t.userData.pg|0)>=NP)t.userData.pg=0;const pg=t.userData.pg|0;cx.fillStyle='#0b0a1c';cx.fillRect(0,0,W,H);cx.strokeStyle=col;cx.lineWidth=10;cx.strokeRect(5,5,W-10,H-10);
+const LBROWS=6;
+function drawLbBoard(t,title,col,list,field,ic,unit){t.userData.lba=[title,col,list,field,ic,unit];const cx=t.userData.cx,W=1024,H=576;cx.fillStyle='#0b0a1c';cx.fillRect(0,0,W,H);cx.strokeStyle=col;cx.lineWidth=10;cx.strokeRect(5,5,W-10,H-10);
  cx.font='900 54px '+FNT;cx.textBaseline='middle';cx.fillStyle='#fff';cx.textAlign='left';cx.fillText(title,40,62);cx.fillStyle='#ff3b3b';cx.beginPath();cx.arc(W-190,62,14,0,7);cx.fill();cx.fillStyle='#fff';cx.fillText('LIVE',W-165,62);
  cx.font='800 38px '+FNT;
  if(!inCloud())cx.fillStyle='#9aa3c8',cx.fillText('🌍 需要登入雲端帳號',40,200);
  else if(!list||!list.length){cx.fillStyle='#9aa3c8';cx.fillText('讀取中…',40,200)}
- else list.slice(pg*7,pg*7+7).forEach((u,j)=>{const i=pg*7+j,y=140+j*60;cx.fillStyle=i==0?'#ffd23f':i==1?'#d6dbe8':i==2?'#e0975a':'#c9cfee';cx.fillText('#'+(i+1),40,y);cx.fillStyle='#fff';cx.fillText(String(u.name).slice(0,14),130,y);cx.fillStyle=col;cx.textAlign='right';cx.fillText(ic+' '+u[field]+(unit?' '+unit:''),W-40,y);cx.textAlign='left'});
- cx.font='600 24px '+FNT;cx.fillStyle='#8088aa';cx.fillText('全球排行榜 · 共 '+(list?list.length:0)+' 位玩家'+(NP>1?' · 第 '+(pg+1)+' / '+NP+' 頁':'')+' · 每 3 分鐘更新',40,H-30);t.needsUpdate=true}
-// lobby boards flip to the next page of 7 every 5 s so every ranked account shows up
-setInterval(()=>{if(typeof st=='undefined'||st!=='lobby')return;for(const k in LBB){const t=LBB[k],A=t&&t.userData&&t.userData.lba;if(!A||!A[2]||A[2].length<=7)continue;t.userData.pg=((t.userData.pg|0)+1)%Math.ceil(A[2].length/7);drawLbBoard(t,...A)}},5000);
+ else{const N=list.length,RH=60,T0=104,B0=H-66,sc=N>LBROWS,span=N*RH+RH*2,sy=sc?(t.userData.sy||0)%span:0;cx.save();cx.beginPath();cx.rect(0,T0,W,B0-T0);cx.clip();for(let c=0;c<(sc?2:1);c++)for(let i=0;i<N;i++){const y=T0+36+i*RH+c*span-sy;if(y<T0-RH||y>B0+RH)continue;const u=list[i];if(i%2==0){cx.fillStyle='#ffffff08';cx.fillRect(20,y-RH/2,W-40,RH)}cx.fillStyle=i==0?'#ffd23f':i==1?'#d6dbe8':i==2?'#e0975a':'#c9cfee';cx.fillText('#'+(i+1),40,y);cx.fillStyle='#fff';cx.fillText(String(u.name).slice(0,14),130,y);cx.fillStyle=col;cx.textAlign='right';cx.fillText(ic+' '+u[field]+(unit?' '+unit:''),W-40,y);cx.textAlign='left'}cx.restore();if(sc){const g1=cx.createLinearGradient(0,T0,0,T0+28),g2=cx.createLinearGradient(0,B0-28,0,B0);g1.addColorStop(0,'#0b0a1c');g1.addColorStop(1,'#0b0a1c00');g2.addColorStop(0,'#0b0a1c00');g2.addColorStop(1,'#0b0a1c');cx.fillStyle=g1;cx.fillRect(10,T0,W-20,28);cx.fillStyle=g2;cx.fillRect(10,B0-28,W-20,28)}}
+ cx.font='600 24px '+FNT;cx.fillStyle='#8088aa';cx.fillText('全球排行榜 · 共 '+(list?list.length:0)+' 位玩家'+(list&&list.length>LBROWS?' · ⬇ 自動往下捲動':'')+' · 每 3 分鐘更新',40,H-30);t.needsUpdate=true}
+// lobby boards scroll smoothly downward (≈36 px/s, seamless loop) so every account rolls past
+setInterval(()=>{if(typeof st=='undefined'||st!=='lobby'||document.hidden)return;for(const k in LBB){const t=LBB[k],A=t&&t.userData&&t.userData.lba;if(!A||!A[2]||A[2].length<=LBROWS)continue;t.userData.sy=(t.userData.sy||0)+3;drawLbBoard(t,...A)}},83);
 // ===== Key Vault 鑰匙展示館 (west room): every Key skin on a gold pedestal + a giant floating key =====
 function mkKeyVault(g){const a=[],ad=m=>{a.push(m);return m};LB.vault=[];const GO=0xffc83a;
  const fl=ad(new T.Mesh(new T.CircleGeometry(7.5,48),new T.MeshBasicMaterial({color:0x2a1f08})));fl.rotation.x=-PI/2;fl.position.set(-23,.02,14);g.add(fl);
@@ -3512,7 +3518,7 @@ function giftCost(k,i,q){if(k=='bundle'){const b=KBBYID[i];return kbGiftable(b)?
 function giftOk(g){if(!g||g.toUid!==CLOUD.uid||!GIFT_KINDS.includes(g.kind)||typeof g.item!='string'||!Number.isInteger(g.qty))return false;const k=g.kind,i=g.item,q=g.qty;
  if(g.free===true){if(String(g.fromName||'').toLowerCase()!==ADMIN_NAME||(GIFT.adminUid&&g.fromUid!==GIFT.adminUid))return false}else if(k!='weapon'&&k!='crate')return false;
  if(k=='weapon')return q===1&&!!WBN(i)&&!START_W.includes(i);if(k=='crate'&&gbId(i)!=null)return q===1&&!!KBBYID[gbId(i)];if(k=='crate')return!!CRBYID[i]&&q>=1&&q<=20;if(k=='keys')return q>=1&&q<=10000;if(k=='tickets')return q>=1&&q<=1000;
- if(k=='skin')return q===1&&!!SKBYID[i];if(k=='wrap')return q===1&&!!WBYID[i]&&i!='bc';if(k=='fin')return q===1&&!!FBYID[i]&&i!='fc';return false}
+ if(k=='skin')return q===1&&!!SKBYID[i]&&!!SKBYID[i].adm;if(k=='wrap')return q===1&&!!WBYID[i]&&i!='bc';if(k=='fin')return q===1&&!!FBYID[i]&&i!='fc';return false}
 function giftLog(e){PF.giftLog.unshift(e);const n={s:0,r:0};PF.giftLog=PF.giftLog.filter(x=>++n[x.d]<=20)}
 async function giftPoll(force){if(!inCloud()||!PF||GIFT.busy||st!=='lobby')return;if(!force&&Date.now()-GIFT.t<GIFT_POLL_MS)return;GIFT.busy=true;GIFT.t=Date.now();const S=CLOUD;
  try{await giftReg();const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:'gifts'}],where:{fieldFilter:{field:{fieldPath:'toUid'},op:'EQUAL',value:{stringValue:S.uid}}},limit:50}});if(S!==CLOUD||!inCloud())return;
@@ -3542,7 +3548,7 @@ async function giftSend(o){if(GIFT.sending||!inCloud()||!PF)return false;const f
 function giftOpen(){if(!inCloud()){toast('送禮需要雲端帳號（請用網站版登入）','#ffc93c');return}GIFT.tab=GIFT.pend.length?'recv':'send';openPanel('Gift');if(Date.now()-GIFT.t>10000)giftPoll(1)}
 const GCATS=[['weapon','🔫 武器'],['crate','📦 箱子'],['bundle','🛍️ 組合包'],['keys','🔑 鑰匙',1],['tickets','🎫 皮膚票',1],['skin','🎨 皮膚',1],['wrap','🧻 包裝',1],['fin','💀 死亡特效',1]];
 function giftItems(k,adm){if(k=='weapon')return ALLW().filter(w=>!START_W.includes(w.n)&&(adm||!NOBUY[w.n])).map(w=>[w.n,w.n+(adm?'':' — 🔑 '+wCost(w.n))]);if(k=='crate')return CRATES.map(C=>[C.id,C.name+' '+C.en+(adm?'':' — '+C.price+' '+CURI[C.cur])]);if(k=='bundle')return KBUNDLES.filter(kbGiftable).map(b=>[b.id,b.zh+' '+b.en+(adm?'':' — 💰 '+b.gold)]);
- if(k=='skin')return SKINS.map(x=>[x.id,x.name+'（'+x.weapon+'）']);if(k=='wrap')return WRAPS.filter(x=>x.id!='bc'&&!x.adm).map(x=>[x.id,x.zh+' '+x.en]);if(k=='fin')return FINS.filter(x=>x.id!='fc').map(x=>[x.id,x.zh+' '+x.en]);return[]}
+ if(k=='skin')return SKINS.filter(x=>x.adm).map(x=>[x.id,x.name+'（'+x.weapon+'）']);if(k=='wrap')return WRAPS.filter(x=>x.id!='bc'&&!x.adm).map(x=>[x.id,x.zh+' '+x.en]);if(k=='fin')return FINS.filter(x=>x.id!='fc').map(x=>[x.id,x.zh+' '+x.en]);return[]}
 const gfQ=k=>k=='crate'||k=='keys'||k=='tickets',gfQmax=(k,adm)=>k=='crate'?(adm?20:10):GIFT_QMAX[k]||1;
 function gfSel(){const adm=isAdmin(),k=GIFT.cat,it=giftItems(k,adm);let i=GIFT.item[k];if(it.length&&!it.some(x=>x[0]===i))i=GIFT.item[k]=it[0][0];if(!it.length)i='';const q=gfQ(k)?Math.max(1,Math.min(gfQmax(k,adm),Math.floor(+GIFT.qty)||1)):1;return{kind:k,item:i,qty:q,msg:String(GIFT.msg||'').trim().slice(0,40)}}
 function gfCostTxt(o){if(isAdmin())return'👑 免費（管理員）';const c=giftCost(o.kind,o.item,o.qty);if(!c)return'—';const ok=PF[c.cur]>=c.n;return'花費：'+CURI[c.cur]+' '+c.n+' '+CURN[c.cur]+'<span style="color:'+(ok?'#9fe0b0':'#ff8a8a')+';font-size:13px;margin-left:8px">（你有 '+PF[c.cur]+(ok?'':'，不足')+'）</span>'}
@@ -3552,7 +3558,7 @@ PRENDER.Gift=()=>{if(!PF)return;const adm=isAdmin(),cl=inCloud(),np=GIFT.pend.le
  for(const b of $('#gfTabs').children)b.onclick=()=>{GIFT.tab=b.dataset.gt;PRENDER.Gift()};let h='';const B0=$('#giftBody');
  if(!cl)h='<div class="cd">送禮需要雲端帳號（請用網站版登入）</div>';
  else if(GIFT.tab=='send'){const o=gfSel(),it=giftItems(o.kind,adm);
-  h=(adm?'<div class="gfadm">👑 管理員：免費贈送 · 任何武器、箱子、鑰匙、皮膚票、皮膚、包裝、死亡特效都不會扣你的東西</div>':'')+
+  h=(adm?'<div class="gfadm">👑 管理員：免費贈送 · 任何武器、箱子、組合包、鑰匙、皮膚票、包裝、死亡特效都不會扣你的東西（皮膚不能指定送，請送皮膚箱；只有管理員專屬皮膚可以直接送）</div>':'')+
   '<div class="gfrow"><label>送給 To</label><input id="gfTo" type="text" maxlength="17" placeholder="對方的 ID，例如 @player123" value="'+esc(GIFT.toIn)+'"><button class="bbtn" id="gfFind">查詢</button></div><div class="gfwho" id="gfWho">'+GIFT.who+'</div>'+
   '<div class="gfrow"><label>禮物 Gift</label><div class="ptabs gfcats">'+GCATS.filter(c=>adm||!c[2]).map(([k,n])=>'<button data-gk="'+k+'" class="'+(o.kind==k?'on':'')+'">'+n+'</button>').join('')+'</div></div>'+
   (it.length?'<div class="gfrow"><label></label><select id="gfItem">'+it.map(([v,t])=>'<option value="'+esc(v)+'"'+(v===o.item?' selected':'')+'>'+esc(t)+'</option>').join('')+'</select></div>':'')+
