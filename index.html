@@ -832,25 +832,74 @@ function keyVM(U,dt){const sk=U&&U.sk;if(!P||!sk||!KEYSK.has(sk)||!P.alive||!U.m
 function keyWorld(dt){for(const e of E){const w=e.alive&&e.hold&&e.mesh.visible&&e.L&&e.L[e.cur],sk=w&&skinKey(e,w);if(!sk||!KEYSK.has(sk)){e._wx=null;continue}
  const dx=e._wx==null?0:e.x-e._wx,dz=e._wx==null?0:e.z-e._wz;e._wx=e.x;e._wz=e.z;const sp=Math.min(20,Math.hypot(dx,dz)/Math.max(dt,1e-3));if(sp<.8)continue;
  if(Math.random()<dt*(6+sp*3)){e.hold.getWorldPosition(_kv);finPS();if(!FPA)continue;const o=_kwO;o.p[0]=_kv.x+(Math.random()-.5)*.15;o.p[1]=_kv.y+(Math.random()-.5)*.15;o.p[2]=_kv.z+(Math.random()-.5)*.15;o.v[0]=o.v[1]=o.v[2]=0;o.s=.04+Math.random()*.04;o.l=.2+sp*.05;o.c=KDC[(Math.random()*4)|0];psE(FPA,o)}}}
-// per-frame Key Daggers viewmodel pose / FX (called from animVM after the generic weapon pose; local player only)
-function kdVM(U,u,s,dt){const m1=U.m,m2=U.m2;if(!m1)return;const A=m1.userData,Bm=m2&&m2.userData;let r1z=1.28,r1y=-1,r2z=-1.28,r2y=1,o1x=0,o1y=-.07,o1z=0,o2x=0,o2y=-.07,o2z=0,s1=0,s2=0,th=0,fl1=0,fl2=0;
+// Key Daggers viewmodel, matched to the in-game reference video: the two keys FLOAT horizontally above the fists
+// (rings outward, tips inward, flat side to the camera). Per-frame offsets: keys k1/k2 (pos, rz tilt, ry yaw, s spin about
+// the blade, hb = 0 floating / 1 gripped on the fist), arms a1/a2 (pos). Left side mirrors x / rz / ry / s.
+function kdVM(U,u,s,dt){const m1=U.m,m2=U.m2;if(!m1)return;const A=m1.userData,Bm=m2&&m2.userData;
+ const KX=.28,KY=.2,KZ=-.1,RZ=PI/2+.26,RY=-.32,SC=.8;
+ const k1={x:0,y:0,z:0,rz:0,ry:0,s:0,hb:0,v:1},k2={x:0,y:0,z:0,rz:0,ry:0,s:0,hb:0,v:1},a1={x:0,y:0,z:0},a2={x:0,y:0,z:0};
  if(P.kdF){P.kdF=0;kdAt(A.spn,14,.5,.35,.018);if(Bm)kdAt(Bm.spn,14,.5,.35,.018)}
- const t=P.insp>0?(P.inspV||U.insp):null,p=P.insp>0?1-P.insp/2.4:0;
- if(t=='keyspin'){const sp=kf(p,[[0,0],[.3,PI*6]]);s1=sp;s2=-sp;const c=kf(p,[[.28,0],[.38,1],[.55,1],[.64,0]]);r1z+=.42*c;r2z-=.42*c;r1y+=.35*c;r2y-=.35*c;o1x-=.07*c;o2x+=.07*c;o1y+=.06*c;o2y+=.06*c;o1z-=.05*c;o2z-=.05*c;
-  const up=kf(p,[[.6,0],[.7,1],[.9,1],[1,0]]);r1z+=(.12-r1z)*up;r1y+=(-.15-r1y)*up;o1y+=.13*up;o1x-=.05*up;s1+=kf(p,[[.7,0],[.88,PI]]);
-  if(c>.9&&Math.random()<dt*20)kdAt(A.tip,1,.15,.25,.014);if(up>.6&&Math.random()<dt*16)kdAt(A.tip,2,.2,.3,.016)}
- else if(t=='keytoss'){const q=cl01((p-.06)/.5);if(q>0&&q<1){const h=Math.sin(q*PI);th=h*.42;o1y+=th;o1x-=h*.08;r1z+=q*PI*6;if(m1.visible){kdAt(A.tip,4,.03,.45,.008);kdAt(A.spn,2,.02,.4,.007)}}
-  const bk=kf(p,[[.54,0],[.6,1],[.86,1],[1,0]]);r1z+=bk*1.9;o1y-=bk*.03;if(p>.55&&p<.6&&!P.kdC){P.kdC=1;kdAt(A.spn,10,.4,.3,.016);snd(1600,.03,.06,'square');setTimeout(()=>snd(2400,.05,.04,'sine'),40)}
-  r2z-=Math.sin(cl01(p/.6)*PI)*.25}
- if(P.insp<=0)P.kdC=0;
- {const b1=Math.sin(BT*2.6)*.012,b2=Math.sin(BT*2.6+1.7)*.012;fl1=.05+b1;fl2=.05+b2;s1+=Math.sin(BT*1.3)*.25;s2-=Math.sin(BT*1.3+.8)*.25;if(Math.random()<dt*7)kdAt(A.spn,1,.05,.32,.009);if(Bm&&Math.random()<dt*7)kdAt(Bm.spn,1,.05,.32,.009)}
- if(P.kdIn>0){P.kdIn=Math.max(0,P.kdIn-dt);const q=1-P.kdIn/.6,e=ez(q),r=1-e;o1x+=r*.24;o2x-=r*.24;fl1+=r*.3;fl2+=r*.3;o1z-=r*.25;o2z-=r*.25;s1+=r*PI*5;s2-=r*PI*5;r1z-=r*1.4;r2z+=r*1.4;
-  if(q<.9){kdAt(A.tip,3,.04,.3,.014);if(Bm)kdAt(Bm.tip,3,.04,.3,.014)}if(q>=.98&&!P.kdLd){P.kdLd=1;kdAt(A.spn,10,.3,.3,.016);if(Bm)kdAt(Bm.spn,10,.3,.3,.016);snd(2093,.15,.035,'sine')}}else P.kdLd=0;
- if(P.krl>0){P.krl=Math.max(0,P.krl-dt);const q=1-P.krl/.32,sp=ez(q)*PI*4;s1+=sp;s2-=sp;if(P.kfl){P.kfl=0;kdAt(A.spn,12,.35,.22,.022);if(Bm)kdAt(Bm.spn,12,.35,.22,.022)}}
- if(P.kst>0){P.kst=Math.max(0,P.kst-dt);const q=1-P.kst/.36,e1=Math.sin(cl01(q/.5)*PI),e2=Math.sin(cl01((q-.28)/.5)*PI);o1z-=e1*.22;o1x-=e1*.05;r1y-=e1*.4;o2z-=e2*.22;o2x+=e2*.05;r2y+=e2*.4}
- m1.position.set(U.kx[0]+o1x,(U.ky0??(U.ky0=m1.position.y))+o1y+fl1,o1z);A.piv.rotation.set(0,r1y,r1z);A.spn.rotation.y=s1;
- if(m2&&Bm&&Bm.piv){m2.position.set(U.kx[1]+o2x,(U.ky1??(U.ky1=m2.position.y))+o2y+fl2,o2z);Bm.piv.rotation.set(0,r2y,r2z);Bm.spn.rotation.y=s2}
- if(u.ka){const a=u.ka,r=u.kar;a[0].position.set(r[0].x+o1x,r[0].y+o1y-th,r[0].z+o1z);a[1].position.set(r[1].x+o2x,r[1].y+o2y,r[1].z+o2z)}}
+ // idle float / bob
+ k1.y+=Math.sin(BT*2.6)*.012;k2.y+=Math.sin(BT*2.6+1.7)*.012;k1.rz+=Math.sin(BT*1.3)*.05;k2.rz+=Math.sin(BT*1.3+.8)*.05;
+ if(Math.random()<dt*6)kdAt(A.spn,1,.05,.32,.009);if(Bm&&Math.random()<dt*6)kdAt(Bm.spn,1,.05,.32,.009);
+ const ins=P.insp>0,iv=ins?(P.inspV||U.insp):null,IT=P.inspT||2.4,t=ins?(1-P.insp/IT)*IT:0;
+ if(iv=='keyspin'){const K=(a)=>kf(t,a);
+  // 0-1: tips meet in the centre (low, right above the fists), then the joined pair tilts
+  const j=K([[0,0],[.5,1],[1.1,1],[1.6,0]]);k1.x-=.3*j;k2.x+=.3*j;k1.y-=.06*j;k2.y-=.06*j;a1.x-=.07*j;a2.x+=.07*j;
+  const tl=K([[.8,0],[1.05,1],[1.6,1],[2,0]]);k1.y+=.04*tl;k2.y-=.06*tl;k2.rz-=.55*tl;k1.rz-=.15*tl;
+  // 1-3.4: right key comes up close to the camera (tip up-left, ring low-right), left hand sinks away
+  const up=K([[1,0],[2.4,.5],[3.1,1],[3.4,1],[3.75,0]]);k1.x-=.2*up;k1.y+=.0*up;k1.z+=.38*up;k1.rz-=.7*up;k1.ry+=.3*up;a1.y+=.02*up;
+  const dn=K([[1,0],[2.4,.35],[3.3,1],[7.45,1],[7.9,0]]);k2.x-=.15*dn;k2.y-=.5*dn;a2.x-=.15*dn;a2.y-=.5*dn;k2.v=dn<.95;
+  // 3.4-7.5: the right key sits on the fist (hb=1)
+  const hb=K([[3.4,0],[3.8,1],[7.3,1],[7.45,0]]);k1.hb=hb;
+  if(t>3.5&&t<3.95){const f=(t-3.5)/.45;k1.rz-=PI*2*ez(f);k1.s+=PI*ez(f)}
+  // 3.9-5.2: arm reaches up toward the centre and twirls the key around the fist (3 turns)
+  const tw=K([[3.75,0],[4.0,1],[5.1,1],[5.25,0]]);a1.x-=.22*tw;a1.y+=.1*tw;a1.z-=.08*tw;if(t>3.95&&t<5.15)k1.rz+=-((t-3.95)/1.2)*PI*6;
+  // 5.2-5.55: fist comes right up to the camera, key lying flat on top
+  const cl=K([[5.1,0],[5.3,1],[5.45,1],[5.65,0]]);a1.z+=.42*cl;a1.x-=.2*cl;a1.y+=.0*cl;k1.rz+=PI/2*cl;
+  // 5.6-6.45: arm up in the middle, key stands up "in the lock" and turns
+  const lk=K([[5.45,0],[5.7,1],[6.4,1],[6.6,0]]);a1.x-=.3*lk;a1.y+=.12*lk;a1.z-=.25*lk;
+  k1.s+=K([[5.8,0],[5.95,PI/2],[6.1,PI/2],[6.25,0]]);
+  // 6.5-7.3: key tilted tip down-left
+  const dg=K([[6.4,0],[6.65,1],[7.15,1],[7.3,0]]);k1.rz+=(PI/2+.5)*dg;a1.x-=.22*dg;a1.y+=.08*dg;a1.z-=.14*dg;
+  // 7.3 swing; 7.4-7.95 key flung up and away, spinning; left key flies back in from the left; snap back to idle at 8
+  const sw=K([[7.2,0],[7.32,1],[7.42,0]]);k1.rz+=.9*sw;a1.y-=.05*sw;
+  const ts=K([[7.38,0],[7.9,1],[8,0]]);k1.y+=.32*ts;k1.x+=.12*ts;k1.z-=.5*ts;if(t>7.38&&t<8)k1.rz+=((t-7.38)/.62)*PI*5;
+  const lr=K([[7.45,0],[7.6,1],[7.95,0]]);k2.x-=.25*lr;k2.z+=.25*lr;k2.y+=.1*lr;if(t>7.5&&t<7.95)kdAt(Bm?Bm.tip:null,2,.04,.3,.014);
+  if(P.kdE!==Math.floor(t*4)){P.kdE=Math.floor(t*4);for(const ft of[3.7,4.0,4.85,5.2,7.33,7.95])if(Math.abs(t-ft)<.13)kdAt(ft==7.95?(Bm||A).spn:A.spn,12,.4,.3,.02)}
+  if(hb>.5&&tw>.5&&Math.random()<dt*25)kdAt(A.tip,1,.12,.25,.013)}
+ else if(iv=='keytoss'){const p=1-P.insp/IT,q=cl01((p-.06)/.5);if(q>0&&q<1){const h=Math.sin(q*PI);k1.y+=h*.42;k1.x-=h*.06;k1.rz+=q*PI*6;kdAt(A.tip,3,.03,.45,.008)}
+  const bk=kf(p,[[.54,0],[.6,1],[.86,1],[1,0]]);k1.rz+=bk*.8;if(p>.55&&p<.6&&!P.kdC){P.kdC=1;kdAt(A.spn,10,.4,.3,.016);snd(1600,.03,.06,'square');setTimeout(()=>snd(2400,.05,.04,'sine'),40)}}
+ if(!ins)P.kdC=0;
+ // draw (0.6 s): arms cross in an X while the keys streak in from far away, then pop into place
+ if(P.kdIn>0){P.kdIn=Math.max(0,P.kdIn-dt);const q=1-P.kdIn/.6,cr=kf(q,[[0,.5],[.18,1],[.42,0]]),k=ez(cl01((q-.12)/.75)),r=1-k;
+  a1.x-=.3*cr;a2.x+=.3*cr;a1.y+=.06*cr;a2.y+=.06*cr;
+  k1.y+=.22*r;k2.y+=.22*r;k1.z-=.7*r;k2.z-=.7*r;k1.x-=.12*r;k2.x+=.12*r;k1.rz-=PI*2*r;k2.rz+=PI*2*r;k1.v=k2.v=q>.1;
+  if(q<.25){for(const sd of[1,-1])kdSpk(sd*.42-.17,-.05+Math.random()*.1,-.45,2,.05,.18,.02,-sd*1.6,.15,-.3)}
+  if(q>.1&&q<.9){kdAt(A.tip,2,.04,.3,.014);if(Bm)kdAt(Bm.tip,2,.04,.3,.014)}
+  if(q>=.97&&!P.kdLd){P.kdLd=1;kdAt(A.spn,14,.35,.3,.018);if(Bm)kdAt(Bm.spn,14,.35,.3,.018);snd(2093,.15,.035,'sine')}}else P.kdLd=0;
+ // throw (fire): both arms snap up and forward, right key flies first, then the left; keys stay gone until they come back
+ if(P.kst>0){P.kst=Math.max(0,P.kst-dt);const q=1-P.kst/.36,e1=Math.sin(cl01(q/.6)*PI),e2=Math.sin(cl01((q-.22)/.6)*PI);
+  a1.y+=.16*e1;a1.z-=.1*e1;a1.x+=.06*e1;a2.y+=.16*e2;a2.z-=.1*e2;a2.x-=.06*e2;
+  // release streaks: a long white-gold trail from each hand toward the crosshair
+  for(const[i,q0,sd,o]of[[1,.1,1,A],[2,.32,-1,Bm]])if(o&&q>=q0&&(P.kdR|0)<i){P.kdR=i;o.spn.getWorldPosition(_kv);kdBeam(_kv.x,_kv.y,_kv.z,-.17+sd*.04,.02,-2.4);for(let n=0;n<14;n++){const f=n/13;kdSpk(_kv.x+(-.17-_kv.x)*f,_kv.y+(.02-_kv.y)*f,_kv.z+(-1.6-_kv.z)*f,1,.03,.12+f*.18,.026-f*.01,0,0,-.6)}}}
+ else P.kdR=0;
+ // catch (reload): arms cross and the keys reappear above the crossed hands, spin, and spread back out
+ if(P.krl>0){P.krl=Math.max(0,P.krl-dt);const q=1-P.krl/.32,c=Math.sin(q*PI);a1.x-=.3*c;a2.x+=.3*c;a1.y+=.06*c;a2.y+=.06*c;a1.z-=.04*c;k1.x-=.22*c;k2.x+=.22*c;k1.y-=.04*c;k2.y-=.04*c;k1.z-=.05*c;k2.z-=.05*c;
+  const sp=ez(q)*PI*4;k1.s+=sp;k2.s-=sp;if(P.kfl){P.kfl=0;kdAt(A.spn,12,.35,.22,.022);if(Bm)kdAt(Bm.spn,12,.35,.22,.022)}}
+ kdBeamU(dt);
+ // apply
+ const put=(m,B0,k,a,sd,ky0)=>{const h=k.hb;m.userData.kv=k.v?1:0;m.position.set((B0+sd*KX*(1-h))+k.x*sd+(a.x*sd)*h,ky0+(KY*(1-h)-.02*h)+k.y+a.y*h,KZ*(1-h)+k.z+a.z*h);
+  m.scale.setScalar(SC);m.userData.piv.rotation.set(0,(RY*(1-h)+k.ry)*sd,(RZ*(1-h)+k.rz)*sd);m.userData.spn.rotation.y=k.s*sd};
+ // k.x/a.x above are in "toward-centre is negative for the right hand" units, so mirror them with sd
+ put(m1,U.kx[0],{...k1,x:k1.x},a1,1,U.ky0??(U.ky0=m1.position.y));
+ if(m2&&Bm&&Bm.piv)put(m2,U.kx[1],{...k2,x:-k2.x},{x:-a2.x,y:a2.y,z:a2.z},-1,U.ky1??(U.ky1=m2.position.y));
+ if(u.ka){const a=u.ka,r=u.kar;a[0].position.set(r[0].x+a1.x,r[0].y+a1.y,r[0].z+a1.z);a[1].position.set(r[1].x+a2.x,r[1].y+a2.y,r[1].z+a2.z)}}
+// bright white-gold throw streaks in the viewmodel scene (two stretched boxes: white core + gold glow), fade in 0.25 s
+var KDB=[];function kdBeam(x,y,z,X,Y,Z){const len=Math.hypot(X-x,Y-y,Z-z),g=new T.Group();
+ for(const[c,w,o]of[[0xffffff,.018,1],[0xffd23f,.05,.55]]){const m=new T.Mesh(new T.BoxGeometry(w,w,len),new T.MeshBasicMaterial({color:c,transparent:true,opacity:o,depthWrite:false,blending:T.AdditiveBlending}));m.userData.o=o;g.add(m)}
+ g.position.set((x+X)/2,(y+Y)/2,(z+Z)/2);g.lookAt(X,Y,Z);vs.add(g);KDB.push({g,t:.25})}
+function kdBeamU(dt){for(let i=KDB.length-1;i>=0;i--){const b=KDB[i];b.t-=dt;const k=Math.max(0,b.t/.25);for(const m of b.g.children){m.material.opacity=m.userData.o*k;m.scale.set(.4+k*.6,.4+k*.6,1)}if(b.t<=0){vs.remove(b.g);for(const m of b.g.children){m.geometry.dispose();m.material.dispose()}KDB.splice(i,1)}}}
 const SKINS=[
 {id:'ak47',weapon:'Assault Rifle',name:'AK-47',rarity:'rare',how:'從皮膚箱開出 Unboxed from the Skin Case',build:g=>{const W=0xb34a14,W2=0x953a0d,mg=new T.Group();
  B(g,.062,.095,.4,0,.088,-.04,K);B(g,.052,.022,.34,0,.147,-.05,K2);B(g,.066,.05,.24,0,.108,-.38,W);B(g,.07,.05,.26,0,.062,-.37,W2);B(g,.07,.07,.03,0,.085,-.5,K2);
@@ -934,17 +983,28 @@ const SKINS=[
  inspFx:p=>skBurst(p,8,[0xe0302a,0xffffff],1.3,.3,.04),
  reloadFx:()=>{for(let i=0;i<4;i++)setTimeout(()=>snd(1800+rnd()*600,.03,.03,'triangle'),i*35);setTimeout(()=>snd(900,.06,.05,'sine'),160)},
  fireFx:p=>{skBurst(p,9,[0xe0302a,0xffffff],1.6,.3,.045);snd(1300,.08,.05,'sine');setTimeout(()=>snd(1700,.1,.05,'triangle'),70)}},
-{id:'dg_key',weapon:'Daggers',name:'鑰匙雙刃 Key Daggers',rarity:'legendary',ex:1,how:'極致鑰匙組合包限定 Ultra Key Bundle Exclusive',insp:'keyspin',insp2:'keytoss',build:kdBuild,
+{id:'dg_key',weapon:'Daggers',name:'鑰匙雙刃 Key Daggers',rarity:'legendary',ex:1,how:'極致鑰匙組合包限定 Ultra Key Bundle Exclusive',insp:'keyspin',insp2:'keytoss',inspT:8,build:kdBuild,
  drawFx:()=>{P.kdF=1;P.kdIn=.6;snd(2600,.025,.07,'square');snd(1300,.03,.04,'square');[520,700,940,1260].forEach((f,i)=>setTimeout(()=>snd(f,.09,.035,'sine'),40+i*45))},
  inspFx:()=>{if(P.inspV=='keytoss'){snd(420,.12,.04,'triangle');setTimeout(()=>snd(760,.18,.03,'triangle'),120);[300,520,760,1000].forEach(t=>setTimeout(()=>snd(3200,.03,.025,'sine'),t))}
-  else{[90,190,290,390,490,590].forEach((t,i)=>setTimeout(()=>snd(1900+(i%2)*500,.022,.05,'square'),t));setTimeout(()=>{snd(620,.05,.06,'square');setTimeout(()=>snd(1240,.12,.04,'sine'),60)},930);setTimeout(()=>snd(2640,.25,.03,'sine'),1700)}},
+  else{const at=(t,f)=>setTimeout(()=>{if(P&&P.insp>0&&P.inspV==null)f()},t);at(500,()=>{snd(1800,.03,.06,'square');snd(2600,.05,.04,'sine')});at(3700,()=>{snd(1568,.15,.04,'sine');snd(2093,.2,.03,'sine')});[4000,4400,4850].forEach((t,i)=>at(t,()=>{snd(1200+i*200,.05,.05,'triangle');snd(2400+i*300,.12,.03,'sine')}));at(5200,()=>snd(2637,.2,.035,'sine'));at(5950,()=>{snd(700,.04,.07,'square');setTimeout(()=>snd(1050,.04,.06,'square'),70)});at(6250,()=>snd(820,.04,.06,'square'));at(7330,()=>{snd(950,.07,.05,'triangle');snd(2093,.22,.035,'sine')});at(7450,()=>snd(420,.15,.04,'triangle'));at(7950,()=>{snd(2093,.15,.035,'sine');snd(3136,.2,.025,'sine')})}},
  reloadFx:()=>{P.krl=.32;P.kfl=1;snd(1750,.025,.06,'square');setTimeout(()=>snd(2350,.025,.06,'square'),70)},
  fireFx:()=>{P.kst=.36;kdArc(1);snd(950,.07,.05,'triangle');snd(2093,.22,.035,'sine');setTimeout(()=>{kdArc(-1);snd(820,.07,.05,'triangle');snd(2637,.22,.03,'sine')},100)}},
-{id:'hg_keyper',weapon:'Handgun',name:'Keyper 鎏金手槍',rarity:'legendary',ex:1,how:'Keyper 划算鑰匙包限定 Keyper Bundle Exclusive',
- build:g=>{const Gd=0xd8b23a,Gd2=0xa8841f,Di=0x9fe8ff;B(g,.05,.06,.25,0,.1,-.06,Gd2);B(g,.046,.045,.2,0,.06,-.04,Gd);B(g,.046,.13,.065,0,0,.03,Gd,{rx:-.22});
- Sp(g,.022,0,.135,-.14,Di,1);B(g,.01,.012,.15,0,.1,-.19,Di,{e:1});return{}},
- drawFx:p=>{skBurst(p,9,[0xd8b23a,0x9fe8ff,0xffffff],2,.3,.045);snd(1500,.08,.05,'sine')},
- fireFx:p=>{skBurst(p,5,[0xd8b23a,0x9fe8ff],1.8,.16,.035);snd(1800,.04,.045,'sine')}},
+{id:'hg_keyper',weapon:'Sniper',name:'Keyper 鑰匙狙擊',rarity:'legendary',ex:1,how:'Keyper 划算鑰匙包限定 Keyper Bundle Exclusive',insp:'heavy',flashColor:0xffd23f,flashScale:1.4,
+ build:g=>{const Gd=0xf0c020,G2=0xcf9f12,Dk=0x2a2208,Ln=0xffe27a;
+  B(g,.07,.095,.46,0,.08,-.06,Gd);B(g,.056,.025,.4,0,.14,-.06,G2);B(g,.074,.075,.09,0,.092,-.32,Gd);
+  Cz(g,.03,.02,.46,0,.095,-.58,Gd);Cz(g,.03,.03,.05,0,.095,-.83,Gd);Cz(g,.016,.016,.012,0,.095,-.857,Dk);
+  B(g,.022,.065,.25,0,.05,-.7,Gd);for(const z of[-.61,-.7,-.79])B(g,.022,.1,.062,0,-.03,z,Gd);
+  Cz(g,.032,.032,.26,0,.19,-.06,Gd);Cz(g,.042,.034,.05,0,.19,-.21,Gd);Cz(g,.036,.036,.006,0,.19,-.237,Ln);Cz(g,.01,.01,.004,0,.196,-.241,Dk);B(g,.008,.02,.004,0,.182,-.241,Dk);Cz(g,.036,.03,.04,0,.19,.09,Gd);
+  B(g,.03,.05,.026,0,.145,-.14,G2);B(g,.03,.05,.026,0,.145,.02,G2);Cy(g,.014,.03,0,.235,-.06,G2);B(g,.03,.022,.022,.035,.19,-.06,G2);
+  B(g,.07,.014,.014,.045,.1,.07,Gd);Sp(g,.019,.083,.1,.07,Gd);
+  const mg=new T.Group();B(mg,.05,.08,.07,0,.0,-.13,G2);B(mg,.054,.014,.074,0,-.035,-.13,Gd);g.add(mg);
+  B(g,.045,.12,.055,0,0,.03,Gd,GRIP);B(g,.012,.05,.06,0,.015,-.03,G2);
+  B(g,.06,.035,.32,0,.115,.32,Gd);B(g,.06,.035,.32,0,.005,.32,Gd);for(const z of[.17,.31,.46])B(g,.062,.145,.04,0,.06,z,Gd);
+  return{fore:[0,.04,-.3],mag:mg}},
+ drawFx:p=>{skBurst(p,14,[0xffd23f,0xffffff,0xfff2b8],1.6,.4,.045);[1318,1568,2093].forEach((f,i)=>setTimeout(()=>snd(f,.1,.03,'sine'),i*60))},
+ inspFx:p=>{[0,300,600].forEach((t,i)=>setTimeout(()=>{if(P&&P.alive)skBurst(muz(P),6,[0xffd23f,0xffffff],.7,.4,.03);snd(1568+i*262,.08,.03,'sine')},t))},
+ reloadFx:()=>{snd(1750,.025,.06,'square');setTimeout(()=>snd(2350,.03,.06,'square'),80)},
+ fireFx:p=>{skBurst(p,12,[0xffd23f,0xffffff,0xfff2b8],2.4,.3,.05);snd(60,.3,.14,'sawtooth');snd(1760,.25,.03,'sine')}},
 // original key-themed sniper (own design): key-ring stock, padlock magazine, gold/silver two-tone
 {id:'sn_locksmith',weapon:'Sniper',name:'鎖匠 Locksmith',rarity:'legendary',ex:1,how:'傳奇鑰匙組合包限定 Legendary Key Bundle Exclusive',insp:'heavy',flashColor:0xffd23f,flashScale:1.4,
  drawFx:p=>{skBurst(p,16,[0xffd23f,0xffffff,0xfff2b8],1.6,.45,.045);[1046,1318,1568,2093].forEach((f,i)=>setTimeout(()=>snd(f,.12,.03,'sine'),i*60))},
@@ -993,11 +1053,17 @@ const SKINS=[
   B(g,.016,.05,.03,0,.12,.032,Wt,{rx:.6});B(g,.016,.05,.03,0,.21,-.032,Wt,{rx:-.6});Sp(g,.014,0,-.055,0,0x9fe6ff,1);return{dual:1}},
  drawFx:p=>{skBurst(p,10,[0x9fe6ff,0xffffff],1.2,.35,.035);snd(1800,.12,.04,'sine')}},
 {id:'ar_akey',weapon:'Assault Rifle',name:'A-Key 鑰匙步槍',rarity:'legendary',ex:1,how:'鑰匙組合包（即將推出 Coming Soon）',insp:'heavy',flashColor:0xffd23f,flashScale:1.3,
- build:g=>{const Gd=0xe0b830,Gd2=0xb38c1c,Sv=0xc9ced6,Dk=0x1c1c22;B(g,.072,.105,.34,0,.08,-.05,Gd);Cz(g,.021,.021,.52,0,.1,-.46,Sv);Cz(g,.032,.032,.05,0,.1,-.73,Gd);
-  for(const[z,h]of[[-.58,.05],[-.63,.085],[-.68,.04]])B(g,.022,h,.04,0,.08-h/2,z,Gd2);B(g,.045,.12,.055,0,0,.03,Dk,GRIP);B(g,.034,.03,.24,0,.16,-.12,Sv);
-  const mg=new T.Group();B(mg,.05,.2,.07,0,-.1,-.12,Gd2,{rx:.2});for(const y of[-.06,-.12,-.18])B(mg,.054,.018,.034,0,y,-.13+y*.2,Sv,{rx:.2});g.add(mg);
-  B(g,.05,.06,.14,0,.07,.15,Gd);const ring=new T.Mesh(UT,mt(Gd));ring.scale.set(.09,.09,.085);ring.rotation.y=PI/2;ring.position.set(0,.07,.3);g.add(ring);Sp(g,.022,0,.07,.3,0x58b4ff,1);
-  return{fore:[0,.03,-.32],mag:mg}},
+ build:g=>{const Gd=0xf0c020,G2=0xcf9f12,Dk=0x2a2208;
+  B(g,.075,.1,.32,0,.075,-.02,Gd);B(g,.06,.03,.3,0,.14,-.04,G2);for(const z of[-.12,-.02,.08])B(g,.064,.014,.03,0,.16,z,Gd);B(g,.03,.035,.05,0,.17,.1,Gd);
+  B(g,.072,.03,.27,0,.135,-.31,Gd);B(g,.072,.035,.27,0,.04,-.31,Gd);B(g,.072,.13,.04,0,.088,-.43,Gd);B(g,.072,.13,.04,0,.088,-.19,Gd);
+  Cz(g,.022,.022,.38,0,.1,-.62,Gd);Cz(g,.031,.031,.045,0,.1,-.81,Gd);Cz(g,.017,.017,.012,0,.1,-.836,Dk);
+  Cz(g,.016,.016,.3,0,.152,-.56,Gd);B(g,.022,.11,.022,0,.2,-.67,Gd,{rx:-.35});B(g,.022,.07,.022,0,.275,-.66,Gd,{rx:.5});B(g,.022,.04,.022,0,.3,-.625,Gd,{rx:1.2});
+  B(g,.02,.06,.19,0,.06,-.72,Gd);for(const z of[-.65,-.72,-.79])B(g,.02,.085,.048,0,-.012,z,Gd);
+  const mg=new T.Group();[[-.005,-.1,.15],[-.075,-.122,.35],[-.14,-.158,.55],[-.198,-.205,.75]].forEach(([y,z,r],i)=>{B(mg,.052,.1,.078,0,y,z,Gd,{rx:r});B(mg,.056,.012,.082,0,y-.046,z-.03-.006*i,G2,{rx:r})});B(mg,.06,.022,.09,0,-.245,-.245,G2,{rx:.85});g.add(mg);
+  B(g,.045,.12,.055,0,0,.03,Gd,GRIP);B(g,.012,.05,.06,0,.015,-.03,G2);
+  for(const z of[.075,.11]){const r=new T.Mesh(UT,mt(G2));r.scale.set(.014,.014,.012);r.rotation.y=PI/2;r.position.set(.04,.07,z);g.add(r)}
+  B(g,.055,.085,.06,0,.075,.15,Gd);B(g,.05,.035,.24,0,.105,.27,Gd);B(g,.05,.035,.22,0,.0,.27,Gd,{rx:-.12});B(g,.056,.15,.04,0,.05,.39,Gd);B(g,.058,.03,.045,0,.12,.39,G2);
+  return{fore:[0,.03,-.31],mag:mg}},
  reloadFx:()=>{snd(1750,.025,.06,'square');setTimeout(()=>snd(2350,.03,.06,'square'),80)}},
 {id:'rv_gold',weapon:'Revolver',name:'黃金左輪 Golden Revolver',rarity:'legendary',ex:1,how:'黃金通行證 Lv20 Premium 專屬',insp:'twirl',flashColor:0xffd23f,
  build:g=>{const Gd=0xe8b412,Gd2=0xb88209,Iv=0xf2e8d0;Cz(g,.018,.018,.24,0,.11,-.21,Gd);B(g,.032,.022,.22,0,.136,-.21,Gd2);Cz(g,.042,.042,.08,0,.095,-.05,Gd2);for(let i=0;i<6;i++){const a=i/6*PI*2;Sp(g,.007,Math.cos(a)*.03,.095+Math.sin(a)*.03,-.008,Gd)}
@@ -1885,7 +1951,7 @@ function rel(e){const w=e.L[e.cur],s=e.S[e.cur];if(w.norl||(w.res!=null&&!(s.r>0
 // per-skin FX hooks (Sniper skins etc): reuse SKBYID entries' reloadFx/fireFx/inspFx, local player only.
 function skRelFx(e,w){if(!e.isP||!w)return;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.reloadFx)try{S.reloadFx()}catch(err){console.error(err)}}
 function skFireFx(e,w){if(!e.isP||!w)return false;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.fireFx){try{S.fireFx(muz(e))}catch(err){console.error(err)}return true}return false}
-function skInspFx(e){if(!e||!e.isP||!e.alive)return;const w=e.L[e.cur];const S=w&&SKBYID[skinKey(e,w)];e.inspV=null;if(S&&S.weapon==w.n&&S.insp2&&(keys.KeyW||keys.KeyA||keys.KeyS||keys.KeyD))e.inspV=S.insp2;if(S&&S.weapon==w.n&&S.inspFx)try{S.inspFx(muz(e))}catch(err){console.error(err)}}
+function skInspFx(e){if(!e||!e.isP||!e.alive)return;const w=e.L[e.cur];const S=w&&SKBYID[skinKey(e,w)];e.inspV=null;e.inspT=2.4;if(S&&S.weapon==w.n&&S.insp2&&(keys.KeyW||keys.KeyA||keys.KeyS||keys.KeyD))e.inspV=S.insp2;if(S&&S.weapon==w.n&&S.inspT&&!e.inspV)e.inspT=S.inspT;if(e.insp>0)e.insp=e.inspT;if(S&&S.weapon==w.n&&S.inspFx)try{S.inspFx(muz(e))}catch(err){console.error(err)}}
 function fireW(e,w,s,x){if(GHA)return;if(NET&&!GH)nf(e,'w',e.L.indexOf(w),x);if(w.lim&&!w.selfLim)s.c--;if(w.mag&&!w.inf&&!s.bm)s.a--;if(w.heat){s.h+=w.heat;if(s.h>=1){s.h=1;s.ov=1}}
 s.lf=e.age;e.shotT=BT;e.wnm=w.n;if(e.isP){P.rk=(rnd()-.5)*2;P.insp=0;if(w.k=='M'&&!w.au){P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk=w.n=='Riot Shield'?'s':w.n=='Maul'?'h':'n';if(w.n=='Maul')P.sw=P.swT=.6}if(w.k=='U'&&w.lim&&w.n!='Medkit')P.thr=.45}(w.fire||(w.pj?fProj:fGun))(e,w,s,x||{});e.cd=w.rate*(e.isP?(admEP(e,w)?1/3:1):DF[cfg.d].rm*(1+rnd()*.3));e.kick=1;if(!skFireFx(e,w)&&w.f)snd(w.f,.08,.05);
 if(w.burst){s.q=w.burst-1;s.qt=w.qi||.07;s.qs=0}if(w.mag&&!w.inf&&s.a<=0)rel(e)}
@@ -2116,7 +2182,7 @@ if(s.rl>0&&w.rl&&P.qmT<=0){const p=1-s.rl/w.rl,t=RS[w.n]||'mag';
  else if(t=='rocket'){py+=kf(p,[[0,0],[.2,-.14],[.8,-.14],[1,0]]);rx+=kf(p,[[0,0],[.2,-.35],[.8,-.35],[1,0]]);lo=kf(p,[[.2,0],[.35,1],[.7,1],[.8,0]])}
  else if(t=='dag'){py+=kf(p,[[0,0],[.3,-.12],[.6,-.12],[1,0]]);rx+=kf(p,[[0,0],[.3,-.4],[.6,-.4],[1,0]])}
  else if(t=='box'){py+=kf(p,[[0,0],[.2,-.1],[.8,-.1],[1,0]]);rz+=kf(p,[[0,0],[.2,.3],[.8,.3],[1,0]]);lo=kf(p,[[.2,0],[.4,1],[.7,1],[.85,0]])}}
-if(P.insp>0){const p=1-P.insp/2.4,t=P.inspV||U.insp;
+if(P.insp>0){const p=1-P.insp/(P.inspT||2.4),t=P.inspV||U.insp;
  if(t=='twirl'||t=='sturn'||t=='side'||t=='knuck'){}
  else if(t=='keyspin'){py+=kf(p,[[0,0],[.3,.03],[.9,.03],[1,0]]);rx+=kf(p,[[.28,0],[.4,.12],[.6,.12],[.7,0]])}
  else if(t=='keytoss'){ry+=kf(p,[[0,0],[.15,.12],[.55,.12],[.62,-.1],[.8,-.1],[1,0]]);py+=kf(p,[[.52,0],[.58,-.03],[.66,0]])}
@@ -2132,7 +2198,7 @@ if(P.insp>0){const p=1-P.insp/2.4,t=P.inspV||U.insp;
  else{ry+=kf(p,[[0,0],[.25,.9],[.48,.9],[.6,0],[1,0]]);rz+=kf(p,[[0,0],[.25,.4],[.48,.4],[.6,-.6],[.85,-.6],[1,0]]);px+=kf(p,[[0,0],[.25,-.06],[.85,-.06],[1,0]]);py+=kf(p,[[0,0],[.25,.04],[.85,.04],[1,0]])}}
 if(w.k!='M'){const Rc=RC[w.n]||.07;pz+=k*.05*(1+Rc*3)*(1-A*.5);rx+=k*Rc;rz+=k*(P.rk||0)*.06}
 if(U.fa){const tt=performance.now()/1000;for(const a of U.fa){const sd=a.userData.sd;a.position.copy(a.userData.rest);a.rotation.copy(a.userData.rr);a.position.y+=Math.sin(tt*5+(sd>0?0:PI))*.012;
-  if(P.insp>0&&U.insp=='knuck'){const p=1-P.insp/2.4,e=kf(p,[[0,0],[.14,1],[.86,1],[1,0]]);a.position.x+=-sd*.14*e;a.position.y+=.06*e;a.position.z-=.04*e;a.rotation.z+=sd*.35*e;
+  if(P.insp>0&&U.insp=='knuck'){const p=1-P.insp/(P.inspT||2.4),e=kf(p,[[0,0],[.14,1],[.86,1],[1,0]]);a.position.x+=-sd*.14*e;a.position.y+=.06*e;a.position.z-=.04*e;a.rotation.z+=sd*.35*e;
    if(sd>0){a.position.x-=kf(p,[[.14,0],[.22,.05],[.27,.02],[.33,.05],[.38,.02],[.44,0]]);a.rotation.x+=kf(p,[[.14,0],[.22,-.35],[.27,-.1],[.33,-.4],[.38,-.1],[.44,0]])}
    else a.rotation.x+=kf(p,[[.14,0],[.22,.15],[.38,.15],[.44,0]]);
    a.rotation.y+=sd*kf(p,[[.46,0],[.56,.9],[.66,.9],[.74,-.5],[.82,-.5],[.88,0]]);a.rotation.z+=sd*kf(p,[[.46,0],[.56,1.2],[.66,1.2],[.74,-.5],[.82,-.5],[.88,0]]);
@@ -2142,7 +2208,7 @@ if(w.n=='Chainsaw'&&(mL||mR)&&P.alive){const j=mR&&!mL?.012:.008;px+=(rnd()-.5)*
 if(P.thr>0){const p=1-P.thr/.45;pz+=kf(p,[[0,0],[.35,.1],[.6,-.2],[1,0]]);py+=kf(p,[[0,0],[.35,.1],[.6,0]]);rx+=kf(p,[[0,0],[.35,.7],[.6,-.9],[1,0]])}
 h.position.set(px,py,pz);h.rotation.set(rx,ry,rz);
 if(U.m){let my=0,mx=0,mry=0,mrz=0;const MO=U.insp;
- if(P.insp>0){const p=1-P.insp/2.4;
+ if(P.insp>0){const p=1-P.insp/(P.inspT||2.4);
   if(MO=='toss'){const q=Math.min(1,Math.max(0,(p-.12)/.46));my=Math.sin(q*PI)*.6;mx=-q*PI*2;mrz=q*PI}
   else if(MO=='twirl'){mx=-kf(p,[[0,0],[.12,0],[.4,PI*2],[.55,PI*2],[.85,PI*4]]);mrz=kf(p,[[.85,0],[.92,.5],[1,0]])}
   else if(MO=='sturn'||MO=='side'){mry=kf(p,[[0,0],[.2,1.15],[.45,1.15],[.62,-1.15],[.85,-1.15],[1,0]]);mrz=kf(p,[[0,0],[.2,.3],[.45,.3],[.62,-.3],[.85,-.3],[1,0]])}}
@@ -2154,7 +2220,7 @@ if(U.mag){U.mag.position.y=U.magY+mo;U.mag.visible=!mh}
 if(U.la){if(lo!=null&&lo>0){const t2=U.mag?V(U.mag.position.x,U.magY-.06+mo,U.mag.position.z+.02):V(U.laRest.x,U.laRest.y-.15,U.laRest.z+.06);U.la.position.lerpVectors(U.laRest,t2,lo)}else U.la.position.copy(U.laRest)}
 if(U.arrow){const c=s.ch||0;for(const a of U.arrow)a.position.z=a.userData.z0+c*.16}
 if(U.m)U.m.visible=!(w.n=='Spear'&&s.c<=0)&&!(P.thr>0&&P.thr<.2);
-if(w.n=='Daggers'&&U.m){const rl=s.rl>0&&w.rl?1-s.rl/w.rl:0;U.m.visible=s.a>=2||rl>.55;if(U.m2)U.m2.visible=s.a>=1||rl>.55}
+if(w.n=='Daggers'&&U.m){const rl=s.rl>0&&w.rl?1-s.rl/w.rl:0;U.m.visible=(s.a>=2||rl>.55)&&U.m.userData.kv!==0;if(U.m2)U.m2.visible=(s.a>=1||rl>.55)&&U.m2.userData.kv!==0}
 if(u.spin)u.spin.rotation.z+=s.sp*dt*40;if(fl)fl.visible=k>.6&&!w.charge&&w.n!='Warper';vm.visible=P.alive&&!(P.zoom&&w.scope)&&!(st=='lobby'&&!LB.inRange)}
 // spectating: show the watched player's held weapon + arms from their eye, with recoil / reload / walk bob
 function specVM(t,dt){const w=t.L&&t.L[t.cur];if(!w){vm.visible=false;return}let U=vm.userData;if(U.spec!==t||U.w!==w||U.wk!==wrapKey(t,w)||U.sk!==skinKey(t,w)){setVM(w,t);U=vm.userData;U.spec=t;U.lx=t.x;U.lz=t.z;U.bob=0}
@@ -3004,7 +3070,7 @@ var UPDATES=[
  {e:'🎄',h:0,t:'聖誕箱與通行證',b:['新增聖誕限定包裝箱，開出 2 款限定聖誕包裝','Premium Pass 通行證正式上線，花金幣解鎖後每級都有額外獎勵']},
  {e:'🏆',h:200,t:'成就、戰績、熟練度、稱號',b:['🏆 成就：14 個長期目標，達成領鑰匙','📊 戰績：生涯總覽 + 最近 20 場對戰紀錄','⭐ 武器熟練度：依擊殺數升級，每把武器都有自己的等級，升級領金幣','🏷️ 稱號：8 種可解鎖稱號，裝備後大廳會顯示在你名字旁邊']},
  {e:'📅',h:160,t:'每日 / 每週玩法',b:['🎡 每日轉盤：任務頁面每天可以免費轉一次，花金幣能再抽','📅 每週挑戰：4 個每週目標，獎勵比每日任務更豐厚，每週重置','🔥 今日特惠：商店箱子每天有一個打 7 折，每天自動輪換']},
- {e:'🔑',h:120,t:'鑰匙組合包 大改版',b:['Keyper 划算鑰匙包：新增限定手槍皮膚','傳奇鑰匙組合包：新增限定狙擊槍「鎖匠」皮膚（原本的鑰匙雙刃移到極致鑰匙組合包）','新增 3 款金幣組合包：醫療、手作、能量，各帶限定皮膚和死亡特效','組合包價格全面調整']},
+ {e:'🔑',h:120,t:'鑰匙組合包 大改版',b:['Keyper 划算鑰匙包：新增限定狙擊槍皮膚','傳奇鑰匙組合包：新增限定狙擊槍「鎖匠」皮膚（原本的鑰匙雙刃移到極致鑰匙組合包）','新增 3 款金幣組合包：醫療、手作、能量，各帶限定皮膚和死亡特效','組合包價格全面調整']},
  {e:'🙏',h:120,t:'感謝你的支持！',b:['謝謝你一起玩、一起測試，也歡迎繼續給我們回饋','點下面的按鈕，領取這次更新的獎勵']}]},
 {ver:'2026.11.08',title:'🎄 聖誕大更新',rewardKeys:20,rewardGold:200,slides:[
  {e:'🎄',h:0,t:'聖誕大更新來了！',b:['大廳變成聖誕風：聖誕樹、禮物、冰柱、飄雪','全新地圖、新貨幣雪花 ❄️、新皮膚、新模式','還有粉絲許願的功能一次做好！']},
