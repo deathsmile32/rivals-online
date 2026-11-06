@@ -2825,7 +2825,8 @@ function fbEmail(k){k=String(k).toLowerCase();const h=[...new TextEncoder().enco
 const fbPw=pw=>{pw=String(pw);return pw.length<6?pw+'·rvl-legacy':pw};
 const FB_ERR={EMAIL_EXISTS:'這個名稱已經有人用了',INVALID_LOGIN_CREDENTIALS:'帳號或密碼錯誤',INVALID_PASSWORD:'帳號或密碼錯誤',EMAIL_NOT_FOUND:'帳號或密碼錯誤',WEAK_PASSWORD:'密碼至少 6 個字',
  TOO_MANY_ATTEMPTS_TRY_LATER:'嘗試太多次，請稍後再試',USER_DISABLED:'這個帳號已被停用',INVALID_EMAIL:'這個名稱不能用在雲端帳號',OPERATION_NOT_ALLOWED:'雲端還沒開啟「電子郵件/密碼」登入（請到 Firebase 主控台啟用）',
- TOKEN_EXPIRED:'登入已過期，請重新登入',INVALID_REFRESH_TOKEN:'登入已過期，請重新登入',USER_NOT_FOUND:'登入已過期，請重新登入',PERMISSION_DENIED:'雲端拒絕存取（請檢查 Firestore 規則）'};
+ TOKEN_EXPIRED:'登入已過期，請重新登入',INVALID_REFRESH_TOKEN:'登入已過期，請重新登入',USER_NOT_FOUND:'登入已過期，請重新登入',PERMISSION_DENIED:'雲端拒絕存取（請檢查 Firestore 規則）',RESOURCE_EXHAUSTED:'今天的雲端免費使用量用完了（台灣時間下午 4 點左右會恢復）'};
+const fbQuota=e=>!!e&&(e.code==='RESOURCE_EXHAUSTED'||e.status===429);
 function fbMsg(e){if(typeof e=='string')return e;if(e&&e.net)return'無法連線到雲端（請檢查網路），請稍後再試';const c=(e&&e.code)||'';if(FB_ERR[c])return FB_ERR[c];if(/API_?KEY/i.test(c+(e&&e.raw||'')))return'雲端設定錯誤（API key 無效）';return'雲端錯誤：'+(c||(e&&e.message)||e)}
 async function fbFetch(url,opt,ms){const ac=(typeof AbortController!='undefined'&&!opt.keepalive)?new AbortController():null,t=ac&&setTimeout(()=>ac.abort(),ms||12000);let r;
  try{r=await fetch(url,ac?Object.assign({},opt,{signal:ac.signal}):opt)}catch(_){throw{net:1}}finally{if(t)clearTimeout(t)}
@@ -2848,7 +2849,7 @@ function ccGet(){const c=lsGet('rvl_cloud_cache',null);return c&&typeof c=='obje
 function ccPut(uid,o){const c=ccGet();c[uid]=Object.assign(c[uid]||{},o);lsSet('rvl_cloud_cache',c)}
 const SYNC_T={ok:['☁️ 已同步','#9fe0b0'],busy:['☁️ 同步中…','#cfd6ff'],off:['⚠️ 離線，稍後同步','#ffc93c'],err:['⚠️ 同步失敗，稍後重試','#ff9a8a']};
 function setSync(s,e){CLOUD.st=s;const el=document.getElementById('llsync');if(!el)return;const v=inCloud()&&SYNC_T[s];el.style.display=v?'inline':'none';if(v){el.textContent=v[0];el.style.color=v[1];el.title=e?fbMsg(e):'雲端帳號：進度會自動同步'}}
-function cloudSched(){clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>cloudFlush(),3000);if(CLOUD.st!=='off'&&CLOUD.st!=='err')setSync('busy')}
+function cloudSched(){clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>cloudFlush(),10000);if(CLOUD.st!=='off'&&CLOUD.st!=='err')setSync('busy')}
 async function cloudFlush(keep,S){S=S||CLOUD;if(!S.uid||!S.dirty)return true;clearTimeout(S.t);if(S.busy){S.again=1;return false}
  const prof=S===CLOUD?PF:S.snap;if(!prof)return false;S.busy=true;const upd=S.upd,ps=JSON.stringify(prof);let ok=false;if(S===CLOUD)setSync('busy');
  try{await fsPut(S,ps,upd,keep);ok=true;S.fails=0;S.synced=Math.max(S.synced,upd);if(S.upd===upd)S.dirty=false;ccPut(S.uid,{synced:S.synced});if(S===CLOUD){CLOUD.ok=true;setSync(S.dirty?'busy':'ok')}}
@@ -2864,7 +2865,7 @@ async function cloudBegin(S,name,prof,upd,push,isNew,msg){if(await checkBan(S.ui
  if(typeof giftReset=='function')giftReset();S.name=name;S.live=true;S.synced=S.upd=upd||0;CLOUD=S;ACCT='c:'+S.uid;PF=fixProf(prof);
  try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}cloudRemember(S);
  accEnter(isNew,msg);if(push)cloudFlush();else setSync('busy')}
-async function cloudLoad(S,name,mig){const d=await fsGet(S),c=ccGet()[S.uid];let prof,upd=0,push=false,msg='';
+async function cloudLoad(S,name,mig){let d;const c=ccGet()[S.uid];try{d=await fsGet(S)}catch(e){if((e&&e.net||fbQuota(e))&&c&&c.prof){cloudBegin(S,c.name||name,c.prof,c.synced||0,false,0,fbQuota(e)?'⚠️ 雲端今天的免費額度用完了，先用這台裝置上的進度，額度恢復後會自動同步':'⚠️ 目前無法連線雲端，先用這台裝置上的進度，連線後會自動同步');setSync('off');clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>cloudFlush(),fbQuota(e)?600000:5000);return}throw e}let prof,upd=0,push=false,msg='';
  if(d&&d.prof){prof=d.prof;upd=d.updated;if(d.name)name=d.name;if(c&&c.prof&&(c.updated||0)>upd){prof=c.prof;push=true}}
  else if(c&&c.prof){prof=c.prof;push=true;if(c.name)name=c.name}
  else if(mig&&mig.lu&&await pwHash(mig.k,mig.pw,mig.lu.salt)===mig.lu.hash){prof=mig.lu.prof;name=mig.lu.name||name;mig.lu.cloud=S.uid;lsSet('rvl_accounts',ACCDB);push=true;msg=MIG_MSG}
@@ -2889,7 +2890,7 @@ async function cloudResume(cs,rem){const S=Object.assign(newCloud(CLOUD),{uid:cs
  catch(e){if(e&&e.net){const c=ccGet()[S.uid];if(c&&c.prof){cloudBegin(S,c.name||S.name,c.prof,c.synced||0,false,0,'⚠️ 目前無法連線雲端，先用這台裝置上的進度，連線後會自動同步');setSync('off');clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>cloudFlush(),5000);return}
    $('#amsg').textContent=fbMsg(e);return}
   cloudForget();$('#amsg').textContent=e&&/TOKEN|USER_/.test(e.code||'')?'登入已過期，請重新登入':fbMsg(e)}}
-async function cloudPull(){const S=CLOUD;if(!inCloud()||S.dirty||S.busy||st!=='lobby'||PANEL||CRO||Date.now()-S.pullT<15000)return;S.pullT=Date.now();
+async function cloudPull(){const S=CLOUD;if(!inCloud()||S.dirty||S.busy||st!=='lobby'||PANEL||CRO||Date.now()-S.pullT<120000)return;S.pullT=Date.now();
  try{const d=await fsGet(S);if(S!==CLOUD||!inCloud()||S.dirty||S.busy||st!=='lobby'||PANEL||!d||!d.prof||d.updated<=S.synced)return;
   PF=fixProf(d.prof);S.synced=S.upd=d.updated;ccPut(S.uid,{name:S.name,prof:PF,updated:d.updated,synced:d.updated});applyProfile();if(typeof renderLUI=='function')renderLUI();setSync('ok');toast('☁️ 已載入其他裝置的最新進度','#4fc3f7')}catch(_){}}
 addEventListener('pagehide',()=>{if(inCloud()&&CLOUD.dirty)cloudFlush(true)});
@@ -3293,12 +3294,14 @@ PRENDER.Play=renderPlay;$('#playBtn').onclick=()=>openPanel('Play');
 // ===== global leaderboards (level / win streak) =====
 
 var LVLB={t:0,list:[],busy:false,err:'',me:-1},STLB={t:0,list:[],busy:false,err:'',me:-1};
-async function lvlPush(){if(!inCloud()||!PF)return;try{await fsCall('/levels/'+encodeURIComponent(CLOUD.uid),'PATCH',fsEnc({name:CLOUD.name,lv:PF.lv,t:Date.now()}));LVLB.t=0}catch(_){}}
-async function stPush(){if(!inCloud()||!PF)return;try{await fsCall('/streaks/'+encodeURIComponent(CLOUD.uid),'PATCH',fsEnc({name:CLOUD.name,streak:PF.st.streak,t:Date.now()}));STLB.t=0}catch(_){}}
-async function lbLoad(LB,coll,field,force){if(!inCloud()||LB.busy)return;if(!force&&Date.now()-LB.t<180000)return;LB.busy=true;LB.err='';
- try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:coll}],orderBy:[{field:{fieldPath:field},direction:'DESCENDING'}],limit:500}});const L=[];
+for(const[LB,k]of[[LVLB,'levels'],[STLB,'streaks']]){LB.k=k;const c=lsGet('rvl_lb_'+k,null);if(c&&Array.isArray(c.list)){LB.list=c.list;LB.t=c.t||0}}
+async function lvlPush(){if(!inCloud()||!PF)return;try{await fsCall('/levels/'+encodeURIComponent(CLOUD.uid),'PATCH',fsEnc({name:CLOUD.name,lv:PF.lv,t:Date.now()}));lbMine(LVLB,'lv',PF.lv)}catch(_){}}
+async function stPush(){if(!inCloud()||!PF)return;try{await fsCall('/streaks/'+encodeURIComponent(CLOUD.uid),'PATCH',fsEnc({name:CLOUD.name,streak:PF.st.streak,t:Date.now()}));lbMine(STLB,'streak',PF.st.streak)}catch(_){}}
+function lbMine(LB,f,v){if(!inCloud())return;let r=LB.list.find(d=>d.uid===CLOUD.uid);if(!r){r={uid:CLOUD.uid};LB.list.push(r)}r.name=CLOUD.name;r[f]=v;LB.list.sort((a,b)=>(b[f]||0)-(a[f]||0));LB.me=LB.list.indexOf(r);lsSet('rvl_lb_'+LB.k,{t:LB.t,list:LB.list})}
+async function lbLoad(LB,coll,field,force){if(!inCloud()||LB.busy)return;LB.me=LB.list.findIndex(d=>d.uid===CLOUD.uid);if(Date.now()-LB.t<(force?60000:1200000))return;LB.busy=true;LB.err='';
+ try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:coll}],orderBy:[{field:{fieldPath:field},direction:'DESCENDING'}],limit:100}});const L=[];
   for(const x of Array.isArray(r)?r:[]){if(!x||!x.document)continue;const d=fsDec(x.document.fields);d.uid=String(x.document.name).split('/').pop();if(typeof d.name=='string'&&Number.isFinite(d[field]))L.push(d)}
-  LB.list=L;LB.me=L.findIndex(d=>d.uid===CLOUD.uid);LB.t=Date.now()}catch(e){LB.err=e&&e.status===403?'排行榜還沒開放（管理員需要更新 Firebase 規則）':'讀取排行榜失敗，稍後再試'}
+  LB.list=L;LB.me=L.findIndex(d=>d.uid===CLOUD.uid);LB.t=Date.now();lsSet('rvl_lb_'+coll,{t:LB.t,list:L})}catch(e){LB.err=fbQuota(e)?'今天的雲端免費使用量用完了（台灣時間下午 4 點左右會恢復）':e&&e.status===403?'排行榜還沒開放（管理員需要更新 Firebase 規則）':'讀取排行榜失敗，稍後再試'}
  finally{LB.busy=false;if(PANEL=='Ranked')renderRanked();if(coll=='levels'&&LBB.lvl)drawLbBoard(LBB.lvl,'⭐ 等級排行','#ffd23f',LVLB.list,'lv','⭐','級');if(coll=='streaks'&&LBB.streak)drawLbBoard(LBB.streak,'🔥 連勝排行','#ff9a3c',STLB.list,'streak','🔥','連勝');try{hofDraw()}catch(_){}renderLUI()}}
 function lvlLoad(force){return lbLoad(LVLB,'levels','lv',force)}
 function stLoad(force){return lbLoad(STLB,'streaks','streak',force)}
@@ -3373,11 +3376,12 @@ function rkResHTML(a){if(!a)return'';
   '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:6px">'+rkImg(a.t1,54)+'<div style="text-align:left"><div style="font-weight:900;font-size:18px;color:'+a.t1.col+'">'+a.t1.en+'</div><div>'+a.t1.zh+' · '+PF.rk.rp+' RP</div></div>'+
   '<div style="font:900 26px system-ui;color:'+(a.d>0?'#35d07f':a.d<0?'#ff6a6a':'#ffd23f')+'">'+(a.d>0?'+':'')+a.d+'</div></div>'+
   (a.first&&!a.won?'<div class="note" style="color:#ffd23f">🛡️ 今天第一場排位，輸了不扣分</div>':'')+(up?'<div style="color:#ffd23f;font-weight:900">⬆️ 升段！</div>':dn?'<div style="color:#ff8a8a;font-weight:900">⬇️ 降段了</div>':'')+'</div>'}
-async function rkPush(){if(!inCloud()||!PF)return;try{await fsCall('/ranked/'+encodeURIComponent(CLOUD.uid),'PATCH',fsEnc({name:CLOUD.name,rp:PF.rk.rp,t:Date.now()}));RKLB.t=0}catch(_){}}
-async function rkLoad(force){if(!inCloud()||RKLB.busy)return;if(!force&&Date.now()-RKLB.t<180000)return;RKLB.busy=true;RKLB.err='';
- try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:'ranked'}],orderBy:[{field:{fieldPath:'rp'},direction:'DESCENDING'}],limit:200}});const L=[];
+{RKLB.k='ranked';const c=lsGet('rvl_lb_ranked',null);if(c&&Array.isArray(c.list)){RKLB.list=c.list;RKLB.t=c.t||0}}
+async function rkPush(){if(!inCloud()||!PF)return;try{await fsCall('/ranked/'+encodeURIComponent(CLOUD.uid),'PATCH',fsEnc({name:CLOUD.name,rp:PF.rk.rp,t:Date.now()}));lbMine(RKLB,'rp',PF.rk.rp)}catch(_){}}
+async function rkLoad(force){if(!inCloud()||RKLB.busy)return;RKLB.me=RKLB.list.findIndex(d=>d.uid===CLOUD.uid);if(Date.now()-RKLB.t<(force?60000:1200000))return;RKLB.busy=true;RKLB.err='';
+ try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:'ranked'}],orderBy:[{field:{fieldPath:'rp'},direction:'DESCENDING'}],limit:100}});const L=[];
   for(const x of Array.isArray(r)?r:[]){if(!x||!x.document)continue;const d=fsDec(x.document.fields);d.uid=String(x.document.name).split('/').pop();if(typeof d.name=='string'&&Number.isFinite(d.rp))L.push(d)}
-  RKLB.list=L;RKLB.me=L.findIndex(d=>d.uid===CLOUD.uid);RKLB.t=Date.now()}catch(e){RKLB.err=e&&e.status===403?'排行榜還沒開放（管理員需要更新 Firebase 規則）':'讀取排行榜失敗，稍後再試'}
+  RKLB.list=L;RKLB.me=L.findIndex(d=>d.uid===CLOUD.uid);RKLB.t=Date.now();lsSet('rvl_lb_ranked',{t:RKLB.t,list:L})}catch(e){RKLB.err=fbQuota(e)?'今天的雲端免費使用量用完了（台灣時間下午 4 點左右會恢復）':e&&e.status===403?'排行榜還沒開放（管理員需要更新 Firebase 規則）':'讀取排行榜失敗，稍後再試'}
  finally{RKLB.busy=false;if(PANEL=='Ranked')renderRanked();if(LBB.rp)drawLbBoard(LBB.rp,'🏆 Ranked RP','#58b4ff',RKLB.list,'rp','🏆','RP');try{hofDraw()}catch(_){}renderLUI()}}
 function rkOpen(){if(!PF)return;rkAbandon();RKT='play';openPanel('Ranked');rkLoad()}
 function renderRanked(){if(!PF)return;const r=PF.rk,t=rkCur(),body=$('#rkBody');
@@ -3562,7 +3566,7 @@ function kbGrant(b,pre){PF.keys+=b.keys;if(b.snow)PF.snow=(PF.snow|0)+b.snow;let
 // Admin = the cloud account 'deathsmile' (auth email ADMIN_EMAIL = fbEmail('deathsmile')): may gift anything free (free:true); the Firestore rules
 // (see FB_CFG comment) only accept free:true from that email, and receivers additionally drop free gifts that are not from it.
 const ADMIN_NAME='deathsmile',ADMIN_EMAIL='u6465617468736d696c65@rivals-arena.app',GIFT_KINDS=['weapon','crate','keys','tickets','skin','wrap','fin'],GIFT_QMAX={keys:10000,tickets:1000,crate:20};
-var GIFT_POLL_MS=60000,GIFT={pend:[],t:0,busy:false,reg:'',seen:{},adminUid:null,to:null,toIn:'',who:'',cat:'weapon',item:{},qty:1,msg:'',tab:'send',sending:false};
+var GIFT_POLL_MS=30000,GIFT={pend:[],t:0,busy:false,reg:'',seen:{},adminUid:null,to:null,toIn:'',who:'',cat:'weapon',item:{},qty:1,msg:'',tab:'send',sending:false};
 function giftReset(){Object.assign(GIFT,{pend:[],t:0,reg:'',seen:{},adminUid:null,to:null,toIn:'',who:'',qty:1,msg:'',tab:'send',cat:'weapon'});const d=$('#gfDlg');if(d)d.style.display='none'}
 const fsBase=()=>'https://firestore.googleapis.com/v1/projects/'+encodeURIComponent(FB_CFG.projectId)+'/databases/(default)/documents';
 async function fsCall(path,method,body){const S=CLOUD;for(let i=0;;i++){const tok=await fbTok(S,i>0);
@@ -3597,6 +3601,7 @@ function giftLog(e){PF.giftLog.unshift(e);const n={s:0,r:0};PF.giftLog=PF.giftLo
 async function giftPoll(force){if(!inCloud()||!PF||GIFT.busy||st!=='lobby')return;if(!force&&Date.now()-GIFT.t<GIFT_POLL_MS)return;GIFT.busy=true;GIFT.t=Date.now();const S=CLOUD;
  try{await giftReg();const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:'gifts'}],where:{fieldFilter:{field:{fieldPath:'toUid'},op:'EQUAL',value:{stringValue:S.uid}}},limit:50}});if(S!==CLOUD||!inCloud())return;
   const L=[];for(const x of Array.isArray(r)?r:[]){if(!x||!x.document)continue;const g=fsDec(x.document.fields);g.id=String(x.document.name).split('/').pop();L.push(g)}
+  try{invFrom(L)}catch(_){}
   if(L.some(g=>g.free===true)&&!GIFT.adminUid){try{const d=fsDec((await fsCall('/names/'+ADMIN_NAME,'GET')).fields);if(d.email===ADMIN_EMAIL)GIFT.adminUid=d.uid}catch(_){}}
   const P2=[];for(const g of L){if(g.item==='@inv')continue;if(PF.giftClaimed.includes(g.id)||!giftOk(g)){if(!CLOUD.dirty||!PF.giftClaimed.includes(g.id))fsCall('/gifts/'+encodeURIComponent(g.id),'DELETE').catch(()=>{});continue}P2.push(g)}
   P2.sort((a,b)=>(a.ts||0)-(b.ts||0));GIFT.pend=P2;renderLUI();if(PANEL=='Gift'&&GIFT.tab=='recv')PRENDER.Gift();
@@ -3934,7 +3939,7 @@ async function invPoll(){if(!inCloud()||!PF||INV.busy||NET||st!=='lobby'||INV.cu
  try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:'gifts'}],where:{fieldFilter:{field:{fieldPath:'toUid'},op:'EQUAL',value:{stringValue:S.uid}}},limit:50}});if(S!==CLOUD)return;const L=[];
   for(const x of Array.isArray(r)?r:[]){if(!x||!x.document)continue;const g=fsDec(x.document.fields);if(g.item!=='@inv')continue;g.id=String(x.document.name).split('/').pop();if(Date.now()-(+g.ts||0)>INV_TTL||!g.msg||!PF.friends.some(f=>f.uid===g.fromUid)&&!g.fromName){fsCall('/gifts/'+encodeURIComponent(g.id),'DELETE').catch(()=>{});continue}if(!INV.shown[g.id])L.push(g)}
   L.sort((a,b)=>(b.ts||0)-(a.ts||0));if(L.length)invShow(L[0])}catch(_){}finally{INV.busy=false}}
-setInterval(invPoll,8000);
+function invFrom(L){if(NET||INV.cur||!PF)return;const M=[];for(const g of L){if(g.item!=='@inv')continue;if(Date.now()-(+g.ts||0)>INV_TTL||!g.msg||!PF.friends.some(f=>f.uid===g.fromUid)&&!g.fromName){fsCall('/gifts/'+encodeURIComponent(g.id),'DELETE').catch(()=>{});continue}if(!INV.shown[g.id])M.push(g)}M.sort((a,b)=>(b.ts||0)-(a.ts||0));if(M.length)invShow(M[0])}
 function invShow(g){INV.cur=g;INV.shown[g.id]=1;let d=$('#invPop');if(!d){d=document.createElement('div');d.id='invPop';d.style.cssText='position:fixed;left:50%;top:calc(74px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:60;background:linear-gradient(#2a3157,#151a30);border:2px solid #4ff0ff;border-radius:16px;padding:12px 16px;color:#fff;font:700 15px system-ui;box-shadow:0 8px 30px #000a;display:flex;gap:10px;align-items:center;max-width:92vw;flex-wrap:wrap;justify-content:center';document.body.appendChild(d)}
  d.innerHTML='<span style="font-size:26px">📨</span><span><b style="color:#4ff0ff">'+esc(String(g.fromName||'好友').slice(0,16))+'</b> 邀請你加入線上房間 <b>'+esc(String(g.msg).slice(0,12))+'</b></span><button class="gbtn" id="invOk">加入</button><button id="invNo">忽略</button>';d.style.display='flex';snd(880,.12,.06,'sine');setTimeout(()=>snd(1180,.12,.06,'sine'),140);
  const done=()=>{d.style.display='none';INV.cur=null;fsCall('/gifts/'+encodeURIComponent(g.id),'DELETE').catch(()=>{})};
