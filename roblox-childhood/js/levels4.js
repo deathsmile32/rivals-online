@@ -7,21 +7,21 @@
   // ======================= 16. 小豬快逃 (Piggy) =======================
   const PIGGY_MAP = [
     '###############',
-    '#S....#.......#',
-    '#.###.#.#####.#',
-    '#.#H..#.#...#.#',
-    '#.#####.#.#.#.#',
-    '#.......#.#...#',
-    '###.#####.###.#',
-    '#...#P....#...#',
-    '#.###.###.#.###',
-    '#.#...#K#.#...#',
-    '#.#.###B#.###.#',
-    '#...#.........D',
+    '#S.....#......#',
+    '#......#......#',
+    '#..H.......P..#',
+    '#......#......#',
+    '###.#######.###',
+    '#.............#',
+    '#.............#',
+    '###.#####.#B###',
+    '#.....#...#...#',
+    'D.....#...#.K.#',
+    '#.........#...#',
     '###############',
   ];
   G.LEVELS.push({
-    name: '小豬快逃', insp: 'Piggy', obj: '找到槌子打破木板，拿到鑰匙，打開紅色大門逃出去！別被小豬抓到。',
+    name: '小豬快逃', insp: 'Piggy', obj: '在房子裡找到槌子打破木板，拿到紅色鑰匙，打開左下角的紅色大門逃出去！別被小豬抓到。',
     ctrl: 'WASD 移動・滑鼠 看・E 撿東西 / 使用',
     build(L) {
       darkSky(); G.cam.mode = 'first';
@@ -45,7 +45,7 @@
       L.boards = [];
       for (let i = 0; i < 3; i++) L.boards.push(G.box(B.p.x, 0.6 + i * 1.2, B.p.z, 4, 0.4, 0.3, 0x9b6a3c));
       L.boardCol = G.box(B.p.x, 0, B.p.z, 4, 4.5, 0.6, 0x000000, { opacity: 0.01 });
-      G.interact(B.p.clone().add(new V(0, 0, 2)), 2.6, () => L.hasHammer ? '用槌子打破木板' : '木板擋住了，需要槌子', () => {
+      G.interact(B.p.clone().add(new V(0, 0, -2)), 2.6, () => L.hasHammer ? '用槌子打破木板' : '木板擋住了，需要槌子', () => {
         if (!L.hasHammer) { G.hud.toast('要先找到槌子 🔨'); return; }
         L.broken = true; L.boards.forEach(b => { G.world.remove(b); G.removeCol(b.userData.col); }); G.removeCol(L.boardCol.userData.col); G.world.remove(L.boardCol);
         delete M.block[B.c + ',' + B.r]; G.sfx('boom'); G.burst(B.p.clone().setY(2), 0x9b6a3c, 16);
@@ -54,11 +54,12 @@
       M.block[D.c + ',' + D.r] = true;
       L.door = G.box(D.p.x, 0, D.p.z, 0.6, 4.5, 4, 0xb81d1d);
       G.label('出口', { pos: D.p.clone().setY(5), scale: 1, color: '#ff8080' });
-      G.interact(D.p.clone().add(new V(-2, 0, 0)), 2.6, () => L.hasKey ? '用鑰匙開門' : '鎖住了，需要紅色鑰匙', () => {
+      G.interact(D.p.clone().add(new V(2, 0, 0)), 2.6, () => L.hasKey ? '用鑰匙開門' : '鎖住了，需要紅色鑰匙', () => {
         if (!L.hasKey) { G.hud.toast('要先找到紅色鑰匙 🔑'); return; }
         L.open = true; G.removeCol(L.door.userData.col); L.door.visible = false; G.sfx('win'); delete M.block[D.c + ',' + D.r];
       }, () => !L.open);
       L.exit = D.p;
+      L.decor();
       // piggy
       const pg = G.makeNPC({ skin: 0xffa6c9, shirt: 0x7a2a4a, pants: 0x3a1a2a, pos: L.pSpawn, face: 'scary' });
       const h = pg.mesh.userData.P.head;
@@ -80,7 +81,7 @@
         if (G.dist2(pg.pos, p.pos) < 1.25) G.die('被小豬抓到了！🐷');
         if (L.grace > -0.1) G.sfx('alarm');
       } else G.syncNPC(pg, dt, 0);
-      if (L.open && p.pos.x > L.exit.x - 0.5) G.complete('逃出去了！🏃');
+      if (L.open && p.pos.x < L.exit.x + 0.5) G.complete('逃出去了！🏃');
       G.hud.prog(`🔨 槌子 ${L.hasHammer ? '✔' : '✗'}　🔑 鑰匙 ${L.hasKey ? '✔' : '✗'}${L.grace > 0 ? '　⏳ ' + Math.ceil(L.grace) : ''}`);
     },
     respawn(L) { L.piggy.pos.copy(L.pSpawn); L.piggy.vel.set(0, 0, 0); L.grace = 5; }
@@ -345,6 +346,18 @@
       }
     }
   });
+  const lv16 = G.LEVELS.find(l => l.name === '小豬快逃'), b16 = lv16.build;
+  lv16.build = function (L) {
+    L.decor = () => {
+      const M = L.M, w = (c, r) => M.toWorld(c, r);
+      const rug = (c, r, col, sx, sz) => { const p = w(c, r); G.box(p.x, 0.01, p.z, sx, 0.04, sz, col, { solid: false }); };
+      rug(3, 2, 0x9b3a3a, 8, 6); rug(10, 2, 0x3a5a9b, 9, 6); rug(7, 6.5, 0x6b5a2a, 30, 3);
+      const tbl = (c, r, col) => { const p = w(c, r); G.box(p.x, 0, p.z, 0.25, 0.9, 0.25, 0x5a3b26, { solid: false }); G.box(p.x, 0.9, p.z, 2, 0.15, 1.2, col, { solid: false }); };
+      tbl(5, 1, 0x8b5a2b); tbl(12, 4, 0x8b5a2b); tbl(2, 11, 0x8b5a2b);
+      for (const [c, r] of [[1, 4], [13, 1], [1, 6], [13, 7], [8, 9]]) { const p = w(c, r); G.box(p.x, 0, p.z, 0.3, 2.2, 0.3, 0x333333, { solid: false }); G.box(p.x, 2.2, p.z, 0.8, 0.5, 0.8, 0xffeeaa, { emissive: 0xaa8844, solid: false }); }
+    };
+    b16(L);
+  };
   const lv19 = G.LEVELS[G.LEVELS.length - 1], b19 = lv19.build;
   lv19.build = function (L) {
     b19(L);

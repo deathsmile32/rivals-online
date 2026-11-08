@@ -7,8 +7,8 @@ G.LEVELS = [];
 
 // ---------------- storage ----------------
 G.store = {
-  get(k, d) { try { const v = localStorage.getItem('rc_' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v) { try { localStorage.setItem('rc_' + k, JSON.stringify(v)); } catch (e) {} }
+  get(k, d) { try { const v = localStorage.getItem('rc2_' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('rc2_' + k, JSON.stringify(v)); } catch (e) {} }
 };
 G.isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 G.quality = G.store.get('quality', G.isTouch ? 'low' : 'high');
@@ -297,7 +297,10 @@ G.updatePlayer = function (dt) {
   const k = p.onGround ? Math.min(1, dt * 14) : Math.min(1, dt * 5);
   p.vel.x += (w.x * sp - p.vel.x) * k;
   p.vel.z += (w.z * sp - p.vel.z) * k;
-  if (G.in.jumpP && p.onGround && !p.noJump) { p.vel.y = p.jump; p.onGround = false; G.sfx('jump'); }
+  if (G.in.jumpP && !p.noJump && (p.onGround || p.infJump)) {
+    if (!p.onGround) G.ring(p.pos.clone().add(new V3(0, 0.1, 0)), 0xffffff, 1.6, 0.25);
+    p.vel.y = p.jump; p.onGround = false; G.sfx('jump');
+  }
   G.moveEntity(p, dt);
   if (p.hitKill) G.die(G.L.killMsg || '碰到危險方塊了！');
   if (p.pos.y < G.L.killY) G.die(G.L.fallMsg || '掉下去了！');
@@ -380,6 +383,9 @@ G.input = {
       if (e.code === 'KeyQ') I.qP = true;
       if (e.code === 'KeyF') { I.fP = true; I.fH = true; }
       if (e.code === 'KeyR') I.rP = true;
+      if (e.code === 'KeyX') I.xP = true;
+      if (e.code === 'KeyC') I.cP = true;
+      if (e.code === 'KeyV') I.vP = true;
       if (e.code === 'Escape' && G.state === 'play' && G.isTouch) G.pause();
       if (e.code === 'KeyP' && G.state === 'play') G.pause();
     });
@@ -396,7 +402,7 @@ G.input = {
     cv.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('mousemove', e => {
       if (document.pointerLockElement === cv && G.state === 'play') {
-        G.cam.yaw -= e.movementX * G.cam.sens; G.cam.pitch -= e.movementY * G.cam.sens;
+        const k = G.cam.sens * (G.camera.fov / 70); G.cam.yaw -= e.movementX * k; G.cam.pitch -= e.movementY * k;
       }
     });
     document.addEventListener('pointerlockchange', () => {
@@ -418,6 +424,9 @@ G.input = {
         if (k === 'e') I.eP = true;
         if (k === 'q') I.qP = true;
         if (k === 'f') { I.fP = true; I.fH = true; }
+        if (k === 'x') I.xP = true;
+        if (k === 'c') I.cP = true;
+        if (k === 'v') I.vP = true;
         // allow looking while holding the fire button: track this finger as look too
         if (k === 'act' && lookId === null) { const t = e.changedTouches[0]; lookId = t.identifier; lx = t.clientX; ly = t.clientY; }
       }, { passive: false });
@@ -431,7 +440,7 @@ G.input = {
       b.addEventListener('touchmove', e => {
         e.preventDefault();
         for (const t of e.changedTouches) if (t.identifier === lookId && G.state === 'play') {
-          G.cam.yaw -= (t.clientX - lx) * 0.0065; G.cam.pitch -= (t.clientY - ly) * 0.0065; lx = t.clientX; ly = t.clientY;
+          const k = 0.0065 * (G.camera.fov / 70); G.cam.yaw -= (t.clientX - lx) * k; G.cam.pitch -= (t.clientY - ly) * k; lx = t.clientX; ly = t.clientY;
         }
       }, { passive: false });
     });
@@ -454,7 +463,7 @@ G.input = {
           knob.style.left = (33 + dx) + 'px'; knob.style.top = (33 + dy) + 'px';
           G.in.tjoy = { x: dx / mx, z: -dy / mx };
         } else if (t.identifier === lookId && G.state === 'play') {
-          G.cam.yaw -= (t.clientX - lx) * 0.0065; G.cam.pitch -= (t.clientY - ly) * 0.0065; lx = t.clientX; ly = t.clientY;
+          const k = 0.0065 * (G.camera.fov / 70); G.cam.yaw -= (t.clientX - lx) * k; G.cam.pitch -= (t.clientY - ly) * k; lx = t.clientX; ly = t.clientY;
         }
       }
     }, { passive: false });
@@ -475,14 +484,14 @@ G.input = {
     I.move.x = x; I.move.z = z;
     I.sprint = !!k.ShiftLeft;
   },
-  clearEdges() { const I = G.in; I.jumpP = I.actP = I.eP = I.qP = I.fP = I.rP = false; }
+  clearEdges() { const I = G.in; I.jumpP = I.actP = I.eP = I.qP = I.fP = I.rP = I.xP = I.cP = I.vP = false; }
 };
 G.lock = function () { if (!G.isTouch) { const cv = G.$('c'); try { const r = cv.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch (e) {} } };
 G.unlock = function () { if (document.pointerLockElement) document.exitPointerLock(); };
 G.setButtons = function (o) {
-  const def = { act: '動作', jump: '跳', e: 'E', q: null, f: null };
+  const def = { act: '動作', jump: '跳', e: 'E', q: null, f: null, x: null, c: null, v: null };
   const b = Object.assign(def, o || {});
-  for (const k of ['act', 'jump', 'e', 'q', 'f']) {
+  for (const k of ['act', 'jump', 'e', 'q', 'f', 'x', 'c', 'v']) {
     const el = G.$('tb_' + k);
     if (b[k] === null) el.classList.add('hidden'); else { el.classList.remove('hidden'); el.textContent = b[k]; }
   }
@@ -879,23 +888,126 @@ G.closePanel = function (relock = true) {
 };
 
 // ---------------- shared FPS kit (used by several levels) ----------------
+// Detailed first-person weapon models. Every model points down -Z; userData.muzzle = local muzzle point.
+G.gunModel = function (kind, accent = 0xff3b6b) {
+  const g = new THREE.Group();
+  const P = (x, y, z, w, h, d, c, o) => G.part(g, x, y, z, w, h, d, c, Object.assign({ noShadow: true }, o || {}));
+  const C = (x, y, z, r, len, c, axis = 'z', seg) => { const m = G.mesh('cyl', c, x, y, z, r * 2, len, r * 2, { parent: g, noShadow: true }); if (axis === 'z') m.rotation.x = Math.PI / 2; return m; };
+  const dark = 0x23252b, mid = 0x3a3d45, metal = 0x6b7080, wood = 0x7a4a26, skin = 0xffd23f;
+  let muzzle = new V3(0, 0, -0.8);
+  switch (kind) {
+    case 'ar':
+      P(0, 0, 0, 0.1, 0.14, 0.44, mid); P(0, 0.085, -0.02, 0.06, 0.03, 0.4, dark);
+      for (let i = 0; i < 7; i++) P(0, 0.104, -0.18 + i * 0.05, 0.065, 0.012, 0.025, metal);
+      P(0, 0.135, 0.04, 0.05, 0.05, 0.1, dark); P(0, 0.135, -0.012, 0.04, 0.04, 0.01, 0xff2020, { emissive: 0xff0000 });
+      P(0, -0.005, -0.37, 0.09, 0.11, 0.3, dark); for (let i = 0; i < 4; i++) P(0.047, -0.005, -0.27 - i * 0.06, 0.005, 0.06, 0.03, mid);
+      C(0, 0.01, -0.62, 0.018, 0.22, metal); P(0, 0.01, -0.74, 0.042, 0.042, 0.07, dark);
+      { const m = P(0, -0.15, -0.09, 0.055, 0.2, 0.1, accent); m.rotation.x = 0.28; const m2 = P(0, -0.27, -0.13, 0.05, 0.08, 0.09, accent); m2.rotation.x = 0.45; }
+      { const gp = P(0, -0.14, 0.13, 0.06, 0.17, 0.08, dark); gp.rotation.x = -0.35; }
+      P(0, -0.075, 0.06, 0.012, 0.05, 0.1, dark);
+      P(0, 0.0, 0.31, 0.07, 0.11, 0.22, mid); P(0, -0.03, 0.43, 0.075, 0.16, 0.04, dark); P(0.052, 0.02, 0.02, 0.01, 0.03, 0.06, metal);
+      P(0.051, 0, -0.1, 0.004, 0.035, 0.18, accent);
+      muzzle = new V3(0, 0.01, -0.79); break;
+    case 'pistol':
+      P(0, 0.035, -0.04, 0.06, 0.07, 0.27, 0x8a8f9c); for (let i = 0; i < 5; i++) P(0, 0.035, 0.05 + i * 0.012, 0.062, 0.06, 0.004, dark);
+      P(0, -0.015, -0.04, 0.055, 0.045, 0.24, dark); P(0, 0.075, -0.16, 0.012, 0.015, 0.012, dark); P(0, 0.075, 0.08, 0.03, 0.015, 0.012, dark);
+      { const gp = P(0, -0.11, 0.06, 0.055, 0.17, 0.08, 0x2a2a2a); gp.rotation.x = -0.3; }
+      P(0, -0.05, -0.05, 0.012, 0.04, 0.07, dark); C(0, 0.035, -0.185, 0.012, 0.02, 0x111111);
+      P(0.03, -0.11, 0.06, 0.004, 0.12, 0.05, accent);
+      muzzle = new V3(0, 0.035, -0.19); break;
+    case 'revolver':
+      C(0, 0.03, -0.2, 0.017, 0.26, 0x9aa0aa); P(0, 0.055, -0.2, 0.015, 0.02, 0.26, 0x8a8f9c);
+      { const cy = G.mesh('cyl', 0x7a7f8a, 0, 0.02, -0.02, 0.1, 0.09, 0.1, { parent: g, noShadow: true }); cy.rotation.x = Math.PI / 2; g.userData.drum = cy; }
+      P(0, 0.03, 0.06, 0.05, 0.07, 0.08, 0x6b7080); { const gp = P(0, -0.08, 0.1, 0.05, 0.16, 0.08, wood); gp.rotation.x = -0.4; }
+      P(0, -0.035, 0.01, 0.01, 0.04, 0.06, 0x333333); P(0, 0.07, -0.32, 0.01, 0.02, 0.01, 0x333333);
+      muzzle = new V3(0, 0.03, -0.34); break;
+    case 'smg':
+      P(0, 0, 0, 0.08, 0.12, 0.32, 0x2f3a2f); P(0, 0.075, -0.02, 0.05, 0.025, 0.28, dark);
+      P(0, 0.11, 0.02, 0.04, 0.04, 0.08, dark); P(0, 0.11, -0.022, 0.03, 0.03, 0.005, 0x30ff60, { emissive: 0x20ff40 });
+      C(0, 0.005, -0.3, 0.032, 0.24, 0x1a1a1a); for (let i = 0; i < 3; i++) C(0, 0.005, -0.22 - i * 0.07, 0.034, 0.01, metal);
+      P(0, -0.17, -0.06, 0.045, 0.26, 0.06, accent); { const gp = P(0, -0.12, 0.09, 0.05, 0.14, 0.07, dark); gp.rotation.x = -0.3; }
+      P(0, -0.12, -0.17, 0.04, 0.12, 0.05, dark);
+      P(0.03, 0.02, 0.27, 0.01, 0.01, 0.22, metal); P(-0.03, 0.02, 0.27, 0.01, 0.01, 0.22, metal); P(0, -0.02, 0.38, 0.07, 0.09, 0.015, metal);
+      muzzle = new V3(0, 0.005, -0.43); break;
+    case 'shotgun':
+      C(0, 0.03, -0.38, 0.026, 0.7, 0x2a2a2a); C(0, -0.03, -0.33, 0.022, 0.55, 0x3a3a3a);
+      P(0, 0.0, 0.02, 0.08, 0.13, 0.26, mid); P(0, 0.07, -0.72, 0.012, 0.02, 0.012, 0xffd23f);
+      { const pump = P(0, -0.03, -0.32, 0.07, 0.07, 0.2, wood); for (let i = 0; i < 5; i++) P(0, -0.03, -0.4 + i * 0.04, 0.074, 0.074, 0.01, 0x5a3418); g.userData.pump = pump; }
+      { const gp = P(0, -0.11, 0.17, 0.06, 0.15, 0.08, wood); gp.rotation.x = -0.4; }
+      { const st = P(0, -0.05, 0.36, 0.07, 0.12, 0.3, wood); st.rotation.x = -0.12; } P(0, -0.07, 0.52, 0.075, 0.15, 0.03, 0x111111);
+      P(0.042, 0.0, 0.04, 0.005, 0.05, 0.12, accent);
+      muzzle = new V3(0, 0.03, -0.74); break;
+    case 'sniper':
+      P(0, 0, 0, 0.08, 0.11, 0.42, 0x2a3a4a); C(0, 0.01, -0.55, 0.02, 0.7, 0x1a1a1a); P(0, 0.01, -0.92, 0.045, 0.045, 0.1, dark);
+      for (let i = 0; i < 3; i++) P(0, 0.01, -0.86 + i * 0.03, 0.05, 0.012, 0.012, metal);
+      C(0, 0.115, -0.02, 0.036, 0.36, 0x111111); C(0, 0.115, -0.21, 0.048, 0.06, 0x111111); C(0, 0.115, 0.17, 0.044, 0.06, 0x111111);
+      { const l = G.mesh('cyl', 0x4fd6e0, 0, 0.115, -0.243, 0.08, 0.004, 0.08, { parent: g, emissive: 0x1a5a77, noShadow: true }); l.rotation.x = Math.PI / 2; }
+      P(0, 0.075, -0.06, 0.02, 0.04, 0.03, dark); P(0, 0.075, 0.06, 0.02, 0.04, 0.03, dark);
+      P(0.05, 0.03, 0.08, 0.06, 0.012, 0.012, metal); G.mesh('sph', metal, 0.085, 0.03, 0.08, 0.035, undefined, undefined, { parent: g, noShadow: true });
+      P(0, -0.04, -0.3, 0.075, 0.08, 0.32, 0x3f5a3a); { const st = P(0, -0.04, 0.33, 0.07, 0.14, 0.32, 0x3f5a3a); st.rotation.x = -0.08; } P(0, 0.02, 0.32, 0.05, 0.03, 0.14, 0x3f5a3a);
+      P(0, -0.12, -0.02, 0.05, 0.08, 0.05, dark); { const gp = P(0, -0.13, 0.11, 0.055, 0.14, 0.07, 0x3f5a3a); gp.rotation.x = -0.35; }
+      { const b1 = P(-0.03, -0.1, -0.52, 0.012, 0.16, 0.012, metal); b1.rotation.z = 0.25; const b2 = P(0.03, -0.1, -0.52, 0.012, 0.16, 0.012, metal); b2.rotation.z = -0.25; }
+      P(0.041, 0, -0.32, 0.004, 0.03, 0.2, accent);
+      muzzle = new V3(0, 0.01, -0.97); break;
+    case 'rocket':
+      C(0, 0.04, -0.15, 0.085, 1.1, 0x3a5a2a); C(0, 0.04, -0.69, 0.095, 0.06, 0x2a3a1a); C(0, 0.04, 0.39, 0.095, 0.05, 0x2a3a1a);
+      { const w = G.mesh('cone', 0x8a8f9c, 0, 0.04, -0.82, 0.13, 0.22, 0.13, { parent: g, noShadow: true }); w.rotation.x = -Math.PI / 2; g.userData.warhead = w; }
+      P(0, 0.15, -0.15, 0.03, 0.08, 0.06, dark); P(0.06, 0.15, -0.12, 0.08, 0.08, 0.02, dark); P(0.1, 0.15, -0.12, 0.02, 0.05, 0.004, 0x4fd6e0, { emissive: 0x1a5a77 });
+      { const gp = P(0, -0.08, 0.02, 0.05, 0.14, 0.07, dark); gp.rotation.x = -0.3; } P(0, -0.07, -0.28, 0.05, 0.12, 0.06, dark);
+      P(0, 0.04, -0.4, 0.172, 0.03, 0.03, 0xffd23f); P(0, 0.04, 0.2, 0.172, 0.03, 0.03, 0xffd23f);
+      muzzle = new V3(0, 0.04, -0.9); break;
+    case 'knife':
+      P(0, 0, 0.06, 0.04, 0.05, 0.16, 0x2a1a0a); for (let i = 0; i < 4; i++) P(0, 0, 0.0 + i * 0.04, 0.045, 0.055, 0.01, 0xffd23f);
+      P(0, 0, -0.03, 0.14, 0.025, 0.025, 0xffd23f, { emissive: 0x554400 });
+      P(0, 0.01, -0.17, 0.012, 0.06, 0.24, 0xffe680, { emissive: 0x665500 }); { const tip = P(0, 0.0, -0.3, 0.011, 0.045, 0.06, 0xffe680, { emissive: 0x665500 }); tip.rotation.x = 0.6; }
+      P(0, -0.025, -0.16, 0.006, 0.01, 0.22, 0xffffff, { emissive: 0x888888 });
+      muzzle = new V3(0, 0, -0.33); break;
+  }
+  // hands
+  if (kind !== 'knife') { P(0.0, -0.13, 0.12, 0.09, 0.09, 0.1, skin); }
+  else P(0, 0, 0.06, 0.09, 0.09, 0.11, skin);
+  if (kind === 'ar' || kind === 'smg' || kind === 'shotgun' || kind === 'sniper') P(0, -0.07, -0.33, 0.1, 0.08, 0.1, skin);
+  // muzzle flash
+  const fl = G.mesh('sph', 0xffd060, muzzle.x, muzzle.y, muzzle.z - 0.05, 0.16, 0.16, 0.3, { parent: g, emissive: 0xffaa00, noShadow: true, basic: true });
+  fl.visible = false; g.userData.flash = fl;
+  g.userData.muzzle = muzzle; g.userData.kind = kind;
+  g.traverse(o => { o.userData.noHit = true; o.castShadow = false; });
+  return g;
+};
 G.fps = {
-  makeGun(color = 0x333333, len = 0.7) {
-    const g = new THREE.Group();
-    G.part(g, 0, 0, 0, 0.14, 0.18, len, color, { noShadow: true });
-    G.part(g, 0, -0.16, 0.18, 0.1, 0.22, 0.12, 0x222222, { noShadow: true });
-    g.position.set(0.32, -0.3, -0.55);
-    g.traverse(o => o.userData.noHit = true);
-    G.camera.add(g); G.L.gunModel = g; return g;
+  makeGun(kind = 'ar', accent) {
+    if (typeof kind !== 'string') kind = 'ar';
+    G.fps.removeGun();
+    const g = G.gunModel(kind, accent);
+    const base = kind === 'knife' ? new V3(0.28, -0.26, -0.45) : kind === 'rocket' ? new V3(0.26, -0.24, -0.5) : new V3(0.24, -0.22, -0.48);
+    const ads = kind === 'rocket' ? new V3(0.12, -0.2, -0.45) : kind === 'sniper' ? new V3(0, -0.13, -0.3) : new V3(0, -0.12 - (g.userData.muzzle.y), -0.4);
+    g.userData.base = base; g.userData.ads = ads;
+    g.position.copy(base); g.scale.setScalar(1.15);
+    G.camera.add(g); G.L.gunModel = g; G.L.aiming = false; G.L.aimT = false;
+    return g;
   },
-  removeGun() { if (G.L && G.L.gunModel) { G.camera.remove(G.L.gunModel); G.L.gunModel = null; } },
+  removeGun() {
+    if (G.L && G.L.gunModel) { G.camera.remove(G.L.gunModel); G.L.gunModel = null; }
+    G.camera.fov = 70; G.camera.updateProjectionMatrix();
+    const sc = document.getElementById('scope'); if (sc) sc.classList.add('hidden');
+  },
+  // bot gun in the avatar's right hand
+  botGun(n, kind, accent) {
+    const g = G.gunModel(kind, accent); g.userData.flash.visible = false;
+    g.rotation.x = -Math.PI / 2; g.position.set(0, -0.8, 0.05); g.scale.setScalar(1.25);
+    g.traverse(o => o.userData.noHit = false);
+    n.mesh.userData.P.aR.add(g);
+    g.traverse(c => { c.userData.npc = n; });
+    n.gun = g; return g;
+  },
   // returns true if fired
   fire(w, onKill) {
     const L = G.L;
     if (L.fireCd > 0 || L.reload > 0) return false;
+    const gm = L.gunModel;
     if (w.melee) {
       L.fireCd = w.rate; G.sfx('swing');
-      if (L.gunModel) { L.gunModel.rotation.x = -0.9; }
+      if (gm) { gm.rotation.x = -0.9; gm.rotation.y = 0.5; }
       for (const n of G.npcs) {
         if (!n.alive) continue;
         const d = G.dist2(n.pos, G.player.pos);
@@ -907,32 +1019,64 @@ G.fps = {
       return true;
     }
     L.fireCd = w.rate; L.mag--; G.sfx(w.proj ? 'boom' : 'shoot');
-    if (L.gunModel) L.gunModel.position.z = -0.45;
-    const muzzle = G.camera.localToWorld(new V3(0.32, -0.25, -1.0));
+    const scoped = L.aiming && w.scope;
+    if (gm) {
+      gm.position.z += w.kick || 0.08; gm.rotation.x += (w.kick || 0.08) * 1.5;
+      gm.userData.flash.visible = !scoped; gm.userData.flash.rotation.z = Math.random() * 3; L.flashT = 0.05;
+      if (gm.userData.drum) gm.userData.drum.rotation.y += Math.PI / 3;
+      if (gm.userData.pump) L.pumpT = 0.35;
+    }
+    G.cam.pitch += (w.recoil || 0.01) * (L.aiming ? 0.5 : 1);
+    const muzzle = gm && !scoped ? gm.localToWorld(gm.userData.muzzle.clone()) : G.camera.localToWorld(new V3(0.2, -0.2, -0.6));
+    const spread = L.aiming ? (w.adsSpread !== undefined ? w.adsSpread : w.spread * 0.35) : (w.hipSpread !== undefined ? w.hipSpread : w.spread);
     if (w.proj) {
       const r = G.camRay(200);
       const dir = r.point.clone().sub(muzzle).normalize();
-      G.shootProj({ pos: muzzle, vel: dir.multiplyScalar(w.speed || 40), color: 0xff8a1a, size: 0.35, dmg: w.dmg, aoe: w.aoe || 0, fromPlayer: true, life: 4, onHit: () => { for (const n of G.npcs) if (!n.alive && !n._counted) { n._counted = true; if (onKill) onKill(n); } } });
+      if (gm && gm.userData.warhead) { gm.userData.warhead.visible = false; }
+      G.shootProj({ pos: muzzle, vel: dir.multiplyScalar(w.speed || 40), color: 0xff8a1a, size: 0.35, dmg: w.dmg, aoe: w.aoe || 0, fromPlayer: true, life: 4 });
     } else {
       for (let i = 0; i < (w.pellets || 1); i++) {
-        const r = G.camRay(w.range || 120, w.spread || 0);
+        const r = G.camRay(w.range || 120, spread);
         G.tracer(muzzle, r.point, w.tracer || 0xffee88);
         if (r.npc) {
           G.hud.hitmark(); G.sfx('hit');
           const was = r.npc.alive; G.hitNPC(r.npc, w.dmg * (r.head ? 1.6 : 1), { head: r.head });
           if (was && !r.npc.alive) { r.npc._counted = true; if (onKill) onKill(r.npc); }
-        }
+        } else G.burst(r.point, 0xcccccc, 2, 0.3);
       }
     }
-    if (L.mag <= 0 && w.mag) { L.reload = w.reloadT || 1.4; G.hud.toast('換彈中…', 900); }
+    if (L.mag <= 0 && w.mag) { L.reload = w.reloadT || 1.4; G.hud.toast('換彈中…', 900); L.aiming = false; L.aimT = false; }
     return true;
   },
   tick(dt, w) {
     const L = G.L;
     L.fireCd = Math.max(0, (L.fireCd || 0) - dt);
-    if (L.reload > 0) { L.reload -= dt; if (L.reload <= 0) L.mag = w.mag; }
+    const gm = L.gunModel;
+    if (L.reload > 0) { L.reload -= dt; if (L.reload <= 0) { L.mag = w.mag; if (gm && gm.userData.warhead) gm.userData.warhead.visible = true; } }
     if (G.in.rP && w.mag && L.mag < w.mag && !(L.reload > 0)) { L.reload = w.reloadT || 1.4; G.hud.toast('換彈中…', 900); }
-    if (L.gunModel) { L.gunModel.position.z = G.lerp(L.gunModel.position.z, -0.55, dt * 12); L.gunModel.rotation.x = G.lerp(L.gunModel.rotation.x, 0, dt * 10); }
+    // aim: hold right mouse on PC, tap the aim button to toggle on touch
+    if (!w.melee) {
+      if (G.isTouch) { if (G.in.fP) L.aimT = !L.aimT; L.aiming = L.aimT; }
+      else L.aiming = G.in.fH;
+      if (L.reload > 0) L.aiming = false;
+    } else L.aiming = false;
+    const scoped = L.aiming && w.scope;
+    const fovT = L.aiming ? (w.scope ? 16 : (w.adsFov || 52)) : 70;
+    G.camera.fov = G.lerp(G.camera.fov, fovT, Math.min(1, dt * 14)); G.camera.updateProjectionMatrix();
+    const sc = document.getElementById('scope'); if (sc) sc.classList.toggle('hidden', !(scoped && G.camera.fov < 30));
+    G.hud.cross(!(scoped && G.camera.fov < 30) && !(L.aiming && !w.scope && w.ads !== false && G.camera.fov < 58 && false));
+    if (gm) {
+      const tgt = L.aiming ? gm.userData.ads : gm.userData.base;
+      const bob = L.aiming ? 0 : Math.sin(G.time * 9) * Math.min(1, Math.hypot(G.player.vel.x, G.player.vel.z) / 8) * 0.012;
+      gm.position.x = G.lerp(gm.position.x, tgt.x, Math.min(1, dt * 14));
+      gm.position.y = G.lerp(gm.position.y, tgt.y + bob, Math.min(1, dt * 14));
+      gm.position.z = G.lerp(gm.position.z, tgt.z, Math.min(1, dt * 12));
+      gm.rotation.x = G.lerp(gm.rotation.x, L.reload > 0 ? -0.6 : 0, Math.min(1, dt * 10));
+      gm.rotation.y = G.lerp(gm.rotation.y, 0, Math.min(1, dt * 10));
+      gm.visible = !(scoped && G.camera.fov < 30);
+      if (L.flashT > 0) { L.flashT -= dt; if (L.flashT <= 0) gm.userData.flash.visible = false; }
+      if (gm.userData.pump) { if (L.pumpT > 0) { L.pumpT -= dt; gm.userData.pump.position.z = -0.32 + Math.sin((1 - L.pumpT / 0.35) * Math.PI) * 0.1; } }
+    }
     G.hud.ammo(w.melee ? '🔪 ' + w.name : `${w.name}　${L.reload > 0 ? '換彈…' : (w.mag ? L.mag + ' / ' + w.mag : '∞')}`);
   },
   // simple shooter bot brain
@@ -942,21 +1086,22 @@ G.fps = {
     const eye = n.pos.clone().add(new V3(0, 1.9, 0)), pe = p.pos.clone().add(new V3(0, 1.5, 0));
     const see = !G.dying && G.los(eye, pe);
     const d = G.dist2(n.pos, p.pos);
-    let target;
+    if (n.gun && n.gun.userData.flash.visible) { n.data.fl = (n.data.fl || 0) - dt; if (n.data.fl <= 0) n.gun.userData.flash.visible = false; }
     if (see && d < (o.range || 40)) {
       const side = Math.sin(n.t * 1.3 + n.data.seed) > 0 ? 1 : -1;
       const to = p.pos.clone().sub(n.pos).setY(0).normalize();
       const perp = new V3(-to.z, 0, to.x).multiplyScalar(side);
       const want = d > (o.keep || 12) ? to : d < 6 ? to.clone().negate() : new V3();
-      target = n.pos.clone().add(perp.multiplyScalar(3)).add(want.multiplyScalar(3));
+      const target = n.pos.clone().add(perp.multiplyScalar(3)).add(want.multiplyScalar(3));
       n.data.cd = (n.data.cd || 0) - dt;
       if (n.data.cd <= 0) {
         n.data.cd = o.rate * G.rand(0.8, 1.3);
-        const muzzle = n.pos.clone().add(new V3(0, 1.6, 0));
+        const muzzle = n.gun ? n.gun.localToWorld(n.gun.userData.muzzle.clone()) : n.pos.clone().add(new V3(0, 1.6, 0));
         const acc = o.acc * G.clamp(1.2 - d / 50, 0.35, 1) * (Math.hypot(p.vel.x, p.vel.z) > 3 ? 0.75 : 1);
         const hit = Math.random() < acc;
         const aim = pe.clone().add(hit ? new V3() : new V3(G.rand(-1.5, 1.5), G.rand(-0.5, 1.2), G.rand(-1.5, 1.5)));
         G.tracer(muzzle, aim, 0xff7070); G.sfx('shoot');
+        if (n.gun) { n.gun.userData.flash.visible = true; n.data.fl = 0.05; }
         if (hit) G.damage(o.dmg);
       }
       G.moveEntity(n, dt);
@@ -968,7 +1113,8 @@ G.fps = {
       G.syncNPC(n, dt, Math.hypot(n.vel.x, n.vel.z));
     } else {
       n.mesh.userData.armPose = false;
-      G.npcSeek(n, n.data.wp && n.pos.distanceTo(n.data.wp) > 2 && n.t < (n.data.wpT || 0) ? n.data.wp : (n.data.wp = p.pos.clone(), n.data.wpT = n.t + 3, n.data.wp), o.speed, dt);
+      if (!n.data.wp || n.pos.distanceTo(n.data.wp) < 2 || n.t > (n.data.wpT || 0)) { n.data.wp = p.pos.clone(); n.data.wpT = n.t + 3; }
+      G.npcSeek(n, n.data.wp, o.speed, dt);
     }
   }
 };

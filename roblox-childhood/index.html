@@ -32,6 +32,7 @@
   <div id="hBig" class="hidden"></div>
   <div id="hHp" class="hidden"><div class="bar"><div id="hHpFill"></div></div><span id="hHpTxt">100</span></div>
   <div id="hAmmo" class="hidden"></div>
+  <div id="scope" class="hidden"><div class="ring"></div></div>
   <div id="dmgFlash"></div>
 </div>
 
@@ -39,6 +40,9 @@
 <div id="touch" class="hidden">
   <div id="joy"><div id="joyKnob"></div></div>
   <div id="tbtns">
+    <button class="tb" data-k="x" id="tb_x">X</button>
+    <button class="tb" data-k="c" id="tb_c">C</button>
+    <button class="tb" data-k="v" id="tb_v">V</button>
     <button class="tb" data-k="f" id="tb_f">防禦</button>
     <button class="tb" data-k="q" id="tb_q">技能</button>
     <button class="tb" data-k="e" id="tb_e">E</button>
@@ -53,7 +57,7 @@
 <!-- title screen -->
 <div id="title" class="screen">
   <div class="logo"><span>ROBLOX</span><span class="sub">CHILDHOOD</span></div>
-  <div class="tagline">19 個熱門遊戲，一次玩過一輪</div>
+  <div class="tagline" id="tagline">熱門遊戲，一次玩過一輪</div>
   <div class="menuBtns">
     <button id="btnNew" class="btn green">▶ 開始新遊戲</button>
     <button id="btnCont" class="btn blue hidden">⏩ 繼續</button>
@@ -105,6 +109,7 @@
 <script src="js/levels2.js"></script>
 <script src="js/levels3.js"></script>
 <script src="js/levels4.js"></script>
+<script src="js/levels5.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

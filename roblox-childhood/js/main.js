@@ -64,6 +64,7 @@
 
   G.showTitle = function () {
     G.state = 'title'; G.unlock(); G.closePanel(false);
+    $('tagline').textContent = G.LEVELS.length + ' 個熱門遊戲，一次玩過一輪';
     if (G.L && G.def && G.def.cleanup) G.def.cleanup(G.L);
     G.fps.removeGun();
     G.buildTitleScene();
@@ -95,7 +96,7 @@
     G.hud.reset();
     G.dying = false; G.completing = false; G.noTouch = false;
     const p = G.player;
-    Object.assign(p, { maxHp: 100, hp: 100, speed: 8, jump: 11, frozen: false, custom: false, hidden: false, slow: 1, noJump: false, blocking: false, invuln: 0, faceCam: false, noInteract: false, hw: 0.45, h: 2.3 });
+    Object.assign(p, { infJump: false, maxHp: 100, hp: 100, speed: 8, jump: 11, frozen: false, custom: false, hidden: false, slow: 1, noJump: false, blocking: false, invuln: 0, faceCam: false, noInteract: false, hw: 0.45, h: 2.3 });
     p.mesh.visible = true; p.mesh.scale.setScalar(1);
     Object.assign(G.cam, { mode: 'third', dist: 7, height: 1.8, shoulder: 0, target: null, eye: 1.95 });
     G.setSky({});

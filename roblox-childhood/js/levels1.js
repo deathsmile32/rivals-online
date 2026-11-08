@@ -6,8 +6,8 @@
   // ======================= 1. 競技對決 (RIVALS) =======================
   G.LEVELS.push({
     name: '競技對決', insp: 'RIVALS', obj: '1v1 射擊對決：擊敗對手 3 次！',
-    ctrl: 'WASD 移動・滑鼠 瞄準・左鍵 射擊・R 換彈・空白鍵 跳・P 暫停',
-    ctrlTouch: '左邊搖桿移動・右邊拖曳瞄準・按住「射擊」開火（按住時也能拖曳瞄準）',
+    ctrl: 'WASD 移動・滑鼠 瞄準・左鍵 射擊・按住右鍵 瞄準鏡・R 換彈・空白鍵 跳・P 暫停',
+    ctrlTouch: '左邊搖桿移動・右邊拖曳瞄準・按住「射擊」開火・按「瞄準」切換瞄準',
     build(L) {
       G.setSky({ color: 0x9fd8ff, fog: [70, 160] });
       G.cam.mode = 'first';
@@ -22,15 +22,15 @@
       for (const c of covers) G.box(c[0], 0, c[1], c[2], c[3], c[4], c[5]);
       G.box(-16, 4, 0, 3, 0.4, 3, 0xffffff); G.box(16, 4, 0, 3, 0.4, 3, 0xffffff);
       L.spawn.set(0, 0, 17); L.spawnYaw = 0;
-      L.w = { name: '突擊步槍', rate: 0.11, dmg: 21, spread: 0.012, mag: 30, reloadT: 1.5, range: 150 };
+      L.w = { name: '突擊步槍', rate: 0.11, dmg: 21, spread: 0.014, adsSpread: 0.003, mag: 30, reloadT: 1.5, range: 150, kick: 0.05, recoil: 0.006 };
       L.mag = 30; L.reload = 0; L.kills = 0;
-      G.fps.makeGun(0x2f2f38, 0.8);
+      G.fps.makeGun('ar', 0xff3b6b);
       G.hud.cross(true); G.hud.hp(true);
-      G.setButtons({ act: '射擊', e: null });
+      G.setButtons({ act: '射擊', e: null, f: '瞄準' });
       G.hud.prog('擊殺 0 / 3');
       L.spawnBot = () => {
         const n = G.makeNPC({ name: '對手', shirt: 0xd93636, pants: 0x222222, skin: 0xf2c48d, hp: 100, bar: true, pos: new V(G.rand(-8, 8), 0, -17) });
-        G.part(n.mesh.userData.P.aR, 0, -0.85, 0, 0.14, 0.7, 0.18, 0x222222);
+        G.fps.botGun(n, 'ar', 0x3b9bff);
         n.data.seed = Math.random() * 10; n.yaw = 0;
         n.onDeath = () => {
           L.kills++; G.hud.prog(`擊殺 ${L.kills} / 3`);
@@ -75,10 +75,6 @@
         } else if (i >= 20 && i < 26) {
           G.box(x, top - 0.45, z, 3.0, 0.45, 3.0, 0xff1f1f, { kill: true, emissive: 0x880000 });
           G.box(x, top, z, 1.3, 0.3, 1.3, 0x2fd06a);
-        } else if (i >= 26 && i < 32) {
-          G.box(x, top - 0.5, z, 2.8, 0.5, 2.8, col);
-          const bar = G.mesh('box', 0xff1f1f, x, top + 0.65, z, 3.3, 0.28, 0.28, { emissive: 0x880000 });
-          L.spinners.push({ bar, x, z, top, sp: (i % 2 ? 1 : -1) * 1.8, ang: i });
         } else {
           const s = i < 8 ? 2.6 : G.lerp(2.4, 1.4, (i - 32) / 10);
           G.box(x, top - 0.5, z, s, 0.5, s, col);

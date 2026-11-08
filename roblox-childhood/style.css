@@ -44,7 +44,7 @@ body.touch #hHp { bottom: auto; top: 54px; left: 50%; }
 #touch { position: fixed; inset: 0; pointer-events: none; }
 #joy { position: absolute; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,.12); border: 3px solid rgba(255,255,255,.35); left: 30px; bottom: 30px; }
 #joyKnob { position: absolute; width: 54px; height: 54px; border-radius: 50%; background: rgba(255,255,255,.55); left: 33px; top: 33px; }
-#tbtns { position: absolute; right: 14px; bottom: 18px; width: 230px; height: 230px; pointer-events: none; }
+#tbtns { position: absolute; right: 14px; bottom: 18px; width: 240px; height: 260px; pointer-events: none; }
 .tb { position: absolute; pointer-events: auto; width: 64px; height: 64px; border-radius: 50%; border: 3px solid rgba(255,255,255,.6); background: rgba(0,0,0,.4); color: #fff; font-weight: 900; font-size: 15px; touch-action: none; }
 .tb.big { width: 84px; height: 84px; font-size: 18px; }
 .tb.on { background: rgba(255,255,255,.45); }
@@ -53,6 +53,13 @@ body.touch #hHp { bottom: auto; top: 54px; left: 50%; }
 #tb_e { right: 8px; bottom: 98px; background: rgba(40,140,255,.45); }
 #tb_q { right: 86px; bottom: 104px; background: rgba(160,60,255,.45); }
 #tb_f { right: 164px; bottom: 96px; background: rgba(255,170,0,.45); }
+#tb_x { right: 8px; bottom: 178px; background: rgba(255,90,30,.5); }
+#tb_c { right: 82px; bottom: 182px; background: rgba(255,90,30,.5); }
+#tb_v { right: 156px; bottom: 176px; background: rgba(255,90,30,.5); }
+#scope { position: absolute; inset: 0; background: radial-gradient(circle at center, transparent 0, transparent 34vmin, #000 34.4vmin); }
+#scope::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: rgba(0,0,0,.85); }
+#scope::after { content: ""; position: absolute; top: 50%; left: 0; right: 0; height: 2px; margin-top: -1px; background: rgba(0,0,0,.85); }
+#scope .ring { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px; border-radius: 50%; background: #ff2020; box-shadow: 0 0 6px #f00; }
 
 /* ---------- panel ---------- */
 #panel { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); background: rgba(20,24,36,.95); border: 3px solid #fff; border-radius: 16px; padding: 16px; width: min(560px, 94vw); max-height: 88vh; overflow-y: auto; pointer-events: auto; box-shadow: 0 10px 40px rgba(0,0,0,.6); }
