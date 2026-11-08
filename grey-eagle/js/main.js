@@ -7,7 +7,7 @@
 
   // ================= 存檔 =================
   const KEY = 'greyEagle.v1';
-  const defSave = () => ({ cleared: [0, 0, 0], xp: 0, medals: 1500, units: { recruit: { lv: 1, plus: 0 } }, team: ['recruit'], baseLv: 0, cannonLv: 0, sound: true, draws: 0, gift: false });
+  const defSave = () => ({ cleared: [0, 0, 0], xp: 0, medals: 0, units: { recruit: { lv: 1, plus: 0 } }, team: ['recruit'], baseLv: 0, cannonLv: 0, sound: true, draws: 0 });
   let S;
   function load() {
     try { S = Object.assign(defSave(), JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) { S = defSave(); }
@@ -617,10 +617,6 @@
   // ================= 開始 =================
   load();
   show('title');
-  if (!S.gift) {
-    S.gift = true; save();
-    setTimeout(() => toast('🎁 新兵禮包：1,500 勳章！可以先去扭蛋來一次十連抽'), 600);
-  }
   // 方便除錯：在網址加 #debug 會給很多資源
   if (location.hash === '#debug') { S.xp += 1e6; S.medals += 1e5; save(); refreshRes(); }
   G.save = () => S;
