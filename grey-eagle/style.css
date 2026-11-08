@@ -211,3 +211,22 @@ kbd { background: #111; border: 1px solid #555; border-radius: 4px; padding: 0 5
   .cap { width: 84px; height: 108px; }
   #gachaShow { justify-content: flex-start; overflow-y: auto; }
 }
+
+/* ---------- 雲端帳號 ---------- */
+#cloudBtn { margin-top: 10px; background: rgba(0,0,0,.5); border-color: rgba(255,255,255,.3); font-size: 14px; padding: 6px 14px; }
+#cloudBtn.on { border-color: var(--green); }
+#cloudBtn.err { border-color: var(--red); }
+#cloudBtn small { color: var(--dim); font-weight: 600; }
+.acctCard { position: relative; text-align: left; }
+.acctCard h2 { text-align: center; }
+.acctCard .close { position: absolute; top: 10px; right: 10px; padding: 2px 10px; }
+.acctCard label { display: block; font-size: 13px; color: var(--dim); margin: 10px 0 4px; font-weight: 700; }
+.acctCard input { width: 100%; font: inherit; font-size: 16px; padding: 9px 10px; border-radius: 8px; border: 2px solid var(--line); background: #1b1e17; color: var(--fg); }
+.acctCard input:focus { outline: none; border-color: var(--accent); }
+.acctBtns { display: flex; gap: 8px; margin-top: 14px; }
+.acctBtns button { flex: 1; }
+.acctNote { color: var(--dim); font-size: 14px; line-height: 1.6; margin: 0 0 4px; }
+.acctNote.small { font-size: 12px; margin-top: 12px; }
+#acctMsg { margin-top: 10px; font-weight: 700; font-size: 14px; min-height: 1.2em; }
+#acctMsg.bad { color: #ff8a7a; }
+.acctCard > .close { display: inline-block; width: auto; margin: 0; }

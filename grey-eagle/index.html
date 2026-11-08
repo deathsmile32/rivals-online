@@ -31,6 +31,7 @@
       <button id="btnHelp">📖 說明</button>
     </div>
     <div class="titleRes"><span>🎖️ <b id="tMedal">0</b></span><span>⭐ <b id="tXp">0</b></span><span id="tProg"></span></div>
+    <button id="cloudBtn">☁️ 登入 / 註冊</button>
     <div class="note">所有國家、陣營、人物都是虛構的。</div>
   </div>
 </div>
@@ -127,12 +128,36 @@
   </div>
 </div>
 
+<div id="acct" class="overlay hidden">
+  <div class="card acctCard">
+    <button id="acctClose" class="close" aria-label="關閉">✕</button>
+    <h2>☁️ 雲端帳號</h2>
+    <div id="acctIn">
+      <p class="acctNote">登入後進度會存到雲端，換手機、換電腦都能接著玩。<br>和「競技對決 ARENA」共用同一個帳號。</p>
+      <label for="acctUser">帳號名稱</label>
+      <input id="acctUser" autocomplete="username" maxlength="16" placeholder="3～16 個字">
+      <label for="acctPw">密碼</label>
+      <input id="acctPw" type="password" autocomplete="current-password" placeholder="至少 6 個字">
+      <div class="acctBtns"><button id="acctLogin" class="big">登入</button><button id="acctSignup">註冊新帳號</button></div>
+      <p class="acctNote small">第一次登入時，如果雲端還沒有灰鷹軍團的存檔，會把這台裝置目前的進度上傳；雲端已經有存檔的話，會改用雲端的進度。</p>
+    </div>
+    <div id="acctOut" class="hidden">
+      <p>目前登入：<b id="acctName"></b></p>
+      <p class="acctNote">狀態：<span id="acctState"></span></p>
+      <div class="acctBtns"><button id="acctSync">立即同步</button><button id="acctLogout">登出</button></div>
+      <p class="acctNote small">登出後這台裝置會回到全新的進度，你的存檔還在雲端，下次登入就會回來。</p>
+    </div>
+    <div id="acctMsg"></div>
+  </div>
+</div>
+
 <div id="result" class="overlay hidden"><div class="card" id="resultCard"></div></div>
 <div id="toast"></div>
 
 <script src="js/data.js"></script>
 <script src="js/battle.js"></script>
 <script src="js/draw.js"></script>
+<script src="js/cloud.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

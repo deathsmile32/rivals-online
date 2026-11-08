@@ -14,7 +14,11 @@
     S.team = S.team.filter(id => G.UNIT[id]);
     syncUnlocks();
   }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* 無痕模式存不了也沒關係 */ } }
+  function save(fromCloud) {
+    if (!fromCloud) S.upd = Date.now();
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { /* 無痕模式存不了也沒關係 */ }
+    if (!fromCloud && G.cloud) G.cloud.changed();
+  }
   const owned = id => !!S.units[id];
   const effLv = id => S.units[id] ? S.units[id].lv + S.units[id].plus : 1;
   const formOf = id => (S.units[id] && S.units[id].lv >= 10) ? 1 : 0;
@@ -620,5 +624,16 @@
   // 方便除錯：在網址加 #debug 會給很多資源
   if (location.hash === '#debug') { S.xp += 1e6; S.medals += 1e5; save(); refreshRes(); }
   G.save = () => S;
+  // 雲端帳號：取得 / 換掉整份存檔（cloud.js 用）
+  G.getSave = () => S;
+  G.setSave = obj => {
+    S = Object.assign(defSave(), obj || {});
+    S.team = S.team.filter(id => G.UNIT[id]);
+    syncUnlocks(); save(true); refreshRes();
+    if (cur === 'title') renderTitle(); else if (cur !== 'battle') show(cur, { back: backTo });
+  };
+  G.freshSave = defSave;
+  G.toast = toast;
+  if (G.cloud) G.cloud.init();
   G.debug = { battle: () => B, setCam: x => { cam = x; } };
 })(window.GE);

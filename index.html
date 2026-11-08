@@ -2840,11 +2840,12 @@ function fbSetTok(S,id,rt,exp,uid){S.id=id;if(rt)S.rt=rt;S.exp=Date.now()+(+exp|
 async function fbRefresh(S){const j=await fbFetch('https://securetoken.googleapis.com/v1/token'+fbKey(),{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(S.rt)});fbSetTok(S,j.id_token,j.refresh_token,j.expires_in,j.user_id);return S.id}
 async function fbTok(S,force){if(!force&&S.id&&Date.now()<S.exp)return S.id;return fbRefresh(S)}
 const fsUrl=uid=>'https://firestore.googleapis.com/v1/projects/'+encodeURIComponent(FB_CFG.projectId)+'/databases/(default)/documents/users/'+encodeURIComponent(uid);
-async function fsReq(S,method,body,keep){const uid=S.uid;for(let i=0;;i++){const tok=await fbTok(S,i>0);
- try{return await fbFetch(fsUrl(uid),{method,headers:Object.assign({Authorization:'Bearer '+tok},body?{'Content-Type':'application/json'}:{}),body:body||undefined,keepalive:!!keep})}catch(e){if(e&&e.status===401&&i==0)continue;throw e}}}
+async function fsReq(S,method,body,keep,q){const uid=S.uid;for(let i=0;;i++){const tok=await fbTok(S,i>0);
+ try{return await fbFetch(fsUrl(uid)+(q||''),{method,headers:Object.assign({Authorization:'Bearer '+tok},body?{'Content-Type':'application/json'}:{}),body:body||undefined,keepalive:!!keep})}catch(e){if(e&&e.status===401&&i==0)continue;throw e}}}
 async function fsGet(S){try{const j=await fsReq(S,'GET'),f=j.fields||{};let prof=null;try{prof=JSON.parse((f.prof&&f.prof.stringValue)||'null')}catch(_){}
  return{prof:prof&&typeof prof=='object'?prof:null,name:(f.name&&f.name.stringValue)||'',updated:+(f.updated&&f.updated.integerValue)||0}}catch(e){if(e&&e.status===404)return null;throw e}}
-const fsPut=(S,profStr,upd,keep)=>fsReq(S,'PATCH',JSON.stringify({fields:{name:{stringValue:S.name},prof:{stringValue:profStr},updated:{integerValue:String(upd)}}}),keep);
+// updateMask: only touch ARENA's own fields so other games' fields in the same doc (灰鷹軍團: ge, geUpd) are kept
+const fsPut=(S,profStr,upd,keep)=>fsReq(S,'PATCH',JSON.stringify({fields:{name:{stringValue:S.name},prof:{stringValue:profStr},updated:{integerValue:String(upd)}}}),keep,'?updateMask.fieldPaths=name&updateMask.fieldPaths=prof&updateMask.fieldPaths=updated');
 function ccGet(){const c=lsGet('rvl_cloud_cache',null);return c&&typeof c=='object'?c:{}}
 function ccPut(uid,o){const c=ccGet();c[uid]=Object.assign(c[uid]||{},o);lsSet('rvl_cloud_cache',c)}
 const SYNC_T={ok:['☁️ 已同步','#9fe0b0'],busy:['☁️ 同步中…','#cfd6ff'],off:['⚠️ 離線，稍後同步','#ffc93c'],err:['⚠️ 同步失敗，稍後重試','#ff9a8a']};
