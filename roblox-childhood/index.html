@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1b1f2a">
+<title>Roblox Childhood</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<!-- HUD -->
+<div id="hud" class="hidden">
+  <div id="hudTL">
+    <div id="hLevel"></div>
+    <div id="hObj"></div>
+    <div id="hProg"></div>
+  </div>
+  <div id="hudTR">
+    <div id="hTime">⏱ 0:00</div>
+    <div id="hDeaths">💀 0</div>
+    <button id="pauseBtn" title="暫停">⏸</button>
+  </div>
+  <div id="hExtra"></div>
+  <div id="cross"></div>
+  <div id="hBoss" class="hidden"><div id="hBossName"></div><div class="bar"><div id="hBossFill"></div></div></div>
+  <div id="hPrompt" class="hidden"></div>
+  <div id="hToast"></div>
+  <div id="hBig" class="hidden"></div>
+  <div id="hHp" class="hidden"><div class="bar"><div id="hHpFill"></div></div><span id="hHpTxt">100</span></div>
+  <div id="hAmmo" class="hidden"></div>
+  <div id="dmgFlash"></div>
+</div>
+
+<!-- touch controls -->
+<div id="touch" class="hidden">
+  <div id="joy"><div id="joyKnob"></div></div>
+  <div id="tbtns">
+    <button class="tb" data-k="f" id="tb_f">防禦</button>
+    <button class="tb" data-k="q" id="tb_q">技能</button>
+    <button class="tb" data-k="e" id="tb_e">E</button>
+    <button class="tb big" data-k="act" id="tb_act">動作</button>
+    <button class="tb big" data-k="jump" id="tb_jump">跳</button>
+  </div>
+</div>
+
+<!-- generic panel used by levels (shops, wardrobe, fishing...) -->
+<div id="panel" class="hidden"></div>
+
+<!-- title screen -->
+<div id="title" class="screen">
+  <div class="logo"><span>ROBLOX</span><span class="sub">CHILDHOOD</span></div>
+  <div class="tagline">19 個熱門遊戲，一次玩過一輪</div>
+  <div class="menuBtns">
+    <button id="btnNew" class="btn green">▶ 開始新遊戲</button>
+    <button id="btnCont" class="btn blue hidden">⏩ 繼續</button>
+    <button id="btnQual" class="btn gray">畫質：高</button>
+  </div>
+  <div id="levelList"></div>
+  <div class="foot">粉絲致敬作品・與 Roblox 官方及各遊戲作者無關・角色皆為原創</div>
+</div>
+
+<!-- level intro -->
+<div id="intro" class="screen hidden">
+  <div class="card">
+    <div id="iNum"></div>
+    <div id="iName"></div>
+    <div id="iInsp"></div>
+    <div id="iObj"></div>
+    <div id="iCtrl"></div>
+    <button id="iGo" class="btn green">開始！</button>
+  </div>
+</div>
+
+<!-- pause -->
+<div id="pause" class="screen hidden">
+  <div class="card">
+    <div class="pTitle">暫停</div>
+    <button id="pResume" class="btn green">繼續遊戲</button>
+    <button id="pRestart" class="btn blue">重新開始這關</button>
+    <button id="pQual" class="btn gray">畫質：高</button>
+    <button id="pSkip" class="btn orange">跳過這關</button>
+    <button id="pMenu" class="btn red">回主選單</button>
+  </div>
+</div>
+
+<!-- end -->
+<div id="end" class="screen hidden">
+  <div class="card">
+    <div class="logo small"><span>全部通關！</span></div>
+    <div id="eStats"></div>
+    <button id="eAgain" class="btn green">再玩一次</button>
+    <button id="eMenu" class="btn gray">回主選單</button>
+  </div>
+</div>
+
+<div id="loading" class="screen"><div>載入中…</div></div>
+
+<script src="lib/three.min.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/levels1.js"></script>
+<script src="js/levels2.js"></script>
+<script src="js/levels3.js"></script>
+<script src="js/levels4.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

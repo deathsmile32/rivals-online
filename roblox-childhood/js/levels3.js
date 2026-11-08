@@ -1,0 +1,555 @@
+// Levels 11–15: 釣魚大師, 穿搭比賽, 刀刃球, 最強戰場, 兵工廠
+'use strict';
+(function () {
+  const V = THREE.Vector3;
+
+  // ======================= 11. 釣魚大師 (Fish It) =======================
+  const FISH = [
+    { name: '小鯽魚', rar: '普通', col: '#cfd6e0', w: 60, sp: 0.35, zone: 0.32, icon: '🐟' },
+    { name: '條紋鱸魚', rar: '少見', col: '#5bff7a', w: 25, sp: 0.55, zone: 0.28, icon: '🐠' },
+    { name: '金鱗魚', rar: '稀有', col: '#4fb3ff', w: 12, sp: 0.75, zone: 0.25, icon: '🐡' },
+    { name: '彩虹鯨', rar: '傳說', col: '#ffd23f', w: 3, sp: 0.95, zone: 0.22, icon: '🐋' },
+  ];
+  G.LEVELS.push({
+    name: '釣魚大師', insp: 'Fish It!', obj: '走到碼頭上按「拋竿」釣魚，魚上鉤（！）時再按一次，然後按住讓綠色框框住魚。釣到 5 條魚，而且至少 1 條稀有以上！',
+    ctrl: 'WASD 移動・左鍵 拋竿／收線（釣魚時按住左鍵或空白鍵讓綠框往上）',
+    ctrlTouch: '左邊搖桿移動・按「拋竿」釣魚・釣魚時按住「拉」讓綠框往上',
+    build(L) {
+      G.setSky({ color: 0x8fd3ff, fog: [80, 220] });
+      const water = G.mesh('box', 0x1f8fd6, 0, -1.6, -30, 300, 1, 300, { opacity: 0.85, noShadow: true }); water.userData.noHit = true; L.waterMesh = water;
+      G.box(0, -3, 22, 50, 3, 30, 0xf2dfa0);
+      G.box(0, 0, 9, 5, 0.3, 4, 0x9b6a3c);
+      G.box(0, -0.3, -6, 4, 0.5, 26, 0x9b6a3c);
+      for (let z = 6; z >= -18; z -= 4) { G.box(-2.1, -3, z, 0.4, 3.2, 0.4, 0x6b4426); G.box(2.1, -3, z, 0.4, 3.2, 0.4, 0x6b4426); }
+      G.box(0, -0.3, -20, 12, 0.5, 4, 0x9b6a3c);
+      for (let i = 0; i < 8; i++) { const x = G.rand(-22, 22), z = G.rand(15, 34); G.box(x, 0, z, 0.6, 4, 0.6, 0x9b6a3c); G.mesh('sph', 0x2f9e4a, x, 4.4, z, 3); }
+      G.box(-8, 0, 16, 5, 3, 4, 0x2f7de1); G.box(-8, 3, 16, 5.6, 0.4, 4.6, 0xffffff);
+      const fisher = G.makeNPC({ name: '老漁夫', shirt: 0xffd23f, pants: 0x2b3a55, pos: new V(-3.5, 0, 9), hat: 0xc98a4b }); fisher.yaw = Math.PI / 2; G.syncNPC(fisher);
+      G.interact(new V(-3.5, 0, 9), 2.6, '和老漁夫說話', () => G.hud.toast('「稀有的魚游得很快，綠框要穩住啊！」', 3000));
+      L.caught = []; L.state = 'idle'; L.killY = -2.2; L.fallMsg = '掉進水裡了！';
+      L.spawn.set(0, 0.3, 9.5); L.spawnYaw = 0;
+      // rod
+      const rod = new THREE.Group(); G.part(rod, 0, 0, 0, 0.06, 0.06, 2.4, 0x6b4426); rod.position.set(0, -0.9, 0.9); rod.rotation.x = 0.6;
+      G.player.mesh.userData.P.aR.add(rod); rod.visible = false; L.rod = rod;
+      L.bob = G.mesh('sph', 0xff3b3b, 0, 0, 0, 0.35); L.bob.visible = false; L.bob.userData.noHit = true;
+      L.line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new V(), new V()]), new THREE.LineBasicMaterial({ color: 0xffffff })); L.line.userData.noHit = true; G.world.add(L.line); L.line.visible = false;
+      L.excl = G.label('！', { color: '#ff3b3b', scale: 2.2, bg: null }); L.excl.visible = false;
+      G.setButtons({ act: '拋竿', e: 'E' });
+      L.updHud = () => {
+        G.hud.prog(`🎣 ${L.caught.length} / 5 條　${L.caught.some(f => f.w <= 12) ? '✅ 已有稀有魚' : '還需要 1 條稀有以上'}`);
+        G.hud.extra(L.caught.map(f => `<span class="pill" style="color:${f.col}">${f.icon} ${f.rar} ${f.name}</span>`).join('<br>'));
+      };
+      L.updHud();
+    },
+    cleanup(L) { if (L.rod) G.player.mesh.userData.P.aR.remove(L.rod); },
+    update(dt, L) {
+      const p = G.player;
+      const onDock = p.pos.z < -1 && p.pos.y > -0.5;
+      const pressed = G.in.actP;
+      if (L.state === 'idle') {
+        if (pressed && !G.dying) {
+          if (!onDock) { G.hud.toast('走到碼頭上才能釣魚！'); return; }
+          L.state = 'cast'; L.t3 = 0; p.frozen = true; L.rod.visible = true; p.mesh.userData.armPose = true; p.mesh.userData.P.aR.rotation.x = -1.2;
+          p.yaw = G.cam.yaw;
+          const f = G.forward(p.yaw); L.bobTarget = p.pos.clone().addScaledVector(f, 9); L.bobTarget.y = -1.1;
+          L.bobFrom = p.pos.clone().add(new V(0, 2.5, 0));
+          L.bob.visible = true; L.line.visible = true; G.sfx('swing');
+          L.wait = G.rand(1.6, 3.6);
+          G.setButtons({ act: '收線', e: 'E' });
+        }
+      } else if (L.state === 'cast') {
+        L.t3 += dt; const k = Math.min(1, L.t3 / 0.6);
+        L.bob.position.lerpVectors(L.bobFrom, L.bobTarget, k); L.bob.position.y += Math.sin(k * Math.PI) * 3;
+        if (k >= 1) { L.state = 'wait'; L.t3 = 0; }
+      } else if (L.state === 'wait') {
+        L.t3 += dt; L.bob.position.y = -1.1 + Math.sin(L.t * 3) * 0.05;
+        if (pressed) { L.reset('太早收線了…'); return; }
+        if (L.t3 > L.wait) { L.state = 'bite'; L.t3 = 0; L.excl.visible = true; L.excl.position.copy(L.bob.position).add(new V(0, 1.6, 0)); G.sfx('alarm'); }
+      } else if (L.state === 'bite') {
+        L.t3 += dt; L.bob.position.y = -1.4 + Math.sin(L.t * 25) * 0.15;
+        if (pressed) { L.excl.visible = false; L.startReel(); }
+        else if (L.t3 > 1.3) { L.excl.visible = false; L.reset('魚跑掉了！要快一點按'); }
+      } else if (L.state === 'reel') {
+        const R = L.reel;
+        const hold = G.in.actH || G.in.keys.Space;
+        R.v += (hold ? 2.6 : -2.2) * dt; R.v = G.clamp(R.v, -1.2, 1.2);
+        R.z += R.v * dt; if (R.z < 0) { R.z = 0; R.v = 0; } if (R.z > 1 - R.zone) { R.z = 1 - R.zone; R.v = 0; }
+        R.ft -= dt; if (R.ft <= 0) { R.ft = G.rand(0.35, 1.1); R.ftgt = Math.random(); }
+        R.f += G.clamp(R.ftgt - R.f, -R.fish.sp * dt, R.fish.sp * dt); R.f = G.clamp(R.f, 0.03, 0.97);
+        const inZone = R.f >= R.z && R.f <= R.z + R.zone;
+        R.prog += (inZone ? 0.3 : -0.22) * dt;
+        L.drawReel();
+        L.bob.position.y = -1.4 + Math.sin(L.t * 18) * 0.1;
+        if (R.prog >= 1) {
+          const f = R.fish; L.caught.push(f); G.sfx('win');
+          G.hud.big(`${f.icon} ${f.rar}：${f.name}！`, f.col, 1800);
+          G.burst(p.pos.clone().add(new V(0, 3, 0)), parseInt(f.col.slice(1), 16), 18);
+          L.reset(null); L.updHud();
+          if (L.caught.length >= 5 && L.caught.some(x => x.w <= 12)) G.after(1.2, () => G.complete('釣魚大師！🎣'));
+          else if (L.caught.length >= 5) G.hud.toast('還差一條稀有以上的魚！');
+        } else if (R.prog <= 0) { L.reset('魚逃走了…'); }
+      }
+      if (L.state !== 'idle' && L.state !== 'reel') {
+        const tip = p.pos.clone().add(new V(0, 2.6, 0)).addScaledVector(G.forward(p.yaw), 1.6);
+        L.line.geometry.setFromPoints([tip, L.bob.position.clone()]);
+      }
+    },
+    respawn(L) { L.reset(null); }
+  });
+  const lv11 = G.LEVELS[G.LEVELS.length - 1], b11 = lv11.build;
+  lv11.build = function (L) {
+    b11(L);
+    L.reset = (msg) => {
+      L.state = 'idle'; G.player.frozen = false; L.rod.visible = false; L.bob.visible = false; L.line.visible = false; L.excl.visible = false;
+      G.player.mesh.userData.armPose = false;
+      if (G.panelOpen) G.closePanel(false);
+      if (msg) G.hud.toast(msg);
+      G.setButtons({ act: '拋竿', e: 'E' });
+    };
+    L.startReel = () => {
+      let tot = 0; for (const f of FISH) tot += f.w;
+      let r = Math.random() * tot, fish = FISH[0];
+      for (const f of FISH) { if (r < f.w) { fish = f; break; } r -= f.w; }
+      if (L.caught.length >= 3 && !L.caught.some(f => f.w <= 12) && fish.w > 12) fish = FISH[2];
+      L.reel = { fish, z: 0.2, v: 0, f: 0.5, ftgt: 0.5, ft: 0, prog: 0.3, zone: fish.zone };
+      L.state = 'reel';
+      G.setButtons({ act: '拉！', e: null });
+      const p = G.openPanel(`<div style="text-align:center;font-weight:900;margin-bottom:8px;color:${fish.col}">有東西上鉤了！</div>
+        <div class="fishWrap"><div class="fishBar" id="fBar"><div class="fishZone" id="fZone"></div><div class="fishIcon" id="fIcon">🐟</div></div>
+        <div class="fishProg"><div id="fProg"></div></div></div>
+        <div style="text-align:center;margin-top:8px;font-size:13px">${G.isTouch ? '按住「拉！」' : '按住左鍵 / 空白鍵'} 讓綠框往上</div>`, { keepLock: true, side: true });
+      p.style.pointerEvents = 'none'; p.style.width = 'auto';
+      L.drawReel();
+    };
+    L.drawReel = () => {
+      const R = L.reel, H = G.$('fBar').clientHeight;
+      G.$('fZone').style.bottom = (R.z * H) + 'px'; G.$('fZone').style.height = (R.zone * H) + 'px';
+      G.$('fIcon').style.bottom = (R.f * H - 13) + 'px';
+      G.$('fProg').style.height = (G.clamp(R.prog, 0, 1) * 100) + '%';
+    };
+  };
+
+  // ======================= 12. 穿搭比賽 (Dress to Impress) =======================
+  const THEMES = [
+    { id: 'beach', name: '🏖 海灘度假', cols: [0xffd23f, 0x4fd6e0, 0xff8a1a, 0xffffff] },
+    { id: 'winter', name: '❄️ 冬季雪地', cols: [0xffffff, 0x2f7de1, 0x8a93a8, 0xd93636] },
+    { id: 'rock', name: '🎸 搖滾巨星', cols: [0x222222, 0xd93636, 0x8a4fd9, 0x8a93a8] },
+    { id: 'royal', name: '👑 皇家舞會', cols: [0xff8ad8, 0x8a4fd9, 0xffd23f, 0xffffff] },
+    { id: 'sport', name: '⚽ 運動健將', cols: [0xd93636, 0x2f7de1, 0x2fd06a, 0xffffff] },
+  ];
+  const ITEMS = {
+    hat: [['不戴', []], ['草帽', ['beach']], ['毛線帽', ['winter']], ['皇冠', ['royal']], ['棒球帽', ['sport']], ['刺刺頭盔', ['rock']]],
+    top: [['T恤', ['sport', 'beach']], ['毛衣', ['winter']], ['皮夾克', ['rock']], ['蕾絲禮服', ['royal']], ['背心', ['beach', 'sport']]],
+    bottom: [['短褲', ['beach', 'sport']], ['厚長褲', ['winter']], ['蓬蓬裙', ['royal']], ['破洞牛仔褲', ['rock']], ['運動褲', ['sport']]],
+    shoes: [['拖鞋', ['beach']], ['雪靴', ['winter']], ['高跟鞋', ['royal']], ['球鞋', ['sport']], ['馬汀靴', ['rock']]],
+    acc: [['不戴', []], ['墨鏡', ['beach', 'rock']], ['圍巾', ['winter']], ['項鍊', ['royal']], ['電吉他', ['rock']], ['天使翅膀', ['royal']], ['獎牌', ['sport']]],
+  };
+  const CATN = { hat: '帽子', top: '上衣', bottom: '下身', shoes: '鞋子', acc: '配件' };
+  const PALETTE = [0xffffff, 0x222222, 0xd93636, 0xff8ad8, 0xff8a1a, 0xffd23f, 0x2fd06a, 0x4fd6e0, 0x2f7de1, 0x8a4fd9, 0x8a93a8, 0x8b5a2b];
+  G.LEVELS.push({
+    name: '穿搭比賽', insp: 'Dress to Impress', obj: '照主題搭配衣服和顏色，走上伸展台給評審打分數！平均 3.5 顆星以上就過關。',
+    ctrl: '用右邊的選單換衣服，按「完成穿搭」走秀', ctrlTouch: '用選單換衣服，按「完成穿搭」走秀',
+    build(L) {
+      G.setSky({ color: 0x2a1838, fog: [40, 100], hemi: 0.95, hemiSky: 0xffe6ff, sun: 0.6 });
+      G.ground(60, '#3a2448', '#432a52');
+      G.box(0, 0, 0, 4, 0.8, 22, 0xff8ad8); G.box(0, 0, -12, 12, 0.8, 6, 0xd96ab8);
+      for (let z = -9; z <= 9; z += 3) { G.box(-2.3, 0.8, z, 0.3, 0.3, 0.3, 0xffffaa, { emissive: 0xffff66, solid: false }); G.box(2.3, 0.8, z, 0.3, 0.3, 0.3, 0xffffaa, { emissive: 0xffff66, solid: false }); }
+      G.box(0, 0, -15.5, 14, 9, 1, 0x8a4fd9); G.label('✨ 穿搭比賽 ✨', { pos: new V(0, 7.5, -14.8), scale: 2 });
+      L.judges = [];
+      ['評審 小花', '評審 阿星', '評審 莉莉'].forEach((nm, i) => {
+        const j = G.makeNPC({ name: nm, shirt: [0xff8ad8, 0x2f7de1, 0xffd23f][i], pos: new V((i - 1) * 3.5, 0, 15), hair: 0x3b2a1a });
+        j.yaw = Math.PI; G.syncNPC(j); L.judges.push(j);
+      });
+      G.box(0, 0, 14, 12, 1, 1.2, 0xffffff);
+      G.player.frozen = true; G.player.hidden = true; G.cam.mode = 'custom';
+      G.camera.position.set(3, 3.4, -4.5); G.camera.lookAt(0, 1.9, -10.5);
+      L.spawn.set(20, 0, 20);
+      G.setButtons({ act: null, jump: null, e: null });
+      G.noTouch = true;
+    },
+    start(L) { L.newRound(); },
+    cleanup() { G.closePanel(false); },
+    update(dt, L) {
+      const cam = G.camera;
+      if (L.phase === 'dress') {
+        L.left -= dt;
+        L.model.rotation.y += dt * 0.6;
+        cam.position.set(Math.sin(L.t * 0.2) * 2 + 3, 3.4, -4.5); cam.lookAt(0, 1.9, -10.5);
+        const el = G.$('dTime'); if (el) el.textContent = Math.ceil(Math.max(0, L.left));
+        G.hud.prog(`主題：${L.theme.name}　⏱ ${Math.ceil(Math.max(0, L.left))}`);
+        if (L.left <= 0) L.finish();
+      } else if (L.phase === 'walk') {
+        L.wt += dt;
+        const m = L.model;
+        if (L.wt < 4.5) { m.position.set(0, 0.8, -10.5 + L.wt * 4.3); m.rotation.y = 0; G.animAvatar(m, dt, 4); }
+        else { G.animAvatar(m, dt, 0); m.rotation.y = Math.sin(L.wt * 2) * 0.5; }
+        cam.position.set(4, 3.2, m.position.z + 6); cam.lookAt(m.position.x, 1.8, m.position.z);
+        if (L.wt > 5 && !L.scored) L.score();
+      }
+    },
+    respawn(L) { L.newRound(); }
+  });
+  const lv12 = G.LEVELS[G.LEVELS.length - 1], b12 = lv12.build;
+  lv12.build = function (L) {
+    b12(L);
+    L.newRound = () => {
+      if (L.model) G.world.remove(L.model);
+      (L.starLabels || []).forEach(s => G.world.remove(s)); L.starLabels = [];
+      L.theme = G.pick(THEMES.filter(t => !L.theme || t !== L.theme));
+      L.fit = { hat: 0, top: 0, bottom: 0, shoes: 0, acc: 0, topC: 8, botC: 1 };
+      L.model = G.avatar({ shirt: 0x2f7de1, pants: 0x222222, skin: 0xffe0bd, hair: 0x5a3a1a });
+      L.model.position.set(0, 0.8, -10.5); G.world.add(L.model);
+      L.extras = new THREE.Group(); L.model.add(L.extras);
+      L.phase = 'dress'; L.left = 75; L.scored = false;
+      L.applyFit(); L.openWardrobe();
+      G.hud.big('主題：' + L.theme.name, '#ff8ad8', 1800);
+    };
+    L.applyFit = () => {
+      const P = L.model.userData.P, f = L.fit;
+      P.torso.material = G.mat(PALETTE[f.topC]);
+      const sleeve = f.top === 4 ? 0xffe0bd : PALETTE[f.topC];
+      P.armL.material = G.mat(sleeve); P.armR.material = G.mat(sleeve);
+      const legC = f.bottom === 0 ? 0xffe0bd : PALETTE[f.botC];
+      P.lL.children[0].material = G.mat(legC); P.lR.children[0].material = G.mat(legC);
+      const X = L.extras; while (X.children.length) X.remove(X.children[0]);
+      const pc = PALETTE[f.botC];
+      if (f.bottom === 0) { G.part(X, 0, 0.72, 0, 0.98, 0.28, 0.52, pc); }
+      if (f.bottom === 2) { const s = G.mesh('cone', pc, 0, 0.55, 0, 1.6, 1.0, 1.6, { parent: X }); s.rotation.x = 0; }
+      if (f.bottom === 3) { G.part(X, -0.24, 0.45, 0.24, 0.3, 0.12, 0.02, 0xffe0bd); G.part(X, 0.24, 0.3, 0.24, 0.3, 0.12, 0.02, 0xffe0bd); }
+      if (f.top === 2) { G.part(X, 0, 1.27, 0.26, 0.3, 0.85, 0.02, 0x111111); }
+      if (f.top === 3) { G.part(X, 0, 1.0, 0, 1.1, 0.2, 0.62, 0xffffff); }
+      if (f.top === 1) { G.part(X, 0, 1.62, 0, 1.0, 0.16, 0.54, PALETTE[f.topC]); }
+      const hat = [null, () => { G.part(X, 0, 2.33, 0, 1.2, 0.06, 1.2, 0xe8c56b); G.part(X, 0, 2.45, 0, 0.66, 0.24, 0.66, 0xe8c56b); },
+        () => { G.part(X, 0, 2.42, 0, 0.7, 0.3, 0.7, 0xd93636); G.mesh('sph', 0xffffff, 0, 2.66, 0, 0.25, undefined, undefined, { parent: X }); },
+        () => { G.part(X, 0, 2.38, 0, 0.66, 0.16, 0.66, 0xffd23f, { emissive: 0x554400 }); for (let i = 0; i < 4; i++) G.part(X, (i % 2 ? 1 : -1) * 0.25 * (i < 2 ? 1 : 0.01), 2.55, (i >= 2 ? (i % 2 ? 1 : -1) * 0.25 : 0), 0.12, 0.22, 0.12, 0xffd23f, { emissive: 0x554400 }); },
+        () => { G.part(X, 0, 2.36, 0, 0.68, 0.18, 0.68, 0x2f7de1); G.part(X, 0, 2.3, 0.45, 0.6, 0.05, 0.4, 0x2f7de1); },
+        () => { G.part(X, 0, 2.38, 0, 0.7, 0.2, 0.7, 0x222222); for (let i = -1; i <= 1; i++) G.mesh('cone', 0xdddddd, i * 0.22, 2.62, 0, 0.12, 0.3, 0.12, { parent: X }); }][f.hat];
+      if (hat) hat();
+      const shoeC = [0x4fd6e0, 0xffffff, 0xd93636, 0xffffff, 0x222222][f.shoes];
+      const sh = f.shoes === 1 ? 0.3 : f.shoes === 4 ? 0.26 : 0.14;
+      G.part(X, -0.24, sh / 2, 0.06, 0.5, sh, 0.6, shoeC); G.part(X, 0.24, sh / 2, 0.06, 0.5, sh, 0.6, shoeC);
+      const acc = [null, () => { G.part(X, 0, 2.05, 0.32, 0.62, 0.14, 0.03, 0x111111); },
+        () => { G.part(X, 0, 1.68, 0, 1.05, 0.18, 0.6, 0xd93636); G.part(X, 0.3, 1.35, 0.27, 0.18, 0.5, 0.04, 0xd93636); },
+        () => { G.part(X, 0, 1.55, 0.27, 0.42, 0.05, 0.02, 0xffd23f, { emissive: 0x554400 }); G.mesh('sph', 0x4fd6e0, 0, 1.45, 0.28, 0.14, undefined, undefined, { parent: X }); },
+        () => { const g = G.part(X, 0.1, 1.2, 0.38, 0.5, 1.3, 0.1, 0xd93636); g.rotation.z = 0.8; },
+        () => { const a = G.part(X, -0.55, 1.5, -0.4, 0.9, 1.1, 0.06, 0xffffff); a.rotation.y = 0.4; const b = G.part(X, 0.55, 1.5, -0.4, 0.9, 1.1, 0.06, 0xffffff); b.rotation.y = -0.4; },
+        () => { G.mesh('cyl', 0xffd23f, 0, 1.25, 0.28, 0.22, 0.04, 0.22, { parent: X }).rotation.x = Math.PI / 2; G.part(X, 0, 1.5, 0.27, 0.06, 0.4, 0.02, 0x2f7de1); }][f.acc];
+      if (acc) acc();
+    };
+    L.openWardrobe = () => {
+      const sw = (key, cur) => PALETTE.map((c, i) => `<button class="opt sw ${cur === i ? 'sel' : ''}" data-c="${key}" data-i="${i}" style="background:#${c.toString(16).padStart(6, '0')}"></button>`).join('');
+      const cats = Object.keys(ITEMS).map(k => `<div class="lbl">${CATN[k]}</div><div class="row">${ITEMS[k].map((it, i) => `<button class="opt ${L.fit[k] === i ? 'sel' : ''}" data-k="${k}" data-i="${i}">${it[0]}</button>`).join('')}</div>` +
+        (k === 'top' ? `<div class="row">${sw('topC', L.fit.topC)}</div>` : k === 'bottom' ? `<div class="row">${sw('botC', L.fit.botC)}</div>` : '')).join('');
+      const p = G.openPanel(`<h2>主題：${L.theme.name}</h2><div style="font-size:13px;opacity:.8">剩 <b id="dTime">${Math.ceil(L.left)}</b> 秒・衣服和顏色都要符合主題</div>${cats}<button class="btn green" id="dDone" style="width:100%;margin-top:6px">完成穿搭 ✨</button>`, { side: true });
+      p.querySelectorAll('[data-k]').forEach(b => b.onclick = () => { L.fit[b.dataset.k] = +b.dataset.i; G.sfx('click'); L.applyFit(); L.openWardrobe(); });
+      p.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { L.fit[b.dataset.c] = +b.dataset.i; G.sfx('click'); L.applyFit(); L.openWardrobe(); });
+      G.$('dDone').onclick = () => L.finish();
+    };
+    L.finish = () => {
+      if (L.phase !== 'dress') return;
+      G.closePanel(false); L.phase = 'walk'; L.wt = 0; G.sfx('win');
+      G.hud.prog(`主題：${L.theme.name}　走秀中…`);
+    };
+    L.score = () => {
+      L.scored = true;
+      let s = 0; const th = L.theme.id;
+      for (const k of Object.keys(ITEMS)) if (ITEMS[k][L.fit[k]][1].includes(th)) s += 2;
+      if (L.theme.cols.includes(PALETTE[L.fit.topC])) s += 1;
+      if (L.theme.cols.includes(PALETTE[L.fit.botC]) || L.fit.bottom === 0 && L.theme.cols.includes(PALETTE[L.fit.botC])) s += 1;
+      let tot = 0;
+      L.judges.forEach((j, i) => {
+        const st = G.clamp(Math.round(1 + 4 * s / 12 + G.rand(-0.5, 0.6)), 1, 5); tot += st;
+        G.after(0.5 + i * 0.7, () => { G.sfx('pop'); L.starLabels.push(G.label('⭐'.repeat(st), { pos: j.pos.clone().add(new V(0, 3.6, 0)), scale: 0.9 })); });
+      });
+      const avg = tot / 3;
+      G.after(3, () => {
+        if (avg >= 3.5) G.complete(`平均 ${avg.toFixed(1)} 顆星！👗`);
+        else {
+          const miss = Object.keys(ITEMS).filter(k => !ITEMS[k][L.fit[k]][1].includes(th)).map(k => CATN[k]);
+          G.hud.toast('提示：' + (miss.length ? miss.join('、') + ' 不太符合主題' : '顏色再配合主題一點'), 3500);
+          G.die(`平均 ${avg.toFixed(1)} 顆星…再試一次！`);
+        }
+      });
+    };
+  };
+
+  // ======================= 13. 刀刃球 (Blade Ball) =======================
+  G.LEVELS.push({
+    name: '刀刃球', insp: 'Blade Ball', obj: '球變紅色飛向你時，在它靠近的瞬間按「格擋」把它打回去！讓其他 3 個人都被球打中就贏了。',
+    ctrl: 'WASD 移動・左鍵 或 F 格擋（不要亂按，有冷卻）・空白鍵 跳',
+    ctrlTouch: '左邊搖桿移動・球靠近時按「格擋」',
+    build(L) {
+      G.setSky({ color: 0x1a1030, fog: [50, 120], hemi: 0.85, hemiSky: 0xd0c0ff });
+      G.ground(60, '#2a2440', '#3a3258');
+      const disc = G.mesh('cyl', 0x4a3f7a, 0, 0.02, 0, 40, 0.04, 40, { noShadow: true }); disc.userData.noHit = true;
+      const disc2 = G.mesh('cyl', 0x5d4f9a, 0, 0.04, 0, 30, 0.04, 30, { noShadow: true }); disc2.userData.noHit = true;
+      for (let i = 0; i < 24; i++) { const a = i / 24 * Math.PI * 2; G.box(Math.cos(a) * 21, 0, Math.sin(a) * 21, 3, 1.5, 3, i % 2 ? 0xff3b6b : 0x3b9bff); }
+      L.ball = G.mesh('sph', 0xffffff, 0, 3, 0, 0.9, undefined, undefined, { emissive: 0x444444 }); L.ball.userData.noHit = true;
+      L.ballLight = new THREE.PointLight(0xff3030, 0, 10); L.ball.add(L.ballLight);
+      const sw = new THREE.Group(); G.part(sw, 0, 0, 0, 0.1, 0.1, 1.6, 0x9ff3ff, { emissive: 0x2a6a77 }); G.part(sw, 0, 0, -0.75, 0.3, 0.1, 0.1, 0x333333);
+      sw.position.set(0, -0.85, 0.6); G.player.mesh.userData.P.aR.add(sw); L.sword = sw;
+      L.spawn.set(0, 0, 10); L.spawnYaw = 0;
+      G.setButtons({ act: '格擋', e: null });
+      L.reset = () => {
+        (L.bots || []).forEach(b => G.removeNPC(b));
+        L.bots = [];
+        const cols = [0xff4b4b, 0x2fd06a, 0xffd23f];
+        ['小刀', '阿劍', '球王'].forEach((nm, i) => {
+          const a = i / 3 * Math.PI * 2 + 0.5;
+          const b = G.makeNPC({ name: nm, shirt: cols[i], pos: new V(Math.cos(a) * 10, 0, Math.sin(a) * 10) });
+          const s2 = new THREE.Group(); G.part(s2, 0, 0, 0, 0.1, 0.1, 1.6, 0xffb0b0, { emissive: 0x552222 }); s2.position.set(0, -0.85, 0.6); b.mesh.userData.P.aR.add(s2);
+          b.data = { wp: new V(G.rand(-14, 14), 0, G.rand(-14, 14)), parry: 0, rolled: false, ok: false };
+          L.bots.push(b);
+        });
+        L.parry = 0; L.pcd = 0; L.speed = 14; L.target = null; L.wait = 2;
+        L.ball.position.set(0, 3, 0); L.vel = new V();
+      };
+      L.reset();
+    },
+    cleanup(L) { if (L.sword) G.player.mesh.userData.P.aR.remove(L.sword); },
+    update(dt, L) {
+      const p = G.player;
+      const alive = L.bots.filter(b => b.alive);
+      L.pcd -= dt; L.parry -= dt;
+      if ((G.in.actP || G.in.fP) && L.pcd <= 0 && !G.dying) {
+        L.parry = 0.4; L.pcd = 0.65; G.sfx('swing');
+        // instant deflect if the ball is already close enough when you swing
+        if (L.target === 'player' && L.wait <= 0 && L.ball.position.distanceTo(p.pos.clone().add(new V(0, 1.3, 0))) < 3.2 + L.speed * 0.07) { L.deflect(); L.pcd = 0.25; }
+        p.mesh.userData.armPose = true; p.mesh.userData.P.aR.rotation.x = -2.2; L.armT = 0.25;
+        G.ring(p.pos.clone().setY(1.2), 0x9ff3ff, 2.4, 0.25);
+      }
+      if (L.armT > 0) { L.armT -= dt; if (L.armT <= 0) p.mesh.userData.armPose = false; }
+      for (const b of alive) {
+        const d = G.npcSeek(b, b.data.wp, 5, dt);
+        if (d < 1 || b.hitWall) b.data.wp = new V(G.rand(-15, 15), 0, G.rand(-15, 15));
+        b.data.parry -= dt;
+      }
+      // ball
+      const B = L.ball;
+      if (L.wait > 0) {
+        L.wait -= dt; B.position.y = 3 + Math.sin(L.t * 4) * 0.3;
+        if (L.wait <= 0) L.pickTarget(G.pick(['player', ...alive]));
+      } else if (L.target && !G.dying) {
+        const tp = L.target === 'player' ? p.pos : L.target.pos;
+        const aim = tp.clone().add(new V(0, 1.3, 0));
+        const to = aim.clone().sub(B.position); const d = to.length();
+        const turn = 2.2 + L.speed * 0.06;
+        L.vel.lerp(to.normalize().multiplyScalar(L.speed), Math.min(1, dt * turn));
+        B.position.addScaledVector(L.vel, dt);
+        if (B.position.y < 0.6) B.position.y = 0.6;
+        // bots decide once per approach
+        if (L.target !== 'player') {
+          const b = L.target;
+          if (!b.data.rolled && d < 2.2 + L.speed * 0.06) {
+            b.data.rolled = true; b.data.ok = Math.random() < G.clamp(1.04 - L.speed * 0.012, 0.3, 0.97);
+            if (b.data.ok) { b.data.parry = 0.3; b.mesh.userData.armPose = true; b.mesh.userData.P.aR.rotation.x = -2.2; G.after(0.25, () => b.mesh.userData.armPose = false); }
+          }
+        }
+        if (d < 1.25) {
+          const parried = L.target === 'player' ? L.parry > 0 : L.target.data.parry > 0;
+          if (parried) L.deflect();
+          else if (L.target === 'player') { G.die('被球打中了！'); }
+          else {
+            G.killNPC(L.target); G.hud.toast(`${L.target.name} 出局！`);
+            const left = L.bots.filter(b => b.alive).length;
+            if (!left) { G.after(0.8, () => G.complete('最後的倖存者！⚔️')); L.target = null; }
+            else { L.target = null; L.wait = 1.5; L.speed = Math.max(14, L.speed * 0.6); B.position.set(0, 3, 0); L.vel.set(0, 0, 0); }
+          }
+        }
+      }
+      const mine = L.target === 'player';
+      B.material = mine ? G.mat(0xff2020, { emissive: 0xaa0000 }) : G.mat(0xffffff, { emissive: 0x444444 });
+      L.ballLight.intensity = mine ? 2 : 0;
+      G.hud.prog(`剩下對手 ${alive.length}　球速 ${Math.round(L.speed)}`);
+      G.hud.extra(`<span class="pill">${L.pcd > 0 ? '格擋冷卻中…' : '⚔️ 可以格擋'}</span>`);
+    },
+    respawn(L) { L.reset(); }
+  });
+  const lv13 = G.LEVELS[G.LEVELS.length - 1], b13 = lv13.build;
+  lv13.build = function (L) {
+    b13(L);
+    L.deflect = () => {
+      const B = L.ball;
+      G.sfx('parry'); G.ring(B.position.clone(), 0xffffff, 3, 0.3);
+      L.speed = Math.min(70, L.speed + 3);
+      const alive = L.bots.filter(b => b.alive);
+      const others = ['player', ...alive].filter(x => x !== L.target);
+      L.pickTarget(G.pick(others));
+      L.vel.multiplyScalar(-0.2).add(new V(0, 6, 0));
+    };
+    L.pickTarget = (t) => {
+      L.target = t;
+      if (t === 'player') { G.sfx('alarm'); }
+      else t.data.rolled = false;
+    };
+  };
+
+  // ======================= 14. 最強戰場 (The Strongest Battlegrounds) =======================
+  G.LEVELS.push({
+    name: '最強戰場', insp: 'The Strongest Battlegrounds', obj: '用拳頭連擊和技能，打倒 2 個對手！按住防禦可以減少傷害。',
+    ctrl: '左鍵 連擊・Q 衝刺拳・E 升龍拳・按住 F 或右鍵 防禦・空白鍵 跳',
+    ctrlTouch: '「攻擊」連擊・「衝刺」衝刺拳・「升龍」升龍拳・按住「防禦」',
+    build(L) {
+      G.setSky({ color: 0xffc58a, fog: [60, 150], hemiSky: 0xfff0d0 });
+      G.ground(80, '#8f8a7a', '#827d6e');
+      G.box(0, -0.98, 0, 40, 1, 40, 0x6a8f5a, { solid: false });
+      for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2; G.box(Math.cos(a) * 26, 0, Math.sin(a) * 26, G.rand(3, 6), G.rand(3, 9), G.rand(3, 6), 0x7d7666); }
+      for (let i = 0; i < 6; i++) G.box(G.rand(-18, 18), 0, G.rand(-18, 18), G.rand(1.5, 3), G.rand(1, 2), G.rand(1.5, 3), 0x9a9384);
+      L.spawn.set(0, 0, 10); L.spawnYaw = 0;
+      G.player.maxHp = 150; G.player.faceCam = true;
+      G.hud.hp(true);
+      G.setButtons({ act: '攻擊', q: '衝刺', e: '升龍', f: '防禦' });
+      L.foes = [
+        { name: '拳擊手 阿強', hp: 220, dmg: 7, sp: 6.2, shirt: 0xd93636, sword: false },
+        { name: '劍士 小風', hp: 260, dmg: 9, sp: 6.8, shirt: 0x2fb3b3, sword: true },
+      ];
+      L.fi = 0; L.combo = 0; L.cd = 0; L.qcd = 0; L.ecd = 0; L.comboT = 0;
+      L.spawnFoe = () => {
+        const f = L.foes[L.fi];
+        const n = G.makeNPC({ shirt: f.shirt, pants: 0x222222, skin: 0xf2c48d, hp: f.hp, pos: new V(0, 0, -8), face: 'angry', hair: 0x111111 });
+        if (f.sword) G.part(n.mesh.userData.P.aR, 0, -0.95, 0.5, 0.1, 0.1, 1.4, 0xcfe8ff);
+        n.data = { cd: 1, stun: 0, block: 0, dash: 3, combo: 0, f };
+        n.onHit = (dmg) => { if (n.data.block > 0) { G.floatText(n.pos.clone().add(new V(0, 2.8, 0)), '格擋', '#9fd0ff'); n.hp -= dmg * 0.2; if (n.hp <= 0) G.killNPC(n); return false; } n.data.stun = 0.3; };
+        n.onDeath = () => {
+          G.hud.boss(null);
+          L.fi++;
+          if (L.fi >= L.foes.length) G.after(0.8, () => G.complete('最強的人就是你！👊'));
+          else { G.hud.big('下一個對手！', '#ffd23f', 1500); G.after(1.8, () => { G.removeNPC(n); L.spawnFoe(); }); }
+        };
+        L.foe = n;
+        G.hud.toast(`${f.name} 上場了！`);
+      };
+    },
+    start(L) { L.spawnFoe(); },
+    update(dt, L) {
+      const p = G.player, P = p.mesh.userData.P;
+      L.cd -= dt; L.qcd -= dt; L.ecd -= dt; L.comboT -= dt;
+      if (L.comboT <= 0) L.combo = 0;
+      p.blocking = G.in.fH && !G.dying;
+      p.slow = p.blocking ? 0.4 : 1;
+      if (L.armT > 0) { L.armT -= dt; if (L.armT <= 0) p.mesh.userData.armPose = false; }
+      if (p.blocking) { p.mesh.userData.armPose = true; P.aL.rotation.x = -1.5; P.aR.rotation.x = -1.5; L.armT = 0.05; }
+      const n = L.foe;
+      const front = (range, dot = 0.25) => {
+        if (!n || !n.alive) return false;
+        const to = n.pos.clone().sub(p.pos).setY(0); const d = to.length();
+        return d < range && to.normalize().dot(G.forward(G.cam.yaw)) > dot;
+      };
+      if (!p.blocking && !G.dying) {
+        if (G.in.actH && L.cd <= 0) {
+          L.combo = L.combo % 4 + 1; L.comboT = 1; L.cd = L.combo === 4 ? 0.55 : 0.3; G.sfx('swing');
+          p.mesh.userData.armPose = true; (L.combo % 2 ? P.aR : P.aL).rotation.x = -1.7; L.armT = 0.18;
+          if (front(2.8)) {
+            G.hitNPC(n, L.combo === 4 ? 16 : 8); G.sfx('hit');
+            if (L.combo === 4 && n.data.block <= 0) { const kb = G.forward(G.cam.yaw); n.vel.set(kb.x * 18, 7, kb.z * 18); n.data.stun = 0.9; G.ring(n.pos.clone().setY(1), 0xffffff, 3); }
+          }
+        }
+        if (G.in.qP && L.qcd <= 0) {
+          L.qcd = 4; G.sfx('boom'); const f = G.forward(G.cam.yaw);
+          p.vel.x = f.x * 30; p.vel.z = f.z * 30; p.invuln = 0.3;
+          G.burst(p.pos.clone().setY(1), 0xffd23f, 10);
+          G.after(0.18, () => { if (front(3.6, 0)) { G.hitNPC(n, 24); const kb = G.forward(G.cam.yaw); n.vel.set(kb.x * 14, 6, kb.z * 14); n.data.stun = 0.7; } });
+          p.mesh.userData.armPose = true; P.aR.rotation.x = -1.6; L.armT = 0.35;
+        }
+        if (G.in.eP && L.ecd <= 0) {
+          L.ecd = 6; G.sfx('boom'); p.vel.y = 12; G.ring(p.pos.clone().setY(0.3), 0xffa040, 4);
+          if (n && n.alive && G.dist2(n.pos, p.pos) < 3.5) { G.hitNPC(n, 22); n.vel.y = 15; n.data.stun = 1.1; }
+          p.mesh.userData.armPose = true; P.aR.rotation.x = -3; L.armT = 0.4;
+        }
+      }
+      // foe AI
+      if (n && n.alive) {
+        const f = n.data.f, D = n.data;
+        D.cd -= dt; D.stun -= dt; D.block -= dt; D.dash -= dt;
+        G.hud.boss(f.name, n.hp / n.maxHp);
+        const d = G.dist2(n.pos, p.pos);
+        if (D.stun > 0) { G.moveEntity(n, dt); n.vel.x *= 0.9; n.vel.z *= 0.9; G.syncNPC(n, dt, 0); }
+        else if (G.dying) { G.npcSeek(n, n.pos, 0, dt); }
+        else {
+          if (G.in.actP && d < 3 && Math.random() < 0.3) D.block = 0.6;
+          if (D.block > 0) { n.mesh.userData.armPose = true; n.mesh.userData.P.aL.rotation.x = -1.5; n.mesh.userData.P.aR.rotation.x = -1.5; G.npcSeek(n, p.pos, 1.5, dt, { stop: 2 }); }
+          else {
+            n.mesh.userData.armPose = false;
+            if (d > 6 && d < 13 && D.dash <= 0) {
+              D.dash = G.rand(4, 7); const to = p.pos.clone().sub(n.pos).setY(0).normalize();
+              n.vel.set(to.x * 26, 2, to.z * 26); D.stun = 0.25; G.sfx('swing');
+              G.after(0.2, () => { if (n.alive && G.dist2(n.pos, p.pos) < 3) { G.damage(f.dmg * 2); const kb = p.pos.clone().sub(n.pos).setY(0).normalize(); p.vel.set(kb.x * 12, 5, kb.z * 12); } });
+            } else G.npcSeek(n, p.pos, f.sp, dt, { stop: 1.8 });
+            if (d < 2.6 && D.cd <= 0) {
+              D.combo = D.combo % 4 + 1; D.cd = D.combo === 4 ? 1.2 : 0.42;
+              n.mesh.userData.armPose = true; (D.combo % 2 ? n.mesh.userData.P.aR : n.mesh.userData.P.aL).rotation.x = -1.7;
+              G.after(0.15, () => { if (n.mesh) n.mesh.userData.armPose = false; });
+              G.damage(D.combo === 4 ? f.dmg * 1.8 : f.dmg); G.sfx('hit');
+              if (D.combo === 4 && !p.blocking) { const kb = p.pos.clone().sub(n.pos).setY(0).normalize(); p.vel.set(kb.x * 16, 6, kb.z * 16); }
+            }
+          }
+          n.yaw = Math.atan2(p.pos.x - n.pos.x, p.pos.z - n.pos.z); G.syncNPC(n);
+        }
+      }
+      G.hud.extra(`<span class="pill">Q 衝刺 ${L.qcd > 0 ? Math.ceil(L.qcd) + 's' : '✔'}</span><br><span class="pill">E 升龍 ${L.ecd > 0 ? Math.ceil(L.ecd) + 's' : '✔'}</span>`);
+      G.hud.prog(`對手 ${Math.min(L.fi + 1, 2)} / 2　連擊 ${L.combo}`);
+    },
+    respawn(L) { if (L.foe && L.foe.alive) { L.foe.hp = L.foe.maxHp; L.foe.pos.set(0, 0, -8); } }
+  });
+
+  // ======================= 15. 兵工廠 (Arsenal) =======================
+  const LADDER = [
+    { name: '手槍', rate: 0.25, dmg: 30, spread: 0.008, mag: 12, reloadT: 1.1, auto: false, col: 0x333333, len: 0.45 },
+    { name: '衝鋒槍', rate: 0.075, dmg: 15, spread: 0.028, mag: 35, reloadT: 1.4, auto: true, col: 0x2f3a2f, len: 0.7 },
+    { name: '霰彈槍', rate: 0.75, dmg: 16, pellets: 8, spread: 0.06, mag: 6, reloadT: 1.8, auto: false, range: 40, col: 0x6b4426, len: 0.9 },
+    { name: '狙擊槍', rate: 1.1, dmg: 130, spread: 0, mag: 5, reloadT: 2, auto: false, col: 0x2a3a4a, len: 1.2, range: 250 },
+    { name: '火箭筒', rate: 1.2, proj: true, dmg: 150, aoe: 4, speed: 42, mag: 1, reloadT: 1.3, auto: false, col: 0x3a5a2a, len: 1.1 },
+    { name: '金色小刀', melee: true, rate: 0.45, dmg: 100, range: 3.2, col: 0xffd23f, len: 0.5 },
+  ];
+  G.LEVELS.push({
+    name: '兵工廠', insp: 'Arsenal', obj: '每擊殺一次就換下一把武器：手槍→衝鋒槍→霰彈槍→狙擊槍→火箭筒→小刀。用金色小刀擊殺就贏了！',
+    ctrl: 'WASD 移動・滑鼠 瞄準・左鍵 射擊・R 換彈・空白鍵 跳',
+    ctrlTouch: '左邊搖桿移動・右邊拖曳瞄準・按住「射擊」',
+    build(L) {
+      G.setSky({ color: 0xa0b8c8, fog: [50, 130], hemiSky: 0xe8f0ff });
+      G.cam.mode = 'first';
+      G.ground(80, '#5a5f6a', '#666b77');
+      const wc = 0x3f4450;
+      G.box(0, 0, -30, 62, 8, 2, wc); G.box(0, 0, 30, 62, 8, 2, wc); G.box(-30, 0, 0, 2, 8, 62, wc); G.box(30, 0, 0, 2, 8, 62, wc);
+      const cont = [0xd93636, 0x2f7de1, 0x2fae5a, 0xff8a1a, 0x8a4fd9];
+      const C = [[-18, -18, 1], [18, 18, 1], [-18, 14, 0], [18, -14, 0], [0, -20, 0], [0, 20, 0], [-8, 0, 1], [8, 0, 1], [-22, 0, 0], [22, 0, 0]];
+      C.forEach(([x, z, r], i) => { r ? G.box(x, 0, z, 3, 3, 8, cont[i % 5]) : G.box(x, 0, z, 8, 3, 3, cont[i % 5]); });
+      G.box(-18, 3, -18, 3, 3, 8, 0x8a93a8); G.box(18, 3, 18, 3, 3, 8, 0x8a93a8);
+      for (let i = 0; i < 10; i++) G.box(G.rand(-25, 25), 0, G.rand(-25, 25), 1.4, 1.4, 1.4, 0x9b6a3c);
+      G.box(-18, 0, -12.5, 3, 1.5, 3, 0x9b6a3c); G.box(18, 0, 12.5, 3, 1.5, 3, 0x9b6a3c);
+      L.spawn.set(0, 0, 25); L.spawnYaw = 0;
+      L.spots = [new V(-25, 0, -25), new V(25, 0, -25), new V(-25, 0, 25), new V(25, 0, 25), new V(0, 0, -26), new V(-26, 0, 0), new V(26, 0, 0)];
+      L.wi = 0; L.mag = LADDER[0].mag; L.reload = 0;
+      G.hud.cross(true); G.hud.hp(true);
+      G.setButtons({ act: '射擊', e: null });
+      L.bots = [];
+      L.equip = () => { G.fps.removeGun(); const w = LADDER[L.wi]; G.fps.makeGun(w.col, w.len); L.mag = w.mag || 0; L.reload = 0; G.hud.prog(`武器 ${L.wi + 1} / 6：${w.name}`); };
+      L.spawnBot = (i) => {
+        const free = L.spots.filter(sp => !L.bots.some(b => b && b.alive && G.dist2(b.pos, sp) < 6)).sort((a, b) => G.dist2(b, G.player.pos) - G.dist2(a, G.player.pos));
+        const far = (free[G.randi(0, Math.min(2, free.length - 1))] || G.pick(L.spots)).clone().add(new V(G.rand(-1.5, 1.5), 0, G.rand(-1.5, 1.5)));
+        const n = G.makeNPC({ name: ['紅狼', '藍鷹', '綠蛇', '黃虎'][i], shirt: [0xd93636, 0x2f7de1, 0x2fae5a, 0xffd23f][i], pants: 0x222222, skin: 0xf2c48d, hp: 100, bar: true, pos: far.clone() });
+        G.part(n.mesh.userData.P.aR, 0, -0.85, 0, 0.14, 0.7, 0.18, 0x222222);
+        n.data.seed = Math.random() * 10;
+        n.onDeath = () => {
+          if (L.wi >= LADDER.length - 1) { G.after(0.6, () => G.complete('金刀擊殺！遊戲勝利！🔪')); L.wi = 99; return; }
+          L.wi++; G.hud.big('升級：' + LADDER[L.wi].name, '#ffd23f', 1200); L.equip();
+          G.after(2, () => { G.removeNPC(n); L.bots[i] = null; if (G.levelIdx >= 0 && L.wi < 99) L.spawnBot(i); });
+        };
+        L.bots[i] = n;
+      };
+      L.equip();
+    },
+    start(L) { for (let i = 0; i < 4; i++) L.spawnBot(i); },
+    update(dt, L) {
+      if (L.wi > 5) return;
+      const w = LADDER[L.wi];
+      G.fps.tick(dt, w);
+      if (!G.dying && (w.auto ? G.in.actH : G.in.actP)) G.fps.fire(w);
+      for (const b of L.bots) if (b && b.alive) G.fps.bot(b, dt, { speed: 5.6, rate: 0.6, acc: 0.25, dmg: 7, keep: 13 });
+    },
+    respawn(L) {
+      L.mag = LADDER[Math.min(L.wi, 5)].mag || 0; L.reload = 0;
+      for (const b of L.bots) if (b && b.alive && G.dist2(b.pos, G.player.pos) < 14) { b.pos.copy(G.pick(L.spots)); }
+    }
+  });
+})();
