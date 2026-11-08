@@ -202,7 +202,7 @@
   const KCOL = [0xfff3e0, 0xffd6e8, 0xd6f0ff, 0xe0ffd6, 0xfff0b0, 0xe8d6ff];
   G.LEVELS.push({
     name: '+1 速度鍵盤', insp: '+1 Speed Keyboard Escape', obj: '每走一步速度 +1！在跑步機上累積速度，打開需要速度的大門，跳過鍵盤逃出去！最後小心鍵盤怪追你！',
-    ctrl: 'WASD 移動（越跑越快）・空白鍵 跳・跑步機上速度加倍',
+    ctrl: 'WASD 移動（越跑越快）・空白鍵 跳・跑步機上速度加倍・開聲音可以聽到鍵盤 ASMR 🎧',
     build(L) {
       G.setSky({ color: 0xffd6f0, fog: [70, 200], hemiSky: 0xfff0ff });
       const key = (x, y, z, w, d, o = {}) => {
@@ -286,6 +286,14 @@
       const onBelt = p.onGround && p.ground && p.ground.tag === 'belt';
       if (onBelt) p.pos.z += ms * 0.85 * dt;
       const mv = Math.hypot(G.in.move.x, G.in.move.z);
+      // ASMR key clicks while walking on the keyboard
+      if (p.onGround && !L.wasGround && !G.dying) G.sfx('keyLand');
+      L.wasGround = p.onGround;
+      if (p.onGround && mv > 0.1 && !G.dying) {
+        L.stepD = (L.stepD || 0) + mv * ms * dt;
+        const stride = 1.1 + ms * 0.04;
+        if (L.stepD > stride) { L.stepD = 0; G.sfx('key'); }
+      }
       if (p.onGround && mv > 0.1 && !G.dying) {
         L.acc = (L.acc || 0) + mv * ms * dt / 0.9 * (onBelt ? 2 : 1);
         while (L.acc >= 1) { L.acc -= 1; L.spd++; if (L.spd % 50 === 0) G.floatText(p.pos.clone().add(new V(0, 3, 0)), '+50 ⚡', '#ffd23f'); }
@@ -299,9 +307,10 @@
       // checkpoints
       if (p.onGround && p.pos.z < L.ckZ - 0.5 && L.stage < 1) { L.stage = 1; L.ck = L.ck2.clone(); G.hud.toast('到達檢查點！'); }
       if (L.gates[1].open && p.pos.z < L.gates[1].z - 2 && L.stage < 2) {
-        L.stage = 2; L.mon.visible = true; L.mon.position.set(0, 3, L.gates[1].z + 10); G.sfx('alarm'); G.hud.big('鍵盤怪來了！快跑！', '#ff5a5a', 1600);
+        L.stage = 2; L.mon.visible = true; L.mon.position.set(0, 3, L.gates[1].z + 24); L.monWait = 1.2; G.sfx('alarm'); G.hud.big('鍵盤怪來了！快跑！', '#ff5a5a', 1600);
       }
-      if (L.stage === 2 && L.mon.visible && !G.dying) {
+      if (L.monWait > 0) L.monWait -= dt;
+      else if (L.stage === 2 && L.mon.visible && !G.dying) {
         const m = L.mon.position;
         const to = p.pos.clone().add(new V(0, 2.5, 0)).sub(m); const d = to.length();
         m.addScaledVector(to.normalize(), Math.min(d, 10.5 * dt));
@@ -315,7 +324,8 @@
     },
     respawn(L) {
       G.player.pos.copy(L.ck);
-      if (L.stage === 2) L.mon.position.set(0, 3, L.gates[1].z + 12);
+      // monster goes away; it comes back from far behind once you pass the second gate again
+      if (L.stage === 2) { L.stage = 1; L.mon.visible = false; L.mon.position.set(0, -50, 0); }
     }
   });
 

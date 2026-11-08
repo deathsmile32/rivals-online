@@ -811,11 +811,11 @@ G.maze = function (rows, cs, o = {}) {
     let e = c; while (e + 1 < W && M.rows[r][e + 1] === '#' && !(o.noMerge)) e++;
     const p0 = M.toWorld(c, r), p1 = M.toWorld(e, r);
     const col = typeof o.wallColor === 'function' ? o.wallColor(c, r) : (o.wallColor || 0x8a8f9c);
-    M.walls.push(G.box((p0.x + p1.x) / 2, 0, p0.z, (e - c + 1) * cs, wh, cs, col));
+    M.walls.push(G.box((p0.x + p1.x) / 2, 0, p0.z, (e - c + 1) * cs, wh, cs, col, o.wallMat ? { mat: o.wallMat } : {}));
     c = e;
   }
   if (o.floor !== false) {
-    const fl = G.box(0, -1, 0, W * cs, 1, H * cs, o.floorColor || 0x6b5a48);
+    const fl = G.box(0, -1, 0, W * cs, 1, H * cs, o.floorColor || 0x6b5a48, o.floorMat ? { mat: o.floorMat } : {});
     fl.userData.floor = true;
   }
   // BFS: next cell to step to from a toward b
@@ -860,6 +860,20 @@ G.sfx = function (name) {
   try {
     if (!G.ac) G.ac = new (window.AudioContext || window.webkitAudioContext)();
     const ac = G.ac; if (ac.state === 'suspended') ac.resume();
+    if (name === 'key' || name === 'keyLand') {
+      // ASMR mechanical keyboard click: filtered noise "clack" + low "thock"
+      const now = ac.currentTime, loud = name === 'keyLand' ? 1.8 : 1;
+      if (!G._noise) { const b = ac.createBuffer(1, Math.floor(ac.sampleRate * 0.06), ac.sampleRate); const d = b.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / d.length, 3); G._noise = b; }
+      const src = ac.createBufferSource(); src.buffer = G._noise; src.playbackRate.value = G.rand(0.85, 1.25);
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = G.rand(1800, 3800); bp.Q.value = 1.4;
+      const g1 = ac.createGain(); g1.gain.setValueAtTime(0.22 * loud, now); g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+      src.connect(bp); bp.connect(g1); g1.connect(ac.destination); src.start(now);
+      const o = ac.createOscillator(), g2 = ac.createGain(); o.type = 'sine';
+      o.frequency.setValueAtTime(G.rand(150, 210), now + 0.012); o.frequency.exponentialRampToValueAtTime(70, now + 0.07);
+      g2.gain.setValueAtTime(0.0001, now); g2.gain.linearRampToValueAtTime(0.09 * loud, now + 0.015); g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+      o.connect(g2); g2.connect(ac.destination); o.start(now); o.stop(now + 0.1);
+      return;
+    }
     const P = {
       shoot: ['square', 300, 90, 0.07, 0.06], jump: ['sine', 380, 640, 0.12, 0.07], hurt: ['sawtooth', 200, 80, 0.18, 0.09],
       die: ['sawtooth', 400, 60, 0.6, 0.12], win: ['triangle', 520, 1040, 0.5, 0.12], coin: ['square', 900, 1400, 0.1, 0.05],
@@ -874,6 +888,17 @@ G.sfx = function (name) {
     g.gain.setValueAtTime(s[4], ac.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + s[3]);
     o.connect(g); g.connect(ac.destination); o.start(); o.stop(ac.currentTime + s[3] + 0.02);
   } catch (e) {}
+};
+
+// looping ambient drone (e.g. fluorescent buzz); returns stop()
+G.drone = function (freq, vol, type = 'sawtooth') {
+  try {
+    if (!G.ac) G.ac = new (window.AudioContext || window.webkitAudioContext)();
+    const ac = G.ac, o = ac.createOscillator(), f = ac.createBiquadFilter(), g = ac.createGain();
+    o.type = type; o.frequency.value = freq; f.type = 'lowpass'; f.frequency.value = 900; g.gain.value = vol;
+    o.connect(f); f.connect(g); g.connect(ac.destination); o.start();
+    return { stop() { try { o.stop(); } catch (e) {} }, gain: g };
+  } catch (e) { return { stop() {}, gain: null }; }
 };
 
 // ---------------- panel (DOM menus) ----------------
