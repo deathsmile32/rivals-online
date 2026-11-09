@@ -2869,6 +2869,8 @@ function newSess(j,name,rem){return Object.assign(newCloud(CLOUD),{ok:true,uid:j
 const MIG_MSG='☁️ 已把這台裝置的進度上傳到雲端帳號';
 async function cloudBegin(S,name,prof,upd,push,isNew,msg){if(await checkBan(S.uid)){$('#amsg').textContent='🚫 此帳號已被永久封鎖（Permanently Banned）';return}
  if(typeof giftReset=='function')giftReset();S.name=name;S.live=true;S.synced=S.upd=upd||0;CLOUD=S;ACCT='c:'+S.uid;PF=fixProf(prof);
+ // one-time give-back for the admin account whose progress was overwritten by a stale device copy (2026-11-09)
+ if(isAdmin()&&!PF.codes.includes('#rest1')){PF.codes.push('#rest1');PF.lv=Math.max(PF.lv,42);PF.st.streak=Math.max(PF.st.streak,62);PF.st.best=Math.max(PF.st.best,62);PF.rk.rp=Math.max(PF.rk.rp,3768);PF.rk.best=Math.max(PF.rk.best|0,3768);push=true;msg='✅ 已還原：Lv 42 · 62 連勝 · 3768 排位分';setTimeout(()=>{try{lvlPush();stPush();rkPush()}catch(_){}},3000)}
  try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}cloudRemember(S);
  accEnter(isNew,msg);if(push)cloudFlush();else setSync('busy')}
 async function cloudLoad(S,name,mig){let d;const c=ccGet()[S.uid];try{d=await fsGet(S)}catch(e){if((e&&e.net||fbQuota(e))&&c&&c.prof){cloudBegin(S,c.name||name,c.prof,c.synced||0,false,0,fbQuota(e)?'⚠️ 雲端今天的免費額度用完了，先用這台裝置上的進度，額度恢復後會自動同步':'⚠️ 目前無法連線雲端，先用這台裝置上的進度，連線後會自動同步');setSync('off');CLOUD.vfy=1;clearTimeout(CLOUD.t);CLOUD.t=setTimeout(()=>cloudFlush(),fbQuota(e)?600000:5000);return}throw e}let prof,upd=0,push=false,msg='';
