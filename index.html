@@ -860,7 +860,7 @@ const _kwO={p:[0,0,0],v:[0,0,0],s:.05,l:.3,c:0xffffff,d:2,m:0};
 function kdTrail(x){finPS();if(!FPA)return;for(let i=0;i<2;i++){const o=_kwO;o.p[0]=x.x+(Math.random()-.5)*.06;o.p[1]=x.y+(Math.random()-.5)*.06;o.p[2]=x.z+(Math.random()-.5)*.06;o.s=.035+Math.random()*.04;o.l=.22+Math.random()*.15;o.c=i?0xffffff:KDC[(Math.random()*4)|0];psE(FPA,o)}}
 // ===== Key skins (the rarest skins): golden trail on take-out and while moving (faster = more, longer-lived sparks),
 // and Key guns leave a lingering golden shot trail (bright 0.2 s, then lighter, gone after 1 s).
-const KEYSK=new Set(['dg_key','sn_locksmith','hg_keyper','ar_akey']);
+const KEYSK=new Set(['dg_key','sn_locksmith','hg_keyper','ar_akey','sy_keythal']);
 function keyGun(e){const w=e&&e.L&&e.L[e.cur],sk=w&&skinKey(e,w);return!!(sk&&KEYSK.has(sk)&&w.k!='M')}
 function keyTracer(a,b){const len=a.distanceTo(b);if(len<.01)return;const m=new T.Mesh(new T.BoxGeometry(.035,.035,len),new T.MeshBasicMaterial({color:0xffd23f,transparent:true,opacity:1,depthWrite:false}));
  m.position.copy(a).add(b).multiplyScalar(.5);m.lookAt(b);sc.add(m);Fx.push({m,t:1,T:1,kt:1})}
@@ -1085,6 +1085,21 @@ const SKINS=[
  build:g=>{B(g,.03,.95,.03,0,.32,0,WD);B(g,.038,.18,.038,0,-.06,0,0x2a6a3a);const r=new T.Mesh(new T.TorusGeometry(.17,.013,6,22),mt(0x3a9a3a));r.rotation.y=PI/2;r.position.set(0,1.13,0);g.add(r);
   const n=new T.Mesh(new T.ConeGeometry(.16,.32,14,1,true),new T.MeshLambertMaterial({color:0xeaf6ee,transparent:true,opacity:.5,side:T.DoubleSide}));n.rotation.z=PI/2;n.position.set(-.15,1.13,0);g.add(n);return{}},
  drawFx:p=>{skBurst(p,10,[0x9fffb0,0xffffff,0xffe36a],1.3,.4,.035);[660,990,1320].forEach((f,i)=>setTimeout(()=>snd(f,.1,.03,'sine'),i*60))}},
+{id:'sy_keythal',weapon:'Scythe',name:'Keythal 鑰匙鐮刀',rarity:'legendary',ex:1,how:'超級鑰匙組合包限定 Super Key Bundle Exclusive',insp:'keythal',inspT:7.5,flashColor:0xffd23f,
+ // gold key on a long shaft: key bit at the grip end, collars, a figure-8 of two square bows at the top, and a long crescent blade sweeping forward/down from the top bow
+ build:g=>{const Gd=0xf2c418,G2=0xd09c10,G3=0xffe066;
+  Cy(g,.02,.86,0,.2,0,Gd);for(const y of[-.06,.16,.4,.58])Cy(g,.03,.035,0,y,0,G2);Cy(g,.026,.12,0,.66,0,G3);
+  B(g,.036,.16,.05,0,-.25,.035,Gd);for(const[y,h]of[[-.3,.03],[-.24,.025],[-.18,.035]])B(g,.036,h,.04,0,y,.075,G2);B(g,.036,.03,.07,0,-.335,.03,Gd);
+  const hg=new T.Group();hg.rotation.y=.9;g.add(hg);/* head turned toward the left so the blade's face shows in first person */
+  const ring=(cy,cz,s,t)=>{B(hg,.034,t,s,0,cy+s/2-t/2,cz,Gd);B(hg,.034,t,s,0,cy-s/2+t/2,cz,Gd);B(hg,.034,s,t,0,cy,cz+s/2-t/2,Gd);B(hg,.034,s,t,0,cy,cz-s/2+t/2,Gd);for(const a of[-1,1])for(const b of[-1,1])B(hg,.036,t*.9,t*.9,0,cy+a*(s/2-t*.6),cz+b*(s/2-t*.6),G3,{rx:.785})};
+  ring(.79,.0,.17,.034);ring(.98,-.035,.19,.036);
+  // crescent blade: arc from the top bow, sweeping forward (-z) and down, tapering to a point
+  {const N=11,Cy0=.66,Cz0=-.06,R=.43;for(let i=0;i<N;i++){const a0=1.62-i*.2,a1=a0-.2,y0=Cy0+R*Math.sin(a0),z0=Cz0-R*Math.cos(a0),y1=Cy0+R*Math.sin(a1),z1=Cz0-R*Math.cos(a1);
+    const yy=(y0+y1)/2,zz=(z0+z1)/2,l=Math.hypot(y1-y0,z1-z0)*1.12,w=.085*(1-i/N)+.012,an=Math.atan2(y1-y0,z1-z0);B(hg,.016,w,l,0,yy,zz,i%3==1?G3:Gd,{rx:-an});}
+   for(const k of[3,6])B(hg,.018,.03,.02,0,Cy0+R*Math.sin(1.62-k*.2)+.05,Cz0-R*Math.cos(1.62-k*.2)+.03,G2)}
+  return{}},
+ drawFx:p=>{skBurst(p,10,[0xffd23f,0xffffff,0xfff2a8],1.4,.3,.035);snd(1700,.06,.05,'triangle');setTimeout(()=>snd(2400,.08,.04,'sine'),90)},
+ fireFx:p=>{skBurst(p,3,[0xffd23f,0xffffff],1,.12,.03)}},
 {id:'sy_ice',weapon:'Scythe',name:'水晶鐮刀 Crystal Scythe',rarity:'legendary',ex:1,how:'寒冰鐮刀組合包限定（聖誕） Ice Scythe Bundle Exclusive',
  build:g=>{const Ic=0x9fe6ff,Ic2=0x5ab8f0,Wt=0xe8fbff;B(g,.028,1.05,.028,0,.35,0,0x24425f);for(const y of[.1,.4,.68])B(g,.05,.05,.05,0,y,0,Ic,{e:1,rx:.6,ry:.6});
   B(g,.045,.065,.045,0,.86,0,Wt);for(const sd of[-1,1])for(const[y,z,w,h,r]of[[.87,-.08,.085,.23,-.3],[.83,-.2,.075,.21,-.6],[.77,-.32,.065,.19,-.9],[.7,-.42,.055,.15,-1.2],[.64,-.47,.04,.1,-1.5]])B(g,.016,h,w,0,y,z*sd,Ic,{e:1,rx:r*sd});for(let i=0;i<5;i++)B(g,.03,.14+i%2*.06,.03,0,.98,(i-2)*.035,Wt,{e:1,rx:(i-2)*.25});
@@ -1153,26 +1168,6 @@ const SKINS=[
  build:g=>{B(g,.06,.08,.24,0,.09,-.04,0x2a1a3a);B(g,.062,.03,.2,0,.13,-.06,0xff3ad8,{e:1});Cz(g,.03,.03,.02,0,.06,-.15,0xff3ad8,{e:1});B(g,.046,.12,.06,0,0,.03,0x2a1a3a,{rx:-.22});return{dual:1}},
  fireFx:p=>{skBurst(p,4,[0xff3ad8,0xffffff],1.6,.12,.03);snd(1900,.03,.04,'triangle')}}
 ];
-// ===== 每把武器都有皮膚: themed case skins for every weapon that had none. Each theme rebuilds the weapon's own model,
-// recolours it with the theme palette and adds theme parts (crystals, glow strips, rivets, spikes...) fitted to the model's bounding box.
-const SKTH={
- toy:{zh:'玩具',en:'Toy',r:'common',pal:[0x2f6bff,0xffc21a,0xff5a2a],acc:(g,b,c,s)=>{const r=Math.min(.035,s.x*.45);Cz(g,r,r,.035,c.x,c.y+s.y*.15,b.min.z-.014,0xff7a00);Sp(g,Math.min(.02,s.x*.3),b.max.x,c.y,c.z,0xff3a6a);Sp(g,Math.min(.02,s.x*.3),b.min.x,c.y,c.z,0x3ad16a)}},
- wood:{zh:'復古',en:'Vintage',r:'rare',pal:[0x3b2414,0x7a4a26,0xc9a24a],acc:(g,b,c,s)=>{const n=Math.max(2,Math.min(5,Math.round(s.z/.09)));for(let i=0;i<n;i++){const z=b.min.z+s.z*(i+.5)/n;Sp(g,.008,b.max.x+.002,c.y,z,0xd8b25a);Sp(g,.008,b.min.x-.002,c.y,z,0xd8b25a)}B(g,s.x*1.04,.012,Math.min(.05,s.z*.15),c.x,c.y,b.min.z+s.z*.3,0xd8b25a)}},
- candy:{zh:'糖果',en:'Candy',r:'rare',alt:1,pal:[0xff6fa8,0xfff4f8,0x8fd8ff,0xfff4f8],acc:(g,b,c,s)=>{const C=[0xff3a6a,0xffd23f,0x3ad16a,0x3a8cff,0xffffff];for(let i=0;i<9;i++){const m=B(g,.006,.006,.018,b.min.x+s.x*(.15+.7*((i*37)%10)/10),b.max.y+.003,b.min.z+s.z*((i*53)%100)/100,C[i%5]);m.rotation.y=i*1.3}}},
- cyber:{zh:'霓虹',en:'Neon',r:'rare',pal:[0x0c0f1a,0x1c2236,0x2c3550],acc:(g,b,c,s)=>{const L=s.z*.82;B(g,.005,.008,L,b.max.x+.002,c.y,c.z,0x2ff6ff,{e:1});B(g,.005,.008,L,b.min.x-.002,c.y,c.z,0x2ff6ff,{e:1});B(g,.004,Math.min(.04,s.y*.4),Math.min(.08,s.z*.3),c.x,b.max.y+Math.min(.02,s.y*.2),c.z+s.z*.1,0xff2fd8,{e:1})}},
- bone:{zh:'骷髏',en:'Bone',r:'epic',pal:[0x3a3530,0xbdb39a,0xf2ead6],acc:(g,b,c,s)=>{const n=Math.max(3,Math.min(7,Math.round(s.z/.06)));for(let i=0;i<n;i++){const h=.03+.02*((i+1)%2),m=new T.Mesh(new T.ConeGeometry(.011,h,6),mt(0xf2ead6));m.position.set(c.x,b.max.y+h/2-.004,b.min.z+s.z*(i+.5)/n);m.rotation.x=-.35;g.add(m)}}},
- frost:{zh:'冰霜',en:'Frost',r:'epic',pal:[0x1d4f7a,0x6fc6ef,0xdff6ff],acc:(g,b,c,s)=>{const n=Math.max(3,Math.min(6,Math.round(s.z/.07)));for(let i=0;i<n;i++){const h=.045+.035*((i*7)%3)/2,m=new T.Mesh(new T.ConeGeometry(.016,h,5),mt(0xa8ecff,1));m.material=new T.MeshPhongMaterial({color:0xbff4ff,emissive:0x2a8cff,emissiveIntensity:.35,shininess:90,transparent:true,opacity:.85});m.position.set(c.x+((i%2)?.012:-.012),b.max.y+h/2-.006,b.min.z+s.z*(i+.5)/n);m.rotation.z=((i%2)?-.35:.35);g.add(m)}}},
- lava:{zh:'熔岩',en:'Magma',r:'epic',pal:[0x140c0a,0x2a1712,0x4a2a1c],acc:(g,b,c,s)=>{for(const sd of[1,-1]){let z=b.min.z+s.z*.08;for(let i=0;i<4&&z<b.max.z;i++){const l=s.z*(.12+.06*(i%2));B(g,.005,.007,l,c.x+sd*(s.x/2+.002),c.y+((i%2)?.012:-.012)*sd,z+l/2,0xff6a1a,{e:1});z+=l+s.z*.05}}B(g,s.x*.6,.005,s.z*.5,c.x,b.max.y+.002,c.z,0xff8a2a,{e:1})}},
- shadow:{zh:'暗影',en:'Shadow',r:'epic',pal:[0x08060e,0x1a1028,0x3a2458],acc:(g,b,c,s)=>{for(const z of[b.min.z+s.z*.25,c.z,b.max.z-s.z*.25])Sp(g,Math.min(.016,s.x*.3),c.x,b.max.y+.008,z,0xb04aff,1);B(g,.004,.006,s.z*.7,b.max.x+.002,c.y,c.z,0x8a3aff,{e:1})}}};
-function skThemed(g,wn,th){const u=(MD[wn]||(()=>({})))(g)||{},Q=SKTH[th];let i=0;
- g.traverse(o=>{if(!o.isMesh||!o.material||!o.material.color||o.material.transparent)return;const m=o.material;if(m.emissive&&m.emissive.getHex()&&(m.emissiveIntensity||0)>.3)return;const c=m.color,L=.3*c.r+.59*c.g+.11*c.b;o.material=mt(Q.pal[Q.alt?(i++)%Q.pal.length:L<.22?0:L<.5?1:2])});
- g.updateMatrixWorld(true);const b=new T.Box3().setFromObject(g);if(!b.isEmpty()){const c=b.getCenter(V()),s=b.getSize(V());try{Q.acc(g,b,c,s)}catch(_){}}return u}
-{const MAP=[['Burst Rifle','cyber'],['Bow','wood'],['RPG','toy'],['Shotgun','wood'],['Distortion','shadow'],['Permafrost','frost'],['Energy Rifle','cyber'],['Flamethrower','lava'],['Grenade Launcher','toy'],['Minigun','lava'],['Paintball Gun','candy'],['Crossbow','bone'],['Gunblade','shadow'],['Wildcat','frost'],
- ['Handgun','candy'],['Uzi','cyber'],['Shorty','bone'],['Daggers','frost'],['Warper','shadow'],['Energy Pistols','toy'],['Exogun','lava'],['Slingshot','wood'],['Flare Gun','toy'],['Spray','candy'],
- ['Katana','shadow'],['Battle Axe','bone'],['Scythe','lava'],['Maul','frost'],['Spear','wood'],['Trowel','toy'],['Chainsaw','bone'],['Riot Shield','cyber'],
- ['Grenade','candy'],['Medkit','toy'],['Jump Pad','cyber'],['Grappler','wood'],['Subspace Tripmine','shadow'],['Warpstone','frost'],['Flashbang','candy'],['Freeze Ray','frost'],['Satchel','wood'],['Smoke Grenade','bone'],['War Horn','lava'],['Molotov','cyber'],['Sniper','bone'],['Revolver','cyber'],['Knife','lava'],['Assault Rifle','frost']];
- const sl=n=>n.toLowerCase().replace(/[^a-z]/g,'');for(const[wn,th]of MAP){const Q=SKTH[th],id='t_'+th+'_'+sl(wn);if(SKINS.some(x=>x.id==id))continue;
-  SKINS.push({id,weapon:wn,name:Q.zh+' '+Q.en+' '+wn,rarity:Q.r,how:'從皮膚箱開出 Unboxed from a Skin Case',insp:Q.r=='epic'?'heavy':undefined,build:g=>skThemed(g,wn,th)})}}
 const SKBYID=Object.fromEntries(SKINS.map(x=>[x.id,x])),skinsFor=wn=>SKINS.filter(x=>x.weapon==wn);
 function model(w,wk,sk,ch){const g=new T.Group();const S=sk&&SKBYID[sk]&&SKBYID[sk].weapon==w.n?SKBYID[sk]:null;let u;FINE=1;try{u=(S?S.build:MD[w.n]||(()=>({})))(g)||{}}finally{FINE=0}g.userData=u;if(wk)try{applyWrap(g,w,wk)}catch(e){console.error(e)}if(ch)applyCharm(g,w,ch);return g}
 // ===== weapon wraps (procedural canvas textures; cosmetic only) =====
@@ -2262,6 +2257,11 @@ if(P.insp>0){const p=1-P.insp/(P.inspT||2.4),t=P.inspV||U.insp;
  else if(t=='keytoss'){ry+=kf(p,[[0,0],[.15,.12],[.55,.12],[.62,-.1],[.8,-.1],[1,0]]);py+=kf(p,[[.52,0],[.58,-.03],[.66,0]])}
  else if(t=='pxflip'){rx+=kf(p,[[0,0],[.15,.9],[.4,.9],[.55,0],[1,0]]);ry+=kf(p,[[0,0],[.15,.25],[.4,.25],[.55,0],[1,0]]);py+=kf(p,[[0,0],[.15,.05],[.4,.05],[1,0]])}
  else if(t=='void'){ry+=kf(p,[[0,0],[.2,.5],[.8,.5],[1,0]]);rz+=kf(p,[[0,0],[.2,.15],[.8,.15],[1,0]]);if(u.ring)u.ring.rotation.z+=dt*9}
+ else if(t=='keythal'){const T=p*7.5,K=a=>kf(T,a);
+  rx+=K([[0,0],[.6,.55],[1.6,.55],[2.1,.2],[2.6,.2],[3.4,.2],[3.9,.45],[5.4,.45],[5.9,.3],[6.6,.3],[7.5,0]]);
+  rz+=K([[0,0],[.6,-.25],[1.6,-.25],[2.1,.85],[2.6,.85],[3.4,.85],[3.9,-.55],[5.4,-.55],[5.9,.4],[6.6,.4],[7.5,0]]);
+  ry+=K([[2.6,0],[3.4,PI*2]])+K([[0,0],[1.6,0],[2.1,.35],[3.4,.35],[3.9,-.3],[5.4,-.3],[5.9,0]]);
+  px+=K([[1.6,0],[2.1,-.1],[3.4,-.1],[3.9,.07],[5.4,.07],[5.9,-.04],[6.6,-.04],[7.5,0]]);py+=K([[0,0],[.6,.05],[1.6,.05],[2.1,.02],[3.9,.08],[5.4,.08],[6.6,.03],[7.5,0]])}
  else if(t=='heavy'){py-=kf(p,[[0,0],[.3,.1],[.7,.1],[1,0]]);rx+=kf(p,[[0,0],[.3,.35],[.7,.35],[1,0]])}
  else if(t=='pulse'){ry+=kf(p,[[0,0],[.2,.6],[.7,.6],[1,0]]);if(u.glow){const gp=kf(p,[[0,0],[.12,1.8],[.28,1],[1,1]]);u.glow.scale.setScalar(gp)}}
  else if(t=='wiggle'){const w2=Math.min(1,p/.5),e2=kf(p,[[0,0],[.1,1],[.5,1],[.7,0],[1,0]]);rz+=Math.sin(w2*PI*4)*e2*.3;py+=Math.abs(Math.sin(w2*PI*4))*e2*.05}
@@ -3196,7 +3196,6 @@ var UPDATES=[
  {e:'🏠',h:200,t:'遊戲搬家了！',b:['新網址：deathsmile32.itch.io/arena','舊的 GitHub 網址已經不能用了，記得改書籤','帳號和進度都還在，用原本的帳號密碼登入就好']},
  {e:'✌️',h:280,t:'新限時模式：雙倍麻煩 Double Trouble',b:['每次同時拿兩把武器！','按 1 = 主武器＋副武器、2 = 副武器＋近戰、3 = 近戰＋道具、4 = 道具＋主武器','左鍵兩把一起攻擊','這週的限時模式就是它，到「Play → 限時模式」玩']},
  {e:'⚓',h:205,t:'新地圖：Docks 碼頭',b:['港口貨櫃場：一堆貨櫃、木箱、堆高機','兩邊碼頭停著漁船，頭上有一台大型門式起重機','對戰投票就能選 Docks']},
- {e:'🎨',h:300,t:'每把武器都有皮膚了',b:['新增 48 款主題皮膚：玩具、復古、糖果、霓虹、骷髏、冰霜、熔岩、暗影','原本沒有皮膚的武器現在都有了','全部都在 🎫 皮膚箱裡']},
  {e:'📜',h:45,t:'每把武器都有合約',b:['醫療包、跳板、鉤爪、閃光彈等輔助道具也有合約了','輔助道具的合約是「裝備它打 N 場」']},
  {e:'✨',h:50,t:'稀有展示',b:['按 V 檢視武器時，有小機率出現稀有展示','武器會被拋到空中翻兩圈再接住']},
  {e:'🦘',h:160,t:'拉回 Pull Back',b:['用弓／雙刃／拳頭二段跳時，所有水平速度會轉向你按著的方向','先用弓往前二段跳，換雙刃再按 S 二段跳，就能利用衝力往後飛']},
@@ -3626,7 +3625,7 @@ const KBUNDLES=[
  {id:'kb1',zh:'鑰匙組合包',en:'Key Bundle',gold:90,keys:10,art:'🔑'},
  {id:'keyper',zh:'Keyper 划算鑰匙包',en:'Keyper Bundle',gold:210,keys:35,skin:'hg_keyper',art:'🔑💎',off:1},
  {id:'kb2',zh:'大型鑰匙組合包',en:'Mega Key Bundle',gold:300,keys:40,cr:{wbox:1},art:'🔑🔑'},
- {id:'kb3',zh:'超級鑰匙組合包',en:'Super Key Bundle',gold:570,keys:90,cr:{wbox:3,fpack:1},rw:1,art:'🔑🔑🔑'},
+ {id:'kb3',zh:'超級鑰匙組合包',en:'Super Key Bundle',gold:570,keys:90,cr:{wbox:3,fpack:1},rw:1,skin:'sy_keythal',art:'🔑🔑🔑'},
  {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:2499,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,skin:'dg_key',art:'💰🔑'},
  {id:'medic',zh:'醫療組合包',en:'Medic Bundle',gold:1400,keys:40,cr:{wbox:3},rw:1,wpn:['Medkit'],skins:['mk_laptop'],fins:['hr'],sp:1,art:'🩹'},
  {id:'crafty',zh:'手作組合包',en:'Crafty Bundle',gold:850,keys:15,cr:{wbox:5},rw:1,skins:['kb_pencil','ba_sign','dg_toast','st_pizza','ft_spray'],fins:['er'],sp:1,art:'✏️'},
