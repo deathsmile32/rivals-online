@@ -501,7 +501,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
 <div id="pAch" class="pnl"><div class="pbox"><div class="ptitle">🏆 <span data-i18n="ptAch">Achievements</span><button class="xbtn" data-x>✕</button></div><div class="pscroll" id="achBody"></div></div></div>
 <div id="pStats" class="pnl"><div class="pbox"><div class="ptitle">📊 <span data-i18n="ptStats">Stats</span><button class="xbtn" data-x>✕</button></div><div class="pscroll" id="statsBody"></div></div></div>
 <div id="pSet" class="pnl"><div class="pbox sm" style="width:min(560px,94vw)"><div class="ptitle">⚙️ Settings<button class="xbtn" data-x>✕</button></div><div class="pscroll" id="setBody"></div></div></div>
-<div id="pEvent" class="pnl"><div class="pbox sm"><div class="ptitle">🎃 Event<button class="xbtn" data-x>✕</button></div><div style="font:800 15px system-ui;line-height:1.7">🎃 Halloween 活動<br><span class="soon">活動任務與限定獎勵 敬請期待！</span><br><span class="note">大廳裡的南瓜與箱子是本季的裝飾 👻</span></div></div></div>
+<div id="pEvent" class="pnl"><div class="pbox sm"><div class="ptitle">🎃 Event<button class="xbtn" data-x>✕</button></div><div style="font:800 15px system-ui;line-height:1.7">🎃 Halloween 活動<br><span class="note">萬聖節限定：🎃 萬聖節特效包 Halloween Finisher Pack（到 11/30）<br>可以開出 🧟 殭屍化、🦇 蝙蝠、🦴 骨頭、🦷 牙齒 四種限定死亡特效，每個都能用在所有武器上。</span><br><button class="gbtn" id="evHw" style="margin-top:10px">🎃 去看萬聖節特效包</button></div></div></div>
 <div id="pUpd" class="pnl"><button class="xbtn" id="updX" data-x title="關閉">✕</button><div id="updDeck"></div><div id="updDots"></div></div>
 <div id="pParty" class="pnl"><div class="pbox"><div class="ptitle">👥 <span data-i18n="ptParty">Party</span><span class="note" id="partyNote" style="font-weight:700"></span><button class="xbtn" data-x>✕</button></div>
  <div style="flex:1;display:grid;grid-template-columns:minmax(150px,240px) 1fr;gap:14px;min-height:0"><div><div style="font:900 16px system-ui;margin-bottom:6px">Your Party</div><div class="pslots" id="pslots"></div><button id="partyLeave" style="margin-top:8px;display:none">離開隊伍</button></div>
@@ -1109,7 +1109,11 @@ const SKINS=[
  build:g=>{B(g,.03,.95,.03,0,.32,0,WD);B(g,.038,.18,.038,0,-.06,0,0x2a6a3a);const r=new T.Mesh(new T.TorusGeometry(.17,.013,6,22),mt(0x3a9a3a));r.rotation.y=PI/2;r.position.set(0,1.13,0);g.add(r);
   const n=new T.Mesh(new T.ConeGeometry(.16,.32,14,1,true),new T.MeshLambertMaterial({color:0xeaf6ee,transparent:true,opacity:.5,side:T.DoubleSide}));n.rotation.z=PI/2;n.position.set(-.15,1.13,0);g.add(n);return{}},
  drawFx:p=>{skBurst(p,10,[0x9fffb0,0xffffff,0xffe36a],1.3,.4,.035);[660,990,1320].forEach((f,i)=>setTimeout(()=>snd(f,.1,.03,'sine'),i*60))}},
-{id:'sy_keythal',weapon:'Scythe',name:'Keythal 鑰匙鐮刀',rarity:'legendary',ex:1,how:'超級鑰匙組合包限定 Super Key Bundle Exclusive',insp:'keythal',inspT:7.5,flashColor:0xffd23f,
+{id:'sh_tooshort',weapon:'Shorty',name:'太短了 Too Short',rarity:'rare',ex:1,how:'新手包限定 Starter Pack Exclusive',
+ // comically stubby sawed-off: two fat barrels barely longer than the receiver, chunky rounded grip, bright "cut here" band
+ build:g=>{const K=0x2b2d33,Wd=0xb5763a,Rd=0xe5352a;for(const x of[-.026,.026]){Cz(g,.027,.027,.11,x,.1,-.1,K);Cz(g,.029,.029,.016,x,.1,-.152,0xcfd2d8);Cz(g,.019,.019,.004,x,.1,-.161,0x0a0a0c)}
+  B(g,.085,.07,.09,0,.085,-.01,K);B(g,.088,.012,.03,0,.125,-.04,Rd);B(g,.06,.085,.1,0,.07,.07,Wd);B(g,.058,.13,.07,0,.005,.1,Wd,{rx:-.35});Sp(g,.036,0,-.05,.125,Wd);B(g,.012,.03,.04,0,.035,.02,0xcfd2d8);return{}}},
+{id:'sy_keythal',weapon:'Scythe',name:'Keythal 鑰匙鐮刀',rarity:'legendary',ex:1,how:'極致鑰匙組合包限定 Ultra Key Bundle Exclusive',insp:'keythal',inspT:7.5,flashColor:0xffd23f,
  // gold key on a long shaft: key bit at the grip end, collars, a figure-8 of two square bows at the top, and a long crescent blade sweeping forward/down from the top bow
  build:g=>{const Gd=0xf2c418,G2=0xd09c10,G3=0xffe066;
   Cy(g,.02,.86,0,.2,0,Gd);for(const y of[-.06,.16,.4,.58])Cy(g,.03,.035,0,y,0,G2);Cy(g,.026,.12,0,.66,0,G3);
@@ -1310,6 +1314,18 @@ const CHARMS=[
 {id:'bell',zh:'鈴鐺吊飾',en:'Bell Charm',r:3,p:100,how:'商店購買 Shop',build:g=>{const b=Sp(g,.026,0,.008,0,0xffcf3a,1);b.scale.y=.8;Sp(g,.007,0,-.024,0,0x3a2a0a);const rg=Cz(g,.013,.013,.006,0,.032,0,0xffcf3a,{e:1});rg.scale.set(1,1,.6)}},
 {id:'admin',zh:'管理員皇冠',en:'Admin Crown',r:3,p:0,adm:1,how:'管理員專屬 Admin Only',build:g=>{const Gd=0xffd23f;Cy(g,.03,.018,0,-.012,0,Gd);for(let i=0;i<5;i++){const a=i/5*PI*2;B(g,.012,.03,.008,Math.cos(a)*.027,.012,Math.sin(a)*.027,Gd,{ry:-a});Sp(g,.006,Math.cos(a)*.027,.03,Math.sin(a)*.027,[0xff3b5c,0x3b8bff,0x35d07f,0xff3b5c,0x3b8bff][i],1)}Sp(g,.009,0,-.004,.031,0xff3b5c,1)}},
 {id:'wreath',zh:'花環吊飾',en:'Wreath Charm',r:3,p:0,how:'通行證 Lv30 Premium 專屬',build:g=>{g.add(new T.Mesh(new T.TorusGeometry(.022,.007,8,16),mt(0x1f7a3a)));for(let i=0;i<6;i++){const a=i/6*Math.PI*2+.3;Sp(g,.0055,Math.cos(a)*.022,Math.sin(a)*.022,0,0xd41e2c,1)}B(g,.014,.007,.004,-.006,.026,.004,0xd41e2c,{e:1,rz:.5});B(g,.014,.007,.004,.006,.026,.004,0xd41e2c,{e:1,rz:-.5})}}
+,
+// --- capsule-only charms (吊飾膠囊 Charm Capsule) ---
+{id:'ckey',zh:'鑰匙吊飾',en:'Key Charm',r:1,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{const G=0xffd23f;const rg=new T.Mesh(new T.TorusGeometry(.014,.005,8,14),mt(G,1));rg.position.y=.02;g.add(rg);B(g,.007,.045,.007,0,-.012,0,G,{e:1});B(g,.014,.006,.007,.008,-.022,0,G,{e:1});B(g,.012,.006,.007,.007,-.032,0,G,{e:1})}},
+{id:'gem',zh:'寶石吊飾',en:'Gem Charm',r:2,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{const m=new T.Mesh(new T.OctahedronGeometry(.028),mt(0x4ad8ff,1));m.scale.y=1.25;g.add(m)}},
+{id:'moon',zh:'月亮吊飾',en:'Moon Charm',r:1,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{const m=new T.Mesh(new T.TorusGeometry(.02,.009,8,16,PI*1.25),mt(0xfff2a8,1));m.rotation.z=PI*.9;g.add(m)}},
+{id:'flame',zh:'火焰吊飾',en:'Flame Charm',r:2,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{const a=new T.Mesh(new T.ConeGeometry(.02,.055,10),mt(0xff6a1a,1));g.add(a);const b=new T.Mesh(new T.ConeGeometry(.011,.034,10),mt(0xffe23f,1));b.position.set(0,-.008,.006);g.add(b);Sp(g,.02,0,-.026,0,0xff6a1a,1)}},
+{id:'donut',zh:'甜甜圈吊飾',en:'Donut Charm',r:0,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{const m=new T.Mesh(new T.TorusGeometry(.02,.011,8,18),mt(0xd9a066));g.add(m);const ic=new T.Mesh(new T.TorusGeometry(.02,.0095,8,18),mt(0xff7ab8));ic.position.z=.004;g.add(ic);[[0,.02,0xffffff],[.019,.006,0x3ad16a],[-.019,.006,0x3a8cff],[.012,-.016,0xffd23f],[-.012,-.016,0xffffff]].forEach(([x,y,c])=>B(g,.004,.009,.004,x,y,.014,c,{rz:x*40}))}},
+{id:'anchor',zh:'船錨吊飾',en:'Anchor Charm',r:1,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{const S=0x8d97a8;B(g,.007,.055,.007,0,0,0,S);B(g,.03,.006,.007,0,.016,0,S);const r=new T.Mesh(new T.TorusGeometry(.008,.003,6,12),mt(S));r.position.y=.034;g.add(r);const a=new T.Mesh(new T.TorusGeometry(.022,.004,6,14,PI),mt(S));a.rotation.z=PI;a.position.y=-.006;g.add(a)}},
+{id:'pumpkin',zh:'南瓜吊飾',en:'Pumpkin Charm',r:1,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{const s=Sp(g,.028,0,0,0,0xff7a1a);s.scale.y=.8;B(g,.006,.014,.006,0,.026,0,0x2f7a2a);for(const x of[-.009,.009])B(g,.006,.006,.004,x,.004,.026,0x1a0d00,{rz:.78});B(g,.016,.004,.004,0,-.008,.026,0x1a0d00)}},
+{id:'cbone',zh:'骨頭吊飾',en:'Bone Charm',r:0,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{const W=0xf2ead6;B(g,.008,.05,.008,0,0,0,W,{rz:.6});for(const[x,y]of[[-.019,.017],[-.009,.025],[.019,-.017],[.009,-.025]])Sp(g,.008,x,y,0,W)}},
+{id:'balloon',zh:'氣球吊飾',en:'Balloon Charm',r:0,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{const s=Sp(g,.024,0,.006,0,0xff4d4d,1);s.scale.y=1.2;const k=new T.Mesh(new T.ConeGeometry(.006,.008,6),mt(0xc62828));k.position.y=-.026;g.add(k)}},
+{id:'disco',zh:'迪斯可球吊飾',en:'Disco Ball Charm',r:3,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{Sp(g,.026,0,0,0,0xd8e0f0);const C=[0xff5adc,0x40e0ff,0xffe23f,0x7dff7a,0xffffff];for(let i=0;i<14;i++){const a=i*2.4,y=-.02+.04*((i*37)%14)/13,r=Math.sqrt(Math.max(0,.026*.026-y*y));B(g,.007,.007,.003,Math.cos(a)*r,y,Math.sin(a)*r,C[i%5],{e:1,ry:-a+PI/2})}}},
 ];
 const CHBYID=Object.fromEntries(CHARMS.map(x=>[x.id,x]));
 function applyCharm(g,w,chId){const C=CHBYID[chId];if(!C)return;try{const anchor=new T.Group();anchor.position.set(.055,-.09,.045);
@@ -1350,7 +1366,26 @@ const FINS=[
 {id:'tm',zh:'番茄攻擊',en:'Tomato',r:1,p:30,D:3.4,e:'🍅',c:['#ff7a6a','#6a0d0d'],how:'從死亡特效箱開出 Finisher Pack'},
 {id:'gl',zh:'射門！',en:'Goal!!!',r:2,p:50,D:3.9,e:'⚽',c:['#9dffb0','#145a2a'],how:'從死亡特效箱開出 Finisher Pack'},
 {id:'bn',zh:'抓到了！',en:'Caught!',r:2,p:50,D:3.4,e:'🦋',c:['#d8ffe4','#2a6a4a'],how:'從死亡特效箱開出 Finisher Pack'},
-{id:'gw',zh:'聖誕禮物',en:'Gift Wrapped',r:2,p:50,D:3.4,e:'🎁',c:['#ff5a5a','#1f7a3c'],xm:1,how:'從死亡特效箱開出（聖誕活動期間限定）'}];
+{id:'gw',zh:'聖誕禮物',en:'Gift Wrapped',r:2,p:50,D:3.4,e:'🎁',c:['#ff5a5a','#1f7a3c'],xm:1,how:'從死亡特效箱開出（聖誕活動期間限定）'},
+// --- 2026.11 notebook batch ---
+{id:'tc',zh:'科技箱',en:'Technology',r:2,p:55,D:11,e:'📺',c:['#7af0ff','#10283a'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'ru',zh:'衝擊',en:'Rush',r:1,p:30,D:1.9,e:'💥',c:['#ffffff','#3a6aff'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'c1',zh:'100 玩家',en:'100 Players',r:3,p:0,D:3.6,e:'💯',c:['#ffe27a','#c0392b'],ex:1,how:'兌換代碼 thanksfor100players'},
+{id:'sk',zh:'閃一下！',en:'Splink!',r:1,p:30,D:2.4,e:'✨',c:['#ffffff','#7a8cff'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'bl',zh:'氣球',en:'Balloon',r:1,p:28,D:4.4,e:'🎈',c:['#ff8a8a','#3a8ad0'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'sn',zh:'石化',en:'Stone',r:1,p:30,D:4.4,e:'🗿',c:['#b8b8b8','#4a4a4a'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'sp',zh:'星星墓碑',en:'Spark',r:2,p:50,D:3.8,e:'⭐',c:['#ffe27a','#3a2a6a'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'ct',zh:'切！',en:'Cut!',r:3,p:0,D:3,e:'✂️',c:['#e8e8f0','#5a1a1a'],ex:1,how:'排位賽達到 黃金 Gold 解鎖'},
+{id:'of',zh:'OOF',en:'OOF',r:1,p:30,D:3.2,e:'😵',c:['#ffd27a','#b83a3a'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'sh',zh:'發抖',en:'Shaking',r:0,p:15,D:3.2,e:'🥶',c:['#c8e8ff','#4a6a9a'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'dc',zh:'迪斯可',en:'Disco',r:3,p:0,D:4.8,e:'🕺',c:['#ff5adc','#3a2aff'],ex:1,how:'新手武器組合包限定 Starter Weapons Bundle Exclusive'},
+{id:'ed',zh:'編輯器',en:'Editor',r:2,p:0,D:3.8,e:'🟦',c:['#1a9cff','#0a1a3a'],ex:1,how:'能量組合包限定 Energy Bundle Exclusive'},
+{id:'zb',zh:'殭屍化',en:'Zombie',r:2,p:0,D:4,e:'🧟',c:['#8ad04a','#1a3a1a'],hw:1,how:'從 🎃 萬聖節特效包開出 Halloween Finisher Pack（萬聖節限定）'},
+{id:'bt',zh:'蝙蝠',en:'Bat',r:2,p:0,D:3.4,e:'🦇',c:['#a05cff','#12081f'],hw:1,how:'從 🎃 萬聖節特效包開出 Halloween Finisher Pack（萬聖節限定）'},
+{id:'bo',zh:'骨頭',en:'Bones',r:1,p:0,D:3.6,e:'🦴',c:['#f2ead6','#3a3530'],hw:1,how:'從 🎃 萬聖節特效包開出 Halloween Finisher Pack（萬聖節限定）'},
+{id:'te',zh:'牙齒',en:'Teeths',r:2,p:0,D:3.4,e:'🦷',c:['#ffffff','#5a0d0d'],hw:1,how:'從 🎃 萬聖節特效包開出 Halloween Finisher Pack（萬聖節限定）'},
+{id:'tb',zh:'永不死',en:'Technoblade',r:3,p:0,D:5,e:'👑',c:['#ffd23f','#ff7ab8'],ex:1,how:'兌換代碼 technobladeneverdies'}];
+const hwOn=()=>today()<='2026-11-30';
 const FBYID=Object.fromEntries(FINS.map(x=>[x.id,x]));
 // ===== per-weapon (不可共用) cosmetics: PF.finW / PF.wrapW = {id:[weapon names]} live next to the all-weapon PF.fins / PF.wraps.
 // Finisher Pack openings, kill milestones (Golden / Diamond Touch, Golden / Diamond / Dark Matter wraps) only unlock on ONE weapon.
@@ -1373,12 +1408,14 @@ function xmasOn(){return today()<=XMAS_END}
 function giveSnow(n,why){if(!PF||!n)return;PF.snow=(PF.snow|0)+n;saveNow();toast('❄️ +'+n+' 雪花'+(why?' · '+why:''),'#9fdcff');renderLUI()}
 const CRATES=[
  {id:'wbox',name:'包裝箱',en:'Wrap Box',cur:'keys',price:5,kind:'wrap',pool:()=>WRAPS.filter(x=>x.id!='bc'&&!x.ex).map(x=>x.id)},
- {id:'fpack',name:'死亡特效箱',en:'Finisher Pack',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.id!='fc'&&!x.ex&&(!x.xm||xmasOn())).map(x=>x.id)},
+ {id:'fpack',name:'死亡特效箱',en:'Finisher Pack',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.id!='fc'&&!x.ex&&!x.hw&&(!x.xm||xmasOn())).map(x=>x.id)},
+ {id:'hpack',name:'🎃 萬聖節特效包',en:'Halloween Finisher Pack',cur:'keys',price:15,kind:'fin',hw:1,pool:()=>FINS.filter(x=>x.hw).map(x=>x.id)},
+ {id:'ccap',name:'吊飾膠囊',en:'Charm Capsule',cur:'keys',price:8,kind:'charm',pool:()=>CHARMS.filter(x=>!x.adm&&(x.p>0||x.cap)).map(x=>x.id)},
  {id:'scase',name:'皮膚箱',en:'Skin Case',cur:'tickets',price:10,kind:'skin',pool:()=>SKINS.filter(x=>!x.ex).map(x=>x.id)},
  {id:'xbox',name:'🎄 聖誕箱',en:'Xmas Crate',cur:'snow',price:300,kind:'wrap',pool:()=>['xm','xg','xs','xw','xb','xh','xf']},
  {id:'xscase',name:'❄️ 聖誕皮膚箱',en:'Xmas Skin Case',cur:'snow',price:800,kind:'skin',pool:()=>SKINS.filter(x=>x.xsc).map(x=>x.id)}];
 const CRBYID=Object.fromEntries(CRATES.map(c=>[c.id,c]));
-function dealCrate(){const pool=CRATES.filter(c=>c.cur!=='snow');if(!pool.length)return null;const seed=today().split('-').reduce((a,c)=>a+ +c,0);return pool[seed%pool.length]}
+function dealCrate(){const pool=CRATES.filter(c=>c.cur!=='snow'&&!c.hw);if(!pool.length)return null;const seed=today().split('-').reduce((a,c)=>a+ +c,0);return pool[seed%pool.length]}
 const LTM=[{id:'bunny',zh:'兔子狙擊戰',e:'🐰',d:'全員低重力，限定武器：狙擊槍／雙管霰彈 or 訊號彈／武士刀——看誰跳得高、狙得準！'},{id:'rng',zh:'RIVALS RNG',e:'🎲',d:'空手上場只拿著骰子，按 G 骰武器、F 快速使用備用武器！骰到什麼就打什麼，刺激的隨機大亂鬥！'},{id:'jug',zh:'機械戰神 1v7',e:'💪',d:'你是血量 3000 的機械戰神，用你自己選的裝備單挑 7 名敵人（他們只有 100 血），撐到最後就贏！'},{id:'swift',zh:'極速對決 1v1',e:'⚡',d:'全員只有 1 滴血！只能用左輪手槍和小刀，小刀右鍵可以像鐮刀一樣往前衝刺，一擊定勝負！'},{id:'dbl',zh:'雙倍麻煩 Double Trouble',e:'✌️',d:'每次同時拿兩把武器！按 1 = 主武器＋副武器、2 = 副武器＋近戰、3 = 近戰＋道具、4 = 道具＋主武器，左鍵兩把一起攻擊！'}];
 // Double Trouble: the slot after the current one is held in the left hand and fires together with it (own cooldown / trigger state)
 const dblOn=()=>cfg.ltm=='dbl'&&st!='lobby',dbl2=e=>(e.cur+1)%4;
@@ -1440,7 +1477,7 @@ function shock(f,y,c,r,T0,dl){const m=mm(f,UR,ba(f,c,0));m.position.y=y;tw(f,m,T
 const FE=(f,o)=>{const q=f.g.position;o.p=[o.p[0]+q.x,o.p[1]+q.y,o.p[2]+q.z];if(o.b)o.f=q.y;psE(f.P,o)},FA2=(f,o)=>{const q=f.g.position;o.p=[o.p[0]+q.x,o.p[1]+q.y,o.p[2]+q.z];psE(f.A,o)};
 function bolt(f,a,b,c,th,l){const n=4,pts=[a];for(let i=1;i<n;i++){const t=i/n;pts.push([a[0]+(b[0]-a[0])*t+RR(-.18,.18),a[1]+(b[1]-a[1])*t+RR(-.18,.18),a[2]+(b[2]-a[2])*t+RR(-.18,.18)])}pts.push(b);
  for(let i=0;i<n;i++){const p=pts[i],q=pts[i+1],dx=q[0]-p[0],dy=q[1]-p[1],dz=q[2]-p[2],L=Math.hypot(dx,dy,dz)||.01;FA2(f,{p:[(p[0]+q[0])/2,(p[1]+q[1])/2,(p[2]+q[2])/2],s:[L,th,th],r:[0,Math.atan2(-dz,dx),Math.atan2(dy,Math.hypot(dx,dz))],c,l:l||.09,m:0})}}
-function finNew(scn,PN,PA,id,o){const X=FBYID[id]||{D:id=='_'?1e9:1.8};if(!FD[id])return null;const f={id,scn,P:PN,A:PA,t:0,D:X.D,g:new T.Group(),mats:[],tw:[],hs:o.hs||1,pv:!!o.pv,st:{},keep:false,done:false,tex:[]};
+function finNew(scn,PN,PA,id,o){const X=FBYID[id]||{D:id=='_'?1e9:1.8};if(!FD[id])return null;const f={id,scn,P:PN,A:PA,t:0,D:X.D,g:new T.Group(),mats:[],tw:[],hs:o.hs||1,pv:!!o.pv,st:{},keep:false,done:false,tex:[],nm:o.nm||'',byP:!!o.byP};
  f.g.position.set(o.x,o.y,o.z);f.g.rotation.y=o.yaw||0;scn.add(f.g);f.rig=fRig(f,o.col==null?0x3d7bef:o.col);f.pose=o.pose||null;f.g.add(f.rig.g);FD[id].init(f);return f}
 function finDispose(f){if(f.dead)return;f.dead=true;f.scn.remove(f.g);for(const m of f.mats)m.dispose();for(const t of f.tex)t.dispose();f.mats=[];f.tex=[]}
 function finStep(f,dt){if(f.dead)return;f.t+=dt;for(let i=f.tw.length-1;i>=0;i--){const w=f.tw[i];w.t+=dt;if(w.t<0)continue;w.o.visible=true;const k=Math.min(1,w.t/w.T);w.fn(k,w.o);if(k>=1){w.o.visible=false;f.tw.splice(i,1)}}
@@ -1680,18 +1717,227 @@ FD.gw={init(f){const B2=f.box=new T.Group();f.g.add(B2);const bx=mm(f,UB,lm(f,0x
     const k=ph(t,2.35,3);L.position.set(.8*k,1.6+3.5*k-2*k*k,0);L.rotation.z=-2.4*k;const fd=1-ph(t,2.6,3.3);for(const o of B2.children.concat(L.children))if(o.material)o.material.opacity=fd}}}};
 FD._={init(f){},upd(f,t,dt){f.rig.g.rotation.y=Math.sin(t*.9)*.45}};
 FD._x={init(f){},upd(f,t,dt){const R=f.rig,k=ez(ph(t,0,.4));R.g.rotation.x=k*(PI/2);R.g.position.set(0,.21*k,-1.06*k);R.aL.rotation.z=-.5*k;R.aR.rotation.z=.5*k;rigOp(R,1-ph(t,1.1,1.6))}};
+// ---- 2026.11 notebook finishers: Technology, Rush, 100 Players, Splink!, Balloon, Stone, Spark, Cut!, OOF, Shaking, Disco, Editor, Zombie, Bat, Bones, Teeths, Technoblade ----
+function sndSw(f0,f1,d,v,ty){try{AC=AC||new AudioContext();const o=AC.createOscillator(),g=AC.createGain(),t0=AC.currentTime;o.type=ty||'sawtooth';o.frequency.setValueAtTime(f0,t0);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t0+d);g.gain.setValueAtTime(v,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+d);o.connect(g);g.connect(acOut());o.start(t0);o.stop(t0+d)}catch(e){}}
+// loose rigid pieces: {o,v:[x,y,z],w:[x,y,z],gy} fall with gravity, bounce on gy and settle
+function fPhys(L,dt){for(const q of L){if(q.rest)continue;const o=q.o,v=q.v,w=q.w;v[1]-=15*dt;o.position.x+=v[0]*dt;o.position.y+=v[1]*dt;o.position.z+=v[2]*dt;o.rotation.x+=w[0]*dt;o.rotation.y+=w[1]*dt;o.rotation.z+=w[2]*dt;
+ if(o.position.y<q.gy&&v[1]<0){o.position.y=q.gy;if(Math.abs(v[1])<1.1){q.rest=1;if(q.flat!=null){o.rotation.x=q.flat;o.rotation.z=Math.round(o.rotation.z/(PI/2))*(PI/2)}}else{v[1]*=-.38;v[0]*=.6;v[2]*=.6;w[0]*=.5;w[1]*=.5;w[2]*=.5}}}}
+const fLerpC=(m,a,b,k)=>m.color.copy(a).lerp(b,k);
+var FEDGE=null;const fEdge=()=>FEDGE||(FEDGE=new T.EdgesGeometry(UB));
+function fLine(f,c){const m=new T.LineBasicMaterial({color:c,transparent:true,opacity:0});f.mats.push(m);return m}
+// 科技箱 Technology: the body de-rezzes, a metal box pops out of the floor, an LED screen rises showing the victim's face over crossbones, then the box drifts around until the next round
+FD.tc={keep:1,init(f){f.keep=true;const BX=f.bx=new T.Group();f.g.add(BX);BX.visible=false;const dk=lm(f,0x2a3140),d2=lm(f,0x4a5568),cy=ba(f,0x40e8ff,.95);
+  const b=mm(f,UB,dk,BX);b.scale.set(.95,.5,.95);b.position.y=.33;for(const s of[-1,1]){const t=mm(f,UB,cy,BX);t.scale.set(.97,.04,.04);t.position.set(0,.5,s*.47);const u=mm(f,UB,cy,BX);u.scale.set(.04,.04,.97);u.position.set(s*.47,.5,0)}
+  for(const a of[-1,1])for(const c of[-1,1]){const k=mm(f,UB,d2,BX);k.scale.set(.14,.56,.14);k.position.set(a*.44,.33,c*.44)}f.th=fsp(f,0x40e8ff,0);f.th.scale.setScalar(1.3);BX.add(f.th);f.th.position.y=.04;
+  const S=f.sc=new T.Group();S.position.y=.58;BX.add(S);const pole=mm(f,UC,d2,S);pole.scale.set(.05,.55,.05);pole.position.y=.27;const fr=mm(f,UB,dk,S);fr.scale.set(1.2,.86,.09);fr.position.y=.98;
+  const sk=new T.Color(0xf2cf9a).getStyle(),nm=String(f.nm||'PLAYER').slice(0,12),tex=fcvt(f,256,176,(x,W,H)=>{x.fillStyle='#03131c';x.fillRect(0,0,W,H);
+   x.lineCap='round';x.strokeStyle='#e8e2d0';x.lineWidth=13;for(const s of[-1,1]){x.beginPath();x.moveTo(W/2-s*62,40);x.lineTo(W/2+s*62,118);x.stroke()}x.fillStyle='#e8e2d0';for(const[a,b2]of[[-62,40],[62,40],[-62,118],[62,118]]){x.beginPath();x.arc(W/2+a-5,b2-5,9,0,6.3);x.arc(W/2+a+5,b2+5,9,0,6.3);x.fill()}
+   x.fillStyle=sk;x.fillRect(W/2-36,38,72,72);x.fillStyle='#111';x.font='900 26px monospace';x.textAlign='center';x.fillText('x',W/2-17,76);x.fillText('x',W/2+17,76);x.fillRect(W/2-16,90,32,6);
+   x.fillStyle='#40ffb0';x.font='900 22px monospace';x.fillText('R.I.P '+nm,W/2,160);x.fillStyle='rgba(0,0,0,.28)';for(let y=0;y<H;y+=4)x.fillRect(0,y,W,2)});
+  const sm=f.sm=new T.MeshBasicMaterial({map:tex,transparent:true,opacity:0});f.mats.push(sm);for(const s of[-1,1]){const p=mm(f,UP,sm,S);p.scale.set(1.1,.76,1);p.position.set(0,.98,s*.05);if(s<0)p.rotation.y=PI}S.scale.set(1,.001,1)},
+ upd(f,t,dt){const R=f.rig,st=f.st,BX=f.bx,k=ph(t,0,.55);
+  if(t<.55){glow(R,0x40e8ff,1.4*k);R.g.scale.set(1+.25*Math.sin(t*60)*k,Math.max(.02,1-k),1+.25*Math.cos(t*47)*k);R.g.position.x=RR(-.05,.05)*k;if(Math.random()<.7)FA2(f,{p:[RR(-.4,.4),RR(.1,2)*(1-k),RR(-.3,.3)],v:[RR(-.6,.6),RR(.5,2),RR(-.6,.6)],s:[.07,.07,.07],c:RP([0x40e8ff,0xffffff,0x1a9cff]),l:.5})}
+  else if(!st.a){st.a=1;R.g.visible=false;flash(f,[0,.5,0],0x40e8ff,3.5,.35);shock(f,.06,0x40e8ff,2.6,.5);if(!f.pv){snd(880,.06,.05,'square');setTimeout(()=>snd(1320,.06,.05,'square'),80);setTimeout(()=>snd(1760,.12,.05,'square'),160)}}
+  BX.visible=t>.3;const up=eob(ph(t,.3,.85));BX.scale.setScalar(Math.max(.001,up));f.sc.scale.y=Math.max(.001,ez(ph(t,.9,1.5)));
+  if(t>=1.5&&!st.b){st.b=1;if(!f.pv){snd(660,.1,.05,'sine');setTimeout(()=>snd(990,.18,.05,'sine'),110)}}
+  f.sm.opacity=t<1.2?0:t<1.9?(Math.random()<.6?1:.25):(Math.random()<.02?.5:1);
+  const u=Math.max(0,t-1.7),d=ez(Math.min(1,u/1.2));BX.position.set(Math.sin(u*.42)*1.7*d,.14+.05*Math.sin(t*2.4),Math.sin(u*.61)*1.2*d);BX.rotation.y=Math.sin(u*.3)*.9*d;f.th.material.opacity=(.45+.2*Math.sin(t*9))*Math.min(1,up)}};
+// 衝擊 Rush: a burst of light floods everything; the killer's whole screen flips colour for 0.2 s
+function rushTint(){try{const c=R.domElement,o=c.style.filter;c.style.filter='invert(.9) hue-rotate(165deg) saturate(1.9)';setTimeout(()=>{c.style.filter=o||''},200)}catch(e){}}
+FD.ru={init(f){f.sp1=mm(f,US,ba(f,0xcfe4ff,0));f.sp1.position.y=1.2;f.sp2=mm(f,US,ba(f,0xffffff,0));f.sp2.position.y=1.2},
+ upd(f,t,dt){const R=f.rig,st=f.st,k=ph(t,0,.4);
+  if(!st.a){st.a=1;flash(f,[0,1.2,0],0xffffff,11,.6);shock(f,.08,0xbfe0ff,7,.55);shock(f,.08,0xffffff,4,.4,.08);if(f.byP&&!f.pv)rushTint();
+   if(!f.pv){sndSw(180,1900,.22,.07,'sawtooth');snd(2637,.16,.035,'square');setTimeout(()=>sndSw(3200,400,.3,.04,'sine'),90)}
+   for(let i=0;i<Q(70);i++){const a=RR(0,6.28),e=RR(-.5,1.2),sp=RR(6,15);FA2(f,{p:[0,1.2,0],v:[Math.cos(a)*Math.cos(e)*sp,Math.sin(e)*sp,Math.sin(a)*Math.cos(e)*sp],s:RR(.05,.12),c:RP([0xffffff,0xbfe0ff,0x7ab8ff]),l:RR(.3,.7),d:1.5})}}
+  glow(R,0xffffff,3*k);R.g.scale.set(Math.max(.02,1-k),1+2.5*k,Math.max(.02,1-k));rigOp(R,1-ph(t,.2,.45));if(t>.45)R.g.visible=false;
+  const s=ez(ph(t,0,.7));f.sp1.scale.setScalar(.5+13*s);f.sp1.material.opacity=.55*(1-ph(t,.15,.8));f.sp2.scale.setScalar(.3+5*s);f.sp2.material.opacity=.9*(1-ph(t,.05,.5))}};
+// 100 玩家: a giant golden "100" drops out of the sky and flattens the body
+FD.c1={init(f){const H=f.h=new T.Group();f.g.add(H);const gm=lm(f,0xffc21a);gm.emissive.setHex(0x8a5200);gm.emissiveIntensity=.7;f.gm=gm;const g2=lm(f,0xfff0a0);g2.emissive.setHex(0x8a5200);g2.emissiveIntensity=.5;f.g2=g2;
+  const one=mm(f,UB,gm,H);one.scale.set(.42,1.9,.5);one.position.set(-1.35,0,0);const fl=mm(f,UB,gm,H);fl.scale.set(.4,.3,.5);fl.position.set(-1.62,.7,0);fl.rotation.z=.6;const ft=mm(f,UB,g2,H);ft.scale.set(.9,.2,.52);ft.position.set(-1.35,-.86,0);
+  for(const x of[-.1,1.3]){const z=mm(f,UT,gm,H);z.scale.set(.5,.74,.85);z.position.set(x,0,0)}H.position.y=15;H.rotation.y=PI;H.visible=false;f.tx=ftxt(f,'100 PLAYERS!','#ffd23f',3.6);f.tx.position.y=3.5},
+ upd(f,t,dt){const R=f.rig,st=f.st,H=f.h,T0=.6,end=ph(t,2.9,3.6);H.visible=true;
+  if(t<T0){const u=t/T0;H.position.y=15-(15-.97)*u*u;H.rotation.z=.25*(1-u);R.hd.rotation.x=-.6*ph(t,.1,.4);R.aL.rotation.z=-2.6*ph(t,.2,.5);R.aR.rotation.z=2.6*ph(t,.2,.5)}
+  else{if(!st.a){st.a=1;flash(f,[0,.4,0],0xfff0a0,6,.4);shock(f,.06,0xffd23f,5,.6);shock(f,.06,0xffffff,3,.4,.07);if(!f.pv){snd(62,.5,.25,'sine');snd(90,.3,.16,'triangle');setTimeout(()=>snd(1047,.3,.05,'sine'),140);setTimeout(()=>snd(1319,.4,.05,'sine'),260)}
+    for(let i=0;i<Q(34);i++){const a=RR(0,6.28),sp=RR(2,5.5);FE(f,{p:[Math.cos(a)*.6,.15,Math.sin(a)*.6],v:[Math.cos(a)*sp,RR(.6,2.6),Math.sin(a)*sp],s:RR(.1,.24),c:RP([0xb9ae98,0xd8cdb4,0x8f8672]),l:RR(.5,1),g:6,b:.3})}
+    for(let i=0;i<Q(50);i++){const a=RR(0,6.28),sp=RR(1,4);FE(f,{p:[RR(-1.4,1.4),RR(1.2,2),0],v:[Math.cos(a)*sp,RR(3,6.5),Math.sin(a)*sp],s:[RR(.05,.1),RR(.05,.1),.02],c:RP([0xffd23f,0xfff0a0,0xff4d4d,0x4aa3ff,0xffffff]),l:RR(1.2,1.9),g:4.5,d:1,w:[RR(-6,6),RR(-6,6),RR(-6,6)]})}}
+   const u=t-T0;H.position.y=.97+Math.abs(Math.sin(u*9))*Math.exp(-u*5)*.7;H.rotation.z=.05*Math.sin(u*9)*Math.exp(-u*4);R.g.scale.set(1.55,.045,1.55);R.aL.rotation.z=-1.5;R.aR.rotation.z=1.5;
+   f.tx.material.opacity=ph(t,T0,T0+.15)*(1-ph(t,2.6,2.95));const s2=1+.25*Math.exp(-u*7);f.tx.scale.set(3.6*s2,1.35*s2,1)}
+  rigOp(R,1-end);f.gm.opacity=f.g2.opacity=1-end}};
+// 閃一下！ Splink!: a little four-point sparkle appears and sucks the body in, then winks out
+FD.sk={init(f){const S=f.s=new T.Group();S.position.set(0,2.7,0);f.g.add(S);const og=new T.OctahedronGeometry(1),m=f.m=bm(f,0xffffff,1);for(const[a,b,c]of[[.09,.62,.09],[.62,.09,.09],[.09,.09,.3]]){const o=new T.Mesh(og,m);o.scale.set(a,b,c);S.add(o)}f.og=og;
+  S.scale.setScalar(.001);f.gl=fsp(f,0xcfd8ff,0);f.gl.position.copy(S.position);f.tx=ftxt(f,'SPLINK!','#ffffff',2.2);f.tx.position.y=3.5},
+ upd(f,t,dt){const R=f.rig,st=f.st,S=f.s;
+  if(!st.a){st.a=1;if(!f.pv){snd(2093,.07,.04,'sine');setTimeout(()=>snd(3136,.1,.035,'sine'),60)}}
+  const pop=eob(ph(t,0,.35)),out=ez(ph(t,1.55,2.05)),pulse=t>1.3?1+1.1*Math.exp(-(t-1.3)*9):1;S.scale.setScalar(Math.max(.001,pop*pulse*(1-out)));S.rotation.z=t*(1.5+5*ph(t,1.3,2));S.rotation.y=t*2;
+  f.gl.scale.setScalar(1.6+1.2*Math.sin(t*12)*.2+(t>1.3?2*Math.exp(-(t-1.3)*6):0));f.gl.material.opacity=.7*pop*(1-out);
+  if(t>=.35&&t<1.3){const k=ez(ph(t,.35,1.3));R.g.position.y=1.9*k;R.g.rotation.y+=dt*(3+24*k);R.g.rotation.z=.5*Math.sin(t*9)*k;const w=Math.max(.02,(1-k)*(1-.55*k));R.g.scale.set(w,Math.max(.02,(1-k)*(1+1.6*Math.sin(k*PI))),w);glow(R,0xcfd8ff,k);
+   if(Math.random()<.7){const a=RR(0,6.28),r=RR(.8,1.8),y=RR(.2,2.4);FA2(f,{p:[Math.cos(a)*r,y,Math.sin(a)*r],v:[-Math.cos(a)*r*2.4,(2.7-y)*2.4,-Math.sin(a)*r*2.4],s:.05,c:RP([0xffffff,0xcfd8ff]),l:.4})}}
+  if(t>=1.3&&!st.b){st.b=1;R.g.visible=false;flash(f,[0,2.7,0],0xffffff,3.4,.3);if(!f.pv){snd(1568,.08,.06,'triangle');setTimeout(()=>snd(2637,.3,.05,'sine'),70)}for(let i=0;i<Q(16);i++){const a=i/16*6.28;FA2(f,{p:[0,2.7,0],v:[Math.cos(a)*3,Math.sin(a)*3,RR(-.5,.5)],s:.05,c:0xffffff,l:.45,d:3})}}
+  if(t>=2.05&&!st.c){st.c=1;flash(f,[0,2.7,0],0xffffff,1.2,.2);if(!f.pv)snd(4186,.12,.025,'sine')}
+  f.tx.material.opacity=ph(t,1.3,1.4)*(1-ph(t,1.9,2.2))}};
+// 氣球 Balloon: three balloons carry the limp body up into the sky
+FD.bl={init(f){const R=f.rig;f.bs=[];const sm=lm(f,0xf4f4f4);f.bm=[sm];[[-.5,1.45,.12,0xff4d4d],[0,1.95,-.1,0x3d8bff],[.5,1.55,.06,0xffd23f]].forEach(([x,y,z,c],i)=>{const G=new T.Group();G.position.set(0,1.62,0);R.g.add(G);const m=lm(f,c);f.bm.push(m);
+   const L=Math.hypot(x,y,z),st=mm(f,UC,sm,G);st.scale.set(.008,L,.008);st.position.set(x/2,y/2,z/2);st.quaternion.setFromUnitVectors(V(0,1,0),V(x,y,z).normalize());
+   const b=mm(f,US,m,G);b.scale.set(.3,.38,.3);b.position.set(x,y+.36,z);const kn=mm(f,UK,m,G);kn.scale.set(.05,.07,.05);kn.position.set(x,y,z);G.scale.setScalar(.001);f.bs.push(G)})},
+ upd(f,t,dt){const R=f.rig,st=f.st,end=ph(t,3.6,4.4);
+  f.bs.forEach((G,i)=>{const k=eob(ph(t,.05+i*.16,.45+i*.16));G.scale.setScalar(Math.max(.001,k));G.rotation.z=Math.sin(t*1.7+i*2)*.1;if(k>0&&!st['p'+i]){st['p'+i]=1;if(!f.pv)sndSw(300+i*120,700+i*150,.14,.04,'sine')}});
+  const lim=ez(ph(t,.2,.9));R.aL.rotation.z=-2.7*lim;R.aR.rotation.z=2.7*lim;R.hd.rotation.x=.35*lim;R.lL.rotation.x=.25*Math.sin(t*2.2)*lim;R.lR.rotation.x=-.25*Math.sin(t*2.2+.8)*lim;
+  const u=Math.max(0,t-.75);R.g.position.y=.35*ez(ph(t,.5,1))+u*u*.42+u*.5;R.g.rotation.z=Math.sin(t*1.5)*.13*lim;R.g.rotation.y+=dt*.5*lim;R.g.position.x=Math.sin(t*.9)*.25*lim;
+  rigOp(R,1-end);for(const m of f.bm)m.opacity=1-end}};
+// 石化 Stone: the body freezes mid-move and turns to grey rock, then crumbles
+FD.sn={init(f){finPose(f);const R=f.rig;f.oc=[R.sh.color.clone(),R.sk.color.clone(),R.pn.color.clone()];f.tc=[new T.Color(0x8d8b84),new T.Color(0xa3a199),new T.Color(0x6f6d67)];f.base=mm(f,UC,lm(f,0x7a7872));f.base.scale.set(.001,.14,.001);f.base.position.y=.07},
+ upd(f,t,dt){const R=f.rig,st=f.st,c=ez(ph(t,.05,1.1)),ms=[R.sh,R.sk,R.pn],end=ph(t,3.5,3.75);
+  if(!st.a){st.a=1;if(!f.pv){sndSw(240,70,.9,.07,'sawtooth');snd(95,.5,.08,'triangle')}}
+  ms.forEach((m,i)=>{fLerpC(m,f.oc[i],f.tc[i],c);m.emissive.setHex(0);m.emissiveIntensity=0});R.ey.color.setHex(c>.6?0x55534e:0x111111);
+  const bk=ez(ph(t,.3,.9));f.base.scale.set(.95*bk+.001,.14,.95*bk+.001);R.g.position.y=.14*bk;if(t<1.1){R.g.position.x=RR(-.012,.012)*(1-c);if(Math.random()<.5)FE(f,{p:[RR(-.45,.45),RR(.2,2.2)*c,RR(-.3,.3)],v:[RR(-.3,.3),RR(-.4,.1),RR(-.3,.3)],s:RR(.03,.07),c:RP([0x9a988f,0x7a7872,0xb5b3aa]),l:.7,g:5,b:.2})}
+  if(t>=3.5&&!st.b){st.b=1;R.g.visible=false;if(!f.pv){snd(80,.4,.16,'square');sndSw(500,90,.35,.06,'sawtooth')}shock(f,.06,0xb5b3aa,2.6,.5);for(let i=0;i<Q(60);i++)FE(f,{p:[RR(-.45,.45),RR(.2,2.3),RR(-.3,.3)],v:[RR(-1.8,1.8),RR(0,2.6),RR(-1.8,1.8)],s:RR(.08,.22),c:RP([0x8d8b84,0xa3a199,0x6f6d67]),l:RR(.7,1.2),g:9,b:.3,r:[RR(0,6),RR(0,6),0],w:[RR(-6,6),RR(-6,6),0]})}
+  f.base.material.opacity=1-ph(t,3.8,4.4)}};
+// 星星墓碑 Spark: a gold star falls on the body and stays as a memorial reading "R.I.P <name>" until the next round
+FD.sp={keep:1,init(f){f.keep=true;const S=f.s=new T.Group();f.g.add(S);const gm=lm(f,0xffc83a);gm.emissive.setHex(0x8a5a00);gm.emissiveIntensity=.55;const st=mm(f,USTAR,gm,S);st.scale.setScalar(1.25);st.position.y=1.02;
+  const nm=String(f.nm||'PLAYER').slice(0,12),tex=fcvt(f,256,256,(x,W)=>{x.clearRect(0,0,W,W);x.textAlign='center';x.textBaseline='middle';x.fillStyle='#3a2200';x.font='900 62px '+FNT;x.fillText('R.I.P',W/2,96);let fs=44;x.font='900 '+fs+'px '+FNT;while(x.measureText(nm).width>190&&fs>16){fs-=2;x.font='900 '+fs+'px '+FNT}x.fillText(nm,W/2,158)});
+  const tm=new T.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false});f.mats.push(tm);f.tm=tm;for(const s of[-1,1]){const p=mm(f,UP,tm,S);p.scale.set(1.25,1.25,1);p.position.set(0,.98,s*.235);if(s<0)p.rotation.y=PI}
+  S.position.y=16;S.visible=false;f.gl=fsp(f,0xffe27a,0);f.gl.scale.setScalar(4.2);f.gl.position.y=1.1},
+ upd(f,t,dt){const R=f.rig,st=f.st,S=f.s,fall=ez(ph(t,0,.38)),T0=1;
+  R.g.rotation.x=fall*(PI/2);R.g.position.set(0,.21*fall,-1.06*fall);R.aL.rotation.z=-.55*fall;R.aR.rotation.z=.55*fall;
+  S.visible=t>.45;if(t<T0){const u=ph(t,.45,T0);S.position.y=16*(1-u*u);S.rotation.y=(1-u)*9;if(Math.random()<.8)FA2(f,{p:[RR(-.3,.3),S.position.y+RR(1,2.4),RR(-.3,.3)],v:[0,2,0],s:RR(.05,.1),c:RP([0xffe27a,0xffffff]),l:.4})}
+  else{if(!st.a){st.a=1;flash(f,[0,.8,0],0xffe27a,6,.45);shock(f,.06,0xffd23f,4,.55);if(!f.pv){snd(120,.25,.14,'sine');[1047,1319,1568,2093].forEach((q,i)=>setTimeout(()=>snd(q,.22,.045,'sine'),60+i*70))}
+    for(let i=0;i<Q(46);i++){const a=RR(0,6.28),sp=RR(1.5,4.5);FA2(f,{p:[0,.5,0],v:[Math.cos(a)*sp,RR(1,5),Math.sin(a)*sp],s:RR(.05,.11),c:RP([0xffe27a,0xffffff,0xffb03a]),l:RR(.6,1.2),g:5})}}
+   const u=t-T0;S.position.y=Math.abs(Math.sin(u*10))*Math.exp(-u*5)*.5;S.rotation.y=0;S.rotation.z=.07*Math.sin(u*8)*Math.exp(-u*3);
+   if(t<f.D-.05&&Math.random()<.18){const s=fsp(f,0xffffff,0);s.position.set(RR(-1,1),RR(.3,2.1),RR(-.35,.35));tw(f,s,.4,k=>{s.scale.setScalar(.55*Math.sin(k*PI)+.01);s.material.opacity=Math.sin(k*PI)})}}
+  rigOp(R,1-ph(t,T0,T0+.3));if(t>T0+.3)R.g.visible=false;f.gl.material.opacity=t<T0?0:(.3+.12*Math.sin(t*3))*(t>=f.D?.6:1)}};
+// 切！ Cut!: a scythe sweeps through the waist; the top half slides off and both halves fall
+FD.ct={init(f){const R=f.rig,U=f.u=new T.Group(),LG=f.lg=new T.Group();R.g.add(U);R.g.add(LG);for(const o of[R.tor,R.aL,R.aR,R.hd])U.add(o);LG.add(R.lL);LG.add(R.lR);
+  const P0=f.p0=new T.Group();P0.position.set(-2.5,1.02,0);f.g.add(P0);const wd=lm(f,0x5a3a20),stl=lm(f,0xdfe6f0);stl.emissive.setHex(0x8fa4c0);stl.emissiveIntensity=.35;f.sm=[wd,stl];
+  const h=mm(f,UC,wd,P0);h.scale.set(.05,2.5,.05);h.rotation.z=PI/2;h.position.set(1.15,.02,.25);h.rotation.y=-.12;
+  for(let i=0;i<7;i++){const a=i*.22,b=mm(f,UB,stl,P0);b.scale.set(.34-.035*i,.03,.36);b.position.set(2.5-1.15*(1-Math.cos(a)),0,-1.15*Math.sin(a)+.2);b.rotation.y=a}
+  P0.rotation.y=-1.7;P0.visible=false;f.ln=mm(f,UB,ba(f,0xffffff,0));f.ln.scale.set(2.6,.03,.03);f.ln.position.y=1.02;f.tx=ftxt(f,'CUT!','#ff5a5a',2.4);f.tx.position.y=3.1},
+ upd(f,t,dt){const R=f.rig,st=f.st,P0=f.p0,U=f.u,LG=f.lg,end=ph(t,2.3,3);
+  P0.visible=t<1.1;const sw=ez(ph(t,.22,.5));P0.rotation.y=-1.7+3.4*sw;for(const m of f.sm)m.opacity=Math.min(1,t*8)*(1-ph(t,.6,1.05));
+  if(t<.3){R.hd.rotation.y=.5*Math.sin(t*20)}
+  if(t>=.36&&!st.a){st.a=1;R.hd.rotation.y=0;flash(f,[0,1.02,0],0xffffff,3,.22);if(!f.pv){sndSw(1700,300,.16,.07,'sawtooth');setTimeout(()=>snd(2793,.22,.045,'triangle'),50)}
+   for(let i=0;i<Q(26);i++){const s=RR(-1,1);FA2(f,{p:[s*.45,1.02,RR(-.2,.2)],v:[s*RR(1,5),RR(-.5,1.5),RR(-1.5,1.5)],s:[RR(.08,.2),.025,.025],c:RP([0xffffff,0xffe27a]),l:RR(.2,.45),d:2})}}
+  f.ln.material.opacity=t>=.36?Math.max(0,1-(t-.36)*5):0;f.ln.scale.x=2.6+4*ph(t,.36,.56);
+  if(t>=.4){const k=ez(ph(t,.45,1)),fl=ph(t,.85,1.35),f2=fl*fl;U.position.set(.42*k+.5*f2,-.06*k-.78*f2,.12*k);U.rotation.z=-1.52*f2;U.rotation.x=.12*k;
+   if(fl>=1&&!st.b){st.b=1;if(!f.pv)snd(95,.2,.12,'sine');for(let i=0;i<Q(8);i++)FE(f,{p:[1+RR(-.4,.4),.1,RR(-.3,.3)],v:[RR(-1,1),RR(.3,1.2),RR(-1,1)],s:RR(.1,.2),c:RP([0xc8c8c8,0xe0e0e0]),l:.7,m:1,k:1.2})}
+   const lg=ph(t,1.05,1.5);LG.rotation.x=(PI/2)*lg*lg;LG.position.y=.19*lg*lg;if(lg>=1&&!st.c){st.c=1;if(!f.pv)snd(80,.18,.1,'sine')}}
+  f.tx.material.opacity=ph(t,.38,.48)*(1-ph(t,1.5,1.9));const s2=1+.3*Math.exp(-Math.max(0,t-.38)*8);f.tx.scale.set(2.4*s2,.9*s2,1);rigOp(R,1-end)}};
+// OOF: classic ragdoll break-up — head, torso, arms and legs fly apart and clatter on the floor
+FD.of={init(f){const R=f.rig;f.pp=[[R.hd,.25,null],[R.tor,.21,PI/2],[R.aL,.17,PI/2],[R.aR,.17,PI/2],[R.lL,.19,PI/2],[R.lR,.19,PI/2]].map(([o,gy,flat],i)=>{const a=RR(0,6.28),sp=i==1?RR(.3,1):RR(1.4,3.2);return{o,gy,flat,v:[Math.cos(a)*sp,RR(2.6,5.2),Math.sin(a)*sp],w:[RR(-8,8),RR(-8,8),RR(-8,8)]}});f.tx=ftxt(f,'OOF!','#ffffff',2.4);f.tx.position.y=3},
+ upd(f,t,dt){const R=f.rig,st=f.st;
+  if(t<.12){R.g.position.y=.12*Math.sin(t/.12*PI);R.aL.rotation.z=-.8;R.aR.rotation.z=.8}
+  else{if(!st.a){st.a=1;R.g.position.y=0;flash(f,[0,1.2,0],0xffffff,2.6,.2);if(!f.pv){sndSw(360,170,.2,.11,'sawtooth');sndSw(720,340,.16,.05,'square')}}
+   const n0=f.pp.filter(q=>q.rest).length;fPhys(f.pp,Math.min(dt,.05));const n1=f.pp.filter(q=>q.rest).length;if(n1>n0&&!f.pv)snd(150+n1*25,.05,.05,'triangle')}
+  f.tx.material.opacity=ph(t,.12,.2)*(1-ph(t,1.1,1.5));const s2=1+.35*Math.exp(-Math.max(0,t-.12)*8);f.tx.scale.set(2.4*s2,.9*s2,1);rigOp(R,1-ph(t,2.5,3.2))}};
+// 發抖 Shaking: frozen in the last pose, shivering harder and harder
+FD.sh={init(f){finPose(f);const R=f.rig;f.oc=R.sk.color.clone();f.tc=new T.Color(0x9fc8ee);f.b0=R.g.scale.y},
+ upd(f,t,dt){const R=f.rig,st=f.st,a=.4+.6*ph(t,0,1.6),end=ph(t,2.5,3.2);fLerpC(R.sk,f.oc,f.tc,ez(ph(t,.2,1.8)));
+  R.g.position.x=RR(-.045,.045)*a;R.g.position.z=RR(-.03,.03)*a;R.g.rotation.z=RR(-.035,.035)*a;R.hd.rotation.z=RR(-.08,.08)*a;R.g.scale.y=f.b0*(1+RR(-.012,.012)*a);
+  st.n=(st.n||0)-dt;if(st.n<=0){st.n=.075;if(!f.pv)snd(RR(1500,2100),.014,.018*a,'square')}
+  if(Math.random()<.35)FE(f,{p:[RR(-.4,.4),RR(1.3,2.2),RR(-.3,.3)],v:[RR(-.6,.6),RR(.3,1.2),RR(-.6,.6)],s:RR(.03,.055),c:RP([0xcfeaff,0xffffff,0x9fd4ff]),l:.6,g:5});
+  if(Math.random()<.2){const s=RP([-1,1]);FA2(f,{p:[s*RR(.75,.95),RR(.6,2),0],v:[s*.5,0,0],s:[.14,.02,.02],c:0xcfeaff,l:.18})}rigOp(R,1-end)}};
+// 迪斯可 Disco: the body flashes mirror-ball colours and dances while drifting upward
+FD.dc={init(f){f.bm2=[];for(let i=0;i<4;i++){const m=ba(f,[0xff5adc,0x40e0ff,0xffe23f,0x7dff7a][i],0);m.map=ftex('beam');const b=mm(f,UCO,m);b.scale.set(.55,9,.55);f.bm2.push(b)}
+  const B2=f.ball=new T.Group();B2.position.y=3.9;f.g.add(B2);const sm=lm(f,0xdfe6f6);sm.emissive.setHex(0x6a7a9a);sm.emissiveIntensity=.6;f.sm=sm;const s=mm(f,US,sm,B2);s.scale.setScalar(.34);const C=[0xff5adc,0x40e0ff,0xffe23f,0x7dff7a,0xffffff];f.fm=C.map(c=>ba(f,c,1));
+  for(let i=0;i<26;i++){const y=-.3+.6*((i*37)%26)/25,r=Math.sqrt(Math.max(0,.1156-y*y)),a=i*2.4,q=mm(f,UB,f.fm[i%5],B2);q.scale.set(.09,.09,.02);q.position.set(Math.cos(a)*r,y,Math.sin(a)*r);q.rotation.y=-a+PI/2}const st=mm(f,UC,lm(f,0x8890a0),B2);st.scale.set(.012,1.4,.012);st.position.y=1.03;B2.scale.setScalar(.001)},
+ upd(f,t,dt){const R=f.rig,st=f.st,end=ph(t,4,4.8),on=ph(t,0,.4),bt=t*9.2;
+  R.sh.color.setHSL((t*1.3)%1,1,.55);R.sk.color.setHSL((t*1.3+.33)%1,1,.6);R.pn.color.setHSL((t*1.3+.66)%1,1,.5);for(const m of[R.sh,R.sk,R.pn]){m.emissive.copy(m.color);m.emissiveIntensity=.55*on}
+  R.aL.rotation.z=(-1.5-1.1*Math.sin(bt))*on;R.aR.rotation.z=(1.5-1.1*Math.sin(bt))*on;R.aL.rotation.x=.4*Math.cos(bt)*on;R.aR.rotation.x=-.4*Math.cos(bt)*on;R.lL.rotation.x=.55*Math.sin(bt)*on;R.lR.rotation.x=-.55*Math.sin(bt)*on;R.hd.rotation.z=.25*Math.sin(bt/2)*on;
+  const u=Math.max(0,t-.5);R.g.position.y=Math.abs(Math.sin(bt))*.09*on+Math.pow(u,1.35)*.36;R.g.rotation.z=.13*Math.sin(bt/2)*on;R.g.rotation.y+=dt*1.3*on;
+  f.ball.scale.setScalar(Math.max(.001,eob(ph(t,0,.5))));f.ball.rotation.y+=dt*2.2;f.ball.position.y=3.9+Math.pow(u,1.35)*.36;
+  f.bm2.forEach((b,i)=>{const a=t*1.1+i*PI/2;b.position.set(Math.cos(a)*1.1,4.5+f.ball.position.y-3.9-4.5,Math.sin(a)*1.1);b.position.y=f.ball.position.y-4.4;b.rotation.set(Math.sin(a)*.22,0,-Math.cos(a)*.22);b.material.opacity=.3*on*(1-end)*(.6+.4*Math.sin(t*7+i))});
+  if(Math.random()<.7)FA2(f,{p:[RR(-.7,.7),R.g.position.y+RR(.1,2.3),RR(-.5,.5)],v:[0,RR(.2,.8),0],s:RR(.035,.07),c:RP([0xff5adc,0x40e0ff,0xffe23f,0x7dff7a,0xffffff]),l:.45});
+  const b8=Math.floor(t/.171);if(b8!==st.b8&&t<4.1){st.b8=b8;if(!f.pv){if(b8%2==0)snd(110,.09,.085,'sine');snd([392,494,587,784,587,494][b8%6],.09,.022,'square');if(b8%2==1)snd(6500,.02,.012,'square')}if(b8%4==0)shock(f,.05,[0xff5adc,0x40e0ff,0xffe23f,0x7dff7a][(b8/4)%4],2.4,.45)}
+  rigOp(R,1-end);f.sm.opacity=1-end;for(const m of f.fm)m.opacity=1-end}};
+// 編輯器 Editor: frozen in place, selected with blue boxes and a move gizmo like a studio editor, dragged on a grid, then deleted part by part
+FD.ed={init(f){finPose(f);const R=f.rig,E=fEdge(),lb=f.lb=fLine(f,0x18a0ff),lw=f.lw=fLine(f,0xffffff);f.pb=[];
+  const box=(par,w,h,d,y)=>{const l=new T.LineSegments(E,lw);l.scale.set(w*1.08,h*1.05,d*1.08);l.position.y=y||0;par.add(l);return l};
+  f.pb.push([R.hd,box(R.hd,.5,.5,.5)],[R.aL,box(R.aL,.34,.8,.34,-.38)],[R.aR,box(R.aR,.34,.8,.34,-.38)],[R.tor,(()=>{const l=new T.LineSegments(E,lw);l.scale.set(.82*1.08,.82*1.05,.42*1.08);l.position.copy(R.tor.position);R.g.add(l);return l})()],[R.lL,box(R.lL,.38,.8,.38,-.4)],[R.lR,box(R.lR,.38,.8,.38,-.4)]);
+  const G=f.gz=new T.Group();R.g.add(G);const big=new T.LineSegments(E,lb);big.scale.set(1.75,2.3,.75);big.position.y=1.12;G.add(big);const hm=f.hm=bm(f,0x18a0ff,0);
+  for(const a of[-1,1])for(const b of[-1,1])for(const c of[-1,1]){const h=mm(f,UB,hm,G);h.scale.setScalar(.09);h.position.set(a*.875,1.12+b*1.15,c*.375)}
+  f.am=[];[[0xff3b3b,[0,0,-PI/2]],[0x3bdc5a,[0,0,0]],[0x3b8bff,[-PI/2,0,0]]].forEach(([c,r])=>{const m=bm(f,c,0);f.am.push(m);const A=new T.Group();A.position.y=1.15;A.rotation.set(r[0],r[1],r[2]);G.add(A);const s=mm(f,UC,m,A);s.scale.set(.025,.75,.025);s.position.y=.375;const k=mm(f,UK,m,A);k.scale.set(.07,.2,.07);k.position.y=.85});
+  f.tx=ftxt(f,'DELETE','#18a0ff',2.3);f.tx.position.y=2.9},
+ upd(f,t,dt){const R=f.rig,st=f.st,sel=t>=.25?1:0,gone=ph(t,2.85,3);
+  if(sel&&!st.a){st.a=1;if(!f.pv)snd(1250,.03,.05,'square')}
+  f.lb.opacity=sel*(1-gone);f.hm.opacity=sel*(1-gone);for(const m of f.am)m.opacity=sel*(1-gone);f.lw.opacity=ph(t,1.9,1.95)*.9;
+  const sn=(v,q)=>Math.round(v/q)*q,dx=sn(.8*ez(ph(t,.55,1)),.2),dy=sn(.6*ez(ph(t,1,1.35)),.2),ry=sn(ez(ph(t,1.4,1.85)),.5)*(PI/2);
+  const key=dx+'|'+dy+'|'+ry;if(key!==st.k){if(st.k!=null&&!f.pv)snd(900,.02,.03,'square');st.k=key}R.g.position.set(dx,dy,0);R.g.rotation.y=ry;
+  f.pb.forEach(([o,l],i)=>{const T1=2+i*.15;if(t>=T1&&!st['d'+i]){st['d'+i]=1;o.visible=false;l.visible=false;if(!f.pv)snd(760-i*70,.05,.05,'square');const p=o.getWorldPosition(V()).sub(f.g.position);
+    for(let j=0;j<Q(7);j++)FA2(f,{p:[p.x+RR(-.2,.2),p.y+RR(-.3,.3),p.z+RR(-.2,.2)],v:[RR(-1.2,1.2),RR(-.2,1.5),RR(-1.2,1.2)],s:[.07,.07,.01],c:RP([0x18a0ff,0xffffff]),l:.35})}});
+  f.tx.material.opacity=ph(t,2.9,3)*(1-ph(t,3.4,3.8))}};
+// 殭屍化 Zombie: the body slowly turns green, raises its arms, shambles forward and sinks into the ground
+FD.zb={init(f){const R=f.rig;f.oc=[R.sh.color.clone(),R.sk.color.clone(),R.pn.color.clone()];f.tc=[new T.Color(0x4f5e3c),new T.Color(0x76b84c),new T.Color(0x3a3528)]},
+ upd(f,t,dt){const R=f.rig,st=f.st,c=ez(ph(t,.2,2.1)),ms=[R.sh,R.sk,R.pn],wk=ph(t,2.1,2.4),end=ph(t,3.7,4);
+  ms.forEach((m,i)=>fLerpC(m,f.oc[i],f.tc[i],c));if(c>.55)R.ey.color.setHex(0xff2a2a);
+  if(!st.a&&t>.35){st.a=1;if(!f.pv)sndSw(120,72,.8,.07,'sawtooth')}if(!st.b&&t>2.1){st.b=1;if(!f.pv){sndSw(105,60,.9,.08,'sawtooth');sndSw(210,120,.9,.03,'square')}}
+  R.aL.rotation.x=(-1.45+.08*Math.sin(t*3))*c;R.aR.rotation.x=(-1.3+.08*Math.sin(t*3+1.3))*c;R.aL.rotation.z=.12*c;R.aR.rotation.z=-.12*c;R.hd.rotation.z=.38*c;R.hd.rotation.x=-.12*c;
+  R.g.rotation.x=-.13*c;R.g.rotation.z=.07*Math.sin(t*2.3)*c;const u=Math.max(0,t-2.1);R.g.position.z=-u*.6;R.lL.rotation.x=.42*Math.sin(t*5.2)*wk;R.lR.rotation.x=-.42*Math.sin(t*5.2)*wk;R.g.position.x=.05*Math.sin(t*5.2)*wk;
+  const sink=ez(ph(t,3.1,4));R.g.position.y=-2.4*sink;if(sink>0&&sink<1&&Math.random()<.8)FE(f,{p:[RR(-.4,.4),.05,R.g.position.z+RR(-.3,.3)],v:[RR(-1,1),RR(.8,2.4),RR(-1,1)],s:RR(.07,.15),c:RP([0x5a4630,0x3a2c1c,0x6a563a]),l:.6,g:7,b:.2});
+  if(t<3.2&&Math.random()<.4*c)FA2(f,{p:[RR(-.45,.45),RR(.1,2.2),R.g.position.z+RR(-.3,.3)],v:[RR(-.2,.2),RR(.2,.7),RR(-.2,.2)],s:RR(.05,.1),c:RP([0x4a9a2a,0x2a5a1a]),l:.7});rigOp(R,1-end)}};
+// 蝙蝠 Bat: the body dissolves into purple smoke and a swarm of bats flies out
+FD.bt={init(f){const bd=f.b1=lm(f,0x17111f),wg=f.b2=bm(f,0x2a1c3a,1);f.bats=[];for(let i=0;i<Q(13);i++){const G=new T.Group();f.g.add(G);const b=mm(f,UB,bd,G);b.scale.set(.11,.1,.2);for(const s of[-1,1]){const e=mm(f,UK,bd,G);e.scale.set(.025,.07,.025);e.position.set(s*.035,.07,-.07)}
+   const W=[];for(const s of[-1,1]){const pv=new T.Group();pv.position.x=s*.05;G.add(pv);const w=mm(f,UP,wg,pv);w.scale.set(.36,.2,1);w.position.x=s*.18;w.rotation.x=-PI/2;W.push(pv)}G.visible=false;
+   f.bats.push({G,W,a:RR(0,6.28),sp:RR(.9,2.2),up:RR(.9,2.4),p:RR(0,6.28),tw:RR(1,2.2)*RP([-1,1]),dl:RR(0,.35)})}
+  const R=f.rig;f.oc=[R.sh.color.clone(),R.sk.color.clone(),R.pn.color.clone()];f.tc=new T.Color(0x22102e)},
+ upd(f,t,dt){const R=f.rig,st=f.st,c=ez(ph(t,0,.5)),end=ph(t,2.6,3.4);
+  if(t<.5){[R.sh,R.sk,R.pn].forEach((m,i)=>fLerpC(m,f.oc[i],f.tc,c));glow(R,0x7a3cd6,.8*c);R.g.position.x=RR(-.03,.03)*c;R.g.scale.set(1-.15*c,1-.1*c,1-.15*c)}
+  else{if(!st.a){st.a=1;R.g.visible=false;flash(f,[0,1.2,0],0x9a5cff,4,.4);if(!f.pv)for(let i=0;i<5;i++)setTimeout(()=>snd(RR(2800,3900),.04,.03,'square'),i*70);
+    for(let i=0;i<Q(46);i++)FE(f,{p:[RR(-.4,.4),RR(.2,2.2),RR(-.3,.3)],v:[RR(-.9,.9),RR(.4,1.8),RR(-.9,.9)],s:RR(.16,.34),c:RP([0x5a2a9a,0x3a1a6a,0x7a3cd6,0x2a1040]),l:RR(.8,1.5),m:1,k:1.4,d:1.2})}
+   if(t<1.5&&Math.random()<.5)FE(f,{p:[RR(-.5,.5),RR(.1,1.6),RR(-.4,.4)],v:[RR(-.3,.3),RR(.5,1.4),RR(-.3,.3)],s:RR(.14,.26),c:RP([0x5a2a9a,0x3a1a6a]),l:1,m:1,k:1.2})}
+  for(const b of f.bats){const u=t-.5-b.dl;b.G.visible=u>0;if(u<=0)continue;const a=b.a+u*b.tw,r=.25+b.sp*u,y=1.2+b.up*u+.22*Math.sin(u*7+b.p);b.G.position.set(Math.cos(a)*r,y,Math.sin(a)*r);b.G.rotation.y=-a+(b.tw>0?PI:0);b.G.scale.setScalar(Math.min(1,u*5)*1.5);
+   const fl=Math.sin(u*27+b.p)*.95;b.W[0].rotation.z=-fl;b.W[1].rotation.z=fl;if(Math.random()<.02&&!f.pv&&u<1.6)snd(RR(3000,4200),.03,.012,'square')}
+  f.b1.opacity=f.b2.opacity=1-end}};
+// 骨頭 Bones: an x-ray flicker, the body turns into a skeleton that rattles and collapses into a pile
+FD.bo={init(f){const S=f.sk=new T.Group();f.g.add(S);S.visible=false;const w=f.wm=lm(f,0xf2ead6),d=f.dm=lm(f,0x1a1612);f.pp=[];const pc=(geo,sx,sy,sz,x,y,z,gy,flat)=>{const G=new T.Group();G.position.set(x,y,z);S.add(G);const o=mm(f,geo,w,G);o.scale.set(sx,sy,sz);f.pp.push({o:G,gy,flat,h:[x,y,z],v:[0,0,0],w:[0,0,0]});return G};
+  const sk=pc(UB,.44,.4,.44,0,1.9,0,.22,null);for(const s of[-1,1]){const e=mm(f,UB,d,sk);e.scale.set(.11,.12,.03);e.position.set(s*.1,.03,-.225)}const ns=mm(f,UB,d,sk);ns.scale.set(.05,.07,.03);ns.position.set(0,-.07,-.225);const jw=mm(f,UB,w,sk);jw.scale.set(.34,.1,.36);jw.position.set(0,-.26,-.02);for(let i=-2;i<=2;i++){const tt=mm(f,UB,d,sk);tt.scale.set(.012,.07,.02);tt.position.set(i*.06,-.24,-.205)}
+  pc(UC,.05,.78,.05,0,1.24,0,.06,PI/2);for(const y of[1.5,1.34,1.18])pc(UB,.62,.07,.3,0,y,0,.05,0);pc(UB,.5,.14,.26,0,.84,0,.08,0);
+  for(const s of[-1,1]){pc(UC,.05,.74,.05,s*.6,1.22,0,.06,PI/2);pc(UC,.06,.78,.06,s*.21,.4,0,.07,PI/2);pc(US,.07,.07,.07,s*.6,1.62,0,.07,null)}},
+ upd(f,t,dt){const R=f.rig,st=f.st,S=f.sk,end=ph(t,2.9,3.6);
+  if(t<.55){const x=Math.floor(t/.06)%2==1&&t>.12;R.g.visible=!x;S.visible=x;glow(R,0xffffff,1.6*ph(t,0,.5));if(!st.z&&!f.pv){st.z=1;sndSw(900,2600,.5,.04,'sawtooth')}if(Math.random()<.4)bolt(f,[RR(-.5,.5),RR(.2,2.2),RR(-.3,.3)],[RR(-.5,.5),RR(.2,2.2),RR(-.3,.3)],0xffffff,.025)}
+  else{R.g.visible=false;S.visible=true;if(!st.a){st.a=1;flash(f,[0,1.2,0],0xffffff,3.4,.3)}
+   if(t<1){for(const q of f.pp){q.o.position.set(q.h[0]+RR(-.025,.025),q.h[1]+RR(-.015,.015),q.h[2]);q.o.rotation.z=RR(-.06,.06)}st.n=(st.n||0)-dt;if(st.n<=0){st.n=.07;if(!f.pv)snd(RR(900,1500),.02,.03,'triangle')}}
+   else{if(!st.b){st.b=1;for(const q of f.pp){const a=RR(0,6.28),sp=RR(.3,1.6);q.v=[Math.cos(a)*sp,RR(.3,2),Math.sin(a)*sp];q.w=[RR(-6,6),RR(-6,6),RR(-6,6)]}if(!f.pv)[880,740,622,523,415,330].forEach((n,i)=>setTimeout(()=>snd(n,.07,.05,'triangle'),i*75))}
+    const n0=f.pp.filter(q=>q.rest).length;fPhys(f.pp,Math.min(dt,.05));if(f.pp.filter(q=>q.rest).length>n0&&!f.pv)snd(RR(500,900),.03,.035,'triangle')}}
+  f.wm.opacity=f.dm.opacity=1-end}};
+// 牙齒 Teeths: giant skeleton jaws rise up behind the standing body and chomp it
+FD.te={init(f){finPose(f);const J=f.j=new T.Group();f.g.add(J);const w=f.wm=lm(f,0xf6f2e4),bn=f.bn=lm(f,0xd6ccb0);f.jw=[];
+  for(const s of[1,-1]){const G=new T.Group();J.add(G);for(let i=0;i<11;i++){const a=-2.3+i*.46,x=Math.sin(a)*1.3,z=-Math.cos(a)*1.3,big=i>=3&&i<=7;const g=mm(f,UB,bn,G);g.scale.set(.62,.3,.3);g.position.set(x,s*.42,z);g.rotation.y=-a;
+    const th=mm(f,UK,w,G);th.scale.set(big?.15:.19,big?.62:.44,.15);th.position.set(x,s*(big?.02:.1),z);th.rotation.y=-a;if(s>0)th.rotation.x=PI}f.jw.push(G)}
+  J.position.set(0,1.2,2.8);J.scale.setScalar(.001);f.tx=ftxt(f,'CHOMP!','#ffffff',2.5);f.tx.position.y=3.3},
+ upd(f,t,dt){const R=f.rig,st=f.st,J=f.j,[U,L]=f.jw,T0=1,end=ph(t,2.5,3.2);
+  const cm=ez(ph(t,0,.6));J.scale.setScalar(Math.max(.001,cm));J.position.z=2.8*(1-ez(ph(t,.15,.7)));
+  let gap;if(t<T0-.12)gap=1.75+.06*Math.sin(t*30)*ph(t,.6,.9);else if(t<T0)gap=1.75*(1-ph(t,T0-.12,T0));else{const u=t-T0;gap=u<.9?.5*Math.abs(Math.sin(u*7))*(u<.15?0:1)*Math.exp(-u*1.2):0}
+  U.position.y=.3+gap;L.position.y=-.3-gap*.7;U.rotation.x=-.1*gap;
+  if(t<T0){R.hd.rotation.y=.6*Math.sin(t*11)*ph(t,.3,.6);R.g.position.x=RR(-.02,.02)*ph(t,.5,.9)}
+  else if(!st.a){st.a=1;R.g.visible=false;flash(f,[0,1.2,0],0xffffff,4.5,.3);shock(f,.06,0xf6f2e4,3.4,.5);if(!f.pv){snd(85,.22,.22,'square');sndSw(300,60,.3,.1,'sawtooth');setTimeout(()=>snd(70,.15,.12,'square'),240);setTimeout(()=>snd(70,.15,.1,'square'),690)}
+   for(let i=0;i<Q(34);i++){const a=RR(0,6.28),sp=RR(1.5,4.5);FE(f,{p:[RR(-.3,.3),RR(.9,1.5),RR(-.3,.3)],v:[Math.cos(a)*sp,RR(.5,3),Math.sin(a)*sp],s:RR(.07,.16),c:RP([R.col,0xf2cf9a,0xffffff,0x2b2f3a]),l:RR(.5,1),g:7,b:.3})}}
+  J.position.y=1.2-3.4*ez(ph(t,2,2.9));f.tx.material.opacity=ph(t,T0,T0+.08)*(1-ph(t,1.7,2.1));const s2=1+.3*Math.exp(-Math.max(0,t-T0)*8);f.tx.scale.set(2.5*s2,.94*s2,1);f.wm.opacity=f.bn.opacity=1-end}};
+// 永不死 Technoblade (tribute): a crown grows on the head, white wings slowly unfold, and the body rises into golden light
+FD.tb={init(f){const R=f.rig,gm=f.gm=lm(f,0xffc83a);gm.emissive.setHex(0x8a5a00);gm.emissiveIntensity=.6;const rd=f.rd=lm(f,0xff3b5c);rd.emissive.setHex(0x7a0a1a);rd.emissiveIntensity=.6;const C=f.cr=new T.Group();C.position.y=.25;R.hd.add(C);
+  const bd=mm(f,UC,gm,C);bd.scale.set(.29,.13,.29);bd.position.y=.065;for(let i=0;i<6;i++){const a=i/6*PI*2,k=mm(f,UK,gm,C);k.scale.set(.075,.22,.075);k.position.set(Math.cos(a)*.24,.23,Math.sin(a)*.24);const j=mm(f,US,rd,C);j.scale.setScalar(.035);j.position.set(Math.cos(a)*.29,.07,Math.sin(a)*.29)}C.scale.setScalar(.001);
+  const wm=f.wm=lm(f,0xffffff);wm.emissive.setHex(0xbfd0e8);wm.emissiveIntensity=.35;f.wg=[];for(const s of[-1,1]){const W=new T.Group();W.position.set(s*.16,1.52,.24);R.g.add(W);const F=[];for(let i=0;i<7;i++){const pv=new T.Group();pv.position.set(s*i*.035,-i*.02,i*.012);W.add(pv);const L=1.15-i*.11,q=mm(f,UB,wm,pv);q.scale.set(.2,L,.035);q.position.y=-L/2;F.push(pv)}W.scale.setScalar(.001);f.wg.push({W,F,s})}
+  const b=f.b1=mm(f,UCO,ba(f,0xffe27a,0));b.material.map=ftex('beam');b.scale.set(1.1,22,1.1);b.position.y=11;f.hl=fsp(f,0xffe8a0,0);f.hl.scale.setScalar(4.2);f.hl.position.y=1.3;f.tx=ftxt(f,'NEVER DIES','#ffd23f',3.4);f.tx.position.y=3.3},
+ upd(f,t,dt){const R=f.rig,st=f.st,end=ph(t,4.3,5),cr=eob(ph(t,.1,.75)),un=ez(ph(t,.8,2.4)),up=ph(t,2.6,4.7);
+  f.cr.scale.setScalar(Math.max(.001,cr));if(!st.a&&t>.1){st.a=1;if(!f.pv){snd(1319,.2,.05,'sine');setTimeout(()=>snd(1760,.3,.045,'sine'),90)}for(let i=0;i<Q(14);i++){const a=i/14*6.28;FA2(f,{p:[Math.cos(a)*.3,2.3,Math.sin(a)*.3],v:[Math.cos(a)*1.2,RR(.4,1.4),Math.sin(a)*1.2],s:.05,c:RP([0xffe27a,0xffffff]),l:.6})}}
+  if(!st.b&&t>.8){st.b=1;if(!f.pv)sndSw(180,520,1.5,.03,'sine')}
+  for(const w of f.wg){w.W.scale.setScalar(Math.max(.001,eob(ph(t,.8,1.25))));w.F.forEach((pv,i)=>{pv.rotation.z=w.s*(.12+(1.95-i*.3-.12)*un)});w.W.rotation.y=w.s*(.5*(1-un)+(up>0?.2+.4*Math.sin(t*7.5):.12*Math.sin(t*2.2)*un))}
+  const op=ez(ph(t,1.6,2.6));R.aL.rotation.z=-.55*op;R.aR.rotation.z=.55*op;R.hd.rotation.x=-.3*op;R.g.position.y=.25*ez(ph(t,2,2.6))+13*up*up;R.lL.rotation.x=.12*op;R.lR.rotation.x=-.08*op;
+  if(!st.c&&t>2.6){st.c=1;if(!f.pv)[523,659,784,1047,1319].forEach((n,i)=>setTimeout(()=>snd(n,.6,.04,'sine'),i*150))}
+  f.b1.material.opacity=.5*ez(ph(t,1.9,2.6))*(1-end);f.hl.material.opacity=.45*ez(ph(t,1.6,2.4))*(1-end);f.hl.position.y=1.3+R.g.position.y;
+  if(t>.8&&Math.random()<.5)FE(f,{p:[RR(-1.3,1.3),R.g.position.y+RR(.6,2.2),RR(0,.5)],v:[RR(-.3,.3),RR(-.9,-.3),RR(-.2,.2)],s:[.07,.012,.16],c:0xffffff,l:1.4,d:1.5,r:[RR(0,6),RR(0,6),0],w:[RR(-3,3),RR(-3,3),0]});
+  if(t>1.9&&Math.random()<.8){const a=RR(0,6.28),r=RR(.2,1);FA2(f,{p:[Math.cos(a)*r,R.g.position.y+RR(0,2.4),Math.sin(a)*r],v:[0,RR(1,3),0],s:RR(.04,.08),c:RP([0xffe27a,0xfff3c4,0xffffff]),l:RR(.5,1)})}
+  f.tx.material.opacity=ph(t,2.7,2.9)*(1-ph(t,4,4.4));rigOp(R,1-end);f.gm.opacity=f.rd.opacity=f.wm.opacity=1-end}};
 // ---- world runtime ----
 var FIN=[],FPN=null,FPA=null,RFIN=null;
 function finPS(){if(!FPN){FPN=mkPS(sc,MOBILE?450:900,0);FPA=mkPS(sc,MOBILE?300:650,1)}}
 function finClear(){if(typeof FIN==='undefined'||!FIN)return;for(const f of FIN)finDispose(f);FIN=[];psClear(FPN);psClear(FPA)}
 function finTick(dt){if(!FPN)return;for(let i=FIN.length-1;i>=0;i--){const f=FIN[i];finStep(f,dt);if(f.dead)FIN.splice(i,1)}psU(FPN,dt);psU(FPA,dt)}
-function finPlay(x,y,z,yaw,col,id,pose){if(!FBYID[id])return null;finPS();const act=FIN.filter(f=>!f.done);while(act.length>=4)finFF(act.shift());while(FIN.filter(f=>f.done&&!f.dead).length>10){const o=FIN.find(f=>f.done&&!f.dead);finDispose(o);FIN.splice(FIN.indexOf(o),1)}
- const f=finNew(sc,FPN,FPA,id,{x,y,z,yaw,col,pose});if(f)FIN.push(f);return f}
-function finBegin(e,id){if(e.fin)return;const u=e.mesh.userData,pose=u&&u.lL?{lL:u.lL.rotation.clone(),lR:u.lR.rotation.clone(),aL:u.aL.rotation.clone(),aR:u.aR.rotation.clone(),hd:u.hd?u.hd.rotation.clone():null,cr:!!e.cr}:null,gy=Math.min(e.y,ground(e.x,e.z,e.y+.5)),f=finPlay(e.x,gy,e.z,e.yaw||0,u.mat.color.getHex(),id,pose);if(f){e.fin=f;e.mesh.visible=false}}
+function finPlay(x,y,z,yaw,col,id,pose,ex){if(!FBYID[id])return null;finPS();const act=FIN.filter(f=>!f.done);while(act.length>=4)finFF(act.shift());while(FIN.filter(f=>f.done&&!f.dead).length>10){const o=FIN.find(f=>f.done&&!f.dead);finDispose(o);FIN.splice(FIN.indexOf(o),1)}
+ const f=finNew(sc,FPN,FPA,id,{x,y,z,yaw,col,pose,nm:ex&&ex.nm,byP:ex&&ex.byP});if(f)FIN.push(f);return f}
+function finBegin(e,id,by){if(e.fin)return;const u=e.mesh.userData,pose=u&&u.lL?{lL:u.lL.rotation.clone(),lR:u.lR.rotation.clone(),aL:u.aL.rotation.clone(),aR:u.aR.rotation.clone(),hd:u.hd?u.hd.rotation.clone():null,cr:!!e.cr}:null,gy=Math.min(e.y,ground(e.x,e.z,e.y+.5)),f=finPlay(e.x,gy,e.z,e.yaw||0,u.mat.color.getHex(),id,pose,{nm:e.isP?accName():e.name,byP:!!(by&&by.isP)});if(f){e.fin=f;e.mesh.visible=false}}
 // resolve the finisher id an entity plays for a kill with weapon w (own = equipped; range trial override; others = synced value)
 function finKey(e,w){if(!e||!w)return'';if(e.isP&&PF){let id=(PF.fin||{})[w.n]||'';if(st=='lobby'&&LB.inRange&&RFIN)id=RFIN=='_'?'':RFIN;if(id=='?'){const o=FINS.filter(x=>finHas(x.id,w.n)).map(x=>x.id);id=o.length?o[Math.floor(rnd()*o.length)]:''}return FBYID[id]&&(id==RFIN||finHas(id,w.n))?id:''}
  const k=e.fn&&e.fn[w.n];return FBYID[k]?k:''}
-function finOnKill(v,by,wn){if(!v||!by||v.fin||v.finDone)return;const w=WBN(baseWn(wn));if(!w)return;v.finDone=1;const id=finKey(by,w);if(id)finBegin(v,id)}
+function finOnKill(v,by,wn){if(!v||!by||v.fin||v.finDone)return;const w=WBN(baseWn(wn));if(!w)return;v.finDone=1;const id=finKey(by,w);if(id)finBegin(v,id,by)}
 function rangeDummyReset(){for(const r of LB_TARGETS)if(r.kind=='bot'&&r.dead){r.dead=0;r.hp=100;r.mesh.position.y=0;r.mesh.visible=true}}
 // ---- finisher picker (re-uses the wrap picker's UI: same strip / title / search / favorite) ----
 var FDIM=0,FINM=false,FPREV='',FQ='',WFN=null,PVN=null,PVA=null,WFL=null;
@@ -2906,6 +3152,7 @@ function fixProf(p){const d=newProf();if(!p||typeof p!=='object')return d;if(p.x
  p.skins=p.skins.filter((x,i,a)=>typeof x=='string'&&SKBYID[x]&&a.indexOf(x)===i);if(p.codes.includes('deathsmilexux'))for(const x of SKINS)if(!x.adm&&!p.skins.includes(x.id))p.skins.push(x.id);p.skinFav=p.skinFav.filter(x=>SKBYID[x]);for(const n in p.skin){const v=p.skin[n];if(v!=='?'&&!(SKBYID[v]&&SKBYID[v].weapon==n&&p.skins.includes(v)))delete p.skin[n]}
  p.charms=p.charms.filter((x,i,a)=>typeof x=='string'&&CHBYID[x]&&a.indexOf(x)===i);if(!p.charms.includes('coin'))p.charms.unshift('coin');if(p.codes.includes('deathsmilexux'))for(const x of CHARMS)if(!x.adm&&!p.charms.includes(x.id))p.charms.push(x.id);p.charmFav=p.charmFav.filter(x=>CHBYID[x]);for(const n in p.charm){const v=p.charm[n];if(v!=='?'&&!p.charms.includes(v))delete p.charm[n]}
  p.emotes=p.emotes.filter((x,i,a)=>typeof x=='string'&&EMBYID[x]&&a.indexOf(x)===i);if(!p.emotes.includes('wave'))p.emotes.unshift('wave');if(p.codes.includes('deathsmilexux'))for(const x of EMOTES)if(!p.emotes.includes(x.id))p.emotes.push(x.id);
+ if(p.fins.includes('oc')&&!p.fins.includes('ed'))p.fins.push('ed');/* Energy Bundle owners also get the new Editor finisher */
  return p}
 function accLoad(){ACCDB=lsGet('rvl_accounts',null);if(!ACCDB||typeof ACCDB!=='object'||!ACCDB.users)ACCDB={v:1,users:{}};return ACCDB}
 function saveP(){if(!ACCT||!PF)return false;
@@ -3138,6 +3385,7 @@ const CODE_KEYS={free:10,bonus:15,chill:20};
 function redeem(){const c=$('#codeIn').value.trim().toLowerCase(),m=$('#codeMsg');if(!PF)return;if(!c){m.style.color='#ff8a8a';m.textContent='請輸入代碼';return}
  const already=()=>{m.style.color='#ffc93c';m.textContent='這個代碼已經兌換過了'};
  if(c==='deathsmilexux'){if(PF.codes.includes(c)){if(WRAPS.every(x=>x.adm||x.ms||PF.wraps.includes(x.id))&&FINS.every(x=>x.ms||PF.fins.includes(x.id))&&SKINS.every(x=>x.adm||PF.skins.includes(x.id)))return already();for(const x of WRAPS)if(!x.adm&&!x.ms&&!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!x.ms&&!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!x.adm&&!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！新增解鎖全部武器包裝、死亡特效與皮膚';toast('🎉 全部包裝與死亡特效已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}PF.codes.push(c);let n=0;for(const w of ALLW())if(!PF.unl.includes(w.n)){PF.unl.push(w.n);n++}for(const x of WRAPS)if(!x.adm&&!x.ms&&!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!x.ms&&!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!x.adm&&!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已解鎖全部武器、包裝、死亡特效與皮膚（新增武器 '+n+' 把）';toast('🎉 代碼兌換成功：全部武器已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
+ for(const[cd,fid]of[['thanksfor100players','c1'],['technobladeneverdies','tb']])if(c===cd){if(PF.codes.includes(c)||PF.fins.includes(fid))return already();PF.codes.push(c);PF.fins.push(fid);saveNow();const F=FBYID[fid];m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得死亡特效 '+F.e+' '+F.zh+' '+F.en+'（所有武器都能用）';toast(F.e+' 獲得死亡特效：'+F.zh+' '+F.en,'#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='aight bet!'){if(PF.codes.includes(c)||PF.skins.includes('rv_deagle'))return already();PF.codes.push(c);PF.skins.push('rv_deagle');saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 沙漠之鷹 Desert Eagle（左輪皮膚）';toast('🔫 獲得 沙漠之鷹 Desert Eagle！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='skintest'){if(PF.codes.includes(c))return already();PF.codes.push(c);for(const x of SKINS)if(!x.adm&&!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已獲得全部測試皮膚（'+SKINS.filter(x=>!x.adm).map(x=>x.name).join('、')+'）';toast('🎨 已獲得全部皮膚！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='goldtest'){if(PF.codes.includes(c))return already();PF.codes.push(c);PF.gold=(PF.gold||0)+5000;saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 💰 5000 金幣（測試用）';toast('💰 +5000 金幣','#ffcf40');snd(880,.15,.06,'sine');renderLUI();if(PANEL=='Shop')PRENDER.Shop();return}
@@ -3229,6 +3477,14 @@ var UPDATES=[
  {e:'🔑',h:48,t:'鑰匙皮膚調整',b:['A-Key 鑰匙步槍：放進「傳奇鑰匙組合包」，現在買得到了','Keyper 划算鑰匙包停售，已經擁有 Keyper 的玩家會保留']},
  {e:'⚙️',h:220,t:'設定新功能',b:['準心樣式（點／十字／圓圈）、畫質（高／低）、視野 FOV','音效、音樂音量可以分開調整']},
  {e:'🎯',h:0,t:'修正',b:['命中判定更準：頭和身體的判定跟模型一樣大','小刀：左鍵斜砍，右鍵背刺，從背後任何角度都算背刺','修正雲端同步可能讓舊裝置的進度蓋掉新進度的問題']},
+ {e:'🎁',h:120,t:'謝謝你！',b:['點下面的按鈕，領取這次更新的獎勵']}]},
+{ver:'2026.11.20',title:'💀 擊殺特效大更新',rewardKeys:20,rewardGold:100,slides:[
+ {e:'💀',h:280,t:'17 個新擊殺特效！',b:['科技箱、衝擊、閃一下、氣球、石化、星星墓碑、OOF、發抖：在特效包裡開得到','科技箱：跳出一台螢幕顯示對手的臉，會一直飄到下一回合','衝擊：擊殺的瞬間你的整個畫面會閃一下變色','星星墓碑：星星掉下來，寫著 R.I.P 對手名字']},
+ {e:'🎃',h:25,t:'萬聖節限定特效包',b:['新箱子：🎃 萬聖節特效包（15 🔑），到 11/30 為止','裡面有：殭屍化、蝙蝠、骨頭、牙齒']},
+ {e:'🎟️',h:45,t:'新兌換碼',b:['thanksfor100players → 💯 100 玩家（巨大的 100 砸下來）','technobladeneverdies → 👑 永不死（皇冠＋翅膀飛上天）']},
+ {e:'✂️',h:0,t:'排位獎勵：切！ Cut!',b:['排位到達 黃金 Gold（1200 分）就能領','鐮刀把對手切成兩半']},
+ {e:'📦',h:330,t:'新組合包',b:['新手包 49 金幣：Shorty（已有就換 20 🔑）＋ Shorty 皮膚 Too Short ＋ 10 🔑 ＋ 3 個吊飾膠囊','新手武器包 999 金幣：所有 100 🔑 以下的普通武器 ＋ 5 個包裝箱 ＋ 3 個特效包 ＋ 10 個吊飾膠囊 ＋ 30 🔑 ＋ 迪斯可 特效','能量組合包多送 編輯器 特效（已經買過的玩家自動拿到）','每個帳號限買一次']},
+ {e:'🧸',h:300,t:'吊飾膠囊',b:['新箱子：吊飾膠囊（8 🔑），開出隨機吊飾','有 10 個只有膠囊才開得到的吊飾']},
  {e:'🎁',h:120,t:'謝謝你！',b:['點下面的按鈕，領取這次更新的獎勵']}]}];
 function updLatest(){return UPDATES&&UPDATES[UPDATES.length-1]}
 function updUnclaimed(){const U=updLatest();return!!(U&&PF&&(U.rewardKeys>0||U.rewardGold>0)&&!PF.claimedUpd.includes(U.ver))}
@@ -3502,9 +3758,9 @@ function rkQueueOnline(){if(!PF||!NET||!NET.host)return;if(rkLocked()){toast('�
  const party=partyIds().filter(id=>id===NET.me||LPX[id]);if(party.length>2){toast('⚠️ 隊伍最多 2 人才能打排位 2v2');return}
  const rp=PF.rk.rp;cfg.ranked='2v2';cfg.d=rkDiff(rp);PF.rk.pend={f:'2v2',t:Date.now()};saveNow();closePanels();
  startOnlineMatch(2,party,[],'2v2')}
-const RK_REW=[{rp:1200,k:'wrap',id:'rkg',t:'黃金 Gold',n:'🎨 黃金段位包裝'},{rp:2400,k:'emote',id:'rkd',t:'鑽石 Diamond',n:'🕺 冠軍之舞'},{rp:3600,k:'wrap',id:'rkn',t:'宿敵 Nemesis',n:'🎨 宿敵包裝'}];
-function rkRewHas(r){return r.k=='wrap'?PF.wraps.includes(r.id):PF.emotes.includes(r.id)}
-function rkRewards(quiet){if(!PF||!PF.rk)return;const best=Math.max(PF.rk.best|0,PF.rk.m>=10?PF.rk.rp|0:0);let n=0;for(const r of RK_REW)if(best>=r.rp&&!rkRewHas(r)){(r.k=='wrap'?PF.wraps:PF.emotes).push(r.id);n++;if(!quiet)setTimeout(()=>toast('🏆 排位獎勵解鎖：'+r.n,'#ffd23f'),900)}if(n)saveNow()}
+const RK_REW=[{rp:1200,k:'wrap',id:'rkg',t:'黃金 Gold',n:'🎨 黃金段位包裝'},{rp:1200,k:'fin',id:'ct',t:'黃金 Gold',n:'✂️ Cut! 死亡特效'},{rp:2400,k:'emote',id:'rkd',t:'鑽石 Diamond',n:'🕺 冠軍之舞'},{rp:3600,k:'wrap',id:'rkn',t:'宿敵 Nemesis',n:'🎨 宿敵包裝'}];
+function rkRewHas(r){return(r.k=='wrap'?PF.wraps:r.k=='fin'?PF.fins:PF.emotes).includes(r.id)}
+function rkRewards(quiet){if(!PF||!PF.rk)return;const best=Math.max(PF.rk.best|0,PF.rk.m>=10?PF.rk.rp|0:0);let n=0;for(const r of RK_REW)if(best>=r.rp&&!rkRewHas(r)){(r.k=='wrap'?PF.wraps:r.k=='fin'?PF.fins:PF.emotes).push(r.id);n++;if(!quiet)setTimeout(()=>toast('🏆 排位獎勵解鎖：'+r.n,'#ffd23f'),900)}if(n)saveNow()}
 function rkFinish(won){if(!cfg.ranked||!PF)return null;const f=cfg.ranked;return rkApply(won,f,rkFirst())}
 function rkResHTML(a){if(!a)return'';
  if(a.placement){const r=PF.rk;
@@ -3643,7 +3899,7 @@ PRENDER.Shop=()=>{const T2=[['home','<b>🏠</b>Home'],['crates','<b>📦</b>Cra
  const wcard=(w,price,old)=>'<div class="cd rv '+(price>=300?'rr':price>=60?'rb':'rg')+'"><img src="'+icon(w)+'" style="width:100%;height:80px;object-fit:contain"><h4>'+w.n+'</h4><div class="sub2">'+CATN[wcat(w)]+'</div>'+(isUnl(w.n)?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bw="'+w.n+'" data-pr="'+price+'"'+((FREE()||PF.keys>=price)?'':' disabled')+'>'+(old?'<s style="opacity:.6">'+old+'</s> ':'')+'🔑 '+price+'</button>')+'</div>';
  if(SHOPT=='home'){h='<div class="cards"><div class="cd" style="grid-column:span 2;background:linear-gradient(135deg,#6a3cff,#2a1a6a)"><h4>🎫 Season Pass · Season 1</h4><div class="sub2" style="color:#e0d8ff">升級領取免費鑰匙獎勵（30 級）</div><button class="bbtn" id="shPass" style="margin-top:10px">查看 Pass</button></div><div class="cd" style="background:linear-gradient(135deg,#d0408a,#4a1a7a)"><h4>📦 開箱 Crates</h4><div class="sub2" style="color:#ffd8f0">包裝箱 · 死亡特效箱 · 皮膚箱<br>不會開到重複</div><button class="bbtn" id="shCr" style="margin-top:10px">查看箱子</button></div><div class="cd" style="background:linear-gradient(135deg,#d99a14,#6a4a0a)"><h4>🔑 鑰匙組合包 Key Bundles</h4><div class="sub2" style="color:#ffe9b0">用 💰 金幣購買 · 傳奇包送限定 鑰匙雙刃</div><button class="bbtn" id="shKb" style="margin-top:10px">查看組合包</button></div></div><h3>🔥 今日特價 Daily</h3><div class="cards">'+dailyDeals().map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>'}
  else if(SHOPT=='bundles'){h='<h3 style="margin-top:0">✨ 限定組合包 Exclusive Bundles（💰 金幣購買）</h3><div class="kbcards">'+KBUNDLES.map((b,i)=>b.sp&&(!b.lim||xmasOn())?kbCard(b,i):'').join('')+'</div><h3>🔫 武器組合包 Weapon Bundles</h3><div class="cards">'+BUNDLES.map((b,i)=>{const need=b.w.filter(n=>!isUnl(n)),price=Math.max(1,Math.round(need.reduce((s,n)=>s+wCost(n),0)*1.2));return'<div class="cd"><h4>'+b.e+' '+b.n+'</h4><div class="row" style="gap:2px;margin:6px 0">'+b.w.map(n=>'<img src="'+icon(WBN(n))+'" title="'+n+'" style="width:46%;height:42px;object-fit:contain;background:#0003;border-radius:6px;'+(isUnl(n)?'opacity:.4':'')+'">').join('')+'</div><div class="sub2">'+b.w.join(' · ')+'</div>'+(need.length?'<button class="gbtn" style="width:100%;margin-top:6px" data-bb="'+i+'" data-pr="'+price+'"'+((FREE()||PF.keys>=price)?'':' disabled')+'>🔑 '+price+'（只算未擁有的）</button>':'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 全部擁有</div>')+'</div>'}).join('')+'</div>'}
- else if(SHOPT=='crates'){const DC=dealCrate();h='<div class="note" style="margin-bottom:8px">外觀道具改由開箱取得：買下的箱子會放進 🎒 背包，打開時保證開到你還沒擁有的物品（不會重複）。點箱子可以查看內容和機率。</div><div class="cards crcards">'+CRATES.filter(C=>C.cur!='snow'||xmasOn()).map(C=>{const l=crLeft(C).length,hd=crHeld(C.id),deal=DC&&DC.id===C.id;return'<div class="cd crcd" data-crt="'+C.id+'">'+(deal&&l?'<b style="position:absolute;left:10px;top:8px;font:900 13px system-ui;color:#fff;background:#ff6a3d;padding:2px 8px;border-radius:8px">🔥 今日特惠</b>':'')+(hd?'<b class="crn">🎒×'+hd+'</b>':'')+'<img src="'+crArt(C.id)+'" alt=""><h4>'+C.name+'</h4><div class="sub2">'+C.en+' · Lootbox · 剩 '+l+' / '+C.pool().length+' 個</div>'+(l?'<div class="crpr">'+(deal?'<s style="opacity:.55;font-size:.8em">'+C.price+'</s> ':'')+crPrice(C)+' '+CURI[C.cur]+'</div>':'<div class="crpr off">已全部擁有</div>')+'</div>'}).join('')+'</div><div class="note" style="margin-top:10px">🎫 皮膚票只能從 Season Pass 通行證的免費獎勵取得 · 你有 🔑 '+PF.keys+' · 🎫 '+PF.tickets+(xmasOn()?' · ❄️ '+(PF.snow|0)+'（雪花只在聖誕活動期間能用，到 '+XMAS_END+'）':'')+'</div>'}
+ else if(SHOPT=='crates'){const DC=dealCrate();h='<div class="note" style="margin-bottom:8px">外觀道具改由開箱取得：買下的箱子會放進 🎒 背包，打開時保證開到你還沒擁有的物品（不會重複）。點箱子可以查看內容和機率。</div><div class="cards crcards">'+CRATES.filter(C=>(C.cur!='snow'||xmasOn())&&(!C.hw||hwOn())).map(C=>{const l=crLeft(C).length,hd=crHeld(C.id),deal=DC&&DC.id===C.id;return'<div class="cd crcd" data-crt="'+C.id+'">'+(deal&&l?'<b style="position:absolute;left:10px;top:8px;font:900 13px system-ui;color:#fff;background:#ff6a3d;padding:2px 8px;border-radius:8px">🔥 今日特惠</b>':'')+(hd?'<b class="crn">🎒×'+hd+'</b>':'')+'<img src="'+crArt(C.id)+'" alt=""><h4>'+C.name+'</h4><div class="sub2">'+C.en+' · Lootbox · 剩 '+l+' / '+C.pool().length+' 個</div>'+(l?'<div class="crpr">'+(deal?'<s style="opacity:.55;font-size:.8em">'+C.price+'</s> ':'')+crPrice(C)+' '+CURI[C.cur]+'</div>':'<div class="crpr off">已全部擁有</div>')+'</div>'}).join('')+'</div><div class="note" style="margin-top:10px">🎫 皮膚票只能從 Season Pass 通行證的免費獎勵取得 · 你有 🔑 '+PF.keys+' · 🎫 '+PF.tickets+(xmasOn()?' · ❄️ '+(PF.snow|0)+'（雪花只在聖誕活動期間能用，到 '+XMAS_END+'）':'')+'</div>'}
  else if(SHOPT=='daily'){const d=dailyDeals(),rc=shRefCost();h='<div class="note" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">每天換一批，75 折（只會出現你還沒解鎖的武器）<button class="bbtn" id="shRefBtn" style="margin-left:auto">🔄 重新整理'+(rc?'　💰 '+rc:'　(今天免費)')+'</button></div>';h+=d.length?'<div class="cards">'+d.map(w=>{const c=wCost(w.n);return wcard(w,Math.max(1,Math.round(c*.75)),c)}).join('')+'</div>':'<div class="cd">🎉 你已經擁有全部武器！</div>'}
  else if(SHOPT=='keys')h='<div class="note" style="margin-bottom:8px">💰 金幣：每場比賽 +'+GOLD_R.play+'、勝利再 +'+GOLD_R.win+'、每次淘汰 +'+GOLD_R.kill+'，每日任務 +'+GOLD_R.daily+'，升級 +'+GOLD_R.lv+'。你有 💰 <b>'+(PF.gold|0)+'</b>　點組合包查看內容（可重複購買，箱子會放進 🎒 背包）</div><div class="kbcards kk">'+KBUNDLES.map((b,i)=>b.sp||b.off?'':kbCard(b,i)).join('')+'</div>';
  else h='<div class="cards"><div class="cd"><h4>🎟️ Codes 兌換代碼</h4><div class="sub2">輸入代碼領取獎勵</div><button class="gbtn" id="shCode" style="margin-top:8px">Redeem a code</button></div><div class="cd"><h4>📋 Tasks</h4><button class="bbtn" id="shTasks" style="margin-top:8px">打開任務</button></div></div><h3>🔮 吊飾 Charms</h3><div class="note" style="margin-bottom:8px">武器掛飾，純外觀，掛在你自己視角看到的武器上</div><div class="cards">'+CHARMS.filter(c=>c.p>0).map(c=>'<div class="cd"><div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:30px">🔮</div><h4>'+c.zh+'</h4><div class="sub2">'+c.en+'</div>'+(PF.charms.includes(c.id)?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bc="'+c.id+'"'+((FREE()||PF.keys>=c.p)?'':' disabled')+'>🔑 '+c.p+'</button>')+'</div>').join('')+'</div>'
@@ -3659,21 +3915,25 @@ const KBUNDLES=[
  {id:'kb1',zh:'鑰匙組合包',en:'Key Bundle',gold:90,keys:10,art:'🔑'},
  {id:'keyper',zh:'Keyper 划算鑰匙包',en:'Keyper Bundle',gold:210,keys:35,skin:'hg_keyper',art:'🔑💎',off:1},
  {id:'kb2',zh:'大型鑰匙組合包',en:'Mega Key Bundle',gold:300,keys:40,cr:{wbox:1},art:'🔑🔑'},
- {id:'kb3',zh:'超級鑰匙組合包',en:'Super Key Bundle',gold:570,keys:90,cr:{wbox:3,fpack:1},rw:1,skin:'sy_keythal',art:'🔑🔑🔑'},
- {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:2499,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,skin:'dg_key',art:'💰🔑'},
+ {id:'kb3',zh:'超級鑰匙組合包',en:'Super Key Bundle',gold:570,keys:90,cr:{wbox:3,fpack:1},rw:1,art:'🔑🔑🔑'},
+ {id:'kb4',zh:'極致鑰匙組合包',en:'Ultra Key Bundle',gold:2499,keys:450,cr:{wbox:15,fpack:5},rw:7,rf:1,skin:'dg_key',skins:['sy_keythal'],art:'💰🔑'},
+ // starter bundles (one purchase per account). wall:N = every non-admin weapon that costs <= N keys; wdup = keys given instead when a listed weapon is already owned
+ {id:'startp',zh:'新手包',en:'Starter Pack',gold:49,keys:10,cr:{ccap:3},wpn:['Shorty'],wdup:20,skins:['sh_tooshort'],sp:1,once:1,art:'🔫'},
+ {id:'startw',zh:'新手武器組合包',en:'Starter Weapons Bundle',gold:999,keys:30,cr:{wbox:5,fpack:3,ccap:10},wall:100,fins:['dc'],sp:1,once:1,art:'🎒'},
  {id:'medic',zh:'醫療組合包',en:'Medic Bundle',gold:1400,keys:40,cr:{wbox:3},rw:1,wpn:['Medkit'],skins:['mk_laptop'],fins:['hr'],sp:1,art:'🩹'},
  {id:'crafty',zh:'手作組合包',en:'Crafty Bundle',gold:850,keys:15,cr:{wbox:5},rw:1,skins:['kb_pencil','ba_sign','dg_toast','st_pizza','ft_spray'],fins:['er'],sp:1,art:'✏️'},
- {id:'energy',zh:'能量組合包',en:'Energy Bundle',gold:1200,keys:30,cr:{wbox:5},rw:1,wpn:['Energy Rifle','Energy Pistols'],skins:['er_plasma','ep_plasma'],fins:['oc'],sp:1,art:'⚡'},
+ {id:'energy',zh:'能量組合包',en:'Energy Bundle',gold:1200,keys:30,cr:{wbox:5},rw:1,wpn:['Energy Rifle','Energy Pistols'],skins:['er_plasma','ep_plasma'],fins:['oc','ed'],sp:1,art:'⚡'},
  {id:'icedg',zh:'寒冰雙刃組合包',en:'Ice Daggers Bundle',gold:2499,keys:0,cr:{xbox:3},snow:4500,skins:['dg_ice'],sp:1,lim:1,art:'🧊'},
  {id:'icecy',zh:'寒冰鐮刀組合包',en:'Ice Scythe Bundle',gold:4999,keys:0,cr:{xbox:3},snow:11000,skins:['sy_ice'],sp:1,lim:1,red:1,art:'❄️'},
  {id:'kb5',zh:'傳奇鑰匙組合包',en:'Legendary Key Bundle',gold:4999,keys:1100,cr:{wbox:40,fpack:15,scase:1},rw:20,rf:3,skin:'sn_locksmith',skins:['ar_akey'],red:1,art:'👑🔑'}];
-const KBBYID=Object.fromEntries(KBUNDLES.map(b=>[b.id,b])),kbGiftable=b=>!!b&&!b.off&&(!b.lim||xmasOn()),KB_WRAPK=5,KB_FINK=10,KB_SKINT=10,kbSk=b=>(b.skins||[]).concat(b.skin?[b.skin]:[]).filter(x=>SKBYID[x]);
+const KBBYID=Object.fromEntries(KBUNDLES.map(b=>[b.id,b])),kbGiftable=b=>!!b&&!b.off&&(!b.lim||xmasOn()),KB_WRAPK=5,KB_FINK=10,KB_SKINT=10,kbSk=b=>(b.skins||[]).concat(b.skin?[b.skin]:[]).filter(x=>SKBYID[x]),kbWall=b=>b.wall?ALLW().filter(w=>!w.adm&&w.n!='Fists'&&wCost(w.n)<=b.wall).map(w=>w.n):[],kbHad=b=>!!(b.once&&PF&&PF.codes.includes('#b:'+b.id));
 function kbItems(b){const o=b.keys?[['🔑','鑰匙 Keys','',b.keys]]:[];if(b.snow)o.push(['❄️','雪花 Snowflakes','聖誕活動限定貨幣（可買聖誕箱、聖誕皮膚箱）',b.snow]);for(const c in b.cr||{}){const C=CRBYID[c];o.push(['<img src="'+crArt(c)+'">',C.name+' '+C.en,'放進 🎒 背包',b.cr[c]])}
  if(b.rw)o.push(['🎨❔','隨機包裝 Random Wrap','開出未擁有的（全擁有則換 🔑 '+KB_WRAPK+'）',b.rw]);if(b.rf)o.push(['✨❔','隨機死亡特效 Random Finisher','開出未擁有的（全擁有則換 🔑 '+KB_FINK+'）',b.rf]);
- for(const n of b.wpn||[]){const w=WBN(n);if(w)o.push(['<img src="'+icon(w)+'">',n,'武器 Weapon'+(isUnl(n)?'（已擁有）':''),1])}
+ for(const n of b.wpn||[]){const w=WBN(n);if(w)o.push(['<img src="'+icon(w)+'">',n,'武器 Weapon'+(isUnl(n)?(b.wdup?'（已擁有 → 🔑 '+b.wdup+'）':'（已擁有）'):''),1])}
+ if(b.wall){const L=kbWall(b),nw=L.filter(n=>!isUnl(n));o.push(['🔫','全部普通武器 All Standard Weapons','所有 '+b.wall+' 🔑 以下的武器（你還沒有的 '+nw.length+' 把'+(nw.length?'：'+nw.slice(0,6).join('、')+(nw.length>6?'…':''):'')+'）',L.length])}
  for(const id of kbSk(b)){const S=SKBYID[id];o.push(['<img src="'+(S.id=='dg_key'&&kdArt()||skinIcon(WBN(S.weapon),S.id))+'">',S.name,'限定皮膚 Exclusive Skin · '+S.weapon+(ownSkin(S.id)?'（已擁有 → 🎫 '+KB_SKINT+'）':''),1])}
  for(const id of b.fins||[]){const F=FBYID[id];if(F)o.push([F.e,F.zh+' '+F.en,'限定死亡特效 Exclusive Finisher'+(PF.fins.includes(id)?'（已擁有 → 🔑 '+KB_FINK+'）':''),1])}return o}
-function kbCard(b,i){const ok=FREE()||(PF.gold|0)>=b.gold,S=!b.sp&&b.skin&&SKBYID[b.skin];return'<div class="kbcd'+(b.red?' red':'')+'" data-kb="'+i+'">'+(b.lim?'<span class="kbx">🎄 聖誕限定 LIMITED</span>':S||kbSk(b).length?'<span class="kbx">限定 EXCLUSIVE</span>':'')+'<div class="kbart">'+(S?'<img src="'+(S.id=='dg_key'&&kdArt()||skinIcon(WBN(S.weapon),S.id))+'">':b.art)+'</div><h4>'+b.zh+'</h4><div class="kbe">'+b.en+'</div><div class="kbn">'+(b.keys?'+'+b.keys+' 🔑':'')+(b.snow?' +'+b.snow+' ❄️':'')+'</div>'+(b.cr||b.rw||b.rf||S||b.sp?'<div class="kbe">+ '+(b.sp?kbSk(b).length+' 款皮膚、武器與更多':'箱子與更多獎勵')+'</div>':'<div class="kbe">&nbsp;</div>')+'<div class="kbpr'+(ok?'':' off')+'">💰 '+b.gold+'</div></div>'}
+function kbCard(b,i){const ok=FREE()||(PF.gold|0)>=b.gold,S=!b.sp&&b.skin&&SKBYID[b.skin];return'<div class="kbcd'+(b.red?' red':'')+'" data-kb="'+i+'">'+(b.lim?'<span class="kbx">🎄 聖誕限定 LIMITED</span>':S||kbSk(b).length?'<span class="kbx">限定 EXCLUSIVE</span>':'')+'<div class="kbart">'+(S?'<img src="'+(S.id=='dg_key'&&kdArt()||skinIcon(WBN(S.weapon),S.id))+'">':b.art)+'</div><h4>'+b.zh+'</h4><div class="kbe">'+b.en+'</div><div class="kbn">'+(b.keys?'+'+b.keys+' 🔑':'')+(b.snow?' +'+b.snow+' ❄️':'')+'</div>'+(b.cr||b.rw||b.rf||S||b.sp?'<div class="kbe">+ '+(b.sp?kbSk(b).length+' 款皮膚、武器與更多':'箱子與更多獎勵')+'</div>':'<div class="kbe">&nbsp;</div>')+'<div class="kbpr'+(ok?'':' off')+'">'+(kbHad(b)?'✔ 已購買':'💰 '+b.gold)+'</div></div>'}
 function kbDlgClose(){$('#kbDlg').style.display='none'}
 function kbDlg(i){const b=KBUNDLES[i];if(!b||!PF)return;const ok=FREE()||(PF.gold|0)>=b.gold,bx=$('#kbBox');bx.className='kbbox'+(b.red?' red':'');
  bx.innerHTML='<h3>'+b.zh+'<br><small style="font-size:13px;color:#ccd">'+b.en+'</small></h3><div class="kbl">'+kbItems(b).map(([ic,nm,sub,n])=>'<div class="kbrow"><div class="ic">'+ic+'</div><div class="nm">'+nm+(sub?'<small>'+sub+'</small>':'')+'</div><b>×'+n+'</b></div>').join('')+'</div>'+
@@ -3683,19 +3943,20 @@ $('#kbDlg').addEventListener('click',e=>{if(e.target.id=='kbDlg')kbDlgClose()});
 for(const ev of['mousedown','touchstart','wheel'])$('#kbDlg').addEventListener(ev,e=>e.stopPropagation(),{passive:true});
 function kbRand(k){const L=k=='wrap'?WRAPS.filter(x=>x.id!='bc'&&!x.ex&&!PF.wraps.includes(x.id)):FINS.filter(x=>x.id!='fc'&&!x.ex&&!PF.fins.includes(x.id));return L.length?L[Math.floor(Math.random()*L.length)].id:null}
 // buy bundle i: returns a summary object (null when blocked). Grants everything, then saves once.
-function kbBuy(i){const b=KBUNDLES[i];if(!b||!PF)return null;const g=PF.gold|0;if(b.lim&&!xmasOn()){toast('🎄 聖誕限定組合包已下架','#ff6a6a');return null}if(b.off){toast('這個組合包已停售','#ff6a6a');return null}
+function kbBuy(i){const b=KBUNDLES[i];if(!b||!PF)return null;const g=PF.gold|0;if(b.lim&&!xmasOn()){toast('🎄 聖誕限定組合包已下架','#ff6a6a');return null}if(b.off){toast('這個組合包已停售','#ff6a6a');return null}if(kbHad(b)){toast('這個組合包每個帳號只能買一次','#ffd23f');return null}
  if(!FREE()&&g<b.gold){toast('💰 金幣不足（還差 '+(b.gold-g)+'）','#ff6a6a');snd(200,.15,.05);const m=$('#kbMsg');if(m)m.textContent='💰 金幣不足：還差 '+(b.gold-g);return null}
  PF.gold=FREE()?g:g-b.gold;return kbGrant(b,'🛒 購買成功：')}
 function kbGrant(b,pre){PF.keys+=b.keys;if(b.snow)PF.snow=(PF.snow|0)+b.snow;let nc=0;const r={keys:b.keys,cr:{},w:[],f:[],ck:0,tk:0,skin:null};
  for(const c in b.cr||{}){PF.crates[c]=crHeld(c)+b.cr[c];r.cr[c]=b.cr[c];nc+=b.cr[c]}
  for(let j=0;j<(b.rw||0);j++){const id=kbRand('wrap');if(id){PF.wraps.push(id);r.w.push(id)}else r.ck+=KB_WRAPK}
  for(let j=0;j<(b.rf||0);j++){const id=kbRand('fin');if(id){PF.fins.push(id);r.f.push(id)}else r.ck+=KB_FINK}
- r.sk=[];r.wn=[];r.fn=[];for(const n of b.wpn||[])if(WBN(n)&&!isUnl(n)){PF.unl.push(n);r.wn.push(n)}
+ r.sk=[];r.wn=[];r.fn=[];for(const n of b.wpn||[])if(WBN(n)){if(!isUnl(n)){PF.unl.push(n);r.wn.push(n)}else if(b.wdup)r.ck+=b.wdup}
+ let nwall=0;for(const n of kbWall(b))if(!isUnl(n)){PF.unl.push(n);nwall++}if(b.once&&!PF.codes.includes('#b:'+b.id))PF.codes.push('#b:'+b.id);
  for(const id of kbSk(b)){if(PF.skins.includes(id)){PF.tickets+=KB_SKINT;r.tk+=KB_SKINT}else{PF.skins.push(id);r.sk.push(id);if(!r.skin)r.skin=id}}
  for(const id of b.fins||[])if(FBYID[id]){if(PF.fins.includes(id))r.ck+=KB_FINK;else{PF.fins.push(id);r.fn.push(id)}}
  PF.keys+=r.ck;saveNow();renderLUI();
- toast(pre+b.zh+(b.keys+r.ck?'　🔑 +'+(b.keys+r.ck):'')+(b.snow?'　❄️ +'+b.snow:'')+(nc?'　📦 ×'+nc:'')+(r.w.length?'　🎨 ×'+r.w.length:'')+(r.f.length?'　✨ ×'+r.f.length:'')+(r.wn.length?'　🔫 '+r.wn.join('、'):'')+(r.sk.length?'　🎨 '+r.sk.map(x=>SKBYID[x].name).join('、'):'')+(r.fn.length?'　💀 ×'+r.fn.length:''),'#35d07f');
- if(r.ck)setTimeout(()=>toast('已擁有全部包裝／死亡特效，多出的換成 🔑 +'+r.ck+' 鑰匙','#ffd23f'),350);
+ toast(pre+b.zh+(b.keys+r.ck?'　🔑 +'+(b.keys+r.ck):'')+(b.snow?'　❄️ +'+b.snow:'')+(nc?'　📦 ×'+nc:'')+(r.w.length?'　🎨 ×'+r.w.length:'')+(r.f.length?'　✨ ×'+r.f.length:'')+(r.wn.length?'　🔫 '+r.wn.join('、'):'')+(nwall?'　🔫 武器 ×'+nwall:'')+(r.sk.length?'　🎨 '+r.sk.map(x=>SKBYID[x].name).join('、'):'')+(r.fn.length?'　💀 ×'+r.fn.length:''),'#35d07f');
+ if(r.ck)setTimeout(()=>toast('已經擁有的物品換成 🔑 +'+r.ck+' 鑰匙','#ffd23f'),350);
  if(r.tk)setTimeout(()=>toast('重複的皮膚自動換成 🎫 '+r.tk+' 皮膚票','#ff8a8a'),700);
  snd(880,.12,.06,'sine');setTimeout(()=>snd(1320,.15,.05,'sine'),120);return r}
 // ===== gifting 送禮 (cloud accounts only; Firestore REST, same session/token refresh as the profile sync) =====
@@ -3815,18 +4076,24 @@ for(const ev of['mousedown','touchstart','wheel'])$('#gfDlg').addEventListener(e
 // ===== crates: shop/backpack dialogs + 3D opening cinematic =====
 var CRO=null,CRS=null,CRD=null;
 const CRT={pop:.5,land:1.45,shake:2.45,open:3.15,rev:4.05};
-const crOwns=(k,id)=>!!PF&&(k=='wrap'?PF.wraps:k=='fin'?PF.fins:PF.skins).includes(id);
+const crArr=k=>k=='wrap'?PF.wraps:k=='fin'?PF.fins:k=='charm'?PF.charms:PF.skins,crOwns=(k,id)=>!!PF&&crArr(k).includes(id);
 const crLeft=C=>C.id=='fpack'?C.pool().filter(id=>!!PF&&!PF.fins.includes(id)&&finWLeft(id).length>0):C.pool().filter(id=>!crOwns(C.kind,id));
 const crHeld=id=>(PF&&PF.crates&&PF.crates[id])|0;
 const crTot=()=>PF?CRATES.reduce((s,c)=>s+crHeld(c.id),0):0;
-function crGrant(k,id){const a=k=='wrap'?PF.wraps:k=='fin'?PF.fins:PF.skins;if(!a.includes(id))a.push(id)}
+function crGrant(k,id){const a=crArr(k);if(!a.includes(id))a.push(id)}
 const RZE=s=>{const i=s.indexOf(' ');return[s.slice(0,i),s.slice(i+1)]},eob=x=>{x=Math.min(1,Math.max(0,x));return 1+2.70158*Math.pow(x-1,3)+1.70158*Math.pow(x-1,2)};
 function crInfo(k,id){if(k=='wrap'){const x=WBYID[id],[z,e]=RZE(WRN[x.r]);return{nm:x.zh+' '+x.en,col:WRC[x.r],r:x.r,rz:z,re:e,typ:'包裝 Wrap',sub:z+'包裝 '+e+' Wrap（所有武器）',ic:'<img src="'+wrapSwatch(id)+'">'}}
  if(k=='fin'){const x=FBYID[id],[z,e]=RZE(WRN[x.r]);return{nm:x.zh+' '+x.en,col:WRC[x.r],r:x.r,rz:z,re:e,typ:'死亡特效 Finisher',sub:z+'死亡特效 '+e+' Finisher（所有武器）',ic:'<b style="background:linear-gradient(135deg,'+x.c[0]+','+x.c[1]+')">'+x.e+'</b>'}}
+ if(k=='charm'){const x=CHBYID[id],[z,e]=RZE(WRN[x.r]);return{nm:x.zh+' '+x.en,col:WRC[x.r],r:x.r,rz:z,re:e,typ:'吊飾 Charm',sub:z+'吊飾 '+e+' Charm（所有武器）',ic:'<img src="'+charmIcon(id)+'" style="object-fit:contain;background:#2a2d40">'}}
  const x=SKBYID[id],[z,e]=RZE(SKRN[x.rarity]);return{nm:x.name,col:SKRC[x.rarity],r:['common','rare','epic','legendary'].indexOf(x.rarity),rz:z,re:e,typ:'皮膚 Skin · '+x.weapon,sub:z+'皮膚 '+e+' Skin for '+x.weapon,ic:'<img src="'+skinIcon(WBN(x.weapon),id)+'" style="object-fit:contain;background:#2a2d40">'}}
 const CRSHG=new Set([UB,US,UC,UCO,UK,UT,UD,UR,UP,USTAR]);
 function crDisp(o){o.traverse(m=>{if(m.geometry&&!CRSHG.has(m.geometry))m.geometry.dispose()})}
-var CRM=null;
+var CRM=null,CCM=null;const CHIC={};
+function ccMats(){return CCM||(CCM={bot:new T.MeshPhongMaterial({color:0xf4f4f8,shininess:80,specular:0x999999}),top:new T.MeshPhongMaterial({color:0xff5aa8,transparent:true,opacity:.62,shininess:120,specular:0xffffff,side:T.DoubleSide}),band:new T.MeshPhongMaterial({color:0xd8dae6,shininess:60}),glow:new T.MeshBasicMaterial({color:0xffe27a}),shine:new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.75})})}
+// small rendered picture of a charm (for crate odds lists / reveal banners)
+function charmIcon(id){if(CHIC[id]!=null)return CHIC[id];const C=CHBYID[id];if(!C)return'';const g=new T.Group();let u='';
+ try{C.build(g);IR.setSize(128,128);IS.add(g);g.rotation.set(.15,.5,0);g.updateMatrixWorld(true);const b=new T.Box3().setFromObject(g),c=b.getCenter(V()),r=Math.max(.02,b.getSize(V()).length()/2),pc=new T.PerspectiveCamera(30,1,.005,10);pc.position.copy(c).add(V(0,.25,1).normalize().multiplyScalar(r/Math.sin(15*PI/180)*1.05));pc.lookAt(c);IR.render(IS,pc);u=IR.domElement.toDataURL()}catch(e){console.error(e)}
+ IS.remove(g);crDisp(g);IR.setSize(160,96);return CHIC[id]=u}
 function crMats(){if(CRM)return CRM;const ph=(c,e,sh)=>new T.MeshPhongMaterial({color:c,emissive:e,shininess:sh,specular:0xc8b8ff});
  const art=cvTex(256,320,(x,W,H)=>{const g=x.createLinearGradient(0,0,W,H);g.addColorStop(0,'#9a4cff');g.addColorStop(.6,'#4a14a8');g.addColorStop(1,'#22074e');x.fillStyle=g;x.fillRect(0,0,W,H);
   x.strokeStyle='#ffffffd0';x.lineCap='round';x.lineWidth=11;x.beginPath();x.arc(W*.05,H*1.02,W*.98,-1.32,-.3);x.stroke();x.lineWidth=4;x.beginPath();x.arc(W*.05,H*1.02,W*.82,-1.25,-.38);x.stroke();
@@ -3850,6 +4117,11 @@ function mkCrate(kind){const g=new T.Group(),sq=new T.Group();g.add(sq);g.rotati
   const crimp=(par,y,dy)=>{const c=new T.Mesh(new T.BoxGeometry(W+.02,.09,D*.5),M.crimp);c.position.set(0,y,0);par.add(c);for(let i=0;i<10;i++){const t=new T.Mesh(new T.BoxGeometry(.046,.046,D*.48),M.crimp);t.rotation.z=PI/4;t.position.set(-W/2+.025+i*(W-.03)/9,y+dy*.045,0);par.add(t)}};
   crimp(sq,.045,-1);const pv=new T.Group(),y0=.09+bh;pv.position.set(-W/2-.01,y0,0);sq.add(pv);const tp=new T.Group();tp.position.x=W/2+.01;pv.add(tp);crimp(tp,.045,1);
   open=k=>{const a=Math.max(0,k);pv.rotation.z=Math.min(1,a*2.4)*.75+Math.max(0,a-.35)*3.2;pv.position.set(-W/2-.01-Math.max(0,a-.3)*1.3,y0+Math.max(0,a-.3)*1.6-Math.pow(Math.max(0,a-.55),2)*4,0);pv.scale.setScalar(Math.max(.01,1-Math.max(0,a-.6)*1.4));pv.visible=a<1.3};top=H}
+ else if(kind=='charm'){const M=ccMats(),R0=.34;
+  const bt=new T.Mesh(new T.SphereGeometry(R0,24,12,0,PI*2,PI/2,PI/2),M.bot);bt.position.y=R0;sq.add(bt);const rg=new T.Mesh(new T.TorusGeometry(R0+.004,.022,8,28),M.band);rg.rotation.x=PI/2;rg.position.y=R0;sq.add(rg);
+  const hint=new T.Mesh(US,M.glow);hint.scale.setScalar(.1);hint.position.y=R0+.02;sq.add(hint);
+  const pv=new T.Group();pv.position.set(0,R0,-R0);sq.add(pv);const tp=new T.Mesh(new T.SphereGeometry(R0,24,12,0,PI*2,0,PI/2),M.top);tp.position.set(0,0,R0);pv.add(tp);const sh=new T.Mesh(US,M.shine);sh.scale.set(.05,.09,.02);sh.position.set(-.14,.2,R0+.2);sh.rotation.z=.5;pv.add(sh);
+  open=k=>{pv.rotation.x=-2.05*eob(k/.5)};top=R0*2}
  else{const C1=0x6c2ee6,C2=0x9a62ff,C3=0x4a1aa8,L=1.12,H0=.2,HL=.12,D=.56;
   B(sq,L,H0,D,0,H0/2,0,C1);B(sq,L-.07,.012,D-.07,0,H0-.004,0,0x1a1030);
   for(const x of[-.36,.36])B(sq,.06,H0+.004,D+.02,x,H0/2,0,C2);
@@ -3867,6 +4139,7 @@ function crArt(id){if(CRART[id]!=null)return CRART[id];const C=CRBYID[id];if(!C)
  IS.remove(M.g);crDisp(M.g);IR.setSize(160,96);return CRART[id]=u}
 // ---- dialogs: buy (VIEW / ✖ / art ×1 / yellow price), odds list, open-confirm ----
 function crGo(id){closePanels();openPanel('Shop');shopTab('crates');crDlg(id,'buy')}
+{const b=$('#evHw');if(b)b.onclick=()=>{if(!hwOn()){toast('🎃 萬聖節限定已結束','#ff6a6a');return}crGo('hpack')}}
 function crDlgClose(){CRD=null;$('#crDlg').style.display='none'}
 function crDlg(id,mode,back){const C=CRBYID[id];if(!C||!PF)return;CRD={id,mode,back};const bx=$('#crBox'),left=crLeft(C),h=crHeld(id),all=C.pool();let x='';
  const art=n=>'<div class="crart"><img src="'+crArt(id)+'" alt=""><b>×'+n+'</b></div>',hd=(l,t)=>'<div class="crhd">'+l+'<div class="crttl">'+t+'</div><button class="crx" id="crX">✖</button></div>',vb='<button class="crview" id="crV"><small>Contents</small>VIEW</button>';
@@ -3885,13 +4158,14 @@ function crDlg(id,mode,back){const C=CRBYID[id];if(!C||!PF)return;CRD={id,mode,b
 $('#crDlg').addEventListener('click',e=>{if(e.target.id=='crDlg')crDlgClose()});
 for(const ev of['mousedown','touchstart','wheel'])$('#crDlg').addEventListener(ev,e=>e.stopPropagation(),{passive:true});
 function crBuy(id){const C=CRBYID[id];if(!C||!PF)return;const left=crLeft(C).length,h=crHeld(id),m=$('#crMsg');if(!left||h>=left)return;
- if(C.cur=='snow'&&!xmasOn()){toast('❄️ 聖誕活動已結束，雪花不能再使用','#ff6a6a');return}
+ if(C.cur=='snow'&&!xmasOn()){toast('❄️ 聖誕活動已結束，雪花不能再使用','#ff6a6a');return}if(C.hw&&!hwOn()){toast('🎃 萬聖節限定已結束','#ff6a6a');return}
  const PR=crPrice(C);if(!FREE()&&(PF[C.cur]|0)<PR){const d=PR-(PF[C.cur]|0);m.style.color='#ff8a8a';m.textContent=CURI[C.cur]+' '+CURN[C.cur]+'不足：還差 '+d+(C.cur=='tickets'?'（皮膚票只能從 Season Pass 通行證取得）':C.cur=='snow'?'（完成每日任務、做完每日任務後打對戰可以獲得雪花）':'（完成任務、通行證或勝場可以獲得鑰匙）');toast(CURI[C.cur]+' '+CURN[C.cur]+'不足（還差 '+d+'）','#ff6a6a');snd(200,.15,.05);return}
  if(!FREE())PF[C.cur]-=PR;PF.crates[id]=h+1;saveNow();toast('📦 '+C.name+' 已放進背包','#35d07f');snd(880,.12,.06,'sine');renderLUI();if(PANEL=='Shop')PRENDER.Shop();crDlg(id,'buy');const mm=$('#crMsg');if(mm){mm.style.color='#7dff9a';mm.textContent='✔ 已放進背包！到 🎒 Backpack 打開它'}}
 // ---- opening: grant FIRST (saved immediately), then the cinematic ----
 function crItemObj(k,id,col,O){const g=new T.Group();
  if(k=='fin'){const X=FBYID[id],tex=cvTex(256,256,(x,W)=>{const gr=x.createLinearGradient(0,0,W,W);gr.addColorStop(0,X.c[0]);gr.addColorStop(1,X.c[1]);rr(x,12,12,W-24,W-24,44);x.fillStyle=gr;x.fill();x.lineWidth=14;x.strokeStyle=col;x.stroke();x.font='140px '+FNT;x.textAlign='center';x.textBaseline='middle';x.fillText(X.e,W/2,W/2+10)});
   const m=new T.MeshBasicMaterial({map:tex,transparent:true,side:T.DoubleSide});O.mats.push(m);O.tex.push(tex);g.add(new T.Mesh(new T.PlaneGeometry(.78,.78),m));g.userData.tile=1;return g}
+ if(k=='charm'){const h=new T.Group();CHBYID[id].build(h);g.add(h);g.updateMatrixWorld(true);const b=new T.Box3().setFromObject(h),c=b.getCenter(V()),z=b.getSize(V()),s0=.62/Math.max(z.x,z.y,z.z,.02);h.position.sub(c).multiplyScalar(s0);h.scale.setScalar(s0);return g}
  const w=WBN(k=='skin'?SKBYID[id].weapon:'Assault Rifle'),m=k=='skin'?model(w,'',id):model(w,id,skEq(w)),h=new T.Group();m.rotation.y=PI/2;h.add(m);g.add(h);g.updateMatrixWorld(true);
  const b=new T.Box3().setFromObject(h),c=b.getCenter(V()),z=b.getSize(V());h.position.sub(c);const sc0=1.15/Math.max(z.x,z.y,z.z,.2);h.position.multiplyScalar(sc0);h.scale.setScalar(sc0);return g}
 function crOpen(cid){const C=CRBYID[cid];if(!C||!PF)return;if(st!=='lobby'||!P){toast('請先回到大廳再開箱');return}if(crHeld(cid)<1){toast('背包裡沒有這個箱子');return}
