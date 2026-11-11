@@ -1390,7 +1390,7 @@ const FINS=[
 {id:'clw',zh:'抓手',en:'Claw',r:2,p:55,D:3.4,e:'🖐️',c:['#6a5a7a','#16121a'],how:'從死亡特效箱開出 Finisher Pack'},
 {id:'nuk',zh:'核彈',en:'Nuke',r:3,p:90,D:4.2,e:'☢️',c:['#ffd23f','#5a6a3a'],how:'從死亡特效箱開出 Finisher Pack'},
 {id:'bhl',zh:'時空轉換',en:'Space-Time Shift',r:2,p:60,D:2.6,e:'🕳️',c:['#c05cff','#000000'],how:'從死亡特效箱開出 Finisher Pack'},
-{id:'aur',zh:'Aura',en:'Aura',r:3,p:90,D:2.6,e:'🥶',c:['#2f7bff','#0a1a3a'],how:'從死亡特效箱開出 Finisher Pack'},
+{id:'aur',zh:'Aura',en:'Aura',r:3,p:0,D:2.6,e:'🥶',c:['#2f7bff','#0a1a3a'],ex:1,how:'兌換代碼 auro1000'},
 {id:'scb',zh:'Scuba',en:'Scuba',r:2,p:50,D:4.0,e:'🤿',c:['#7ad8ff','#ffd23f'],how:'從死亡特效箱開出 Finisher Pack'},
 {id:'abt',zh:'Aight Bet!',en:'Aight Bet!',r:2,p:60,D:3.4,e:'🔫',c:['#ffffff','#d8302a'],how:'從死亡特效箱開出 Finisher Pack'}];
 const hwOn=()=>today()<='2026-11-30';
@@ -3537,7 +3537,7 @@ const CODE_KEYS={free:10,bonus:15,chill:20};
 function redeem(){const c=$('#codeIn').value.trim().toLowerCase(),m=$('#codeMsg');if(!PF)return;if(!c){m.style.color='#ff8a8a';m.textContent='請輸入代碼';return}
  const already=()=>{m.style.color='#ffc93c';m.textContent='這個代碼已經兌換過了'};
  if(c==='deathsmilexux'){if(PF.codes.includes(c)){if(WRAPS.every(x=>x.adm||x.ms||PF.wraps.includes(x.id))&&FINS.every(x=>x.ms||PF.fins.includes(x.id))&&SKINS.every(x=>x.adm||PF.skins.includes(x.id)))return already();for(const x of WRAPS)if(!x.adm&&!x.ms&&!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!x.ms&&!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!x.adm&&!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！新增解鎖全部武器包裝、死亡特效與皮膚';toast('🎉 全部包裝與死亡特效已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}PF.codes.push(c);let n=0;for(const w of ALLW())if(!PF.unl.includes(w.n)){PF.unl.push(w.n);n++}for(const x of WRAPS)if(!x.adm&&!x.ms&&!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!x.ms&&!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!x.adm&&!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已解鎖全部武器、包裝、死亡特效與皮膚（新增武器 '+n+' 把）';toast('🎉 代碼兌換成功：全部武器已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
- for(const[cd,fid]of[['thanksfor100players','c1'],['technobladeneverdies','tb']])if(c===cd){if(PF.codes.includes(c)||PF.fins.includes(fid))return already();PF.codes.push(c);PF.fins.push(fid);saveNow();const F=FBYID[fid];m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得死亡特效 '+F.e+' '+F.zh+' '+F.en+'（所有武器都能用）';toast(F.e+' 獲得死亡特效：'+F.zh+' '+F.en,'#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
+ for(const[cd,fid]of[['thanksfor100players','c1'],['technobladeneverdies','tb'],['auro1000','aur']])if(c===cd){if(PF.codes.includes(c)||PF.fins.includes(fid))return already();PF.codes.push(c);PF.fins.push(fid);saveNow();const F=FBYID[fid];m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得死亡特效 '+F.e+' '+F.zh+' '+F.en+'（所有武器都能用）';toast(F.e+' 獲得死亡特效：'+F.zh+' '+F.en,'#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='aight bet!'){if(PF.codes.includes(c)||PF.skins.includes('rv_deagle'))return already();PF.codes.push(c);PF.skins.push('rv_deagle');saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 沙漠之鷹 Desert Eagle（左輪皮膚）';toast('🔫 獲得 沙漠之鷹 Desert Eagle！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='skintest'){if(PF.codes.includes(c))return already();PF.codes.push(c);for(const x of SKINS)if(!x.adm&&!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已獲得全部測試皮膚（'+SKINS.filter(x=>!x.adm).map(x=>x.name).join('、')+'）';toast('🎨 已獲得全部皮膚！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='goldtest'){if(PF.codes.includes(c))return already();PF.codes.push(c);PF.gold=(PF.gold||0)+5000;saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 💰 5000 金幣（測試用）';toast('💰 +5000 金幣','#ffcf40');snd(880,.15,.06,'sine');renderLUI();if(PANEL=='Shop')PRENDER.Shop();return}
@@ -3640,8 +3640,8 @@ var UPDATES=[
  {e:'🎁',h:120,t:'謝謝你！',b:['點下面的按鈕，領取這次更新的獎勵']}]},
 {ver:'2026.11.22',title:'☢️ 原創擊殺特效',rewardKeys:15,slides:[
  {e:'☢️',h:30,t:'8 個原創擊殺特效',b:['灰燼：變成灰被風吹走','靈魂出竅：半透明的靈魂從身體飄出來','抓手：地上伸出大手把對手拖下去','核彈：原子彈掉下來，蘑菇雲！']},
- {e:'🕳️',h:270,t:'還有這些',b:['時空轉換：突然出現黑洞把對手吸進去，變超大再瞬間消失','Aura：你的畫面變成剪輯風格，藍色表情＋隨機 Phonk 音樂','Scuba：戴潛水鏡跳舞','Aight Bet!：戴墨鏡的槍手拿兩把步槍掃射']},
- {e:'📦',h:45,t:'怎麼拿到？',b:['全部都在 死亡特效箱 Finisher Pack 裡','殭屍化的手改成往前伸了']},
+ {e:'🕳️',h:270,t:'還有這些',b:['時空轉換：突然出現黑洞把對手吸進去，變超大再瞬間消失','Aura：你的畫面變成剪輯風格，藍色表情＋隨機 Phonk 音樂（兌換碼 auro1000）','Scuba：戴潛水鏡跳舞','Aight Bet!：戴墨鏡的槍手拿兩把步槍掃射']},
+ {e:'📦',h:45,t:'怎麼拿到？',b:['Aura：輸入兌換碼 auro1000','其他 7 個都在 死亡特效箱 Finisher Pack 裡','殭屍化的手改成往前伸了']},
  {e:'🎁',h:120,t:'謝謝你！',b:['點下面的按鈕，領取這次更新的獎勵']}]}];
 function updLatest(){return UPDATES&&UPDATES[UPDATES.length-1]}
 function updUnclaimed(){const U=updLatest();return!!(U&&PF&&(U.rewardKeys>0||U.rewardGold>0)&&!PF.claimedUpd.includes(U.ver))}
