@@ -413,8 +413,9 @@ if (TOUCH) {
   setupTouch();
   document.querySelector('.help').innerHTML = `<div><b>左邊拖曳</b> 移動搖桿</div><div><b>右邊拖曳</b> 轉視角</div>
     <div><b>⚔ 攻擊</b> 點擊攻擊／按住挖方塊</div><div><b>▣ 放置</b> 放方塊／用道具（按住連放）</div>
-    <div><b>跳 / 蹲</b> 蹲是開關，搭橋時打開</div><div><b>點快捷欄</b> 切換物品</div>
-    <div><b>商店</b> 站在 NPC 旁邊按</div><div><b>隊友</b> 切換隊友指令</div>`;
+    <div><b>跳 / 蹲</b> 蹲是開關（可不用）</div><div><b>點快捷欄</b> 切換物品</div>
+    <div><b>商店</b> 站在 NPC 旁邊按</div><div><b>隊友</b> 切換隊友指令</div>
+    <div style="grid-column:span 2"><b>基岩版搭橋</b>：拿方塊對著前方空中按住 ▣ 往前走，自動放在腳下前方</div>`;
 }
 
 initRenderer();

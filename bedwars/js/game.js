@@ -635,16 +635,47 @@ class Game {
     if (!h) return;
     if (ITEMS[h.id].block) {
       const b = tg.block;
-      if (b) {
-        const x = b.x + b.nx, y = b.y + b.ny, z = b.z + b.nz;
-        if (this.placeBlock(p, x, y, z, h.id)) p.swingT = 0.2;
+      let placed = false;
+      // 邊跑邊往下看地板時，也優先往前搭橋（不會在自己面前蓋牆）
+      const moving = Math.hypot(p.vel.x, p.vel.z) > 1.5;
+      const floorTop = b && b.ny === 1 && b.y === Math.floor((p.onGround ? p.pos.y : (p.lastGroundY || p.pos.y)) - 0.01);
+      if (moving && floorTop) { const c = this.assistCell(p); if (c && this.placeBlock(p, c.x, c.y, c.z, h.id)) p.swingT = 0.2; return; }
+      if (b) placed = this.placeBlock(p, b.x + b.nx, b.y + b.ny, b.z + b.nz, h.id);
+      // 基岩版放置：對著空中按，自動放到前方腳下
+      if (!placed && (!b || p.pitch > -1.2)) {
+        const c = this.assistCell(p);
+        if (c) placed = this.placeBlock(p, c.x, c.y, c.z, h.id);
       }
+      if (placed) p.swingT = 0.2;
       return;
     }
     if (!fresh || this.useCd > 0) return;
     if (h.id === 'fireball' || h.id === 'pearl' || h.id === 'egg') { this.throwProjectile(p, h.id); this.useCd = 0.5; }
     else if (h.id === 'tnt' && tg.block) { const b = tg.block; this.placeTNT(p, b.x + b.nx, b.y + b.ny, b.z + b.nz); this.useCd = 0.3; }
     else if (h.id === 'gapple') { this.useGapple(p); this.useCd = 0.8; }
+  }
+  // 基岩版搭橋輔助：找出前方腳下第一個可以放的空格
+  assistCell(p) {
+    const h = p.held();
+    if (!p.alive || !h || !ITEMS[h.id].block) return null;
+    const w = this.world;
+    const baseY = p.onGround || p.lastGroundY == null ? p.pos.y : p.lastGroundY;
+    if (p.pos.y < baseY - 1.3) return null;
+    const fy = Math.floor(baseY - 0.01);
+    const dx = -Math.sin(p.yaw), dz = -Math.cos(p.yaw);
+    let px = Math.floor(p.pos.x), pz = Math.floor(p.pos.z);
+    for (let s = 0; s <= 3.5; s += 0.2) {
+      const cx = Math.floor(p.pos.x + dx * s), cz = Math.floor(p.pos.z + dz * s);
+      if (cx === px && cz === pz && w.get(cx, fy, cz)) continue;
+      if (w.get(cx, fy, cz)) { px = cx; pz = cz; continue; }
+      if (w.hasNeighbor(cx, fy, cz) && this.canPlaceAt(cx, fy, cz)) return { x: cx, y: fy, z: cz };
+      // 斜著走時先補中間那格
+      for (const [ix, iz] of [[cx, pz], [px, cz]]) {
+        if (!w.get(ix, fy, iz) && w.hasNeighbor(ix, fy, iz) && this.canPlaceAt(ix, fy, iz)) return { x: ix, y: fy, z: iz };
+      }
+      return null;
+    }
+    return null;
   }
   interact() {
     const p = this.player;
@@ -702,7 +733,7 @@ class Game {
     if (this.input.mouseR) {
       this.placeRepeat -= dt;
       const h = p.held();
-      if (this.placeRepeat <= 0 && h && ITEMS[h.id].block) { this.useItem(false); this.placeRepeat = 0.18; }
+      if (this.placeRepeat <= 0 && h && ITEMS[h.id].block) { this.useItem(false); this.placeRepeat = 0.12; }
     }
   }
 
@@ -751,6 +782,7 @@ class Game {
   physics(f, dt) {
     const wasGround = f.onGround;
     moveEntity(this.world, f, dt);
+    if (f.onGround) f.lastGroundY = f.pos.y;
     if (!f.onGround) {
       if (f.fallStart == null || f.pos.y > f.fallStart) f.fallStart = f.pos.y;
     } else {
@@ -947,6 +979,18 @@ class Game {
       this.hl.scale.set(1, hh, 1);
       this.hl.position.set(b.x + 0.5, b.y + hh / 2, b.z + 0.5);
     } else this.hl.visible = false;
+    // 基岩版放置預覽
+    const floorLook = tg && tg.block && tg.block.ny === 1 && Math.hypot(p.vel.x, p.vel.z) > 1.5;
+    const ac = p.alive && tg && !tg.ent && (!tg.block || floorLook) ? this.assistCell(p) : null;
+    if (ac) {
+      if (!this.ghost) {
+        this.ghost = new THREE.Mesh(new THREE.BoxGeometry(1.01, 1.01, 1.01), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.22, depthWrite: false }));
+        this.ghost.add(new THREE.LineSegments(new THREE.EdgesGeometry(this.ghost.geometry), new THREE.LineBasicMaterial({ color: 0xffffff })));
+        this.scene.add(this.ghost);
+      }
+      this.ghost.visible = true;
+      this.ghost.position.set(ac.x + 0.5, ac.y + 0.5, ac.z + 0.5);
+    } else if (this.ghost) this.ghost.visible = false;
     // 角色模型
     for (const f of this.fighters) {
       if (!f.model || !f.alive) continue;
