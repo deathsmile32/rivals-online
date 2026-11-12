@@ -46,11 +46,28 @@ const SFX = {
   },
 };
 
+// 像素愛心（用 SVG 畫，手機不會被換成 emoji）
+const HEART_ROWS = ['.XX.XX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'];
+const heartCache = {};
+function heartSVG(type) {
+  if (heartCache[type]) return heartCache[type];
+  const full = type === 'ab' ? '#ffd84a' : '#e82a2a', empty = '#3a1414';
+  let r = '';
+  HEART_ROWS.forEach((row, y) => [...row].forEach((c, x) => {
+    if (c !== 'X') return;
+    const col = type === 'e' ? empty : type === 'h' ? (x < 4 ? full : empty) : full;
+    r += `<rect x="${x + 1}" y="${y + 1}" width="1" height="1" fill="${col}"/>`;
+  }));
+  // 黑色外框
+  const svg = `<svg class="ht" viewBox="0 0 9 8" shape-rendering="crispEdges"><g transform="translate(0.5,0.5)" opacity="0.55">${r.replace(/fill="[^"]+"/g, 'fill="#000"')}</g>${r}<rect x="2" y="2" width="1" height="1" fill="#fff" opacity="${type === 'e' ? 0 : 0.6}"/></svg>`;
+  return (heartCache[type] = svg);
+}
+
 // ===================== 介面 =====================
 const $ = id => document.getElementById(id);
 const UI = {
   game: null, shopKind: null, shopTab: 0, lastHot: '', lastSb: '', toastT: 0, titleT: 0, hudT: 0,
-  bind(g) { this.game = g; this.lastHot = ''; this.lastSb = ''; $('feed').innerHTML = ''; this.title('', ''); },
+  bind(g) { this.game = g; this.lastHot = ''; this.lastHearts = ''; this.lastSb = ''; $('feed').innerHTML = ''; this.title('', ''); },
   toast(html) { const t = $('toast'); t.innerHTML = html; t.style.opacity = 1; this.toastT = 2.2; },
   feed(html) {
     const f = $('feed');
@@ -84,9 +101,10 @@ const UI = {
     // 血量
     const hp = Math.max(0, p.hp);
     let hh = '';
-    for (let i = 0; i < 10; i++) { const v = hp - i * 2; hh += `<span class="ht ${v >= 2 ? 'f' : v >= 1 ? 'h' : 'e'}">♥</span>`; }
-    if (p.absorb > 0) for (let i = 0; i < Math.ceil(p.absorb / 2); i++) hh += '<span class="ht ab">♥</span>';
-    if ($('hearts').innerHTML !== hh) $('hearts').innerHTML = hh;
+    for (let i = 0; i < 10; i++) { const v = hp - i * 2; hh += heartSVG(v >= 2 ? 'f' : v >= 1 ? 'h' : 'e'); }
+    if (p.absorb > 0) for (let i = 0; i < Math.ceil(p.absorb / 2); i++) hh += heartSVG('ab');
+    hh += `<span class="hpn">${Math.ceil(hp)}${p.absorb > 0 ? '+' + Math.ceil(p.absorb) : ''}/20</span>`;
+    if (this.lastHearts !== hh) { this.lastHearts = hh; $('hearts').innerHTML = hh; }
     // 挖掘進度
     const bs = g.breakState;
     $('breakbar').style.display = bs ? 'block' : 'none';

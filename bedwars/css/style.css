@@ -28,8 +28,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font
 #bottom { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); text-align: center; }
 #itemName { height: 22px; font-size: 15px; text-shadow: 1px 1px 0 #000; }
 #hearts { text-align: left; font-size: 19px; height: 24px; letter-spacing: -1px; }
-.ht { text-shadow: 1px 1px 0 #000; }
-.ht.f { color: #ff2a2a; } .ht.h { color: #b04040; } .ht.e { color: #3a1a1a; } .ht.ab { color: #ffd84a; }
+.ht { width: 19px; height: 17px; margin-right: 1px; vertical-align: middle; }
+.hpn { font-size: 14px; font-weight: bold; margin-left: 6px; vertical-align: middle; text-shadow: 1px 1px 0 #000; }
 #hotbar { display: flex; gap: 2px; background: rgba(0, 0, 0, .5); padding: 3px; border: 2px solid #222; }
 .slot { position: relative; width: 50px; height: 50px; border: 2px solid #555; display: flex; align-items: center; justify-content: center; background: rgba(120, 120, 120, .25); }
 .slot.sel { border-color: #fff; box-shadow: 0 0 0 2px #fff; }
@@ -121,6 +121,7 @@ body.touch #crosshair { mix-blend-mode: normal; }
   #bottom { bottom: 4px; }
   #itemName { font-size: 12px; height: 16px; }
   #hearts { font-size: 14px; height: 18px; }
+  .ht { width: 14px; height: 13px; } .hpn { font-size: 11px; }
   .slot { width: 36px; height: 36px; border-width: 1px; }
   .ic { width: 24px; height: 24px; font-size: 14px; }
   .slot .cnt { font-size: 11px; } .slot .key { display: none; }
