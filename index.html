@@ -1045,10 +1045,78 @@ const SKINS=[
  reloadFx:()=>{snd(1400,.04,.05,'square');setTimeout(()=>{snd(700,.03,.05,'sine');setTimeout(()=>snd(1100,.03,.05,'sine'),35);setTimeout(()=>snd(1600,.04,.06,'sine'),70)},70)},
  fireFx:p=>{skBurst(p,4,[0xff2fd0,0xffffff],3.2,.12,.03);snd(2200,.04,.05,'triangle')}},
 {id:'sn_gingerbread',weapon:'Sniper',name:'Gingerbread Sniper',rarity:'rare',how:'從節慶皮膚箱開出 Unboxed from the Festive Skin Case',insp:'wiggle',flashColor:0xe0302a,
- build:g=>{const Br=0xc68642,Br2=0x9c6530,R=0xcc2222,W=0xffffff;B(g,.065,.1,.3,0,.08,-.04,Br);Cz(g,.02,.02,.3,0,.09,-.34,Br2);for(let i=0;i<5;i++)Cz(g,.021,.021,.055,0,.09,-.2-i*.06,i%2?R:W);B(g,.06,.12,.2,0,.06,.28,Br);B(g,.045,.12,.055,0,0,.03,Br2,GRIP);Sp(g,.025,0,.15,-.08,R);Sp(g,.018,.025,.15,-.1,W);return{fore:[0,.09,-.46]}},
+ build:g=>{const Br=0xd08a45,Br2=0xa86a30,R=0xd8262a,W=0xfff6ea;B(g,.068,.1,.5,0,.08,-.06,Br);for(let i=0;i<7;i++)B(g,.072,.025+(i%2)*.012,.07,0,.135-(i%2)*.008,-.28+i*.075,W);
+  for(let i=0;i<8;i++)Cz(g,.02,.02,.055,0,.09,-.33-i*.055,i%2?R:W);for(let i=0;i<6;i++)Cz(g,.034,.034,.045,0,.18,-.2+i*.045,i%2?W:R);Cz(g,.04,.04,.012,0,.18,-.23,R);
+  B(g,.064,.13,.27,0,.06,.3,Br);B(g,.066,.03,.27,0,.13,.3,W);B(g,.045,.12,.055,0,0,.03,Br2,GRIP);
+  for(const s of[-1,1]){B(g,.02,.08,.05,s*.05,.08,-.12,R,{rz:s*.6});B(g,.02,.1,.03,s*.03,.0,-.13,R,{rz:s*.25})}Sp(g,.022,0,.09,-.12,R);
+  for(const z of[.0,.24,.36]){const d=Cz(g,.03,.03,.01,.04,.08,z,W);d.rotation.set(0,0,PI/2);for(let k=0;k<3;k++){const q=B(g,.012,.055,.004,.046,.08,z,R);q.rotation.set(0,PI/2,k*PI/3)}}return{fore:[0,.09,-.42]}},
  inspFx:p=>skBurst(p,8,[0xe0302a,0xffffff],1.3,.3,.04),
  reloadFx:()=>{for(let i=0;i<4;i++)setTimeout(()=>snd(1800+rnd()*600,.03,.03,'triangle'),i*35);setTimeout(()=>snd(900,.06,.05,'sine'),160)},
  fireFx:p=>{skBurst(p,9,[0xe0302a,0xffffff],1.6,.3,.045);snd(1300,.08,.05,'sine');setTimeout(()=>snd(1700,.1,.05,'triangle'),70)}},
+// ----- 2026.11 rifle & sniper skin batch (own blocky takes on each theme)
+{id:'ar_aug',weapon:'Assault Rifle',name:'八月 AUG',rarity:'common',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'side',flashColor:0xfff0a0,
+ build:g=>{const Gn=0x4f7a2a,G2=0x3c5e1f,mg=new T.Group();B(g,.075,.11,.5,0,.085,-.06,Gn);B(g,.07,.07,.2,0,.05,.24,Gn);B(g,.072,.03,.62,0,.15,-.05,K);B(g,.06,.05,.12,0,.12,-.38,K);
+  Cz(g,.017,.017,.34,0,.1,-.48,K);Cz(g,.022,.022,.05,0,.1,-.66,K);B(g,.05,.12,.06,0,-.02,-.2,Gn,{rx:.25});B(g,.045,.12,.055,0,0,.0,Gn,GRIP);B(g,.07,.02,.16,0,.0,-.1,G2);
+  B(mg,.045,.16,.075,0,-.07,.13,K,{rx:-.15});g.add(mg);B(g,.074,.13,.035,0,.08,.36,K);return{fore:[0,0,-.2],mag:mg}}},
+{id:'ar_drum',weapon:'Assault Rifle',name:'鼓槍 Drum Gun',rarity:'rare',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'side',flashColor:0xffb060,
+ build:g=>{const Wd=0xb5581f,W2=0x8c4216,mg=new T.Group();B(g,.07,.1,.36,0,.08,-.06,K);B(g,.062,.06,.2,0,.07,-.32,K);Cz(g,.02,.02,.3,0,.1,-.52,K);for(let i=0;i<6;i++)Cz(g,.03,.03,.012,0,.1,-.4-i*.04,K2);
+  B(g,.05,.13,.06,0,-.01,-.3,Wd,{rx:.2});B(g,.045,.12,.06,0,0,.03,Wd,GRIP);B(g,.06,.12,.26,0,.04,.24,Wd,{rx:-.12});B(g,.062,.03,.2,0,.1,.18,W2);
+  const dr=new T.Mesh(new T.CylinderGeometry(.11,.11,.07,FINE?24:14),mt(K));dr.rotation.z=PI/2;dr.position.set(0,-.07,-.13);mg.add(dr);const dc=new T.Mesh(new T.CylinderGeometry(.04,.04,.075,12),mt(K2));dc.rotation.z=PI/2;dc.position.copy(dr.position);mg.add(dc);g.add(mg);
+  return{fore:[0,-.01,-.3],mag:mg}}},
+{id:'ar_gingeraug',weapon:'Assault Rifle',name:'薑餅步槍 Gingerbread Rifle',rarity:'rare',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'wiggle',flashColor:0xe0302a,
+ build:g=>{const Br=0xc98a46,B2=0xa86a30,W=0xfff6ea,R=0xd8262a,mg=new T.Group();B(g,.08,.12,.5,0,.085,-.06,Br);B(g,.075,.07,.2,0,.05,.24,Br);for(let i=0;i<6;i++)B(g,.084,.035,.07,0,.155-((i%2)?.012:0),-.28+i*.09,W);
+  for(let i=0;i<7;i++)Cz(g,.02,.02,.06,0,.1,-.34-i*.06,i%2?R:W);B(g,.045,.12,.055,0,0,0,Br,GRIP);B(g,.05,.13,.055,0,-.02,-.22,W,{rx:.25});for(let i=0;i<3;i++)B(g,.052,.03,.057,0,-.06+i*.05,-.215+i*.012,R,{rx:.25});
+  for(const z of[-.02,.12]){const d=Cz(g,.032,.032,.01,.042,.07,z,W);d.rotation.set(0,0,PI/2);const d2=Cz(g,.033,.033,.008,.044,.07,z,R);d2.rotation.set(0,0,PI/2);d2.scale.set(.35,1,1)}
+  B(g,.1,.06,.02,0,.06,.32,R,{rz:.5});B(g,.1,.06,.02,0,.06,.32,R,{rz:-.5});B(mg,.05,.16,.075,0,-.07,.13,B2,{rx:-.15});g.add(mg);B(g,.08,.13,.035,0,.08,.36,B2);return{fore:[0,0,-.22],mag:mg}}},
+{id:'ar_ak47',weapon:'Assault Rifle',name:'AK-47',rarity:'epic',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'side',flashColor:0xffb060,
+ build:g=>{const Wd=0xc0601f,W2=0x9a4a16,Gy=0x8a8f9a,mg=new T.Group();B(g,.066,.1,.36,0,.08,-.04,K);B(g,.07,.06,.24,0,.08,-.33,Wd);B(g,.06,.04,.2,0,.13,-.32,W2);B(g,.072,.03,.04,0,.09,-.47,Gy);
+  Cz(g,.017,.017,.34,0,.1,-.6,K);Cz(g,.012,.012,.26,0,.14,-.52,K);B(g,.014,.07,.014,0,.17,-.72,K);B(g,.03,.035,.05,0,.15,-.07,K);
+  [[0,-.04,.15],[-.065,-.06,.35],[-.125,-.09,.55],[-.18,-.13,.75]].forEach(([y,z,r])=>B(mg,.048,.08,.07,0,y,z,K,{rx:r}));g.add(mg);
+  B(g,.045,.12,.055,0,0,.05,Wd,GRIP);B(g,.06,.09,.26,0,.04,.25,Wd,{rx:-.18});B(g,.064,.14,.04,0,-.02,.37,W2);return{fore:[0,.06,-.33],mag:mg}}},
+{id:'ar_boneclaw',weapon:'Assault Rifle',name:'骨爪步槍 Bone Claw Rifle',rarity:'epic',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'side',flashColor:0xf0e6cc,
+ build:g=>{const Bn=0xefe6cf,D=0x1c1d22,mg=new T.Group();B(g,.07,.11,.5,0,.085,-.08,D);B(g,.072,.03,.5,0,.155,-.1,K2);Cz(g,.018,.018,.3,0,.1,-.5,D);Cz(g,.024,.024,.06,0,.1,-.68,D);B(g,.07,.12,.2,0,.06,.26,D);B(g,.045,.12,.055,0,0,.03,D,GRIP);
+  const claw=(x,y,z,s,ry)=>{const c=new T.Group();c.position.set(x,y,z);c.rotation.set(-.9,ry||0,0);g.add(c);for(let i=0;i<3;i++){const k=new T.Mesh(UK,mt(Bn));k.scale.set(.026*s,.08*s,.034*s);k.position.set(0,i*.055*s,-i*.03*s);k.rotation.x=-.35*i;c.add(k)}};
+  for(let i=0;i<5;i++)claw(0,.17,-.3+i*.08,1);for(let i=0;i<4;i++){claw(.04,.09,-.32+i*.1,.8,-1.2);claw(-.04,.09,-.32+i*.1,.8,1.2)}for(let i=0;i<4;i++)Cz(g,.024,.024,.012,0,.1,-.42-i*.05,Bn);
+  B(mg,.045,.16,.07,0,-.08,-.1,D,{rx:.2});for(let i=0;i<2;i++)B(mg,.05,.018,.075,0,-.06-i*.06,-.1+i*.012,Bn,{rx:.2});g.add(mg);for(const z of[.2,.3])claw(0,-.02,z,.9,PI);return{fore:[0,.03,-.36],mag:mg}}},
+{id:'ar_pearl',weapon:'Assault Rifle',name:'珍珠步槍 Pearl Rifle',rarity:'epic',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'side',flashColor:0xfff4fa,
+ build:g=>{const Wt=0xf6efe8,W2=0xe6dccf,Tl=0x7ad8cf,Pk=0xf0b8c8,mg=new T.Group();for(let i=0;i<6;i++){const w=.1-i*.011;B(g,w,w*1.05,.12,0,.09+i*.004,-.04-i*.11,i%2?W2:Wt,{rz:i%2?.12:-.12})}
+  B(g,.09,.12,.16,0,.08,.16,Pk);B(g,.07,.15,.06,0,.07,.27,Pk,{rx:-.2});B(g,.05,.13,.06,0,-.01,.03,Tl,GRIP);B(mg,.06,.16,.08,0,-.07,-.12,Tl,{rx:.2});B(mg,.064,.02,.084,0,-.12,-.11,0xffffff,{rx:.2});g.add(mg);
+  for(const[z,y]of[[-.2,.17],[.12,.19]]){const r=new T.Mesh(UT,mt(Pk));r.scale.set(.024,.024,.02);r.position.set(0,y,z);g.add(r)}Sp(g,.022,0,.18,-.42,0xffffff,1);const st=new T.Mesh(UK,mt(0xffffff));st.scale.set(.02,.04,.02);st.position.set(0,.14,-.3);g.add(st);
+  return{fore:[0,.02,-.3],mag:mg}}},
+{id:'ar_glory',weapon:'Assault Rifle',name:'輝煌步槍 Glorious Rifle',rarity:'legendary',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'flip',flashColor:0xffd23f,flashScale:1.3,
+ build:g=>{const Gd=0xf2c21a,Pu=0xb45cf0,mg=new T.Group();B(g,.08,.12,.42,0,.085,-.08,Pu);B(g,.084,.04,.46,0,.155,-.08,Gd);B(g,.084,.03,.42,0,.025,-.08,Gd);Cz(g,.022,.022,.36,0,.1,-.48,Gd);Cz(g,.03,.03,.05,0,.1,-.68,Gd);
+  for(const z of[-.24,-.04]){const r=new T.Mesh(UT,mt(Gd));r.scale.set(.032,.032,.03);r.rotation.y=PI/2;r.position.set(.045,.09,z);g.add(r);const r2=r.clone();r2.position.x=-.045;g.add(r2)}
+  for(const z of[-.2,.02]){const r=new T.Mesh(UT,mt(Gd));r.scale.set(.025,.025,.02);r.position.set(0,.2,z);g.add(r)}for(const z of[-.3,-.12]){const k=new T.Mesh(UK,mt(Gd));k.scale.set(.02,.07,.02);k.rotation.x=PI;k.position.set(0,-.01,z);g.add(k)}
+  B(g,.05,.13,.06,0,0,.04,Pu,GRIP);B(g,.07,.13,.2,0,.07,.23,Pu);B(g,.072,.03,.2,0,.14,.23,Gd);B(mg,.05,.16,.075,0,-.08,-.12,Gd,{rx:.2});B(mg,.054,.04,.078,0,-.05,-.12,Pu,{rx:.2});g.add(mg);Sp(g,.012,.042,.13,-.15,0xffffff,1);
+  return{fore:[0,.03,-.3],mag:mg}},
+ fireFx:p=>skBurst(p,8,[0xf2c21a,0xb45cf0,0xffffff],1.4,.3,.04)},
+{id:'ar_phoenix',weapon:'Assault Rifle',name:'鳳凰步槍 Phoenix Rifle',rarity:'legendary',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'flip',flashColor:0xff7a1a,flashScale:1.4,
+ build:g=>{const Or=0xffa21a,Yl=0xffd23f,Rd=0xd8261a,mg=new T.Group();B(g,.08,.12,.36,0,.085,-.06,Or);B(g,.084,.04,.3,0,.155,-.08,Yl);
+  for(let i=0;i<3;i++){const k=new T.Mesh(UK,mt(i%2?Yl:Or));k.scale.set(.04-.008*i,.42-.08*i,.03);k.rotation.x=-PI/2-.12*i;k.position.set(0,.1+.03*i,-.42-.03*i);g.add(k)}
+  for(const z of[-.18,.02,.16]){const r=new T.Mesh(UT,mt(Rd));r.scale.set(.03,.03,.026);r.rotation.y=PI/2;r.position.set(.045,.08,z);g.add(r);const r2=r.clone();r2.position.x=-.045;g.add(r2)}
+  for(let i=0;i<3;i++){const f=new T.Mesh(UK,mt(i==1?Rd:Yl));f.scale.set(.025,.12,.02);f.position.set(0,.22,-.12+i*.06);f.rotation.x=.5;g.add(f)}
+  B(g,.05,.13,.06,0,0,.04,Or,GRIP);for(let i=0;i<3;i++){const t=new T.Mesh(UK,mt(i%2?Rd:Or));t.scale.set(.04,.24,.03);t.rotation.x=PI/2+.25*(i-1);t.position.set(0,.08+.04*(i-1),.3);g.add(t)}
+  B(mg,.05,.16,.075,0,-.08,-.12,Rd,{rx:.2});g.add(mg);Sp(g,.03,0,.09,.04,Rd);return{fore:[0,.03,-.3],mag:mg}},
+ fireFx:p=>skBurst(p,10,[0xffa21a,0xffd23f,0xd8261a],1.6,.35,.045)},
+{id:'sn_kraken',weapon:'Sniper',name:'Kraken 海怪狙擊',rarity:'rare',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'side',flashColor:0x4aa3ff,
+ build:g=>{const Wd=0x6a3a1a,W2=0x8a5a2a,Gd=0xd8a02a,Bl=0x2a4a7a,Rd=0x9a1a22,Pk=0xe0606a;B(g,.075,.11,.46,0,.08,-.06,Wd);B(g,.077,.02,.46,0,.14,-.06,Gd);B(g,.078,.05,.2,0,.07,-.08,Bl);Cz(g,.016,.016,.42,0,.09,-.5,K);Cz(g,.024,.024,.1,0,.09,-.3,Gd);
+  B(g,.065,.13,.26,0,.06,.3,Wd);B(g,.067,.02,.26,0,.13,.3,Gd);B(g,.045,.12,.055,0,0,.03,W2,GRIP);
+  const hd=Sp(g,.06,0,.2,-.02,Rd);hd.scale.set(1,1.3,1.1);Sp(g,.014,.05,.2,-.04,0xffd23f,1);Sp(g,.014,-.05,.2,-.04,0xffd23f,1);
+  for(let i=0;i<5;i++){const a=i/5*PI*2,tg=new T.Group();tg.position.set(Math.cos(a)*.03,.15,-.06+Math.sin(a)*.03);g.add(tg);for(let k=0;k<4;k++){const s=new T.Mesh(UC,mt(k%2?Pk:Rd));tg.add(s);s.scale.set(.011-.002*k,.06,.011-.002*k);s.position.set(0,-k*.04,-k*.045-.02);s.rotation.x=.7+k*.25;tg.rotation.y=a}}
+  return{fore:[0,.09,-.42]}}},
+{id:'sn_campfire',weapon:'Sniper',name:'營火狙擊 Campfire Sniper',rarity:'legendary',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'flip',flashColor:0xff8a2a,flashScale:1.4,
+ build:g=>{const Br=0x6a4020,B2=0x8a5a30,Em=0xff8a1a;B(g,.06,.09,.5,0,.08,-.06,Br,{rz:.08});B(g,.04,.05,.36,.015,.12,-.1,B2,{rx:.06,rz:-.2});Cz(g,.02,.012,.46,0,.1,-.52,Br);
+  for(const[z,y]of[[-.36,.11],[-.18,.13],[.0,.1],[.2,.09]]){const e=new T.Mesh(UB,mt(Em,1));e.scale.set(.08,.02,.03);e.position.set(0,y,z);e.rotation.z=.4;g.add(e)}
+  const fl=new T.Mesh(UK,mt(0xffb02a,1));fl.scale.set(.025,.12,.025);fl.rotation.x=-PI/2;fl.position.set(0,.1,-.8);g.add(fl);
+  for(const[y,z]of[[.21,-.08],[-.05,.12]]){Cz(g,.006,.006,.12,0,y-.04,z+.02,B2).rotation.x=.4;const m=Cz(g,.032,.032,.05,0,y,z,0xfafafa);m.rotation.x=0;Cz(g,.033,.033,.012,0,y-.026,z,0x8a5a2a).rotation.x=0}
+  B(g,.06,.12,.26,0,.05,.3,Br,{rx:-.1});B(g,.045,.12,.055,0,0,.03,B2,GRIP);return{fore:[0,.06,-.32]}},
+ fireFx:p=>skBurst(p,10,[0xff8a1a,0xffd23f,0x5a3a20],1.5,.4,.045)},
+{id:'sn_eyes',weapon:'Sniper',name:'眾眼狙擊 Many-Eyes Sniper',rarity:'legendary',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'void',flashColor:0xff2a2a,flashScale:1.3,
+ build:g=>{const Bk=0x101014,Rd=0xe0202a;B(g,.07,.1,.46,0,.08,-.06,Bk);Cz(g,.016,.016,.42,0,.09,-.5,Bk);Cz(g,.034,.034,.26,0,.17,-.08,Bk);B(g,.065,.13,.26,0,.06,.3,Bk);B(g,.045,.12,.055,0,0,.03,Bk,GRIP);
+  const eye=(x,y,z,r,side)=>{const w=new T.Mesh(US,mt(0xffffff));w.scale.set(side?.006:r,r*1.25,side?r:.006);w.position.set(x,y,z);g.add(w);const p=new T.Mesh(US,mt(Rd,1));p.scale.set(side?.008:r*.5,r*1.05,side?r*.5:.008);p.position.set(x+(side?Math.sign(x)*.002:0),y,z);g.add(p)};
+  let s=7;const rr=()=>(s=(s*16807)%2147483647)/2147483647;for(let i=0;i<14;i++){const sd=i%2?1:-1;eye(sd*.037,.04+rr()*.08,-.26+rr()*.4,.009+rr()*.009,1)}for(let i=0;i<6;i++){const sd=i%2?1:-1;eye(sd*.034,.03+rr()*.08,.2+rr()*.18,.01+rr()*.008,1)}
+  const ln=new T.Mesh(US,mt(0xffffff));ln.scale.set(.03,.03,.006);ln.position.set(0,.17,-.211);g.add(ln);const lp=new T.Mesh(US,mt(Rd,1));lp.scale.set(.012,.024,.008);lp.position.set(0,.17,-.213);g.add(lp);return{fore:[0,.09,-.42]}},
+ fireFx:p=>skBurst(p,8,[0xe0202a,0xffffff,0x101014],1.4,.3,.04)},
 {id:'dg_key',weapon:'Daggers',name:'鑰匙雙刃 Key Daggers',rarity:'legendary',ex:1,how:'極致鑰匙組合包限定 Ultra Key Bundle Exclusive',insp:'keyspin',insp2:'keytoss',inspT:8,build:kdBuild,
  drawFx:()=>{P.kdF=1;P.kdIn=.6;snd(2600,.025,.07,'square');snd(1300,.03,.04,'square');[520,700,940,1260].forEach((f,i)=>setTimeout(()=>snd(f,.09,.035,'sine'),40+i*45))},
  inspFx:()=>{if(P.inspV=='keytoss'){snd(420,.12,.04,'triangle');setTimeout(()=>snd(760,.18,.03,'triangle'),120);[300,520,760,1000].forEach(t=>setTimeout(()=>snd(3200,.03,.025,'sine'),t))}
@@ -3700,6 +3768,10 @@ var UPDATES=[
  {e:'💀',h:210,t:'Aura 改版',b:['被殺的人會停在最後的動作站著','旁邊出現骷髏表情','被殺的人也會看到你的剪輯畫面＋音樂']},
  {e:'🌐',h:200,t:'大廳伺服器',b:['登入雲端帳號後會自動進入伺服器（每台最多 100 人）','有好友在線上會優先進好友的伺服器','大廳右上角看得到同伺服器的玩家，🤝 是好友']},
  {e:'🔑',h:45,t:'Keyper',b:['鎖匠 改名成 Keyper，放在 傳奇鑰匙組合包','有鎖匠的玩家自動變成 Keyper']},
+ {e:'🎁',h:120,t:'謝謝你！',b:['點下面的按鈕，領取這次更新的獎勵']}]},
+{ver:'2026.11.26',title:'🔫 步槍＆狙擊皮膚',rewardKeys:10,slides:[
+ {e:'🔫',h:25,t:'8 個新步槍皮膚',b:['八月 AUG、鼓槍、薑餅步槍、AK-47','骨爪步槍、珍珠步槍、輝煌步槍、鳳凰步槍']},
+ {e:'🎯',h:280,t:'3 個新狙擊皮膚',b:['Kraken 海怪狙擊、營火狙擊、眾眼狙擊','薑餅狙擊 重新做了（糖霜、拐杖糖瞄準鏡、蝴蝶結）','全部都在 皮膚箱 裡開得到']},
  {e:'🎁',h:120,t:'謝謝你！',b:['點下面的按鈕，領取這次更新的獎勵']}]}];
 function updLatest(){return UPDATES&&UPDATES[UPDATES.length-1]}
 function updUnclaimed(){const U=updLatest();return!!(U&&PF&&(U.rewardKeys>0||U.rewardGold>0)&&!PF.claimedUpd.includes(U.ver))}
