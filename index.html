@@ -2215,20 +2215,7 @@ FD.bhl={init(f){const H=f.hb=new T.Group();H.position.y=1.2;f.g.add(H);const cor
    for(let i=0;i<Q(30);i++){const a=RR(0,6.28),e=RR(-1,1),sp=RR(3,7);FA2(f,{p:[0,1.2,0],v:[Math.cos(a)*sp,e*sp,Math.sin(a)*sp],s:RR(.03,.07),c:RP([0xffffff,0xc05cff,0x5ab4ff]),l:RR(.3,.6),d:2})}}
   f.tx.material.opacity=ph(t,1.75,1.85)*(1-ph(t,2.3,2.6))}};
 // Aura: the killer's screen turns into a fan-edit — black & white, a smug blue face slides in, "+1000 AURA", random phonk
-function auraFace(x,W){const c=W/2;x.clearRect(0,0,W,W);x.lineJoin=x.lineCap='round';
- // skull emoji: bone-white cranium + jaw, deep sockets with glowing blue pupils, smug brows, grinning teeth, bony waving hand
- const bone=x.createRadialGradient(c-W*.12,c-W*.2,W*.05,c,c,W*.5);bone.addColorStop(0,'#ffffff');bone.addColorStop(.7,'#e9e4d6');bone.addColorStop(1,'#b9b2a0');
- x.fillStyle=bone;x.strokeStyle='#5a5446';x.lineWidth=W*.02;x.beginPath();x.arc(c,c-W*.06,W*.36,PI*.82,PI*2.18);x.lineTo(c+W*.22,c+W*.3);x.quadraticCurveTo(c,c+W*.4,c-W*.22,c+W*.3);x.closePath();x.fill();x.stroke();
- x.fillStyle='#d6cfbd';x.beginPath();x.ellipse(c-W*.31,c+W*.05,W*.05,W*.08,0,0,6.3);x.ellipse(c+W*.31,c+W*.05,W*.05,W*.08,0,0,6.3);x.fill();
- for(const s of[-1,1]){x.fillStyle='#14161c';x.beginPath();x.ellipse(c+s*W*.15,c-W*.03,W*.11,W*.1,s*.15,0,6.3);x.fill();
-  x.fillStyle='#e9e4d6';x.beginPath();x.ellipse(c+s*W*.15,c-W*.11,W*.13,W*.07,s*.15,0,PI);x.fill();x.strokeStyle='#5a5446';x.lineWidth=W*.018;x.beginPath();x.moveTo(c+s*W*.27,c-W*.1);x.quadraticCurveTo(c+s*W*.15,c-W*.06,c+s*W*.04,c-W*.09);x.stroke();
-  const g=x.createRadialGradient(c+s*W*.15,c,0,c+s*W*.15,c,W*.06);g.addColorStop(0,'#bfe6ff');g.addColorStop(.4,'#2f9bff');g.addColorStop(1,'rgba(47,123,255,0)');x.fillStyle=g;x.beginPath();x.arc(c+s*W*.15,c,W*.06,0,6.3);x.fill()}
- x.fillStyle='#14161c';x.beginPath();x.moveTo(c,c+W*.06);x.lineTo(c-W*.045,c+W*.14);x.lineTo(c+W*.045,c+W*.14);x.closePath();x.fill();
- x.fillStyle='#fbf8ee';x.strokeStyle='#14161c';x.lineWidth=W*.014;x.beginPath();x.roundRect(c-W*.18,c+W*.19,W*.36,W*.11,W*.03);x.fill();x.stroke();x.beginPath();for(let i=1;i<6;i++){const tx=c-W*.18+i*W*.06;x.moveTo(tx,c+W*.19);x.lineTo(tx,c+W*.3)}x.moveTo(c-W*.18,c+W*.245);x.lineTo(c+W*.18,c+W*.245);x.stroke();
- const hx=c+W*.37,hy=c+W*.2;x.fillStyle='#f3efe2';x.strokeStyle='#5a5446';x.lineWidth=W*.012;x.beginPath();x.roundRect(hx-W*.08,hy-W*.02,W*.16,W*.13,W*.03);x.fill();x.stroke();
- for(let i=0;i<4;i++){const fx=hx-W*.065+i*W*.043,len=W*(.15+.02*(i==1||i==2));for(let k=0;k<3;k++){x.beginPath();x.roundRect(fx-W*.014,hy-W*.04-(k+1)*len/3,W*.028,len/3-W*.008,W*.012);x.fill();x.stroke()}}
- x.save();x.translate(hx-W*.08,hy+W*.02);x.rotate(-.9);for(let k=0;k<2;k++){x.beginPath();x.roundRect(-W*.014,-(k+1)*W*.055,W*.03,W*.048,W*.012);x.fill();x.stroke()}x.restore();
- x.fillRect(hx-W*.03,hy+W*.11,W*.06,W*.1);x.strokeRect(hx-W*.03,hy+W*.11,W*.06,W*.1)}
+var AURAE='💀';function auraFace(x,W){x.clearRect(0,0,W,W);x.textAlign='center';x.textBaseline='middle';x.font=Math.floor(W*.78)+'px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Segoe UI Symbol",sans-serif';x.fillText(AURAE,W/2,W/2+W*.05)}
 var AURAI=null;function auraFX(D,seed){try{AURAI&&AURAI.remove();const o=document.createElement('div');AURAI=o;o.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 45%,rgba(10,40,120,.55) 100%)';
   const cv=document.createElement('canvas');cv.width=cv.height=420;auraFace(cv.getContext('2d'),420);cv.style.cssText='position:absolute;right:1%;bottom:-3%;width:min(46vw,56vh);height:auto;transform-origin:70% 90%';o.appendChild(cv);
   const tx=document.createElement('div');tx.textContent='+1000 AURA';tx.style.cssText='position:absolute;left:50%;top:18%;transform:translateX(-50%);font:900 clamp(28px,7vw,72px) '+FNT+';color:#fff;letter-spacing:.06em;text-shadow:0 0 18px #2f7bff,0 4px 0 #0a2a6a';o.appendChild(tx);
@@ -2238,7 +2225,7 @@ var AURAI=null;function auraFX(D,seed){try{AURAI&&AURAI.remove();const o=documen
    const b=Math.floor(t/.23),bp=1-((t/.23)%1),ins=ez(Math.min(1,t/.25)),out=ph(t,D-.3,D);cv.style.transform='translate('+(1-ins+out)*60+'%,'+(1-ins+out)*20+'%) rotate('+(-8+4*Math.sin(t*3))+'deg) scale('+(1+.06*bp)+')';
    tx.style.opacity=String(ph(t,.15,.3)*(1-out));tx.style.transform='translateX(-50%) scale('+(1+.12*bp)+') rotate('+(b%2?-3:3)+'deg)';ln.style.transform='translateX('+(-(t*240)%41)+'px)';o.style.opacity=String(1-out);
    requestAnimationFrame(step)};requestAnimationFrame(step)}catch(e){}}
-FD.aur={init(f){finPose(f);const tex=fcvt(f,256,256,(x,W)=>auraFace(x,W)),m=new T.SpriteMaterial({map:tex,transparent:true,opacity:0,depthWrite:false});f.mats.push(m);f.em=new T.Sprite(m);f.em.position.set(-1.05,1.15,0);f.g.add(f.em);
+FD.aur={init(f){finPose(f);AURAE=Math.random()<.5?'💀':'☠️';const tex=fcvt(f,256,256,(x,W)=>auraFace(x,W)),m=new T.SpriteMaterial({map:tex,transparent:true,opacity:0,depthWrite:false});f.mats.push(m);f.em=new T.Sprite(m);f.em.position.set(-1.05,1.15,0);f.g.add(f.em);
   f.tx=ftxt(f,'+1000 AURA','#7ab8ff',3.2);f.tx.position.y=3.2},
  upd(f,t,dt){const R=f.rig,st=f.st,end=ph(t,f.D-.4,f.D);if(!st.a){st.a=1;const sd=Math.floor(Math.random()*3);if((f.byP||f.vicP)&&!f.pv)auraFX(2.6,sd);else phonk(2.6,sd)}
   // the body stays frozen in its last pose, standing — only the skull emoji and the text move
