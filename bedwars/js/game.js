@@ -669,12 +669,14 @@ class Game {
     const p = this.player, k = this.input.keys;
     if (!p.alive) return;
     let fx = 0, fz = 0;
-    const fw = (k.KeyW ? 1 : 0) - (k.KeyS ? 1 : 0), st = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0);
+    let fw = (k.KeyW ? 1 : 0) - (k.KeyS ? 1 : 0), st = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0);
+    const tm = this.touchMove;
+    if (tm && (tm.x || tm.y)) { fw = -tm.y; st = tm.x; }
     const sy = Math.sin(p.yaw), cy = Math.cos(p.yaw);
     fx = -sy * fw + cy * st; fz = -cy * fw - sy * st;
-    p.sneak = !!(k.ShiftLeft || k.ShiftRight);
-    p.sprint = fw > 0 && !p.sneak && p.hp > 3;
-    this.applyControl(p, fx, fz, !!k.Space, dt);
+    p.sneak = !!(k.ShiftLeft || k.ShiftRight || this.touchSneak);
+    p.sprint = fw > 0.7 && !p.sneak && p.hp > 3;
+    this.applyControl(p, fx, fz, !!(k.Space || this.touchJump), dt);
     // 挖方塊
     this.useCd -= dt;
     const tg = this.playerTarget();
@@ -896,10 +898,12 @@ class Game {
     const p = this.player, cam = this.camera;
     if (this.spectator) {
       const k = this.input.keys, s = this.spec;
-      const fw = (k.KeyW ? 1 : 0) - (k.KeyS ? 1 : 0), st = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0);
+      let fw = (k.KeyW ? 1 : 0) - (k.KeyS ? 1 : 0), st = (k.KeyD ? 1 : 0) - (k.KeyA ? 1 : 0);
+      const tm = this.touchMove;
+      if (tm && (tm.x || tm.y)) { fw = -tm.y; st = tm.x; }
       const sy = Math.sin(s.yaw), cy = Math.cos(s.yaw), sp = 12 * dt;
       s.pos.x += (-sy * fw + cy * st) * sp; s.pos.z += (-cy * fw - sy * st) * sp;
-      s.pos.y += ((k.Space ? 1 : 0) - (k.ShiftLeft ? 1 : 0)) * sp;
+      s.pos.y += ((k.Space || this.touchJump ? 1 : 0) - (k.ShiftLeft || this.touchSneak ? 1 : 0)) * sp;
       cam.position.copy(s.pos); cam.rotation.set(s.pitch, s.yaw, 0);
       this.vm.visible = false;
     } else if (p.alive) {

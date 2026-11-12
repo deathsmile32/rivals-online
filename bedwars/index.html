@@ -2,7 +2,10 @@
 <html lang="zh-Hant-TW">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a1c24">
 <title>床戰 BED WARS</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -26,6 +29,19 @@
     <div id="hotbar"></div>
   </div>
 </div>
+
+<!-- 手機觸控 -->
+<div id="touch" class="hidden">
+  <div id="joyBase"><div id="joyKnob"></div></div>
+  <div id="ttop">
+    <button id="tShop">商店</button><button id="tMate">隊友</button><button id="tEat">金蘋果</button><button id="tPause">❚❚</button>
+  </div>
+  <button id="tAtk" class="tb">⚔<span>攻擊</span></button>
+  <button id="tUse" class="tb">▣<span>放置</span></button>
+  <button id="tJump" class="tb">跳</button>
+  <button id="tSneak" class="tb">蹲</button>
+</div>
+<div id="rotate">請把手機轉成橫向 ↻</div>
 
 <!-- 主選單 -->
 <div id="menu">

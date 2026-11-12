@@ -103,7 +103,7 @@ const UI = {
     const hk = p.sel + '|' + p.sword + p.pick + p.axe + '|' + p.hotbar.map(s => s ? s.id + s.count : '-').join(',');
     if (hk !== this.lastHot) {
       this.lastHot = hk;
-      $('hotbar').innerHTML = p.hotbar.map((s, i) => `<div class="slot${i === p.sel ? ' sel' : ''}">${s ? this.icon(s.id, p) + (s.count > 1 ? `<span class="cnt">${s.count}</span>` : '') : ''}<span class="key">${i + 1}</span></div>`).join('');
+      $('hotbar').innerHTML = p.hotbar.map((s, i) => `<div class="slot${i === p.sel ? ' sel' : ''}" data-i="${i}">${s ? this.icon(s.id, p) + (s.count > 1 ? `<span class="cnt">${s.count}</span>` : '') : ''}<span class="key">${i + 1}</span></div>`).join('');
       const h = p.held();
       let nm = '';
       if (h) nm = h.id === 'sword' ? SWORD_NAME[p.sword] : h.id === 'pick' ? PICK_NAME[p.pick] : h.id === 'axe' ? AXE_NAME[p.axe] : ITEMS[h.id].name;
@@ -170,7 +170,7 @@ const UI = {
       }
       html += '</div><div class="hint">鑽石在地圖四角的鑽石島收集</div>';
     }
-    html += '<div class="hint">按 E 或 Esc 關閉</div>';
+    html += `<div class="hint">${TOUCH ? '點右上角 ✕ 關閉' : '按 E 或 Esc 關閉'}</div>`;
     const box = $('shopBox');
     if (box.dataset.h !== html) { box.innerHTML = html; box.dataset.h = html; }
   },
@@ -203,20 +203,25 @@ const UI = {
 
 // ===================== 啟動與輸入 =====================
 let renderer = null, game = null, lastT = 0, sens = 0.0022, curDiff = 'normal';
+// 觸控裝置偵測（手機、平板）
+const TOUCH = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+if (TOUCH) document.body.classList.add('touch');
 const canvas = $('c');
 
 function initRenderer() {
   THREE.ColorManagement.enabled = false;
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: false });
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: !TOUCH, preserveDrawingBuffer: false, powerPreference: 'high-performance' });
   renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, TOUCH ? 1 : 1.5));
   renderer.setSize(innerWidth, innerHeight);
   addEventListener('resize', () => {
     renderer.setSize(innerWidth, innerHeight);
     if (game) { game.camera.aspect = innerWidth / innerHeight; game.camera.updateProjectionMatrix(); }
   });
 }
-function requestLock() { if (game && !game.over && !UI.shopKind) { const r = canvas.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } }
+function requestLock() {
+  if (TOUCH) { if (game) { game.paused = false; $('pause').classList.add('hidden'); } return; }
+  if (game && !game.over && !UI.shopKind) { const r = canvas.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } }
 
 function startGame(diff, testMode) {
   curDiff = diff || curDiff;
@@ -232,23 +237,30 @@ function startGame(diff, testMode) {
   $('hud').classList.remove('hidden');
   UI.title('床戰開始！', '保護你的床，拆掉敵人的床！', '#ffd84a');
   UI.feed('提示：去基地後方的生成器收集鐵和金，到 <b style="color:#ffd84a">道具商店</b> 買羊毛和裝備');
-  if (!testMode) requestLock();
+  if (TOUCH) {
+    $('touch').classList.remove('hidden');
+    const el = document.documentElement;
+    if (!testMode && el.requestFullscreen && !document.fullscreenElement) el.requestFullscreen().catch(() => { });
+    try { screen.orientation.lock('landscape').catch(() => { }); } catch (e) { }
+    resetTouch();
+  } else if (!testMode) requestLock();
 }
 
 function toMenu() {
   if (document.pointerLockElement) document.exitPointerLock();
+  $('touch').classList.add('hidden');
   game = null; UI.game = null;
   ['end', 'pause', 'shop', 'hud'].forEach(id => $(id).classList.add('hidden'));
   $('menu').classList.remove('hidden');
 }
 
 document.addEventListener('pointerlockchange', () => {
-  if (!game) return;
+  if (!game || TOUCH) return;
   if (document.pointerLockElement === canvas) { game.paused = false; $('pause').classList.add('hidden'); }
   else if (!UI.shopKind && !game.over && !game.testMode) { game.paused = true; $('pause').classList.remove('hidden'); game.input.keys = {}; game.input.mouseL = game.input.mouseR = false; }
 });
 canvas.addEventListener('mousedown', e => {
-  if (!game) return;
+  if (!game || TOUCH) return;
   if (document.pointerLockElement !== canvas) { requestLock(); return; }
   game.onMouseDown(e.button);
 });
@@ -322,6 +334,88 @@ try {
   const n = localStorage.getItem('bw_name'); if (n) $('pname').value = n;
   const s = localStorage.getItem('bw_sens'); if (s) { $('sens').value = s; sens = 0.0006 + s * 0.00006; }
 } catch (e) { }
+
+// ===================== 手機觸控操作 =====================
+const touchState = { joyId: null, joyX: 0, joyY: 0, lookId: null, lookX: 0, lookY: 0 };
+function resetTouch() {
+  touchState.joyId = touchState.lookId = null;
+  $('joyBase').style.display = 'none';
+  $('tSneak').classList.remove('on');
+  if (game) { game.touchMove = { x: 0, y: 0 }; game.touchSneak = false; game.touchJump = false; }
+}
+function setupTouch() {
+  const zone = $('touch');
+  const joyR = 55;
+  zone.addEventListener('pointerdown', e => {
+    if (!game || e.target.closest('button') || e.target.closest('.slot')) return;
+    e.preventDefault();
+    // 左半邊下方 = 搖桿，其他地方 = 轉視角
+    if (e.clientX < innerWidth * 0.42 && e.clientY > innerHeight * 0.3 && touchState.joyId == null) {
+      touchState.joyId = e.pointerId; touchState.joyX = e.clientX; touchState.joyY = e.clientY;
+      const b = $('joyBase'); b.style.display = 'block'; b.style.left = e.clientX + 'px'; b.style.top = e.clientY + 'px';
+      $('joyKnob').style.transform = 'translate(-50%,-50%)';
+    } else if (touchState.lookId == null) {
+      touchState.lookId = e.pointerId; touchState.lookX = e.clientX; touchState.lookY = e.clientY;
+    }
+  });
+  zone.addEventListener('pointermove', e => {
+    if (!game) return;
+    if (e.pointerId === touchState.joyId) {
+      let dx = e.clientX - touchState.joyX, dy = e.clientY - touchState.joyY;
+      const l = Math.hypot(dx, dy);
+      if (l > joyR) { dx *= joyR / l; dy *= joyR / l; }
+      $('joyKnob').style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+      let x = dx / joyR, y = dy / joyR;
+      if (Math.hypot(x, y) < 0.15) x = y = 0;
+      game.touchMove = { x, y };
+    } else if (e.pointerId === touchState.lookId) {
+      const t = game.spectator ? game.spec : game.player;
+      const s = sens * 2.4;
+      t.yaw -= (e.clientX - touchState.lookX) * s;
+      t.pitch = Math.max(-1.55, Math.min(1.55, t.pitch - (e.clientY - touchState.lookY) * s));
+      touchState.lookX = e.clientX; touchState.lookY = e.clientY;
+    }
+  });
+  const end = e => {
+    if (e.pointerId === touchState.joyId) { touchState.joyId = null; $('joyBase').style.display = 'none'; if (game) game.touchMove = { x: 0, y: 0 }; }
+    if (e.pointerId === touchState.lookId) touchState.lookId = null;
+  };
+  zone.addEventListener('pointerup', end);
+  zone.addEventListener('pointercancel', end);
+  // 按住型按鈕
+  const hold = (id, down, up) => {
+    const b = $(id);
+    b.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); b.classList.add('press'); if (game) down(); });
+    const u = e => { b.classList.remove('press'); if (game) up(); };
+    b.addEventListener('pointerup', u); b.addEventListener('pointercancel', u); b.addEventListener('pointerleave', u);
+  };
+  hold('tAtk', () => game.onMouseDown(0), () => game.onMouseUp(0));
+  hold('tUse', () => game.onMouseDown(2), () => game.onMouseUp(2));
+  hold('tJump', () => { game.touchJump = true; }, () => { game.touchJump = false; });
+  const tap = (id, fn) => $(id).addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (game) fn(); });
+  tap('tSneak', () => { game.touchSneak = !game.touchSneak; $('tSneak').classList.toggle('on', game.touchSneak); });
+  tap('tShop', () => { if (game.player.alive && !game.interact()) UI.toast('走到商店或升級 NPC 旁邊再按'); });
+  tap('tMate', () => game.cycleMateCmd());
+  tap('tEat', () => { const p = game.player; if (p.alive && !game.useGapple(p)) UI.toast('沒有金蘋果'); });
+  tap('tPause', () => { game.paused = true; $('pause').classList.remove('hidden'); resetTouch(); });
+  // 點快捷欄切換物品
+  $('hotbar').addEventListener('pointerdown', e => {
+    const s = e.target.closest('.slot');
+    if (!s || !game) return;
+    e.preventDefault(); e.stopPropagation();
+    game.player.sel = +s.dataset.i;
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && game && !game.over) { game.paused = true; $('pause').classList.remove('hidden'); resetTouch(); }
+  });
+}
+if (TOUCH) {
+  setupTouch();
+  document.querySelector('.help').innerHTML = `<div><b>左邊拖曳</b> 移動搖桿</div><div><b>右邊拖曳</b> 轉視角</div>
+    <div><b>⚔ 攻擊</b> 點擊攻擊／按住挖方塊</div><div><b>▣ 放置</b> 放方塊／用道具（按住連放）</div>
+    <div><b>跳 / 蹲</b> 蹲是開關，搭橋時打開</div><div><b>點快捷欄</b> 切換物品</div>
+    <div><b>商店</b> 站在 NPC 旁邊按</div><div><b>隊友</b> 切換隊友指令</div>`;
+}
 
 initRenderer();
 requestAnimationFrame(loop);
