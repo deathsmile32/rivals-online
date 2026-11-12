@@ -1,0 +1,85 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: "Microsoft JhengHei", "PingFang TC", "Noto Sans TC", sans-serif; color: #fff; user-select: none; }
+#c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+.hidden { display: none !important; }
+
+/* HUD */
+#hud { position: fixed; inset: 0; pointer-events: none; }
+#crosshair { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -52%); font-size: 26px; color: #fff; text-shadow: 0 0 2px #000; mix-blend-mode: difference; }
+#hurt { position: absolute; inset: 0; box-shadow: inset 0 0 160px rgba(255, 0, 0, 0.9); opacity: 0; transition: opacity .25s; }
+#scoreboard { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, .45); padding: 10px 14px; min-width: 210px; font-size: 14px; line-height: 1.55; }
+.sbt { text-align: center; font-weight: bold; color: #ffd84a; font-size: 17px; margin-bottom: 4px; }
+.sbs { color: #ddd; font-size: 13px; }
+.sbl { height: 8px; }
+.sbr { display: flex; justify-content: space-between; gap: 10px; }
+.you { color: #aaa; font-size: 12px; }
+#feed { position: absolute; left: 10px; bottom: 150px; width: 460px; font-size: 14px; }
+.fl { background: rgba(0, 0, 0, .4); padding: 3px 8px; margin-top: 3px; transition: opacity .6s; text-shadow: 1px 1px 0 #000; }
+#titles { position: absolute; top: 24%; width: 100%; text-align: center; text-shadow: 3px 3px 0 #000; }
+#bigTitle { font-size: 54px; font-weight: 900; }
+#subTitle { font-size: 22px; margin-top: 6px; }
+#respawn { position: absolute; top: 42%; width: 100%; text-align: center; font-size: 28px; font-weight: bold; color: #ff6060; text-shadow: 2px 2px 0 #000; }
+#toast { position: absolute; bottom: 175px; width: 100%; text-align: center; font-size: 17px; text-shadow: 1px 1px 0 #000; opacity: 0; transition: opacity .3s; }
+#breakbar { position: absolute; left: 50%; top: 55%; width: 80px; height: 6px; transform: translateX(-50%); background: rgba(0, 0, 0, .5); display: none; }
+#breakfill { height: 100%; width: 0; background: #fff; }
+#res { position: absolute; left: 10px; top: 10px; background: rgba(0, 0, 0, .45); padding: 8px 12px; font-size: 15px; line-height: 1.6; }
+#res .dot { display: inline-block; width: 10px; height: 10px; margin-right: 6px; border: 1px solid #000; }
+#res .arm { color: #bbb; font-size: 13px; margin-top: 2px; }
+#bottom { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); text-align: center; }
+#itemName { height: 22px; font-size: 15px; text-shadow: 1px 1px 0 #000; }
+#hearts { text-align: left; font-size: 19px; height: 24px; letter-spacing: -1px; }
+.ht { text-shadow: 1px 1px 0 #000; }
+.ht.f { color: #ff2a2a; } .ht.h { color: #b04040; } .ht.e { color: #3a1a1a; } .ht.ab { color: #ffd84a; }
+#hotbar { display: flex; gap: 2px; background: rgba(0, 0, 0, .5); padding: 3px; border: 2px solid #222; }
+.slot { position: relative; width: 50px; height: 50px; border: 2px solid #555; display: flex; align-items: center; justify-content: center; background: rgba(120, 120, 120, .25); }
+.slot.sel { border-color: #fff; box-shadow: 0 0 0 2px #fff; }
+.slot .cnt { position: absolute; right: 3px; bottom: 1px; font-size: 14px; font-weight: bold; text-shadow: 1px 1px 0 #000; }
+.slot .key { position: absolute; left: 3px; top: 0; font-size: 10px; color: #aaa; }
+.ic { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 19px; border: 2px solid rgba(0, 0, 0, .5); text-shadow: 1px 1px 0 #000; }
+.ic.blk { box-shadow: inset -5px -5px 0 rgba(0, 0, 0, .25), inset 4px 4px 0 rgba(255, 255, 255, .15); }
+
+/* 面板 */
+#menu, #pause, #end, #shop { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, .35); }
+.panel { background: rgba(20, 22, 30, .88); border: 3px solid #555; padding: 26px 34px; text-align: center; max-width: 640px; box-shadow: 0 10px 40px rgba(0, 0, 0, .6); }
+h1 { font-size: 52px; color: #ff5555; text-shadow: 4px 4px 0 #000; }
+h1 span { color: #fff; font-size: 30px; }
+h2 { font-size: 32px; margin-bottom: 14px; }
+.sub { color: #ccc; margin: 6px 0 16px; }
+label { display: block; margin: 10px 0; color: #ddd; }
+input { font: inherit; padding: 5px 8px; margin-left: 8px; background: #111; color: #fff; border: 2px solid #555; }
+input[type=range] { vertical-align: middle; width: 200px; }
+.row { display: flex; gap: 10px; justify-content: center; margin: 12px 0; }
+button { font: inherit; font-size: 17px; padding: 8px 20px; background: #555; color: #fff; border: 2px solid #222; border-bottom-width: 4px; cursor: pointer; }
+button:hover { background: #6a6a6a; }
+button.on { background: #3a7a3a; border-color: #1c3c1c; }
+button.big { font-size: 22px; padding: 10px 40px; background: #c83232; margin: 8px 0; }
+button.big:hover { background: #e04040; }
+.help { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 18px; text-align: left; font-size: 14px; color: #ccc; margin-top: 14px; }
+.help b { color: #ffd84a; }
+.tip { margin-top: 12px; font-size: 14px; color: #9fd; }
+
+/* 商店 */
+#shopBox { background: rgba(25, 25, 32, .95); border: 3px solid #666; width: min(760px, 94vw); padding: 14px 18px; }
+.shead { display: flex; align-items: center; gap: 16px; font-size: 15px; margin-bottom: 10px; }
+.shead b { font-size: 22px; color: #ffd84a; }
+.shead span { flex: 1; }
+.x { padding: 2px 10px; }
+.tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+.tabs button { flex: 1; font-size: 16px; padding: 6px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 8px; }
+.card { background: #333; border: 2px solid #555; padding: 8px; cursor: pointer; display: grid; grid-template-columns: 38px 1fr; grid-template-rows: auto auto auto; column-gap: 8px; text-align: left; }
+.card .ic { grid-row: span 2; }
+.card:hover { border-color: #fff; }
+.card.ok { border-color: #3a8a3a; }
+.card.poor { opacity: .55; }
+.card.owned { opacity: .45; cursor: default; }
+.cn { font-weight: bold; font-size: 15px; }
+.cc { font-size: 14px; }
+.cd { grid-column: span 2; font-size: 12px; color: #aaa; margin-top: 4px; }
+.hint { text-align: center; color: #888; font-size: 13px; margin-top: 8px; }
+
+/* 結算 */
+table { border-collapse: collapse; margin: 12px auto; font-size: 15px; }
+th, td { padding: 4px 12px; border-bottom: 1px solid #444; }
+th { color: #ffd84a; }
+tr.me { background: rgba(255, 216, 74, .15); }
