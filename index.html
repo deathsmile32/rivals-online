@@ -992,9 +992,21 @@ const SKINS=[
  reloadFx:()=>{snd(220,.1,.07,'sine');setTimeout(()=>snd(660,.06,.06,'sine'),110)},
  fireFx:p=>{skBurst(p,10,[0x7fd9ff,0xffffff,0xc8d2e0],2.6,.22,.05);snd(1400,.05,.05,'sine')}},
 // ----- Knife skins: original procedural reinterpretations (NOT Roblox assets). Same local frame as MD['Knife'] (grip at origin, blade extends +y). drawFx(p) fires once on equip (see swE/qmelee), p = world position.
-{id:'kb_karambit',weapon:'Knife',name:'彎刃 Karambit-style',rarity:'rare',how:'從皮膚箱開出 Unboxed from the Skin Case',
- build:g=>{const S=0xd3d8e0;B(g,.03,.1,.035,0,0,0,0x1f2024);B(g,.016,.03,.016,-.028,.07,.012,0x1f2024,{rz:.6});B(g,.05,.014,.045,0,.06,0,0x6a6f78);B(g,.016,.14,.05,0,.14,-.012,S,{rx:.16});B(g,.016,.11,.045,0,.25,-.045,S,{rx:.55});B(g,.016,.05,.04,0,.31,-.095,S,{rx:1.05});return{}},
- drawFx:p=>{skBurst(p,9,[0xeef2f7,0xbfd6ff],2.6,.22,.05);snd(1900,.05,.05,'sine');snd(2400,.04,.04,'sine')}},
+{id:'kb_karambit',weapon:'Knife',name:'爪刀 Karambit',rarity:'epic',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'kspin',inspT:2.6,
+ build:g=>{const S=0xa9b0bb,S2=0xbcc3cd,Hd=0x24262b,H2=0x34373e,s=.16,Y=y=>y*s+.02,Z=x=>x*s;
+  // handle with finger grooves, finger ring at the bottom, guard at the top
+  B(g,.026,.2,.055,0,Y(.33),Z(-.02),Hd);B(g,.028,.2,.012,0,Y(.33),Z(.17),H2);for(let i=0;i<3;i++){const b=Sp(g,.02,0,Y(.75-i*.3),Z(-.24),Hd);b.scale.set(.65,1,1)}for(let i=0;i<6;i++)B(g,.03,.004,.012,0,Y(.1+i*.14),Z(.2),0x111214);
+  const r=new T.Mesh(UT,mt(Hd));r.scale.set(.026,.026,.05);r.rotation.y=PI/2;r.position.set(0,Y(-.4),Z(-.18));g.add(r);B(g,.024,.03,.03,0,Y(-.12),Z(-.1),Hd);
+  B(g,.03,.025,.075,0,Y(.97),Z(-.05),H2);
+  // curved claw blade: segments along a quadratic curve from the guard to the tip
+  const P0=[-.02,1.0],P1=[-.12,1.7],P2=[-1.05,1.78],N=9;let prev=null;
+  for(let k=0;k<=N;k++){const t=k/N,a=(1-t)*(1-t),b=2*(1-t)*t,c=t*t,px=a*P0[0]+b*P1[0]+c*P2[0],py=a*P0[1]+b*P1[1]+c*P2[1];if(prev){const dx=px-prev[0],dy=py-prev[1],L=Math.hypot(dx,dy),w=.38*(1-t)+.05,ang=Math.atan2(dx,dy);
+   const m=B(g,.012,L*s*1.15,w*s,0,Y((py+prev[1])/2),Z((px+prev[0])/2+.06*(1-t)),k%2?S:S2);m.rotation.x=ang;const e=B(g,.005,L*s*1.1,.012,0,Y((py+prev[1])/2)-.004*(1-t),Z((px+prev[0])/2+.06*(1-t))+w*s*.45,0xf6f8fb);e.rotation.x=ang}prev=[px,py]}
+  return{}},
+ drawFx:p=>{skBurst(p,9,[0xeef2f7,0xbfd6ff],2.6,.22,.05);snd(1900,.05,.05,'sine');snd(2400,.04,.04,'sine')},
+ inspFx:()=>{[200,700,1300].forEach(t=>setTimeout(()=>{if(P&&P.insp>0)snd(2200,.04,.03,'sine')},t))},
+ vm:(o)=>{if(o.ip>=0){o.py+=kf(o.ip,[[0,0],[.1,.05],[.9,.05],[1,0]]);o.ry+=kf(o.ip,[[0,0],[.1,.5],[.9,.5],[1,0]])}},
+ vm2:(o,U)=>{if(!U.m||o.ip<0)return;const a=-kf(o.ip,[[.08,0],[.38,PI*2],[.5,PI*2],[.8,PI*4],[1,PI*4]]),ry=-.044,rz=-.029,c=Math.cos(a),sn=Math.sin(a);U.m.rotation.x+=a;U.m.position.y+=ry-(ry*c-rz*sn);U.m.position.z=rz-(ry*sn+rz*c)}},
 {id:'kb_pencil',weapon:'Knife',name:'鉛筆 Pencil',rarity:'common',how:'從皮膚箱開出 Unboxed from the Skin Case',
  build:g=>{Cy(g,.026,.3,0,.1,0,0xf0c13a);const tp=new T.Mesh(new T.ConeGeometry(.026,.07,8),mt(0xcdb27a));tp.position.set(0,.285,0);g.add(tp);const gp=new T.Mesh(new T.ConeGeometry(.012,.03,8),mt(0x3a3a3a));gp.position.set(0,.335,0);g.add(gp);Cy(g,.028,.035,0,-.07,0,0xb9bec7);Cy(g,.026,.05,0,-.12,0,0xff9fc7);return{}},
  drawFx:p=>{skBurst(p,7,0xb8b2a0,.9,.4,.045);snd(260,.1,.05,'square')}},
@@ -2871,7 +2883,7 @@ if(s.rl>0&&w.rl&&P.qmT<=0){const p=1-s.rl/w.rl,t=RS[w.n]||'mag';
  else if(t=='box'){py+=kf(p,[[0,0],[.2,-.1],[.8,-.1],[1,0]]);rz+=kf(p,[[0,0],[.2,.3],[.8,.3],[1,0]]);lo=kf(p,[[.2,0],[.4,1],[.7,1],[.85,0]])}}
 if(P.insp>0){const p=1-P.insp/(P.inspT||2.4),t=P.inspV||U.insp;
  if(t=='lucky'){py+=kf(p,[[0,0],[.12,-.06],[.26,.38],[.5,.5],[.72,.08],[.8,-.05],[.9,0]]);pz+=kf(p,[[0,0],[.26,-.1],[.72,-.1],[.9,0]]);rx+=kf(p,[[.22,0],[.74,PI*4]]);rz+=kf(p,[[.22,0],[.5,.4],[.74,0]])}
- else if(t=='twirl'||t=='sturn'||t=='side'||t=='knuck'||t=='popcat'||t=='six7'||t=='cspin'||t=='oiiai'){}
+ else if(t=='twirl'||t=='sturn'||t=='side'||t=='knuck'||t=='popcat'||t=='six7'||t=='cspin'||t=='oiiai'||t=='kspin'){}
  else if(t=='keyspin'){py+=kf(p,[[0,0],[.3,.03],[.9,.03],[1,0]]);rx+=kf(p,[[.28,0],[.4,.12],[.6,.12],[.7,0]])}
  else if(t=='keytoss'){ry+=kf(p,[[0,0],[.15,.12],[.55,.12],[.62,-.1],[.8,-.1],[1,0]]);py+=kf(p,[[.52,0],[.58,-.03],[.66,0]])}
  else if(t=='pxflip'){rx+=kf(p,[[0,0],[.15,.9],[.4,.9],[.55,0],[1,0]]);ry+=kf(p,[[0,0],[.15,.25],[.4,.25],[.55,0],[1,0]]);py+=kf(p,[[0,0],[.15,.05],[.4,.05],[1,0]])}
