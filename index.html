@@ -1149,6 +1149,15 @@ const SKINS=[
   const ln=new T.Mesh(US,mt(0xffffff));ln.scale.set(.03,.03,.006);ln.position.set(0,.17,-.211);g.add(ln);const lp=new T.Mesh(US,mt(Rd,1));lp.scale.set(.012,.024,.008);lp.position.set(0,.17,-.213);g.add(lp);return{fore:[0,.09,-.42]}},
  fireFx:p=>skBurst(p,8,[0xe0202a,0xffffff,0x101014],1.4,.3,.04)},
 // ----- 2026.11 burst rifle / crossbow / 10B skins (own blocky takes on each theme)
+{id:'sn_glory',weapon:'Sniper',name:'輝煌狙擊 Glorious Sniper',rarity:'legendary',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'flip',flashColor:0xffe27a,flashScale:1.6,
+ build:g=>{const Gd=0xf2c21a,G2=0xffe27a,Pu=0x7a3ad0;B(g,.068,.1,.46,0,.08,-.06,Pu);B(g,.072,.03,.46,0,.14,-.06,Gd);B(g,.072,.025,.46,0,.03,-.06,Gd);Cz(g,.018,.018,.44,0,.09,-.5,Gd);Cz(g,.026,.026,.05,0,.09,-.74,G2,{e:1});
+  Cz(g,.034,.034,.26,0,.18,-.08,Gd);Cz(g,.044,.044,.03,0,.18,-.22,G2,{e:1});Cz(g,.04,.04,.03,0,.18,.06,Gd);B(g,.02,.04,.02,0,.14,-.08,Gd);
+  for(const z of[-.24,-.02]){const r=new T.Mesh(UT,mt(Gd));r.scale.set(.034,.034,.03);r.rotation.y=PI/2;r.position.set(.036,.08,z);g.add(r);const r2=r.clone();r2.position.x=-.036;g.add(r2)}
+  for(const z of[-.42,-.58]){const r=new T.Mesh(UT,mt(Gd));r.scale.set(.03,.03,.02);r.position.set(0,.09,z);g.add(r)}
+  for(const z of[-.3,.02]){const k=new T.Mesh(UK,mt(Gd));k.scale.set(.02,.08,.02);k.rotation.x=PI;k.position.set(0,-.01,z);g.add(k)}
+  B(g,.06,.13,.26,0,.06,.3,Pu);B(g,.062,.03,.26,0,.13,.3,Gd);B(g,.064,.15,.03,0,.06,.43,Gd);const sw=new T.Mesh(UT,mt(Gd));sw.scale.set(.04,.04,.025);sw.rotation.y=PI/2;sw.position.set(.032,.06,.3);g.add(sw);
+  B(g,.045,.12,.055,0,0,.03,Gd,GRIP);Sp(g,.012,.038,.12,-.15,0xffffff,1);Sp(g,.01,-.038,.11,.2,0xffffff,1);return{fore:[0,.09,-.42]}},
+ fireFx:p=>skBurst(p,10,[0xf2c21a,0xffe27a,0x7a3ad0,0xffffff],1.6,.35,.045)},
 {id:'ar_10b',weapon:'Assault Rifle',name:'10B 百億步槍',rarity:'legendary',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'flip',flashColor:0xffc21a,flashScale:1.3,
  build:g=>{const Gd=0xf2b81a,G2=0xd89a10,mg=new T.Group();B(g,.07,.1,.3,0,.08,-.04,Gd);Cz(g,.022,.022,.34,0,.1,-.5,Gd);Cz(g,.03,.03,.05,0,.1,-.68,G2);
   for(let i=0;i<6;i++){const o=new T.Mesh(UT,mt(i%2?G2:Gd));o.scale.set(.045,.06,.05);o.position.set(0,.14+(i%2)*.02,-.3+i*.085);o.rotation.y=PI/2;g.add(o)}
@@ -3872,7 +3881,7 @@ var UPDATES=[
  {e:'🎁',h:120,t:'謝謝你！',b:['點下面的按鈕，領取這次更新的獎勵']}]},
 {ver:'2026.11.26',title:'🔫 新皮膚大更新',rewardKeys:15,slides:[
  {e:'🔫',h:25,t:'8 個新步槍皮膚',b:['八月 AUG、鼓槍、薑餅步槍、AK-47','骨爪步槍、珍珠步槍、輝煌步槍、鳳凰步槍']},
- {e:'🎯',h:280,t:'3 個新狙擊皮膚',b:['Kraken 海怪狙擊、營火狙擊、眾眼狙擊','薑餅狙擊 重新做了（糖霜、拐杖糖瞄準鏡、蝴蝶結）','全部都在 皮膚箱 裡開得到']},
+ {e:'🎯',h:280,t:'3 個新狙擊皮膚',b:['Kraken 海怪狙擊、營火狙擊、眾眼狙擊、輝煌狙擊','薑餅狙擊 重新做了（糖霜、拐杖糖瞄準鏡、蝴蝶結）','全部都在 皮膚箱 裡開得到']},
  {e:'💥',h:300,t:'9 個爆發步槍皮膚',b:['電流步槍、霓虹爆發、牛頭衝刺、像素爆炸、沙漠無托','水之爆發、輝煌爆發步槍、松木爆發、幽靈爆發']},
  {e:'🏹',h:160,t:'9 個十字弓皮膚',b:['弧光十字弓、像素十字弓、蜘蛛十字弓、凍傷十字弓、魚叉弩','小提琴十字弓、營火十字弓、十字骨、輝煌十字弓','還有 10B 百億步槍、AK-47 戰術版（上導軌＋長彈匣）']},
  {e:'🎁',h:120,t:'謝謝你！',b:['點下面的按鈕，領取這次更新的獎勵']}]}];
