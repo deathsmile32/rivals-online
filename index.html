@@ -1384,7 +1384,7 @@ const FINS=[
 {id:'bt',zh:'蝙蝠',en:'Bat',r:2,p:0,D:3.4,e:'🦇',c:['#a05cff','#12081f'],hw:1,how:'從 🎃 萬聖節特效包開出 Halloween Finisher Pack（萬聖節限定）'},
 {id:'bo',zh:'骨頭',en:'Bones',r:1,p:0,D:3.6,e:'🦴',c:['#f2ead6','#3a3530'],hw:1,how:'從 🎃 萬聖節特效包開出 Halloween Finisher Pack（萬聖節限定）'},
 {id:'te',zh:'牙齒',en:'Teeths',r:2,p:0,D:3.4,e:'🦷',c:['#ffffff','#5a0d0d'],hw:1,how:'從 🎃 萬聖節特效包開出 Halloween Finisher Pack（萬聖節限定）'},
-{id:'tb',zh:'永不死',en:'Technoblade',r:3,p:0,D:5,e:'👑',c:['#ffd23f','#ff7ab8'],ex:1,how:'兌換代碼 technobladeneverdies・致敬 Minecraft YouTuber Technoblade'},
+{id:'tb',zh:'永不死',en:'Technoblade',r:3,p:0,D:5,e:'👑',c:['#ffd23f','#ff7ab8'],ex:1,how:'兌換代碼 technobladeneverdies・致敬 TechnoBlade'},
 {id:'ash',zh:'灰燼',en:'Ashes',r:1,p:30,D:3.0,e:'🌫️',c:['#9a948c','#ff7a2a'],how:'從死亡特效箱開出 Finisher Pack'},
 {id:'sou',zh:'靈魂出竅',en:'Soul Out',r:1,p:30,D:3.0,e:'👻',c:['#d8f0ff','#3a6aa0'],how:'從死亡特效箱開出 Finisher Pack'},
 {id:'clw',zh:'抓手',en:'Claw',r:2,p:55,D:3.4,e:'🖐️',c:['#6a5a7a','#16121a'],how:'從死亡特效箱開出 Finisher Pack'},
@@ -2022,14 +2022,22 @@ FD.bhl={init(f){const H=f.hb=new T.Group();H.position.y=1.2;f.g.add(H);const cor
    for(let i=0;i<Q(30);i++){const a=RR(0,6.28),e=RR(-1,1),sp=RR(3,7);FA2(f,{p:[0,1.2,0],v:[Math.cos(a)*sp,e*sp,Math.sin(a)*sp],s:RR(.03,.07),c:RP([0xffffff,0xc05cff,0x5ab4ff]),l:RR(.3,.6),d:2})}}
   f.tx.material.opacity=ph(t,1.75,1.85)*(1-ph(t,2.3,2.6))}};
 // Aura: the killer's screen turns into a fan-edit — black & white, a smug blue face slides in, "+1000 AURA", random phonk
-function auraFace(x,W){const c=W/2;x.clearRect(0,0,W,W);x.fillStyle='#2f7bff';x.beginPath();x.arc(c,c,W*.42,0,6.3);x.fill();x.fillStyle='#1d55c8';x.beginPath();x.arc(c,c+W*.02,W*.42,.2,PI-.2);x.lineTo(c-W*.4,c);x.fill();x.fillStyle='#2f7bff';x.beginPath();x.arc(c,c-W*.03,W*.4,0,6.3);x.fill();
- x.strokeStyle='#071a3a';x.lineCap='round';x.lineWidth=W*.035;for(const s of[-1,1]){x.beginPath();x.moveTo(c+s*W*.26,c-W*.17);x.lineTo(c+s*W*.07,c-W*.13);x.stroke();x.beginPath();x.moveTo(c+s*W*.25,c-W*.06);x.lineTo(c+s*W*.08,c-W*.06);x.stroke()}
- x.fillStyle='#ffffff';x.beginPath();x.moveTo(c-W*.2,c+W*.08);x.quadraticCurveTo(c,c+W*.16,c+W*.2,c+W*.06);x.quadraticCurveTo(c+W*.12,c+W*.27,c-W*.02,c+W*.25);x.quadraticCurveTo(c-W*.16,c+W*.24,c-W*.2,c+W*.08);x.fill();x.strokeStyle='#071a3a';x.lineWidth=W*.018;x.stroke();
- x.beginPath();for(let i=1;i<5;i++){x.moveTo(c-W*.2+i*W*.08,c+W*.1);x.lineTo(c-W*.2+i*W*.08,c+W*.24)}x.moveTo(c-W*.19,c+W*.165);x.lineTo(c+W*.17,c+W*.155);x.stroke();
- x.fillStyle='#ffcf6a';x.strokeStyle='#7a4a10';x.lineWidth=W*.014;const hx=c+W*.36,hy=c+W*.1;x.beginPath();x.roundRect(hx-W*.1,hy-W*.05,W*.2,W*.22,W*.05);x.fill();x.stroke();for(let i=0;i<4;i++){x.beginPath();x.roundRect(hx-W*.1+i*W*.05,hy-W*.2+(i==0?W*.04:0),W*.045,W*.18,W*.02);x.fill();x.stroke()}
- x.beginPath();x.roundRect(hx-W*.17,hy+W*.0,W*.09,W*.05,W*.02);x.fill();x.stroke()}
+function auraFace(x,W){const c=W/2;x.clearRect(0,0,W,W);x.lineJoin=x.lineCap='round';
+ // skull emoji: bone-white cranium + jaw, deep sockets with glowing blue pupils, smug brows, grinning teeth, bony waving hand
+ const bone=x.createRadialGradient(c-W*.12,c-W*.2,W*.05,c,c,W*.5);bone.addColorStop(0,'#ffffff');bone.addColorStop(.7,'#e9e4d6');bone.addColorStop(1,'#b9b2a0');
+ x.fillStyle=bone;x.strokeStyle='#5a5446';x.lineWidth=W*.02;x.beginPath();x.arc(c,c-W*.06,W*.36,PI*.82,PI*2.18);x.lineTo(c+W*.22,c+W*.3);x.quadraticCurveTo(c,c+W*.4,c-W*.22,c+W*.3);x.closePath();x.fill();x.stroke();
+ x.fillStyle='#d6cfbd';x.beginPath();x.ellipse(c-W*.31,c+W*.05,W*.05,W*.08,0,0,6.3);x.ellipse(c+W*.31,c+W*.05,W*.05,W*.08,0,0,6.3);x.fill();
+ for(const s of[-1,1]){x.fillStyle='#14161c';x.beginPath();x.ellipse(c+s*W*.15,c-W*.03,W*.11,W*.1,s*.15,0,6.3);x.fill();
+  x.fillStyle='#e9e4d6';x.beginPath();x.ellipse(c+s*W*.15,c-W*.11,W*.13,W*.07,s*.15,0,PI);x.fill();x.strokeStyle='#5a5446';x.lineWidth=W*.018;x.beginPath();x.moveTo(c+s*W*.27,c-W*.1);x.quadraticCurveTo(c+s*W*.15,c-W*.06,c+s*W*.04,c-W*.09);x.stroke();
+  const g=x.createRadialGradient(c+s*W*.15,c,0,c+s*W*.15,c,W*.06);g.addColorStop(0,'#bfe6ff');g.addColorStop(.4,'#2f9bff');g.addColorStop(1,'rgba(47,123,255,0)');x.fillStyle=g;x.beginPath();x.arc(c+s*W*.15,c,W*.06,0,6.3);x.fill()}
+ x.fillStyle='#14161c';x.beginPath();x.moveTo(c,c+W*.06);x.lineTo(c-W*.045,c+W*.14);x.lineTo(c+W*.045,c+W*.14);x.closePath();x.fill();
+ x.fillStyle='#fbf8ee';x.strokeStyle='#14161c';x.lineWidth=W*.014;x.beginPath();x.roundRect(c-W*.18,c+W*.19,W*.36,W*.11,W*.03);x.fill();x.stroke();x.beginPath();for(let i=1;i<6;i++){const tx=c-W*.18+i*W*.06;x.moveTo(tx,c+W*.19);x.lineTo(tx,c+W*.3)}x.moveTo(c-W*.18,c+W*.245);x.lineTo(c+W*.18,c+W*.245);x.stroke();
+ const hx=c+W*.37,hy=c+W*.2;x.fillStyle='#f3efe2';x.strokeStyle='#5a5446';x.lineWidth=W*.012;x.beginPath();x.roundRect(hx-W*.08,hy-W*.02,W*.16,W*.13,W*.03);x.fill();x.stroke();
+ for(let i=0;i<4;i++){const fx=hx-W*.065+i*W*.043,len=W*(.15+.02*(i==1||i==2));for(let k=0;k<3;k++){x.beginPath();x.roundRect(fx-W*.014,hy-W*.04-(k+1)*len/3,W*.028,len/3-W*.008,W*.012);x.fill();x.stroke()}}
+ x.save();x.translate(hx-W*.08,hy+W*.02);x.rotate(-.9);for(let k=0;k<2;k++){x.beginPath();x.roundRect(-W*.014,-(k+1)*W*.055,W*.03,W*.048,W*.012);x.fill();x.stroke()}x.restore();
+ x.fillRect(hx-W*.03,hy+W*.11,W*.06,W*.1);x.strokeRect(hx-W*.03,hy+W*.11,W*.06,W*.1)}
 var AURAI=null;function auraFX(D,seed){try{AURAI&&AURAI.remove();const o=document.createElement('div');AURAI=o;o.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 45%,rgba(10,40,120,.55) 100%)';
-  const cv=document.createElement('canvas');cv.width=cv.height=420;auraFace(cv.getContext('2d'),420);cv.style.cssText='position:absolute;right:-6%;bottom:-8%;width:min(46vw,56vh);height:auto;transform-origin:70% 90%';o.appendChild(cv);
+  const cv=document.createElement('canvas');cv.width=cv.height=420;auraFace(cv.getContext('2d'),420);cv.style.cssText='position:absolute;right:1%;bottom:-3%;width:min(46vw,56vh);height:auto;transform-origin:70% 90%';o.appendChild(cv);
   const tx=document.createElement('div');tx.textContent='+1000 AURA';tx.style.cssText='position:absolute;left:50%;top:18%;transform:translateX(-50%);font:900 clamp(28px,7vw,72px) '+FNT+';color:#fff;letter-spacing:.06em;text-shadow:0 0 18px #2f7bff,0 4px 0 #0a2a6a';o.appendChild(tx);
   const ln=document.createElement('div');ln.style.cssText='position:absolute;inset:-20%;background:repeating-linear-gradient(115deg,rgba(255,255,255,.0) 0 38px,rgba(255,255,255,.1) 38px 41px);opacity:.8';o.prepend(ln);document.body.appendChild(o);
   const c=R0dom(),of=c?c.style.filter:'',ot=c?c.style.transform:'';if(c)c.style.filter='grayscale(.9) contrast(1.35) brightness(.9)';phonk(D,seed);const t0=performance.now();
@@ -2039,7 +2047,7 @@ var AURAI=null;function auraFX(D,seed){try{AURAI&&AURAI.remove();const o=documen
    requestAnimationFrame(step)};requestAnimationFrame(step)}catch(e){}}
 FD.aur={init(f){finPose(f);const R=f.rig;f.oc=[R.sh.color.clone(),R.sk.color.clone(),R.pn.color.clone()];f.gr=new T.Color(0x9aa0aa);const tex=fcvt(f,256,256,(x,W)=>auraFace(x,W)),m=new T.SpriteMaterial({map:tex,transparent:true,opacity:0,depthWrite:false});f.mats.push(m);f.em=new T.Sprite(m);f.em.position.set(1.1,2.6,0);f.g.add(f.em);
   f.au=fsp(f,0x2f7bff,0);f.au.scale.set(2.4,3.6,1);f.au.position.y=1.2;f.tx=ftxt(f,'+1000 AURA','#7ab8ff',3.2);f.tx.position.y=3.4},
- upd(f,t,dt){const R=f.rig,st=f.st,end=ph(t,2.2,2.6);if(!st.a){st.a=1;if(f.byP&&!f.pv)auraFX(2.3,Math.floor(Math.random()*3))}
+ upd(f,t,dt){const R=f.rig,st=f.st,end=ph(t,2.2,2.6);if(!st.a){st.a=1;const sd=Math.floor(Math.random()*3);if(f.byP&&!f.pv)auraFX(2.3,sd);else phonk(2.3,sd)}
   [R.sh,R.sk,R.pn].forEach((m,i)=>fLerpC(m,f.oc[i],f.gr,ez(ph(t,0,.3))));glow(R,0x2f7bff,.35+.25*Math.sin(t*27));
   const bp=1-((t/.23)%1);f.au.material.opacity=(.35+.25*bp)*(1-end);f.au.scale.set(2.4+.3*bp,3.6+.4*bp,1);R.g.position.y=.05*bp;
   if(Math.random()<.8)FA2(f,{p:[RR(-.5,.5),RR(0,1.6),RR(-.35,.35)],v:[RR(-.2,.2),RR(1.5,3),RR(-.2,.2)],s:[.04,RR(.1,.25),.04],c:RP([0x2f7bff,0x7ab8ff,0xffffff]),l:.45});
@@ -2951,7 +2959,7 @@ function mkLobbyDecor(g){const a=[];LB_PADS.length=0;LB_TARGETS.length=0;LB.spin
 function updLobbyDummies(dt){for(const t of LB_TARGETS){if(t.dead){t.rt-=dt;if(t.rt<=0){t.dead=0;t.hp=100;t.mesh.position.y=0}}if(t.kind=='bot'){t.phase+=dt*t.speed;if(t.ax=='x')t.mesh.position.x=t.base-Math.sin(t.phase)*t.range;else t.mesh.position.z=t.baseZ+Math.sin(t.phase)*t.range;const u=t.mesh.userData;u.lL.rotation.x=Math.sin(t.phase*6)*.4;u.lR.rotation.x=-Math.sin(t.phase*6)*.4}
  if(t.flash>0){t.flash=Math.max(0,t.flash-dt*2.2);if(t.kind=='bull')t.mesh.material.color.setHex(t.flash>0?0xffe060:0xffffff);else t.mat.emissive.setHex(t.flash>0?0xffcf40:0)}}
  if(LB.holo)LB.holo.rotation.y+=dt*1.2;if(LB.vault)for(const v of LB.vault){v.rotation.y+=dt*.7;v.position.y=v.userData.y0+Math.sin(performance.now()/625+v.userData.ph)*.12}}
-function dummyFlash(obj,dm,wn){const rec=obj.userData.drec||LB_TARGETS.find(t=>t.mesh===obj);if(!rec||rec.dead)return;rec.flash=1;if(rec.kind=='bot'&&dm>0&&P){rec.hp=(rec.hp==null?100:rec.hp)-dm;if(rec.hp<=0){const w=WBN(baseWn(wn)),id=w?finKey(P,w):'';if(id){const p=rec.mesh.position;rec.dead=1;rec.rt=3.4;rec.f=finPlay(p.x,0,p.z,rec.mesh.rotation.y,0xe04848,id);p.y=-50}else rec.hp=100}}}
+function dummyFlash(obj,dm,wn){const rec=obj.userData.drec||LB_TARGETS.find(t=>t.mesh===obj);if(!rec||rec.dead)return;rec.flash=1;if(rec.kind=='bot'&&dm>0&&P){rec.hp=(rec.hp==null?100:rec.hp)-dm;if(rec.hp<=0){const w=WBN(baseWn(wn)),id=w?finKey(P,w):'';if(id){const p=rec.mesh.position;rec.dead=1;rec.rt=3.4;rec.f=finPlay(p.x,0,p.z,rec.mesh.rotation.y,0xe04848,id,null,{byP:1});p.y=-50}else rec.hp=100}}}
 function inRangeXZ(x,z){return z>32&&x>-31.2&&x<31.2}
 function padAt(x,z){for(const p of LB_PADS)if(Math.hypot(x-p.x,z-p.z)<p.r)return p;return null}
 const pk=(n,s,c)=>n+'_'+s+(c?'_r':''),pdKey=pd=>(pd.nt?'t':'')+pk(pd.n,pd.s,pd.c);
@@ -3633,7 +3641,7 @@ var UPDATES=[
 {ver:'2026.11.20',title:'💀 擊殺特效大更新',rewardKeys:20,rewardGold:100,slides:[
  {e:'💀',h:280,t:'17 個新擊殺特效！',b:['科技箱、衝擊、閃一下、氣球、石化、星星墓碑、OOF、發抖：在特效包裡開得到','科技箱：跳出一台螢幕顯示對手的臉，會一直飄到下一回合','衝擊：擊殺的瞬間你的整個畫面會閃一下變色','星星墓碑：星星掉下來，寫著 R.I.P 對手名字']},
  {e:'🎃',h:25,t:'萬聖節限定特效包',b:['新箱子：🎃 萬聖節特效包（15 🔑），到 11/30 為止','裡面有：殭屍化、蝙蝠、骨頭、牙齒']},
- {e:'🎟️',h:45,t:'新兌換碼',b:['thanksfor100players → 💯 100 玩家（巨大的 100 砸下來）','technobladeneverdies → 👑 永不死（皇冠＋翅膀飛上天），致敬 Minecraft YouTuber Technoblade']},
+ {e:'🎟️',h:45,t:'新兌換碼',b:['thanksfor100players → 💯 100 玩家（巨大的 100 砸下來）','technobladeneverdies → 👑 永不死（皇冠＋翅膀飛上天），致敬 TechnoBlade']},
  {e:'✂️',h:0,t:'排位獎勵：切！ Cut!',b:['排位到達 黃金 Gold（1200 分）就能領','鐮刀把對手切成兩半']},
  {e:'📦',h:330,t:'新組合包',b:['新手包 49 金幣：Shorty（已有就換 20 🔑）＋ Shorty 皮膚 Too Short ＋ 10 🔑 ＋ 3 個吊飾膠囊','新手武器包 999 金幣：所有 100 🔑 以下的普通武器 ＋ 5 個包裝箱 ＋ 3 個特效包 ＋ 10 個吊飾膠囊 ＋ 30 🔑 ＋ 迪斯可 特效','能量組合包多送 編輯器 特效（已經買過的玩家自動拿到）','每個帳號限買一次']},
  {e:'🧸',h:300,t:'吊飾膠囊',b:['新箱子：吊飾膠囊（8 🔑），開出隨機吊飾','有 10 個只有膠囊才開得到的吊飾']},
