@@ -72,6 +72,7 @@ class Bot extends Fighter {
       if (e.team === this.team || !e.alive || e.spectator) continue;
       if (e.pos.y < VOID_Y + 6) continue;
       const d = e.pos.distanceTo(this.pos);
+      if (e.fx.invis > 0 && d > 3.5 && !(e === this.lastAttacker && g.time - this.lastAttackerT < 3)) continue;
       if (Math.abs(e.pos.y - this.pos.y) > 6) continue;
       let range = mode === 'defend' ? 9 : mode === 'follow' ? 11 : 10;
       if (mode === 'defend' && Math.hypot(e.pos.x - bed.x, e.pos.z - bed.z) < 16) range = 22;
@@ -132,6 +133,15 @@ class Bot extends Fighter {
       this.attackCd = (1 / P.cps) * (0.75 + Math.random() * 0.5);
       this.swingT = 0.25;
       if (err < 0.6 && Math.random() < P.hit && g.world.lineClear(this.eye(), tp)) g.attack(this, t);
+    }
+    // 弓箭：距離遠時射箭
+    this.bowCd = (this.bowCd || 0) - dt;
+    if (d > 7 && d < 26 && this.count('bow') && this.count('arrow') && this.bowCd <= 0 && err < 0.12 && g.world.lineClear(this.eye(), tp)) {
+      // 拋物線補償：往上抬一點
+      this.pitch += Math.min(0.25, d * 0.008);
+      g.shootArrow(this, 0.85 + Math.random() * 0.15);
+      this.bowCd = 1.6 + Math.random() * 1.4;
+      this.bowT = 0;
     }
     // 火球：對方在虛空上方或搭橋時
     if (P.fireball && this.fireCd <= 0 && d > 7 && d < 24 && this.count('fireball')) {
@@ -257,7 +267,8 @@ class Bot extends Fighter {
     const g = this.game, P = this.P;
     let mode = this.cmd || this.role;
     if (!this.team.bedAlive && mode === 'defend') mode = this.cmd ? 'follow' : 'attack';
-    if (mode === 'follow' && (!g.player.alive && g.player.eliminated)) mode = 'attack';
+    const lead = this.leader || g.player;
+    if (mode === 'follow' && lead.eliminated) mode = 'attack';
     if (mode === 'follow') return this.setState('follow');
     if (mode === 'defend') {
       if (!this.team.defenseDone && this.team.bedAlive) {
@@ -287,7 +298,7 @@ class Bot extends Fighter {
     const ws = cands.map(t => {
       const d = Math.hypot(t.spawn.x - this.pos.x, t.spawn.z - this.pos.z);
       let wgt = 60 / (d + 20);
-      if (t === g.player.team) wgt *= 1.5;
+      if (t.members.some(m => m.human)) wgt *= 1.5;
       tot += wgt; return wgt;
     });
     let r = Math.random() * tot;
@@ -426,7 +437,7 @@ class Bot extends Fighter {
         break;
       }
       case 'follow': {
-        const pl = g.player;
+        const pl = this.leader || g.player;
         if (!pl.alive || pl.spectator) { this.setState('guard'); break; }
         const r = this.navigate(pl.pos, dt, { stop: 2.5 });
         if (r === 'arrived') this.turnTo(pl.yaw, 0, dt);
@@ -470,6 +481,8 @@ class Bot extends Fighter {
       () => this.axe < 1 && g.buy(this, 'axe'),
       () => P.gapple && this.count('gapple') < 1 && g.buy(this, 'gapple'),
       () => P.fireball && this.count('fireball') < 1 && this.res.iron >= 48 && g.buy(this, 'fireball'),
+      () => P.fireball && this.armor >= 3 && !this.count('bow') && this.res.gold >= 14 && g.buy(this, 'bow'),
+      () => this.count('bow') && this.count('arrow') < 8 && g.buy(this, 'arrow'),
       () => this.pick < 2 && this.res.iron >= 18 && g.buy(this, 'pick'),
       () => this.blockCount() < 64 && g.buy(this, 'wool'),
       () => !this.team.up.sharp && g.buyUpgrade(this, 'sharp'),

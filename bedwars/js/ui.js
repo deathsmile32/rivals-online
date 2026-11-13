@@ -82,15 +82,20 @@ const UI = {
     this.titleT = 3.5;
   },
   hurt() { const h = $('hurt'); h.style.opacity = 0.55; setTimeout(() => h.style.opacity = 0, 150); },
+  // 物品圖示（像素圖）
   icon(id, f, tier) {
     const it = ITEMS[id];
-    let bg = '#666', txt = '', col = '#fff';
-    if (id === 'sword') { bg = '#3a3a3a'; txt = '劍'; col = '#' + (SWORD_COLOR[tier || f.sword] || 0x9a7040).toString(16).padStart(6, '0'); }
-    else if (id === 'pick' || id === 'axe') { bg = '#3a3a3a'; txt = id === 'pick' ? '鎬' : '斧'; col = '#' + (TOOL_COLOR[Math.max(1, tier || (id === 'pick' ? f.pick : f.axe))]).toString(16).padStart(6, '0'); }
-    else if (id === 'armor') { bg = '#3a3a3a'; txt = '甲'; col = '#' + (ARMOR_COLOR[tier] || 0xaaaaaa).toString(16).padStart(6, '0'); }
-    else if (it && it.block) { bg = '#' + (id === 'wool' ? TEAM_DEFS[f.team.id].wool : it.color).toString(16).padStart(6, '0'); txt = ''; }
-    else if (it) { bg = '#2a2a2a'; col = '#' + it.color.toString(16).padStart(6, '0'); txt = { kbstick: '棒', fireball: '火', tnt: 'T', pearl: '珠', gapple: '蘋', egg: '蛋' }[id]; }
-    return `<div class="ic${it && it.block ? ' blk' : ''}" style="background:${bg};color:${col}">${txt}</div>`;
+    let key, build;
+    if ((it && it.block) || id === 'tnt') {
+      const bid = id === 'tnt' ? null : f.blockIdOf(id), info = bid != null ? BINFO[bid] : null;
+      key = 'blk_' + (id === 'wool' ? 'wool' + f.team.id : id);
+      build = () => id === 'tnt' ? blockIconCanvas('tnt_top', 'tnt_side', null) : blockIconCanvas(info.tex.top, info.tex.side, info.tint);
+    } else {
+      const tr = id === 'sword' ? (tier || f.sword) : id === 'pick' ? (tier || Math.max(1, f.pick)) : id === 'axe' ? (tier || Math.max(1, f.axe)) : id === 'armor' ? tier : 0;
+      key = id + tr;
+      build = () => { const a = itemArt(id, tr, 0); return a ? artToCanvas(a, 2) : null; };
+    }
+    return `<img class="ic" src="${iconURL(key, build)}" draggable="false">`;
   },
   // ---------- HUD ----------
   update(dt) {
@@ -107,8 +112,11 @@ const UI = {
     if (this.lastHearts !== hh) { this.lastHearts = hh; $('hearts').innerHTML = hh; }
     // 挖掘進度
     const bs = g.breakState;
-    $('breakbar').style.display = bs ? 'block' : 'none';
+    const bowC = p.bowT > 0 ? Math.min(1, p.bowT) : 0;
+    $('breakbar').style.display = bs || bowC ? 'block' : 'none';
     if (bs) $('breakfill').style.width = Math.min(100, bs.t / bs.need * 100) + '%';
+    else if (bowC) $('breakfill').style.width = bowC * 100 + '%';
+    $('breakfill').style.background = bowC && !bs ? (bowC >= 1 ? '#ffd84a' : '#ddd') : '#fff';
     // 重生倒數
     $('respawn').textContent = !p.alive && !p.eliminated ? `你死了！${Math.ceil(p.respawnT)} 秒後重生` : '';
     this.hudT -= dt;
@@ -116,9 +124,12 @@ const UI = {
     this.hudT = 0.1;
     // 資源
     $('res').innerHTML = ['iron', 'gold', 'diamond', 'emerald'].map(r => `<div><span class="dot" style="background:${RES_CSS[r]}"></span>${RES_NAME[r]} <b>${p.res[r]}</b></div>`).join('') +
-      `<div class="arm">護甲：${ARMOR_NAME[p.armor]}${p.team.up.prot ? ' +' + p.team.up.prot : ''}</div>`;
+      `<div class="arm">護甲：${ARMOR_NAME[p.armor]}${p.team.up.prot ? ' +' + p.team.up.prot : ''}</div>` +
+      [['speed', '速度', '#7cf'], ['jump', '跳躍', '#7f7'], ['invis', '隱身', '#bbf']].filter(([k]) => p.fx[k] > 0).map(([k, n, c]) => `<div style="color:${c}">⬤ ${n} ${Math.ceil(p.fx[k])} 秒</div>`).join('') +
+      (p.slowT > 0 ? `<div style="color:#f88">⬤ 緩速 ${Math.ceil(p.slowT)} 秒</div>` : '') +
+      (g.mode !== 'solo' ? `<div class="arm">${g.mode === 'host' ? '房主' : '線上'}・房號 ${Net.code}</div>` : '');
     // 快捷欄
-    const hk = p.sel + '|' + p.sword + p.pick + p.axe + '|' + p.hotbar.map(s => s ? s.id + s.count : '-').join(',');
+    const hk = p.sel + '|' + p.sword + p.pick + p.axe + '|' + p.team.id + p.hotbar.map(s => s ? s.id + s.count : '-').join(',');
     if (hk !== this.lastHot) {
       this.lastHot = hk;
       $('hotbar').innerHTML = p.hotbar.map((s, i) => `<div class="slot${i === p.sel ? ' sel' : ''}" data-i="${i}">${s ? this.icon(s.id, p) + (s.count > 1 ? `<span class="cnt">${s.count}</span>` : '') : ''}<span class="key">${i + 1}</span></div>`).join('');
@@ -141,7 +152,8 @@ const UI = {
     sb += '<div class="sbl"></div>';
     sb += `<div class="sbs">擊殺：${p.stats.kills}　最終擊殺：${p.stats.finals}</div><div class="sbs">拆床：${p.stats.beds}</div>`;
     const mate = p.team.members.find(m => m !== p);
-    if (mate) sb += `<div class="sbs">隊友 ${mate.name}：${mate.eliminated ? '已淘汰' : !mate.alive ? '重生中' : { defend: '防守', follow: '跟隨', attack: '進攻' }[mate.cmd]}　(G 切換)</div>`;
+    const mc = g.mode === 'client' ? g.mateCmdNet : (mate && mate.isBot ? mate.cmd : 'human');
+    if (mate) sb += `<div class="sbs">隊友 ${mate.name}：${mate.eliminated ? '已淘汰' : !mate.alive ? '重生中' : mc === 'human' || !mc ? '真人玩家' : { defend: '防守', follow: '跟隨', attack: '進攻' }[mc] + '　(G 切換)'}</div>`;
     if (sb !== this.lastSb) { this.lastSb = sb; $('scoreboard').innerHTML = sb; }
     // 商店開著時更新
     if (this.shopKind) this.renderShop();
@@ -184,7 +196,7 @@ const UI = {
         const lv = p.team.up[u.key];
         const st = g.upgradeState(p, u.key);
         const costTxt = st === 'owned' ? (u.max > 1 ? '已滿級' : '已擁有') : `<span style="color:${RES_CSS.diamond}">${u.costs[lv]} 鑽石</span>`;
-        html += `<div class="card ${st}" onclick="UI.upgrade('${u.key}')"><div class="ic" style="background:#2a2a40;color:#d79bff">${u.name[0]}</div><div class="cn">${u.name}${u.max > 1 ? ` <small>(${lv}/${u.max})</small>` : ''}</div><div class="cc">${costTxt}</div><div class="cd">${u.desc}</div></div>`;
+        html += `<div class="card ${st}" onclick="UI.upgrade('${u.key}')">${this.icon(...{ sharp: ['sword', p, 4], prot: ['armor', p, 3], forge: ['iron', p, 0], heal: ['gapple', p, 0], trap: ['tnt', p, 0] }[u.key])}<div class="cn">${u.name}${u.max > 1 ? ` <small>(${lv}/${u.max})</small>` : ''}</div><div class="cc">${costTxt}</div><div class="cd">${u.desc}</div></div>`;
       }
       html += '</div><div class="hint">鑽石在地圖四角的鑽石島收集</div>';
     }
@@ -196,14 +208,14 @@ const UI = {
     const g = this.game;
     const st = g.shopState(g.player, key);
     if (st === 'poor') { this.toast('資源不足！'); SFX.play('hurt'); }
-    else if (st === 'ok') g.buy(g.player, key);
+    else if (st === 'ok') { g.act({ a: 'buy', k: key }); if (g.mode === 'client') SFX.play('buy'); }
     this.renderShop();
   },
   upgrade(key) {
     const g = this.game;
     const st = g.upgradeState(g.player, key);
     if (st === 'poor') { this.toast('鑽石不足！'); SFX.play('hurt'); }
-    else if (st === 'ok') g.buyUpgrade(g.player, key);
+    else if (st === 'ok') g.act({ a: 'upg', k: key });
     this.renderShop();
   },
   showEnd(win, text, g) {
@@ -241,17 +253,21 @@ function requestLock() {
   if (TOUCH) { if (game) { game.paused = false; $('pause').classList.add('hidden'); } return; }
   if (game && !game.over && !UI.shopKind) { const r = canvas.requestPointerLock(); if (r && r.catch) r.catch(() => { }); } }
 
-function startGame(diff, testMode) {
-  curDiff = diff || curDiff;
+// opts: { mode: 'solo'|'host'|'client', diff, roster, localId, testMode }
+function startGame(opts) {
+  if (typeof opts === 'string' || !opts) opts = { mode: 'solo', diff: opts };
+  const testMode = !!opts.testMode;
+  curDiff = opts.diff || curDiff;
   SFX.init();
-  const name = ($('pname').value || '玩家').slice(0, 10);
-  try { localStorage.setItem('bw_name', name); } catch (e) { }
+  const name = playerName();
   if (game) game.scene.traverse(o => { if (o.geometry) o.geometry.dispose(); });
-  game = new Game(renderer, { difficulty: curDiff, playerName: name, testMode });
+  const mode = opts.mode || 'solo';
+  game = new Game(renderer, { difficulty: curDiff, playerName: name, testMode, mode, roster: opts.roster, localId: opts.localId, net: mode === 'solo' ? null : Net.gameIface() });
+  window.game = game;
   game.camera.aspect = innerWidth / innerHeight; game.camera.updateProjectionMatrix();
   UI.bind(game);
   window.__game = game;
-  ['menu', 'end', 'pause', 'shop'].forEach(id => $(id).classList.add('hidden'));
+  ['menu', 'end', 'pause', 'shop', 'online', 'lobby'].forEach(id => $(id).classList.add('hidden'));
   $('hud').classList.remove('hidden');
   UI.title('床戰開始！', '保護你的床，拆掉敵人的床！', '#ffd84a');
   UI.feed('提示：去基地後方的生成器收集鐵和金，到 <b style="color:#ffd84a">道具商店</b> 買羊毛和裝備');
@@ -264,11 +280,17 @@ function startGame(diff, testMode) {
   } else if (!testMode) requestLock();
 }
 
+function playerName() {
+  const name = ($('pname').value || '玩家').trim().slice(0, 10) || '玩家';
+  try { localStorage.setItem('bw_name', name); } catch (e) { }
+  return name;
+}
 function toMenu() {
   if (document.pointerLockElement) document.exitPointerLock();
   $('touch').classList.add('hidden');
-  game = null; UI.game = null;
-  ['end', 'pause', 'shop', 'hud'].forEach(id => $(id).classList.add('hidden'));
+  if (Net.role) Net.leave();
+  game = null; window.game = null; UI.game = null;
+  ['end', 'pause', 'shop', 'hud', 'online', 'lobby'].forEach(id => $(id).classList.add('hidden'));
   $('menu').classList.remove('hidden');
 }
 
@@ -296,28 +318,41 @@ addEventListener('wheel', e => {
   p.sel = (p.sel + (e.deltaY > 0 ? 1 : 8)) % 9;
 }, { passive: true });
 addEventListener('keydown', e => {
-  if (!game) { if (e.code === 'Enter' && !$('menu').classList.contains('hidden')) startGame(); return; }
+  if (!game) { if (e.code === 'Enter' && !$('menu').classList.contains('hidden')) startGame({ mode: 'solo' }); return; }
   if (e.code === 'Tab' || e.code === 'Space') e.preventDefault();
   if (e.code === 'KeyE') { if (UI.shopKind) UI.closeShop(); else if (game.player.alive) game.interact(); return; }
   if (e.code === 'Escape' && UI.shopKind) { UI.closeShop(); return; }
   if (UI.shopKind) return;
   game.input.keys[e.code] = true;
   if (e.code.startsWith('Digit')) { const n = +e.code.slice(5); if (n >= 1 && n <= 9) game.player.sel = n - 1; }
-  if (e.code === 'KeyG') game.cycleMateCmd();
-  if (e.code === 'KeyF') { const p = game.player; const h = p.held(); if (h && h.id === 'gapple') game.useGapple(p); }
+  if (e.code === 'KeyG') game.act({ a: 'mate' });
+  if (e.code === 'KeyF') { const p = game.player; if (p.count('gapple')) game.act({ a: 'gap' }); }
 });
 addEventListener('keyup', e => { if (game) game.input.keys[e.code] = false; });
 addEventListener('blur', () => { if (game) { game.input.keys = {}; game.input.mouseL = game.input.mouseR = false; } });
 
+let lastUpd = 0;
 function loop(t) {
   requestAnimationFrame(loop);
   const dt = Math.min(0.05, (t - lastT) / 1000 || 0.016);
   lastT = t;
   if (!game) { renderMenuBg(dt); return; }
-  if (!game.paused) game.update(dt);
+  if (!game.paused || game.mode !== 'solo') { game.update(dt); lastUpd = performance.now(); }
   game.render(dt);
   UI.update(dt);
 }
+// 房主的分頁在背景時，瀏覽器會暫停畫面更新 → 用背景計時器讓遊戲繼續跑（不然大家都會卡住）
+try {
+  const tw = new Worker(URL.createObjectURL(new Blob(['setInterval(()=>postMessage(0),25)'], { type: 'text/javascript' })));
+  tw.onmessage = () => {
+    if (!game || game.mode === 'solo') return;
+    const now = performance.now();
+    if (now - lastUpd < 60) return; // 畫面正常更新中
+    let dt = Math.min(0.25, (now - lastUpd) / 1000);
+    lastUpd = now;
+    while (dt > 0) { const s = Math.min(0.05, dt); game.update(s); dt -= s; }
+  };
+} catch (e) { }
 
 // 主選單背景：緩慢環繞地圖
 let menuScene = null;
@@ -341,10 +376,25 @@ document.querySelectorAll('.diff').forEach(b => b.addEventListener('click', () =
   document.querySelectorAll('.diff').forEach(x => x.classList.remove('on'));
   b.classList.add('on'); curDiff = b.dataset.d;
 }));
-$('startBtn').onclick = () => startGame();
+$('startBtn').onclick = () => startGame({ mode: 'solo' });
+$('onlineBtn').onclick = () => { $('menu').classList.add('hidden'); $('online').classList.remove('hidden'); $('onlineErr').textContent = ''; };
+$('hostBtn').onclick = () => { SFX.init(); Net.host(playerName()); };
+$('joinBtn').onclick = () => {
+  const code = $('roomCode').value.trim().toUpperCase();
+  if (code.length < 4) { $('onlineErr').textContent = '請輸入房號'; return; }
+  SFX.init(); Net.join(playerName(), code);
+};
+$('onlineBack').onclick = () => { $('online').classList.add('hidden'); $('menu').classList.remove('hidden'); };
 $('resumeBtn').onclick = () => requestLock();
 $('quitBtn').onclick = toMenu;
-$('againBtn').onclick = () => startGame();
+$('againBtn').onclick = () => {
+  if (Net.role) { // 線上：回到房間
+    $('end').classList.add('hidden'); $('hud').classList.add('hidden'); $('touch').classList.add('hidden');
+    game = null; window.game = null; UI.game = null;
+    LobbyUI.show(); if (Net.role === 'host') Net.sync();
+  } else startGame({ mode: 'solo' });
+};
+if (QP.join) { setTimeout(() => { $('menu').classList.add('hidden'); $('online').classList.remove('hidden'); $('roomCode').value = QP.join; }, 0); }
 $('menuBtn').onclick = toMenu;
 $('sens').oninput = e => { sens = 0.0006 + e.target.value * 0.00006; try { localStorage.setItem('bw_sens', e.target.value); } catch (er) { } };
 $('vol').oninput = e => { SFX.vol = e.target.value / 100; };
@@ -413,8 +463,8 @@ function setupTouch() {
   const tap = (id, fn) => $(id).addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); if (game) fn(); });
   tap('tSneak', () => { game.touchSneak = !game.touchSneak; $('tSneak').classList.toggle('on', game.touchSneak); });
   tap('tShop', () => { if (game.player.alive && !game.interact()) UI.toast('走到商店或升級 NPC 旁邊再按'); });
-  tap('tMate', () => game.cycleMateCmd());
-  tap('tEat', () => { const p = game.player; if (p.alive && !game.useGapple(p)) UI.toast('沒有金蘋果'); });
+  tap('tMate', () => game.act({ a: 'mate' }));
+  tap('tEat', () => { const p = game.player; if (p.alive && p.count('gapple')) game.act({ a: 'gap' }); else UI.toast('沒有金蘋果'); });
   tap('tPause', () => { game.paused = true; $('pause').classList.remove('hidden'); resetTouch(); });
   // 點快捷欄切換物品
   $('hotbar').addEventListener('pointerdown', e => {

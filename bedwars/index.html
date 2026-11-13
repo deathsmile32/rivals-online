@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#1a1c24">
 <title>床戰 BED WARS</title>
 <link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:,">
 </head>
 <body>
 <canvas id="c"></canvas>
@@ -20,7 +21,6 @@
   <div id="feed"></div>
   <div id="titles"><div id="bigTitle"></div><div id="subTitle"></div></div>
   <div id="respawn"></div>
-  <div id="toast"></div>
   <div id="breakbar"><div id="breakfill"></div></div>
   <div id="res"></div>
   <div id="bottom">
@@ -29,6 +29,8 @@
     <div id="hotbar"></div>
   </div>
 </div>
+
+<div id="toast"></div>
 
 <!-- 手機觸控 -->
 <div id="touch" class="hidden">
@@ -47,25 +49,43 @@
 <div id="menu">
   <div class="panel">
     <h1>床戰 <span>BED WARS</span></h1>
-    <p class="sub">單人模式：4 隊 × 2 人 — 你和電腦隊友 vs 3 隊電腦</p>
+    <p class="sub">4 隊 × 2 人・單機打電腦，或開房間和朋友連線</p>
     <label>玩家名稱 <input id="pname" maxlength="10" value="玩家"></label>
     <div class="row">
       <button class="diff" data-d="easy">簡單</button>
       <button class="diff on" data-d="normal">普通</button>
       <button class="diff" data-d="hard">困難</button>
     </div>
-    <button id="startBtn" class="big">開始遊戲</button>
+    <div class="row">
+      <button id="startBtn" class="big">單機遊戲</button>
+      <button id="onlineBtn" class="big blue">線上遊戲</button>
+    </div>
     <div class="help">
       <div><b>WASD</b> 移動（往前自動衝刺）</div><div><b>滑鼠</b> 看方向</div>
       <div><b>空白鍵</b> 跳</div><div><b>Shift</b> 蹲下（不會掉下邊緣，搭橋用）</div>
       <div><b>左鍵</b> 攻擊／按住挖方塊</div><div><b>右鍵</b> 放方塊／使用道具（按住連放）</div>
       <div style="grid-column:span 2"><b>基岩版搭橋</b>：拿著方塊對著前方空中按住右鍵往前走，方塊會自動放在腳下前方（白框預覽），不用蹲</div>
       <div><b>1–9 / 滾輪</b> 切換物品</div><div><b>E</b> 開商店（站在 NPC 旁）</div>
-      <div><b>G</b> 切換隊友指令</div><div><b>F</b> 吃金蘋果（手持時）</div>
+      <div><b>G</b> 切換隊友指令</div><div><b>F</b> 吃金蘋果</div>
+      <div style="grid-column:span 2"><b>魚竿</b>：右鍵丟出，勾到敵人或 TNT 後再按一次就拉過來　<b>弓</b>：按住右鍵蓄力、放開射箭</div>
     </div>
     <p class="tip">規則：床還在就能重生。拆掉敵人的床，再把他們全部擊殺就能獲勝！</p>
   </div>
 </div>
+
+<!-- 線上遊戲 -->
+<div id="online" class="hidden">
+  <div class="panel">
+    <h2>線上遊戲</h2>
+    <p class="sub">最多 8 人（4 隊 × 2），空位由電腦補上</p>
+    <button id="hostBtn" class="big">建立房間</button>
+    <div class="sub">或輸入朋友的房號：</div>
+    <div class="row"><input id="roomCode" maxlength="6" placeholder="房號" style="text-transform:uppercase;width:140px;text-align:center;font-size:20px"><button id="joinBtn" class="big blue">加入</button></div>
+    <div id="onlineErr" class="err"></div>
+    <button id="onlineBack">返回</button>
+  </div>
+</div>
+<div id="lobby" class="hidden"><div class="panel"><h2>房間大廳</h2><div id="lobbyBody"></div></div></div>
 
 <!-- 暫停 -->
 <div id="pause" class="hidden">
@@ -95,9 +115,11 @@
 
 <script src="js/three.min.js"></script>
 <script src="js/world.js"></script>
+<script src="js/textures.js"></script>
 <script src="js/entities.js"></script>
 <script src="js/ai.js"></script>
 <script src="js/game.js"></script>
+<script src="js/net.js"></script>
 <script src="js/ui.js"></script>
 </body>
 </html>
