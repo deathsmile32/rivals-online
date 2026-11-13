@@ -2248,7 +2248,7 @@ FD.bhl={init(f){const H=f.hb=new T.Group();H.position.y=1.2;f.g.add(H);const cor
   if(t<.15)s=eob(t/.15)*.6;else if(t<1.05)s=.6+.25*ph(t,.15,1.05);else if(t<1.6)s=.85+2.4*ez(ph(t,1.05,1.6));else if(t<1.75)s=3.25*(1-ez(ph(t,1.6,1.75)));else s=0;
   H.scale.setScalar(Math.max(.001,s));f.ad.forEach(([d,m,i])=>{d.rotation.z+=dt*(5-i*1.3);m.opacity=s>0?.55-.12*i:0});f.lens.scale.setScalar(s*3.4+.01);f.lens.material.opacity=s>0?.5:0;
   if(!st.a){st.a=1;if(!f.pv){sndSw(90,40,1.6,.12,'sawtooth');sndSw(1800,200,.25,.04,'sine')}}
-  if(t>=.15&&t<1.05){const k=ph(t,.15,1.05),k2=k*k;R.g.position.y=1.2*k2;R.g.rotation.y+=dt*(2+30*k2);R.g.rotation.z=.6*Math.sin(t*14)*k;R.g.scale.set(Math.max(.02,1-k2*.95),Math.max(.02,(1+2.2*Math.sin(k*PI))*(1-k2)),Math.max(.02,1-k2*.95));glow(R,0x8a5cff,k);
+  if(t>=.15&&t<1.05){const k=ph(t,.15,1.05),k2=k*k;R.g.position.y=1.2*k2;R.g.rotation.y+=dt*(2+30*k2);R.g.rotation.z=.6*Math.sin(t*14)*k;R.g.scale.set(Math.max(.02,1-k2*.95),Math.max(.02,(1+.9*Math.sin(k*PI))*(1-k2)),Math.max(.02,1-k2*.95));glow(R,0x8a5cff,k);
    if(Math.random()<.9){const a=RR(0,6.28),r=RR(1.2,2.6);FA2(f,{p:[Math.cos(a)*r,1.2+RR(-.8,.8),Math.sin(a)*r],v:[-Math.cos(a)*r*3,RR(-.5,.5),-Math.sin(a)*r*3],s:RR(.03,.06),c:RP([0xffa040,0xc05cff,0xffffff]),l:.33})}}
   if(t>=1.05&&!st.b){st.b=1;R.g.visible=false;if(!f.pv)sndSw(60,140,.55,.1,'sawtooth')}
   if(t>=1.75&&!st.c){st.c=1;flash(f,[0,1.2,0],0xffffff,6,.25);shock(f,1.2,0xc05cff,4.5,.4);if(!f.pv){snd(1760,.12,.06,'sine');snd(45,.4,.2,'square')}
