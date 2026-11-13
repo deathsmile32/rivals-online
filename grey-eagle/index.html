@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2b2f26">
+<title>灰鷹軍團</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- 共用：資源列 -->
+<div id="topbar" class="hidden">
+  <button id="tbBack" class="ghost">◀ 返回</button>
+  <div id="tbTitle"></div>
+  <div class="res"><span title="勳章：用來抽扭蛋">🎖️ <b id="resMedal">0</b></span><span title="軍功：用來升級角色">⭐ <b id="resXp">0</b></span></div>
+</div>
+
+<!-- 標題畫面 -->
+<div id="title" class="screen">
+  <canvas id="titleCv"></canvas>
+  <div class="titleBox">
+    <div class="logo">灰鷹軍團</div>
+    <div class="logoSub">GREY EAGLE · 世界篇</div>
+    <div class="menu">
+      <button id="btnPlay" class="big">⚔️ 出擊</button>
+      <button id="btnArmy">🪖 部隊</button>
+      <button id="btnGacha">🎰 扭蛋</button>
+      <button id="btnHelp">📖 說明</button>
+    </div>
+    <div class="titleRes"><span>🎖️ <b id="tMedal">0</b></span><span>⭐ <b id="tXp">0</b></span><span id="tProg"></span></div>
+    <button id="cloudBtn">☁️ 登入 / 註冊</button>
+    <div class="note">所有國家、陣營、人物都是虛構的。</div>
+  </div>
+</div>
+
+<!-- 世界地圖 -->
+<div id="map" class="screen hidden">
+  <div id="chapTabs"></div>
+  <div id="stageList"></div>
+</div>
+
+<!-- 部隊 -->
+<div id="army" class="screen hidden">
+  <div class="armyTop">
+    <div class="secTitle">出擊編隊 <small>（最多 10 隻，點角色可以加入或移出）</small></div>
+    <div id="teamSlots"></div>
+  </div>
+  <div class="armyMain">
+    <div class="rosterWrap">
+      <div id="rarFilter"></div>
+      <div id="roster"></div>
+      <div class="secTitle">碉堡研究</div>
+      <div id="research"></div>
+    </div>
+    <div id="detail" class="hidden"></div>
+  </div>
+</div>
+
+<!-- 扭蛋 -->
+<div id="gacha" class="screen hidden">
+  <div id="banners"></div>
+  <div id="gachaOwned"></div>
+</div>
+<div id="gachaShow" class="overlay hidden"><div id="gachaStage"></div><button id="gachaOk" class="hidden">確定</button></div>
+
+<!-- 說明 -->
+<div id="help" class="screen hidden">
+  <div class="helpBox">
+    <h2>怎麼玩</h2>
+    <ul>
+      <li>右邊是我方的<b>灰鷹碉堡</b>，左邊是敵方碉堡。打爆敵方碉堡就贏，我方碉堡被打爆就輸。</li>
+      <li>軍費會自動增加。點下方的角色按鈕出擊（電腦可以按 <kbd>1</kbd>～<kbd>0</kbd>）。</li>
+      <li>左下角「<b>後勤升級</b>」讓軍費上限和賺錢速度變高（<kbd>Q</kbd>）。</li>
+      <li>右下角「<b>要塞砲</b>」充滿後發射，打退附近所有敵人（<kbd>空白鍵</kbd>）。</li>
+      <li>拖曳畫面（或 <kbd>←</kbd> <kbd>→</kbd>）可以左右看戰場，右上角可以切換 2 倍速。</li>
+      <li>打倒敵人會掉軍費。有魔王的關卡，打到敵方碉堡時魔王會出現。</li>
+    </ul>
+    <h2>屬性相剋</h2>
+    <ul>
+      <li>🛡️ <b>裝甲</b>（坦克、裝甲車）：火箭筒兵 3 倍傷害。</li>
+      <li>✈️ <b>空中</b>（飛機）：防空砲組 3 倍傷害。</li>
+      <li>🪖 <b>步兵</b>：噴火兵 1.5 倍傷害、機槍範圍掃射。</li>
+    </ul>
+    <h2>角色稀有度</h2>
+    <ul>
+      <li><span class="rb basic">基本</span> 推關卡解鎖　<span class="rb ex">EX</span> 達成條件取得</li>
+      <li><span class="rb rare">稀有</span> <span class="rb super">激稀有</span> <span class="rb uber">超激稀有</span> 扭蛋取得</li>
+      <li><span class="rb legend">傳說稀有</span> 只會出現在「傳說祭」扭蛋（0.3%）</li>
+      <li>角色 Lv10 會進化成第二形態。抽到重複的角色會變成 <b>+1</b> 等級。</li>
+    </ul>
+    <h2>世界篇</h2>
+    <ul>
+      <li>40 關：小國 → 遠方參戰國 → 四大強國，最後是紅星聯盟。</li>
+      <li>每個國家的碉堡長得都不一樣，有些碉堡還會開砲。</li>
+      <li>通過第一章 40 關會開放第二章、第三章（敵人更強，獎勵更多）。</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 戰鬥 -->
+<div id="battle" class="hidden">
+  <canvas id="cv"></canvas>
+  <div id="bTop">
+    <button id="bPause">⏸</button>
+    <div id="bStage"></div>
+    <div id="bSpeed" class="pill">▶ 1x</div>
+    <div id="bMoney"><span id="moneyNow">0</span><small> / <span id="moneyMax">0</span></small></div>
+  </div>
+  <div id="bWeather"></div>
+  <div id="bBar">
+    <button id="bWallet"><div class="wl">後勤 <b id="wlLv">Lv1</b></div><div class="wc" id="wlCost">80</div></button>
+    <div id="bSlots"></div>
+    <button id="bCannon"><div class="cf" id="cannonFill"></div><span>要塞砲</span></button>
+  </div>
+  <div id="rotateTip" class="hidden">📱 把手機轉成橫的玩起來更順手</div>
+</div>
+
+<div id="pause" class="overlay hidden">
+  <div class="card">
+    <h2>暫停</h2>
+    <button id="pResume" class="big">▶ 繼續</button>
+    <button id="pSound">🔊 音效：開</button>
+    <button id="pRetry">↻ 重新開始</button>
+    <button id="pQuit">🏳️ 撤退（回地圖）</button>
+  </div>
+</div>
+
+<div id="acct" class="overlay hidden">
+  <div class="card acctCard">
+    <button id="acctClose" class="close" aria-label="關閉">✕</button>
+    <h2>☁️ 雲端帳號</h2>
+    <div id="acctIn">
+      <p class="acctNote">登入後進度會存到雲端，換手機、換電腦都能接著玩。<br>和「競技對決 ARENA」共用同一個帳號。</p>
+      <label for="acctUser">帳號名稱</label>
+      <input id="acctUser" autocomplete="username" maxlength="16" placeholder="3～16 個字">
+      <label for="acctPw">密碼</label>
+      <input id="acctPw" type="password" autocomplete="current-password" placeholder="至少 6 個字">
+      <div class="acctBtns"><button id="acctLogin" class="big">登入</button><button id="acctSignup">註冊新帳號</button></div>
+      <p class="acctNote small">第一次登入時，如果雲端還沒有灰鷹軍團的存檔，會把這台裝置目前的進度上傳；雲端已經有存檔的話，會改用雲端的進度。</p>
+    </div>
+    <div id="acctOut" class="hidden">
+      <p>目前登入：<b id="acctName"></b></p>
+      <p class="acctNote">狀態：<span id="acctState"></span></p>
+      <div class="acctBtns"><button id="acctSync">立即同步</button><button id="acctLogout">登出</button></div>
+      <p class="acctNote small">登出後這台裝置會回到全新的進度，你的存檔還在雲端，下次登入就會回來。</p>
+    </div>
+    <div id="acctMsg"></div>
+  </div>
+</div>
+
+<div id="result" class="overlay hidden"><div class="card" id="resultCard"></div></div>
+<div id="toast"></div>
+
+<script src="js/data.js"></script>
+<script src="js/battle.js"></script>
+<script src="js/draw.js"></script>
+<script src="js/cloud.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
