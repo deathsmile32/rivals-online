@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>死亡微笑遊戲大廳</title>
+<meta name="description" content="死亡微笑做的網頁遊戲合集：競技對決 ARENA、床戰 BED WARS、百門飯店、Roblox Childhood">
+<meta name="theme-color" content="#0d0b1f">
+<link rel="icon" href="../icon-192.png">
+<style>
+  :root{
+    --bg:#0d0b1f; --panel:#17142f; --line:#2c2756; --text:#f1efff; --muted:#a39fc9;
+    --accent:#ffcc33;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+    background:radial-gradient(1200px 600px at 50% -200px,#2a1f63 0%,var(--bg) 60%) fixed;
+    color:var(--text);min-height:100vh;line-height:1.6;
+  }
+  header{max-width:1100px;margin:0 auto;padding:56px 20px 28px;text-align:center}
+  .logo{font-size:56px;line-height:1;margin-bottom:12px;filter:drop-shadow(0 0 18px #ffcc3366)}
+  h1{font-size:clamp(30px,6vw,52px);font-weight:900;letter-spacing:2px;
+     background:linear-gradient(90deg,#ffcc33,#ff5fa2,#7c6cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);margin-top:8px;font-size:16px}
+  .filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+  .filters button{
+    background:var(--panel);color:var(--text);border:1px solid var(--line);
+    padding:8px 16px;border-radius:999px;font:inherit;font-size:14px;cursor:pointer;transition:.15s;
+  }
+  .filters button:hover{border-color:var(--accent)}
+  .filters button.on{background:var(--accent);color:#1a1400;border-color:var(--accent);font-weight:700}
+
+  main{max-width:1100px;margin:0 auto;padding:12px 20px 60px;
+       display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:20px}
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    display:flex;flex-direction:column;transition:transform .18s,box-shadow .18s,border-color .18s;
+  }
+  .card:hover{transform:translateY(-4px);border-color:var(--c);box-shadow:0 12px 30px -10px var(--c)}
+  .card.hide{display:none}
+  .thumb{height:150px;position:relative;display:grid;place-items:center;overflow:hidden;
+         background:linear-gradient(135deg,var(--c) 0%,var(--c2) 100%)}
+  .thumb::before{content:"";position:absolute;inset:0;
+    background-image:linear-gradient(#ffffff14 2px,transparent 2px),linear-gradient(90deg,#ffffff14 2px,transparent 2px);
+    background-size:28px 28px}
+  .thumb .emoji{font-size:64px;position:relative;filter:drop-shadow(0 6px 10px #0006)}
+  .thumb .badge{position:absolute;top:10px;left:10px;background:#000a;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700}
+  .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .body h2{font-size:20px}
+  .body h2 small{display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:1px}
+  .body p{color:var(--muted);font-size:14px;flex:1}
+  .tags{display:flex;gap:6px;flex-wrap:wrap}
+  .tags span{font-size:12px;padding:2px 8px;border-radius:6px;background:#ffffff10;border:1px solid var(--line)}
+  .play{
+    display:block;text-align:center;text-decoration:none;font-weight:800;font-size:16px;letter-spacing:2px;
+    padding:11px;border-radius:12px;background:var(--c);color:#fff;transition:filter .15s;
+    text-shadow:0 1px 2px #0007;
+  }
+  .play:hover{filter:brightness(1.15)}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:0 20px 40px}
+  footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">😈</div>
+  <h1>死亡微笑遊戲大廳</h1>
+  <p class="sub">打開就能玩，不用下載 · 電腦和手機都可以</p>
+  <div class="filters" id="filters">
+    <button class="on" data-f="all">全部</button>
+    <button data-f="online">可以連線</button>
+    <button data-f="solo">單人</button>
+    <button data-f="horror">恐怖</button>
+    <button data-f="fps">射擊</button>
+  </div>
+</header>
+
+<main id="list">
+  <article class="card" data-tags="online solo fps" style="--c:#7c4dff;--c2:#ff3d7f">
+    <div class="thumb"><span class="badge">3D 第一人稱</span><span class="emoji">🔫</span></div>
+    <div class="body">
+      <h2>競技對決 ARENA<small>RIVALS 風格</small></h2>
+      <p>Rivals 風格的槍戰對決，1v1 和多人派對模式，可以打電腦也能和朋友線上對戰。</p>
+      <div class="tags"><span>🌐 線上對戰</span><span>🤖 打電腦</span><span>📱 手機可玩</span></div>
+      <a class="play" href="../">開始遊戲</a>
+    </div>
+  </article>
+
+  <article class="card" data-tags="online solo" style="--c:#e53935;--c2:#1e88e5">
+    <div class="thumb"><span class="badge">3D 第一人稱</span><span class="emoji">🛏️</span></div>
+    <div class="body">
+      <h2>床戰 BED WARS<small>MINECRAFT 風格</small></h2>
+      <p>4 隊 × 2 人，保護自己的床、拆掉敵人的床。基岩版搭橋、商店、釣竿拉 TNT。</p>
+      <div class="tags"><span>🌐 線上</span><span>🤖 單人＋電腦隊友</span><span>📱 手機可玩</span></div>
+      <a class="play" href="../bedwars/">開始遊戲</a>
+    </div>
+  </article>
+
+  <article class="card" data-tags="online solo horror" style="--c:#2e7d32;--c2:#111111">
+    <div class="thumb"><span class="badge">恐怖</span><span class="emoji">🚪</span></div>
+    <div class="body">
+      <h2>百門飯店<small>HUNDRED DOORS</small></h2>
+      <p>闖過飯店的 100 扇門，躲衣櫃、開燈、別看千眼。1～4 人一起連線合作。</p>
+      <div class="tags"><span>👥 1～4 人連線</span><span>👤 單人</span><span>📱 手機可玩</span></div>
+      <a class="play" href="../hundred-doors/">開始遊戲</a>
+    </div>
+  </article>
+
+  <article class="card" data-tags="solo" style="--c:#f9a825;--c2:#00acc1">
+    <div class="thumb"><span class="badge">小遊戲合集</span><span class="emoji">🧱</span></div>
+    <div class="body">
+      <h2>Roblox Childhood<small>23 關</small></h2>
+      <p>把 23 款熱門 Roblox 遊戲做成小關卡，一關接一關玩，進度會自動存檔。</p>
+      <div class="tags"><span>👤 單人</span><span>💾 自動存檔</span><span>📱 手機可玩</span></div>
+      <a class="play" href="../roblox-childhood/">開始遊戲</a>
+    </div>
+  </article>
+</main>
+
+<footer>
+  更多遊戲製作中 · YouTube：死亡微笑
+</footer>
+
+<script>
+  const btns = document.querySelectorAll('#filters button');
+  const cards = document.querySelectorAll('.card');
+  btns.forEach(b => b.addEventListener('click', () => {
+    btns.forEach(x => x.classList.toggle('on', x === b));
+    const f = b.dataset.f;
+    cards.forEach(c => c.classList.toggle('hide', f !== 'all' && !c.dataset.tags.split(' ').includes(f)));
+  }));
+</script>
+</body>
+</html>
