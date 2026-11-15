@@ -1994,7 +1994,211 @@ const CHARMS=[
 {id:'balloon',zh:'氣球吊飾',en:'Balloon Charm',r:0,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{const s=Sp(g,.024,0,.006,0,0xff4d4d,1);s.scale.y=1.2;const k=new T.Mesh(new T.ConeGeometry(.006,.008,6),mt(0xc62828));k.position.y=-.026;g.add(k)}},
 {id:'disco',zh:'迪斯可球吊飾',en:'Disco Ball Charm',r:3,p:0,cap:1,how:'從吊飾膠囊開出 Charm Capsule',build:g=>{Sp(g,.026,0,0,0,0xd8e0f0);const C=[0xff5adc,0x40e0ff,0xffe23f,0x7dff7a,0xffffff];for(let i=0;i<14;i++){const a=i*2.4,y=-.02+.04*((i*37)%14)/13,r=Math.sqrt(Math.max(0,.026*.026-y*y));B(g,.007,.007,.003,Math.cos(a)*r,y,Math.sin(a)*r,C[i%5],{e:1,ry:-a+PI/2})}}},
 ];
+// ===== 2026.11 wiki charm list: tiny part-list builder (own blocky takes). 1 unit = .022 world units; charm hangs from y≈+1.
+// part: [kind,color,x,y,z,a,b,c,rx,ry,rz,glow]  kinds: s sphere(a radius; b,c y/z scale) · b box(a,b,c) · c cylinder(a top r,b h,c bottom r) · k cone(a r,b h)
+//       t torus(a R,b tube,c arc) · o octahedron(a) · d dodecahedron(a) · x star(a size,b depth) · h heart(a size)
+function CHB(parts,sc){return g=>{const s=new T.Group();s.scale.setScalar(.022*(sc||1));g.add(s);for(const p of parts){const[k,col,x=0,y=0,z=0,a=1,b=1,c,rx=0,ry=0,rz=0,e=0]=p;let m;
+ if(k=='s'){m=new T.Mesh(US,mt(col,e));m.scale.set(a,a*(b==1&&c==null?1:b),a*(c==null?(b==1?1:1):c))}
+ else if(k=='b'){m=new T.Mesh(UB,mt(col,e));m.scale.set(a,b,c==null?a:c)}
+ else if(k=='c'){m=new T.Mesh(new T.CylinderGeometry(a,c==null?a:c,1,14),mt(col,e));m.scale.y=b}
+ else if(k=='k'){m=new T.Mesh(UK,mt(col,e));m.scale.set(a,b,a)}
+ else if(k=='t'){m=new T.Mesh(new T.TorusGeometry(a,b,8,20,c==null?PI*2:c),mt(col,e))}
+ else if(k=='o'){m=new T.Mesh(new T.OctahedronGeometry(a),mt(col,e))}
+ else if(k=='d'){m=new T.Mesh(new T.DodecahedronGeometry(a),mt(col,e))}
+ else if(k=='x'){m=new T.Mesh(USTAR,mt(col,e));m.scale.set(a,a,b)}
+ else if(k=='h'){m=new T.Group();for(const sx of[-1,1]){const q=new T.Mesh(US,mt(col,e));q.scale.setScalar(a*.55);q.position.set(sx*a*.42,a*.25,0);m.add(q)}const q=new T.Mesh(UB,mt(col,e));q.scale.set(a*.85,a*.85,a*.75);q.rotation.z=PI/4;q.position.y=-a*.15;m.add(q)}
+ m.position.set(x,y,z);m.rotation.set(rx,ry,rz);s.add(m)}}}
+const FACE=(c,ey,mo)=>[['s',c,0,0,0,1],['s',ey||0x1a1a1a,-.35,.2,.88,.14],['s',ey||0x1a1a1a,.35,.2,.88,.14]].concat(mo||[['b',0x3a1a0a,0,-.35,.9,.5,.1,.1]]);
+// rows: [id, 中文, English, rarity c/r/l/u, source, parts]
+// source: cap 吊飾膠囊 · hw 🎃 · jl 🎄 · tr 🌴 · ex:how-text (exclusive) · code:xxx
+const CH2=[
+// --- Common ---
+['cake2','二週年蛋糕','2nd Birthday Cake','c','cap',[['c',0xffd0e8,0,-.4,0,1,.7],['c',0x7a4a2a,0,.15,0,.75,.5],['c',0xfff0f5,0,.5,0,.5,.3],['c',0x3a8aff,0,.9,0,.06,.5],['s',0xffd23f,0,1.2,0,.12,1,1,0,0,0,1]]],
+['stool','遠古凳','Ancient Stool','c','cap',[['c',0x8a5a3a,0,.6,0,.9,.25],['c',0x6a4020,0,0,0,.35,1.1],['c',0x8a5a3a,0,-.6,0,.7,.2]]],
+['armchair','扶手椅','Armchair','c','cap',[['b',0xb89a8a,0,-.3,0,1.6,.5,1.2],['b',0xb89a8a,0,.3,.5,1.6,1.1,.3],['b',0xa88a7a,-.8,0,0,.3,.8,1.2],['b',0xa88a7a,.8,0,0,.3,.8,1.2]]],
+['bone','骨頭','Bone','c','hw',[['b',0xf2ead6,0,0,0,.4,1.6,.4,0,0,.7],['s',0xf2ead6,-.75,.75,0,.32],['s',0xf2ead6,-.45,.95,0,.32],['s',0xf2ead6,.75,-.75,0,.32],['s',0xf2ead6,.45,-.95,0,.32]]],
+['bowling','保齡球瓶','Bowling Pin','c','cap',[['s',0xf8f8f8,0,-.4,0,.6,1.3],['s',0xf8f8f8,0,.75,0,.3,1.2],['c',0xe8262a,0,.25,0,.33,.1],['c',0xe8262a,0,.42,0,.31,.1]]],
+['cage','鳥籠','Cage','c','cap',[['c',0x2a2a30,0,-.9,0,.7,.1],['c',0x2a2a30,0,.9,0,.5,.1,.7],...[0,1,2,3,4,5,6,7].map(i=>['b',0x3a3a40,Math.cos(i*.785)*.62,0,Math.sin(i*.785)*.62,.06,1.8,.06]),['s',0xfff6a0,0,0,0,.18,1,1,0,0,0,1]]],
+['candy','糖果','Candy','c','hw',[['s',0x2a6ae8,0,0,0,.55,1,1],['k',0x2a6ae8,-.85,0,0,.45,.6,0,0,0,PI/2],['k',0x2a6ae8,.85,0,0,.45,.6,0,0,0,-PI/2],['t',0xffffff,0,0,0,.5,.08,null,0,PI/2]]],
+['candycorn','玉米糖','Candy Corn','c','hw',[['k',0xfff4e0,0,.75,0,.35,.5],['c',0xff8a1a,0,.15,0,.38,.7,.6],['c',0xffd23a,0,-.5,0,.6,.6,.75]]],
+['zhead','殭屍頭','Chombie Head','c','ex:逃出殭屍塔 Escape the Zombie Tower',FACE(0x5ad83a,0xffffff,[['b',0x3a0a0a,0,-.35,.85,.6,.25,.1],['k',0xc84a1a,0,1.1,0,.5,.6]])],
+['cobweb','蜘蛛網','Cobweb','c','hw',[...[0,1,2,3].map(i=>['b',0xf4f4f4,0,0,0,2,.05,.05,0,0,i*.785]),['t',0xf4f4f4,0,0,0,.45,.03],['t',0xf4f4f4,0,0,0,.8,.03]]],
+['cog','齒輪','Cog','c','cap',[['t',0x5a5e66,0,0,0,.65,.25],...[0,1,2,3,4,5,6,7].map(i=>['b',0x5a5e66,Math.cos(i*.785)*.95,Math.sin(i*.785)*.95,0,.35,.35,.35,0,0,i*.785])]],
+['coconut','椰子','Coconut','c','tr',[['s',0x6a4020,0,0,0,.9],['s',0x3a2010,-.25,.3,.78,.1],['s',0x3a2010,.25,.3,.78,.1],['s',0x3a2010,0,0,.85,.1]]],
+['cookie','餅乾','Cookie','c','cap',[['c',0xc8843a,0,0,0,.95,.3,null,PI/2],...[[.3,.3],[-.4,.1],[.1,-.4],[-.2,.5],[.5,-.2]].map(([x,y])=>['s',0x3a2010,x,y,.15,.13])]],
+['crystal','冰晶','Crystal','c','jl',[...[0,1,2].map(i=>['b',0x80d8ff,0,0,0,.3,2,.15,0,0,i*1.047,1]),['o',0xbff4ff,0,0,0,.4,1,null,0,0,0,1]]],
+['cupcake','杯子蛋糕','Cupcake','c','cap',[['c',0xe8a0c0,0,-.5,0,.7,.8,.5],['s',0xff8ac8,0,.2,0,.75,.7],['s',0xff8ac8,0,.65,0,.45,.8],['s',0xe8262a,0,1.05,0,.18]]],
+['dice2','骰子','Dice','c','cap',[['b',0xf4f4f4,0,0,0,1.4,1.4,1.4,.3,.5],...[[-.35,-.35],[.35,.35],[0,0],[-.35,.35],[.35,-.35]].map(([x,y])=>['s',0x1a1a1a,x*1,y,.72,.13,1,.3])]],
+['elfhat','精靈帽','Elf Hat','c','jl',[['k',0x2aa83a,0,.3,0,.75,1.6,0,0,0,-.4],['t',0xe8262a,0,-.45,0,.75,.15,null,PI/2],...[0,1,2,3].map(i=>['s',0xffd23a,Math.cos(i*1.57)*.8,-.45,Math.sin(i*1.57)*.8,.15])]],
+['fedora','紳士帽堆','Fedora Stack','c','cap',[0,1,2].map(i=>[['c',[0x1a1a1a,0xf4f4f4,0x1a1a1a][i],0,-.6+i*.55,0,1-i*.1,.08],['c',[0x1a1a1a,0xf4f4f4,0x1a1a1a][i],0,-.4+i*.55,0,.55,.35]]).flat()],
+['firework','煙火筒','Firework','c','jl',[['c',0x1a1a1a,0,0,0,.4,1.5],['c',0xf2c21a,0,.3,0,.42,.25],['c',0xf2c21a,0,-.3,0,.42,.25],['k',0xe8262a,0,1,0,.4,.5],['b',0x8a5a2a,0,-1,0,.06,.6,.06]]],
+['flipflop','人字拖','Flip Flop','c','tr',[['s',0xff5a8a,0,0,0,.6,1.4,.12],['b',0x3ad8e8,-.25,.3,.12,.08,.6,.08,0,0,.5],['b',0x3ad8e8,.25,.3,.12,.08,.6,.08,0,0,-.5]]],
+['glorycoin','榮耀幣','Glory Coin','c','ex:排位商店 Ranked Shop',[['c',0x7a3ad8,0,0,0,.95,.2,null,PI/2],['o',0xf2c21a,0,0,.15,.6,1,null,0,0,0,1]]],
+['hammer','鐵鎚','Hammer','c','cap',[['b',0x8a4a20,0,-.3,0,.18,1.5,.18],['b',0x5a5e66,0,.6,0,1,.35,.35]]],
+['happyginger','笑臉薑餅','Happy Gingerbread','c','cap',[['c',0xd8743a,0,0,0,.95,.25,null,PI/2],['t',0xffffff,0,0,.14,.8,.05],['s',0x1a1a1a,-.3,.25,.15,.1],['s',0x1a1a1a,.3,.25,.15,.1],['t',0x1a1a1a,0,-.05,.15,.35,.05,PI,0,0,PI]]],
+['heart2','愛心','Heart','c','cap',[['h',0xff3ab8,0,0,0,1.1,1,null,0,0,0,1]]],
+['hook','掛鉤','Hook','c','cap',[['b',0x8a8e96,0,.4,0,.1,1,.1],['t',0x8a8e96,0,-.3,0,.35,.08,PI*1.3,0,0,PI*.9]]],
+['horseshoe','馬蹄鐵','Horseshoe','c','ex:排位贏 10 場 Win 10 ranked matches',[['t',0x3a3e46,0,0,0,.7,.2,PI*1.4,0,0,-PI*.2]]],
+['icecube','冰塊','Ice Cube','c','cap',[['b',0x9ac8f0,0,0,0,1.2,1.2,1.2,.4,.6]]],
+['jollyhat','聖誕帽','Jolly Hat','c','jl',[['s',0xe8262a,0,.1,0,.8,1.1],['c',0xffffff,0,-.5,0,.85,.3],['s',0xffffff,.2,.9,.3,.25]]],
+['lemonslice','檸檬片','Lemon Slice','c','cap',[['c',0xf2d23a,0,0,0,1,.15,null,PI/2],['c',0xfff4a0,0,0,.05,.85,.15,null,PI/2],...[0,1,2,3,4,5].map(i=>['b',0xf2d23a,Math.cos(i*1.047)*.4,Math.sin(i*1.047)*.4,.14,.06,.8,.03,0,0,i*1.047+PI/2])]],
+['lifebuoy','救生圈','Life Buoy','c','cap',[['t',0xffffff,0,0,0,.7,.25],...[0,1,2,3].map(i=>['b',0xe8262a,Math.cos(i*1.57)*.7,Math.sin(i*1.57)*.7,0,.3,.55,.55,0,0,i*1.57])]],
+['magnet','磁鐵','Magnet','c','cap',[['t',0xe8262a,0,.2,0,.55,.25,PI,0,0,0],['b',0xe8262a,-.55,-.3,0,.5,.9,.5],['b',0xe8262a,.55,-.3,0,.5,.9,.5],['b',0xf4f4f4,-.55,-.85,0,.5,.3,.5],['b',0xf4f4f4,.55,-.85,0,.5,.3,.5]]],
+['beachball','迷你沙灘球','Mini Beach Ball','c','tr',[['s',0xffffff,0,0,0,.9],...[0,1,2].map(i=>['s',[0xe8262a,0x3a8aff,0xf2c21a][i],0,0,0,.91,1,.3,0,i*1.047])]],
+['minicane','迷你拐杖糖','Mini Candy Cane','c','jl',[...[0,1,2,3,4].map(i=>['c',i%2?0xe8262a:0xffffff,0,-.9+i*.35,0,.13,.35]),['t',0xe8262a,-.3,.75,0,.3,.13,PI]]],
+['ministar','迷你閃耀星','Mini Shining Star','c','jl',[['x',0xffe23f,0,0,0,.9,.4,null,0,0,0,1]]],
+['starfish','迷你海星','Mini Starfish','c','tr',[...[0,1,2,3,4].map(i=>['k',0xff8a5a,Math.sin(i*1.257)*.45,Math.cos(i*1.257)*.45,0,.3,.9,0,0,0,-i*1.257])]],
+['ninjastar','手裡劍','Ninja Star','c','cap',[...[0,1,2,3].map(i=>['k',0x2a2a30,Math.sin(i*1.57)*.5,Math.cos(i*1.57)*.5,0,.3,1,0,0,0,-i*1.57]),['c',0x5a5e66,0,0,0,.25,.2,null,PI/2]]],
+['ornament','聖誕球','Ornament','c','jl',[['s',0xe8262a,0,0,0,.9],['c',0xf2c21a,0,.15,0,.92,.25],['c',0xf2c21a,0,-.3,0,.86,.15],['c',0xc8ccd8,0,.95,0,.25,.25]]],
+['camera','狗仔相機','Paparazzi Camera','c','cap',[['b',0x1a1a1a,0,0,0,1.4,.9,.6],['c',0x1a1a1a,0,0,.5,.4,.5,null,PI/2],['c',0x3a8aff,0,0,.76,.28,.05,null,PI/2,0,0,1],['b',0x3a3a40,-.4,.55,0,.4,.25,.4]]],
+['pawn','兵','Pawn','c','cap',[['c',0x1a1a1a,0,-.8,0,.7,.25],['c',0x1a1a1a,0,-.2,0,.3,1,.5],['s',0x1a1a1a,0,.6,0,.38]]],
+['peppermint','薄荷糖','Peppermint Candy','c','jl',[['c',0xffffff,0,0,0,.9,.25,null,PI/2],...[0,1,2,3,4,5].map(i=>['b',0xe8262a,Math.cos(i*1.047)*.45,Math.sin(i*1.047)*.45,.08,.25,.8,.12,0,0,i*1.047+PI/2])]],
+['cactus','盆栽仙人掌','Potted Cactus','c','cap',[['c',0xc8643a,0,-.6,0,.5,.6,.35],['s',0x3ab83a,0,.2,0,.35,1.6],['s',0x3ab83a,.45,.3,0,.18,1.5]]],
+['flower','盆栽花','Potted Flower','c','cap',[['c',0xc8643a,0,-.6,0,.5,.6,.35],['b',0x3a8a3a,0,0,0,.08,.8,.08],...[0,1,2,3,4].map(i=>['s',0xffffff,Math.cos(i*1.257)*.3,.55+Math.sin(i*1.257)*.3,0,.2]),['s',0xf2c21a,0,.55,.1,.15]]],
+['runering','符文環','Rune Ring','c','cap',[['t',0xff40d8,0,0,0,.8,.1,null,0,0,0,1],...[0,1,2,3,4,5].map(i=>['b',0xff80e8,Math.cos(i*1.047)*.8,Math.sin(i*1.047)*.8,0,.18,.3,.1,0,0,i,1])]],
+['runes','符文','Runes','c','cap',[['b',0x40f0e8,0,0,0,.25,1.6,.15,0,0,.3,1],['b',0x40f0e8,.3,.3,0,.8,.2,.15,0,0,.5,1],['b',0x40f0e8,-.2,-.4,0,.7,.2,.15,0,0,-.6,1]]],
+['shipwheel','船舵','Ship Wheel','c','cap',[['t',0x8a4a20,0,0,0,.75,.1],['c',0x6a3a1a,0,0,0,.2,.2,null,PI/2],...[0,1,2,3,4,5,6,7].map(i=>['b',0x8a4a20,0,0,0,.1,2.1,.1,0,0,i*.785])]],
+['snorkel','潛水鏡','Snorkel Goggles','c','tr',[['b',0xff8a1a,0,0,0,1.6,.7,.3],['b',0x5ad8ff,-.4,0,.12,.6,.5,.1,0,0,0,1],['b',0x5ad8ff,.4,0,.12,.6,.5,.1,0,0,0,1],['c',0x3a8aff,.9,.4,0,.1,1.2]]],
+['snowflake','雪花','Snowflake','c','jl',[...[0,1,2].map(i=>['b',0xffffff,0,0,0,.18,2,.1,0,0,i*1.047,1]),...[0,1,2,3,4,5].map(i=>['b',0xffffff,Math.sin(i*1.047)*.6,Math.cos(i*1.047)*.6,0,.4,.1,.1,0,0,-i*1.047,1])]],
+['snowring','雪花環','Snowflake Ring','c','cap',[['t',0x60e0ff,0,0,0,.75,.08,null,0,0,0,1],...[0,1,2,3,4,5].map(i=>['x',0x9af0ff,Math.cos(i*1.047)*.75,Math.sin(i*1.047)*.75,0,.3,.2,null,0,0,0,1])]],
+['snowman','雪人','Snowman','c','ex:排位贏 10 場 Win 10 ranked matches',[['s',0xffffff,0,-.5,0,.6],['s',0xffffff,0,.3,0,.42],['c',0x1a1a1a,0,.75,0,.28,.4],['c',0x1a1a1a,0,.6,0,.45,.05],['k',0xff8a1a,0,.3,.45,.06,.3,0,PI/2],['t',0xe8262a,0,0,0,.35,.08,null,PI/2]]],
+['spider','蜘蛛','Spider','c','hw',[['s',0x1a1a1a,0,0,0,.5,.8],['s',0x1a1a1a,0,.5,.2,.3],...[-1,1].flatMap(s=>[0,1,2,3].map(i=>['b',0x1a1a1a,s*.6,.2-i*.2,0,.9,.06,.06,0,0,s*(.4-i*.25)]))]],
+['star2','星星','Star','c','cap',[['x',0xffd23a,0,0,0,1,.5]]],
+['lamp','檯燈','Table Lamp','c','cap',[['k',0xf4f0e8,0,.5,0,.8,.8],['c',0x2a4a4a,0,-.3,0,.12,.6],['s',0x2a4a4a,0,-.7,0,.4,.8]]],
+['thorn','荊棘環','Thorn Circle','c','hw',[['t',0x1a1a1a,0,0,0,.8,.07],...[0,1,2,3,4,5,6,7,8,9].map(i=>['k',0x2a2a2a,Math.cos(i*.628)*.8,Math.sin(i*.628)*.8,0,.08,.3,0,0,0,i*.628-PI/2])]],
+['cone','三角錐','Traffic Cone','c','cap',[['b',0xff6a1a,0,-.9,0,1.3,.15,1.3],['k',0xff6a1a,0,.1,0,.6,1.8],['c',0xffffff,0,-.1,0,.45,.2,.5]]],
+['melon','西瓜片','Watermelon Slice','c','tr',[['t',0x2a8a3a,0,0,0,.8,.18,PI],['c',0xff4a5a,0,.35,0,.8,.3,null,PI/2,0,0],['s',0x1a1a1a,-.3,.4,.18,.07],['s',0x1a1a1a,.3,.4,.18,.07]]],
+['witchhat','女巫帽','Witch Hat','c','hw',[['c',0x1a1a1a,0,-.5,0,1,.1],['k',0x1a1a1a,0,.3,0,.6,1.4,0,0,0,.2],['t',0xff8a1a,.2,.2,.5,.3,.06,PI*1.3,0,0,1,1]]],
+// --- Rare ---
+['tengallon','十加侖帽','10 Gallon Hat','r','cap',[['s',0xe8e0c8,0,-.3,0,1.2,.15],['c',0xe8e0c8,0,.2,0,.55,.8,.65],['c',0x5a3a1a,0,-.1,0,.67,.15]]],
+['anvil','鐵砧','Anvil','r','cap',[['b',0x3a3e46,0,.4,0,1.6,.5,.7],['k',0x3a3e46,-1,.4,0,.25,.5,0,0,0,PI/2],['b',0x3a3e46,0,-.2,0,.6,.8,.5],['b',0x3a3e46,0,-.7,0,1.2,.3,.7]]],
+['basketball','籃球','Basketball','r','cap',[['s',0xe86a1a,0,0,0,.9],['t',0x1a1a1a,0,0,0,.91,.03],['t',0x1a1a1a,0,0,0,.91,.03,null,0,PI/2],['t',0x1a1a1a,0,0,0,.91,.03,null,PI/2]]],
+['bitster','像素小怪','Bitster','r','cap',[['b',0x7ad83a,0,0,0,1.4,1.2,.8],['b',0x7ad83a,-.5,.8,0,.3,.4,.3],['b',0x7ad83a,.5,.8,0,.3,.4,.3],['b',0xffffff,.1,.1,.42,.5,.5,.05],['b',0x1a1a1a,.15,.1,.46,.25,.25,.05]]],
+['blobfish','水滴魚','Blobfish','r','cap',[['s',0xffa0c0,0,0,0,.9,.8],['s',0xffa0c0,0,-.15,.7,.4,.5],['s',0x1a1a1a,-.4,.25,.75,.1],['s',0x1a1a1a,.4,.25,.75,.1]]],
+['cactusbuddy','仙人掌夥伴','Cactus Buddy','r','cap',[['c',0xc8643a,0,-.7,0,.55,.6,.4],...FACE(0x5ad83a).map(p=>{const q=p.slice();q[3]=(q[3]||0)+.15;return q})]],
+['candybucket','南瓜糖桶','Candy Bucket','r','hw',[['c',0xff6a1a,0,0,0,.75,1.2,.6],['t',0x1a1a1a,0,.7,0,.6,.05,PI],['b',0x1a1a1a,-.25,.15,.68,.18,.18,.05,0,0,.78],['b',0x1a1a1a,.25,.15,.68,.18,.18,.05,0,0,.78],['b',0x1a1a1a,0,-.25,.66,.5,.1,.05]]],
+['caramelapple','焦糖蘋果','Caramel Apple','r','hw',[['s',0xe8262a,0,.1,0,.75],['c',0xc8843a,0,-.4,0,.78,.4,.6],['b',0xc8a06a,0,1,0,.1,.9,.1]]],
+['choco','巧克力球','Chocolate Scoop','r','cap',[['c',0x6a3a1a,0,-.5,0,.9,.4],['c',0x6a3a1a,0,-.1,0,.65,.4,.85],['c',0x6a3a1a,0,.3,0,.4,.4,.6],['k',0x6a3a1a,0,.7,0,.3,.5]]],
+['dtree','聖誕樹','Decorated Tree','r','cap',[['k',0x2a8a3a,0,-.3,0,.8,.8],['k',0x2a8a3a,0,.2,0,.6,.7],['k',0x2a8a3a,0,.65,0,.4,.6],['x',0xffd23a,0,1.05,0,.25,.15,null,0,0,0,1],...[0,1,2,3,4].map(i=>['s',[0xe8262a,0x3a8aff,0xffd23a][i%3],Math.cos(i*1.3)*.45,-.4+i*.2,Math.sin(i*1.3)*.45+.2,.09,1,1,0,0,0,1])]],
+['devpumpkin','邪惡南瓜','Devious Pumpkin','r','hw',[['s',0xff8a1a,0,0,0,.95,.85],['b',0x3a8a2a,0,.85,0,.15,.3,.15],['b',0xffe23a,-.3,.2,.8,.25,.18,.1,0,0,.4,1],['b',0xffe23a,.3,.2,.8,.25,.18,.1,0,0,-.4,1],['b',0xffe23a,0,-.3,.8,.7,.15,.1,0,0,0,1]]],
+['weary','疲憊表情','Emoji: Weary','r','cap',FACE(0xffc83a,0x1a1a1a,[['t',0x3a1a0a,0,-.45,.85,.3,.06,PI]])],
+['famestar','名人星','Fame Star','r','cap',[['x',0xe6b84a,0,0,0,1,.4,null,0,0,0,1],['x',0x5a1a1a,0,0,.08,.65,.4]]],
+['festlight','節慶燈泡','Festive Light','r','jl',[['s',0xe8262a,0,-.2,0,.45,1.5,1,0,0,0,1],['c',0x2a8a3a,0,.55,0,.25,.35]]],
+['football','美式足球','Football','r','cap',[['s',0x7a3a1a,0,0,0,.6,.6,1.1,0,0,0],['b',0xffffff,0,.55,0,.06,.06,.8],...[0,1,2,3].map(i=>['b',0xffffff,0,.56,-.3+i*.2,.25,.04,.04])]],
+['golfball','高爾夫球','Golf Ball','r','cap',[['s',0xf4f4f4,0,0,0,.85]]],
+['gravestone','墓碑','Gravestone','r','hw',[['b',0x3a3a40,0,-.1,0,1,1.4,.3],['c',0x3a3a40,0,.6,0,.5,.3,null,PI/2],['b',0x1a1a1a,0,.15,.16,.12,.6,.05],['b',0x1a1a1a,0,.25,.16,.4,.12,.05]]],
+['hotchoc','熱可可','Hot Chocolate','r','jl',[['c',0xe8262a,0,0,0,.65,1,.55],['t',0xe8262a,.7,0,0,.25,.07],['c',0x5a2a10,0,.48,0,.6,.05],['s',0xffffff,-.2,.55,0,.15],['s',0xffffff,.2,.55,.1,.15]]],
+['hotdog','熱狗','Hotdog','r','cap',[['s',0xe0a050,0,0,0,.45,.7,1.6,PI/2],['s',0xc8402a,0,.35,0,.25,.25,1.8,PI/2],['b',0xf2d23a,0,.6,0,.08,.04,1.2,0,0,0]]],
+['pearl','藏珠','Hidden Pearl','r','tr',[['s',0xe8c8d8,0,-.3,0,1,.3],['s',0xe8c8d8,0,.2,-.4,1,.3,1,-.8],['s',0xffffff,0,-.05,.2,.35,1,1,0,0,0,1]]],
+['jollychair','歡樂王座','Jolly Chair','r','jl',[['b',0xd8262a,0,-.3,0,1.2,.4,1],['b',0xd8262a,0,.4,-.4,1.2,1.4,.25],['b',0xf2c21a,-.65,-.1,0,.15,.6,1],['b',0xf2c21a,.65,-.1,0,.15,.6,1],['s',0xf2c21a,0,1.15,-.4,.25]]],
+['lemonjuice','檸檬汁','Lemon Juice','r','tr',[['c',0xfff07a,0,0,0,.55,1.2,.45],['c',0xf2d23a,.3,.65,0,.3,.06,null,PI/2],['b',0xff5a8a,-.2,.8,0,.05,.8,.05,0,0,.3]]],
+['melonkin','西瓜南瓜','Melonkin','r','hw',[['s',0x2a8a3a,0,0,0,.95,.85],['b',0xff6a1a,-.3,.2,.8,.25,.18,.1,0,0,.4,1],['b',0xff6a1a,.3,.2,.8,.25,.18,.1,0,0,-.4,1],['b',0xff6a1a,0,-.3,.8,.7,.15,.1,0,0,0,1]]],
+['flamingo','迷你紅鶴泳圈','Mini Flamingo Floatie','r','tr',[['t',0xff8ac8,0,-.4,0,.6,.25,null,PI/2],['c',0xff8ac8,.55,.2,0,.15,1.1],['s',0xff8ac8,.55,.8,.15,.25],['k',0x1a1a1a,.55,.75,.45,.08,.25,0,PI/2]]],
+['miniportal','迷你傳送門','Mini Portal','r','cap',[['t',0xd040ff,0,0,0,.75,.18,null,0,0,0,1],['c',0x3a0a5a,0,0,0,.7,.05,null,PI/2,0,0,1]]],
+['unstable','不穩定傳送門','Mini Unstable Portal','r','ex:排位贏 10 場 Win 10 ranked matches',[['t',0x40f0d8,0,0,0,.75,.18,null,0,0,0,1],['c',0x0a3a3a,0,0,0,.7,.05,null,PI/2,0,0,1]]],
+['moai','摩艾石像','Moai','r','cap',[['b',0x6a645a,0,0,0,.9,1.8,.7],['b',0x6a645a,0,.1,.4,.25,.7,.25],['b',0x4a443a,0,.5,.36,.8,.15,.1]]],
+['moneybag','錢袋','Money Bag','r','cap',[['s',0xb87a3a,0,-.2,0,.8,1],['c',0x8a5a2a,0,.65,0,.25,.25]]],
+['duffle','錢包旅行袋','Money Duffle','r','cap',[['s',0x1a1a1a,0,0,0,1,.7,.7],...[0,1,2].map(i=>['b',0x3ad83a,-.4+i*.4,.6,0,.35,.15,.25,0,0,(i-1)*.3])]],
+['mystery','問號方塊','Mystery Block','r','cap',[['b',0xf2a81a,0,0,0,1.4,1.4,1.4],['b',0xffffff,0,.25,.71,.4,.15,.02],['b',0xffffff,.15,.05,.71,.12,.3,.02],['b',0xffffff,0,-.35,.71,.15,.15,.02]]],
+['potion','藥水','Potion','r','cap',[['s',0xaaff2a,0,-.3,0,.8,1,1,0,0,0,1],['c',0xccff8a,0,.6,0,.2,.5],['c',0x8a5a2a,0,.95,0,.22,.2]]],
+['puffer','河豚','Pufferfish','r','cap',[['s',0xf2c21a,0,0,0,.85],...[0,1,2,3,4,5,6,7].map(i=>['k',0xf4f0e0,Math.cos(i*.785)*.85,Math.sin(i*.785)*.85,0,.1,.3,0,0,0,i*.785-PI/2]),['s',0x1a1a1a,-.35,.25,.75,.1],['s',0x1a1a1a,.35,.25,.75,.1]]],
+['rainbow','彩虹','Rainbow','r','cap',[0xff2a2a,0xff9a2a,0xffe23a,0x3ad83a,0x3a8aff,0xa05cff].map((c,i)=>['t',c,0,-.3,0,1-i*.12,.07,PI,0,0,0,1])],
+['popsicle','火箭冰棒','Rocket Popsicle','r','tr',[['c',0xe8262a,0,.6,0,.1,.5,.4],['c',0xffffff,0,.1,0,.4,.5],['c',0x3a8aff,0,-.4,0,.4,.5],['b',0xc8a06a,0,-.95,0,.15,.6,.08]]],
+['rocket','火箭','Rocket Ship','r','cap',[['c',0xffffff,0,0,0,.45,1.2],['k',0xe8262a,0,.9,0,.45,.6],['c',0x5ad8ff,0,.2,.42,.15,.05,null,PI/2],...[0,1,2].map(i=>['b',0xe8262a,Math.cos(i*2.09)*.5,-.5,Math.sin(i*2.09)*.5,.1,.5,.4,0,-i*2.09])]],
+['duck','小鴨','Rubber Duck','r','cap',[['s',0xffd23a,0,-.3,0,.8,.7,1],['s',0xffd23a,0,.45,.3,.5],['k',0xff8a1a,0,.4,.85,.15,.3,0,PI/2],['s',0x1a1a1a,-.2,.6,.7,.07],['s',0x1a1a1a,.2,.6,.7,.07]]],
+['sandbucket','沙桶','Sand Bucket','r','tr',[['c',0x3a8aff,0,0,0,.8,1.2,.6],['t',0xf2c21a,0,.6,0,.7,.06,PI],['s',0xe8c88a,0,.55,0,.75,.2]]],
+['snowflakes','雪花群','Snowflakes','r','cap',[...[0,1,2].map(i=>['b',0xffffff,-.3,.3,0,.12,1.2,.08,0,0,i*1.047,1]),...[0,1,2].map(i=>['b',0xffffff,.5,-.5,0,.08,.7,.06,0,0,i*1.047,1])]],
+['stocking','聖誕襪','Stocking','r','jl',[['b',0xe8262a,0,.2,0,.7,1.2,.5],['s',0xe8262a,.25,-.5,0,.5,.5,.5],['b',0xffffff,0,.85,0,.8,.3,.6]]],
+['surfboard','衝浪板','Surfboard','r','tr',[['s',0x3ad8e8,0,0,0,.45,1.6,.08],['b',0xffffff,0,0,.08,.08,2.6,.02]]],
+['tennis','網球','Tennis Ball','r','cap',[['s',0xc8f03a,0,0,0,.85],['t',0xffffff,0,0,0,.86,.03,null,.5,.5]]],
+['ufo','飛碟','UFO','r','cap',[['s',0xc8ccd8,0,0,0,1.1,.25],['s',0x8af0ff,0,.25,0,.5,.7,1,0,0,0,1],['t',0x3aff5a,0,-.05,0,1,.05,null,PI/2,0,0,1]]],
+// --- Legendary ---
+['alien','外星人頭','Alien Head','l','ex:外星槍組合包 Exogun Bundle',[['s',0x7ad83a,0,0,0,.8,1.1],['s',0x1a1a1a,-.35,.1,.6,.25,1.5,.6,0,0,.4],['s',0x1a1a1a,.35,.1,.6,.25,1.5,.6,0,0,-.4]]],
+['balloondog','氣球狗','Balloon Dog','l','ex:氣球組合包 Balloon Bundle',[['s',0x2a5aff,0,0,0,.25,1,3,0,0,0],['s',0x2a5aff,0,.5,.7,.25,2],['s',0x2a5aff,0,.95,.85,.25,1,1.8],['s',0x2a5aff,-.3,-.6,-.4,.18,2.5],['s',0x2a5aff,.3,-.6,-.4,.18,2.5],['s',0x2a5aff,-.3,-.6,.5,.18,2.5],['s',0x2a5aff,.3,-.6,.5,.18,2.5]]],
+['blackcat','黑貓','Black Cat','l','hw',[['s',0x1a1a1a,0,-.3,0,.7],['s',0x1a1a1a,0,.5,.2,.5],['k',0x1a1a1a,-.3,.95,.2,.15,.3],['k',0x1a1a1a,.3,.95,.2,.15,.3],['s',0xff8a1a,-.18,.55,.65,.1,1,1,0,0,0,1],['s',0xff8a1a,.18,.55,.65,.1,1,1,0,0,0,1]]],
+['boxtv','方盒電視','Box TV','l','ex:道具組合包 Prop Bundle',[['b',0x1a1a1a,0,0,0,1.5,1.2,1],['b',0xf8f4e8,0,0,.51,1.1,.85,.02,0,0,0,1],['b',0x3a3a3a,0,-.75,0,.6,.3,.6]]],
+['cauldron','大釜','Cauldron','l','hw',[['s',0x1a1a1a,0,0,0,.9,.8],['c',0x5aff3a,0,.55,0,.7,.08,null,0,0,0,1],['s',0x8aff5a,.2,.65,0,.15,1,1,0,0,0,1]]],
+['chillman','冰涼雪人','Chillman','l','jl',FACE(0xf4f8ff,0x1a1a1a,[['k',0xff8a1a,0,0,1,.1,.5,0,PI/2],['c',0x3a8aff,0,-.55,0,.95,.2],['s',0xff5ab8,-.5,-.1,.75,.12],['s',0x3ad8ff,.5,-.1,.75,.12]])],
+['cryocap','冷凍艙','Cryo Capsule','l','ex:違禁品組合包 Contraband Bundle',[['c',0x2a3a6a,0,0,0,.5,1.6],['c',0x6ad8ff,0,0,0,.4,1,null,0,0,0,1],['c',0x1a1a1a,0,.85,0,.55,.15],['c',0x1a1a1a,0,-.85,0,.55,.15]]],
+['crystalheart','水晶心','Crystal Heart','l','ex:節慶快閃特賣 Festive Flash Sale',[['h',0x9af0ff,0,0,0,1.1,1,null,0,0,0,1],['x',0xffffff,.6,.6,.3,.3,.1,null,0,0,0,1]]],
+['duely','對決獎','Duely Award','l','ex:違禁品組合包 Contraband Bundle',[['b',0x1a1a1a,0,-.85,0,.8,.3,.6],['s',0xe6b84a,0,-.1,0,.3,1.6],['s',0xe6b84a,0,.65,0,.25]]],
+['dumbkin','傻南瓜','Dumbkin','l','ex:糖果組合包 Candy Bundles',[['s',0xff8a1a,0,0,0,.95,.85],['b',0x3a8a2a,0,.85,0,.15,.3,.15],['s',0xffe23a,.3,.1,.75,.35,1,.3,0,0,0,1]]],
+['emojihot','熱表情','Emoji: Hot','l','tr',FACE(0xff6a3a,0x1a1a1a,[['b',0xff2a6a,0,-.45,.88,.3,.25,.1],['s',0x5ad8ff,.6,.5,.6,.12]])],
+['emojiimp','小惡魔表情','Emoji: Imp','l','ex:排位商店 Ranked Shop',FACE(0x8a3ae8,0x1a1a1a,[['k',0x8a3ae8,-.55,.9,0,.2,.5,0,0,0,.4],['k',0x8a3ae8,.55,.9,0,.2,.5,0,0,0,-.4],['t',0x1a1a1a,0,-.2,.85,.35,.06,PI,0,0,PI]])],
+['nauseated','想吐表情','Emoji: Nauseated','l','ex:新手組合包 Starter Bundle',FACE(0x5ad83a,0x1a1a1a,[['t',0x1a3a0a,0,-.5,.82,.25,.06,PI]])],
+['nerd','書呆子表情','Emoji: Nerd','l','ex:RPG 組合包 RPG Bundle',FACE(0xffc83a,0x1a1a1a,[['t',0x1a1a1a,-.35,.2,.9,.25,.05],['t',0x1a1a1a,.35,.2,.9,.25,.05],['b',0xffffff,0,-.5,.88,.25,.2,.08]])],
+['energycell','能量電池','Energy Cell','l','ex:能量組合包 Energy Bundle',[['c',0x1a1a1a,0,.8,0,.5,.25],['c',0x1a1a1a,0,-.8,0,.5,.25],['c',0x40e8ff,0,0,0,.4,1.4,null,0,0,0,1],['b',0xffffff,0,0,.41,.15,.6,.02,0,0,.4,1]]],
+['explosion','爆炸','Explosion','l','ex:重裝組合包 Heavy Duty Bundle',[['d',0xffa81a,0,0,0,.8,1,null,0,0,0,1],['x',0xffe23a,0,0,.2,1.1,.3,null,0,0,0,1]]],
+['eyeclipse','日蝕之眼','Eyeclipse','l','hw',[['s',0x0a0a0a,0,0,0,.85],['t',0xff8a1a,0,0,.75,.35,.08,null,0,0,0,1]]],
+['ez','EZ','EZ','l','ex:像素組合包 Pixel Bundle',[['b',0xf2c21a,-.4,0,0,.25,1.4,.3],...[.6,0,-.6].map(y=>['b',0xf2c21a,-.15,y,0,.5,.2,.3]),['b',0xf2c21a,.55,.6,0,.6,.2,.3],['b',0xf2c21a,.55,0,0,.2,1.2,.3,0,0,.8],['b',0xf2c21a,.55,-.6,0,.6,.2,.3]]],
+['firstaid','急救包','First Aid','l','ex:醫療組合包 Medkit Bundle',[['b',0xd8262a,0,0,0,1.4,1,.6],['b',0xffffff,0,0,.31,.6,.18,.02],['b',0xffffff,0,0,.31,.18,.6,.02],['t',0x5a5e66,0,.6,0,.3,.06,PI]]],
+['clover4','四葉草','Four-Leaf Clover','l','ex:幸運組合包 Lucky Bundle',[...[0,1,2,3].map(i=>['h',0x3ab83a,Math.cos(i*1.57)*.4,Math.sin(i*1.57)*.4,0,.55,1,null,0,0,i*1.57-PI/2]),['b',0x2a8a2a,.2,-.8,0,.1,.7,.1,0,0,.3]]],
+['frankenblob','科學怪球','Frankenblob','l','hw',FACE(0x5aa83a,0x1a1a1a,[['b',0x1a1a1a,0,.75,0,1.1,.3,.8],['c',0x8a8e96,-.95,-.1,0,.12,.4,null,0,0,PI/2],['c',0x8a8e96,.95,-.1,0,.12,.4,null,0,0,PI/2]])],
+['ghost','幽靈','Ghost','l','hw',[['s',0xffffff,0,.2,0,.75,1.3],['s',0x1a1a1a,-.25,.4,.7,.1,1.5],['s',0x1a1a1a,.25,.4,.7,.1,1.5]]],
+['gingercat','薑餅貓','Gingerbread Cat','l','jl',[['c',0xc8743a,0,0,0,.85,.25,null,PI/2],['k',0xc8743a,-.5,.85,0,.25,.5],['k',0xc8743a,.5,.85,0,.25,.5],['t',0xffffff,0,0,.14,.7,.04],['s',0x1a1a1a,-.3,.15,.15,.08],['s',0x1a1a1a,.3,.15,.15,.08]]],
+['gingerman','薑餅人','Gingerbread Man','l','jl',[['s',0xc8743a,0,.6,0,.45,1,.4],['s',0xc8743a,0,-.2,0,.6,1,.4],['s',0xc8743a,-.65,0,0,.25,1,.4],['s',0xc8743a,.65,0,0,.25,1,.4],['s',0xe8262a,0,-.1,.25,.1],['s',0xffffff,0,-.4,.25,.1]]],
+['home','溫馨小屋','Happy Home','l','ex:懷舊組合包 Nostalgia Bundle',[['b',0xf4ece0,0,-.2,0,1.6,.9,.8],['k',0xc8262a,0,.6,0,1.3,.7,0,0,PI/4],...[-.5,0,.5].map(x=>['b',0x8a3a2a,x,-.3,.41,.25,.4,.02])]],
+['jellyfish','水母','Jellyfish','l','tr',[['s',0xd080ff,0,.3,0,.8,.6,1,0,0,0,1],...[-.4,-.15,.15,.4].map(x=>['b',0xd080ff,x,-.5,0,.06,1,.06,0,0,x*.3,1])]],
+['jinglebell','金鈴鐺','Jingle Bell','l','ex:節慶商店 Festive Shop',[['s',0xe6b84a,0,0,0,.85],['b',0x3a2a0a,0,-.3,.75,.6,.1,.1],['t',0xe6b84a,0,.85,0,.25,.07]]],
+['keycard','門禁卡 3','Keycard 3','l','ex:通行證 Season Pass',[['b',0x3a2ae8,0,0,0,1.1,1.5,.08],['b',0xffffff,-.2,-.3,.05,.3,.5,.02],['b',0xf2c21a,.3,.5,.05,.3,.2,.02]]],
+['treasure','失落寶藏','Long Lost Treasure','l','ex:海盜組合包 Pirate Bundle',[['b',0x8a4a20,0,-.2,0,1.4,.8,.9],['s',0x8a4a20,0,.2,0,.7,.4,.45,0,0,0],['b',0xe6b84a,0,0,.46,.25,.3,.05],['s',0xffd23a,.3,.4,.2,.2,1,1,0,0,0,1]]],
+['banhammer','迷你封鎖錘','Mini Ban Hammer','l','ex:經典組合包 Classic Bundle',[['b',0x5a3a1a,0,-.3,0,.18,1.5,.18],['c',0x1a1a2a,0,.6,0,.4,1.2,null,0,0,PI/2]]],
+['minidisco','迷你迪斯可球','Mini Disco Ball','l','ex:標準武器組合包 Standard Weapons Bundle',[['d',0xd8dce8,0,0,0,.85],...[0,1,2,3].map(i=>['b',0xffffff,Math.cos(i*1.57)*.6,Math.sin(i*1.57)*.6,.5,.2,.2,.05,0,0,0,1])]],
+['minikey','迷你鑰匙','Mini Key','l','ex:鑰匙組合包 Key Bundles',[['t',0xe6b84a,0,.6,0,.35,.12],['b',0xe6b84a,0,-.2,0,.2,1.2,.2],['b',0xe6b84a,.25,-.55,0,.3,.15,.2],['b',0xe6b84a,.25,-.8,0,.3,.15,.2]]],
+['minisnowglobe','迷你雪花球','Mini Snowglobe','l','ex:水晶組合包 Crystal Bundles',[['c',0x1a1a1a,0,-.75,0,.6,.35,.7],['s',0xdcecff,0,.1,0,.8,1,1,0,0,0,0],['k',0x2a8a3a,0,0,0,.3,.6],['s',0xffffff,.3,-.35,0,.2]]],
+['penguin','企鵝','Penguin','l','ex:節慶商店 Festive Shop',[['s',0x1a1a1a,0,0,0,.75,1.1],['s',0xffffff,0,-.1,.35,.55,.9,.6],['k',0xff8a1a,0,.4,.75,.12,.3,0,PI/2],['s',0xffffff,-.2,.55,.6,.12],['s',0xffffff,.2,.55,.6,.12]]],
+['piercedheart','穿心','Pierced Heart','l','ex:可愛組合包 Lovely Bundle',[['h',0xe8262a,0,0,0,1,1],['b',0xc8a06a,0,0,0,2.4,.08,.08,0,0,.3],['k',0xe8262a,1.15,.36,0,.15,.3,0,0,0,-PI/2+.3]]],
+['siren','警笛','Police Siren','l','cap',[['c',0x1a1a1a,0,-.6,0,.75,.3],['s',0xe8262a,-.3,.1,0,.5,1.1,1,0,0,0,1],['s',0x2a5aff,.3,.1,0,.5,1.1,1,0,0,0,1]]],
+['pumpkincat','南瓜貓','Pumpkin Cat','l','ex:萬聖商店 Spooky Shop',[['s',0x1a1a1a,0,0,0,.9,.85],['k',0x1a1a1a,-.5,.85,0,.2,.4],['k',0x1a1a1a,.5,.85,0,.2,.4],['b',0x3aff5a,0,-.1,.8,.8,.25,.1,0,0,0,1]]],
+['sandcastle','沙堡','Sand Castle','l','tr',[['b',0xe8c88a,0,-.4,0,1.6,.6,1],...[-.6,0,.6].map(x=>['c',0xe8c88a,x,.2,0,.25,.8]),['b',0xe8262a,0,.9,0,.4,.25,.02]]],
+['shark','鯊魚','Shark','l','ex:夏日商店 Summer Shop',[['s',0x6a8aaa,0,0,0,1.2,.5,.45],['k',0x6a8aaa,0,.55,0,.25,.5],['k',0x6a8aaa,-1.2,.1,0,.3,.5,0,0,0,PI/2],['s',0x1a1a1a,.75,.15,.35,.06]]],
+['shinypearl','亮珍珠','Shiny Pearl','l','ex:珍珠組合包 Pearl Bundles',[['s',0xf4f0ff,0,0,0,.8,1,1,0,0,0,1],['t',0xc8b8e8,0,0,0,.85,.06,null,PI/2]]],
+['shredart','碎紙名畫','Shredding Artwork','l','cap',[['b',0xe6b84a,0,.4,0,1.3,1,.1],['b',0xf4f4f4,0,.4,.06,1,.75,.02],['h',0xe8262a,.1,.35,.08,.25,.1],...[-.4,-.2,0,.2,.4].map(x=>['b',0xf4f4f4,x,-.4,0,.12,.7,.02])]],
+['skull2','頭骨','Skull','l','ex:萬聖商店 Spooky Shop',[['s',0xf4f0e8,0,.15,0,.8],['b',0xf4f0e8,0,-.55,.2,.6,.4,.5],['s',0x1a1a1a,-.3,.15,.68,.18],['s',0x1a1a1a,.3,.15,.68,.18]]],
+['skullgourd','骷髏南瓜','Skullgourd','l','hw',[['s',0xff8a1a,0,0,0,.95,.8],['s',0xffe23a,-.3,.15,.75,.2,1,.4,0,0,0,1],['s',0xffe23a,.3,.15,.75,.2,1,.4,0,0,0,1],...[-.3,-.1,.1,.3].map(x=>['b',0xffe23a,x,-.35,.8,.12,.2,.05,0,0,0,1])]],
+['sneaker','球鞋','Sneaker','l','ex:購買 5 個 UGC Buy 5 UGC',[['s',0xe8262a,0,0,0,1.1,.5,.55],['b',0xffffff,0,-.35,0,2,.25,1.1],['b',0xffffff,-.3,.25,0,.6,.1,.6]]],
+['snowblob','雪球怪','Snowblob','l','cap',FACE(0xffffff,0x1a1a1a,[['k',0xff8a1a,0,0,1,.12,.6,0,PI/2],['s',0x1a1a1a,-.2,-.45,.85,.07],['s',0x1a1a1a,.2,-.45,.85,.07]])],
+['soda','汽水罐','Soda Can','l','tr',[['c',0x3a8aff,0,0,0,.55,1.5],['c',0xc8ccd8,0,.8,0,.5,.1],['b',0xffffff,0,0,.55,.6,.3,.02]]],
+['cooler','冰桶','Summer Cooler','l','tr',[['b',0x3a8aff,0,-.2,0,1.6,.9,.9],['b',0xffffff,0,.35,0,1.65,.25,.95],['b',0xffffff,0,.6,0,.8,.12,.15]]],
+['warpdisc','傳送盤','Warp Disc','l','ex:第一季組合包 Season 1 Bundle',[['c',0x3a3a40,0,0,0,.9,.25,null,PI/2],['o',0xc040ff,0,0,.2,.45,1,null,0,0,0,1]]],
+['wreath2','聖誕花圈','Wreath','l','jl',[['t',0x2a8a3a,0,0,0,.7,.25],['b',0xe8262a,0,-.7,.2,.4,.25,.1],['b',0xe8262a,-.1,-1,.2,.12,.5,.1,0,0,.2]]],
+['yeti','雪怪','Yeti','l','jl',FACE(0xf4f8ff,0x1a1a1a,[['s',0x8ad8ff,0,-.1,.75,.5,.6,.4],['b',0xffffff,-.15,-.3,.95,.1,.15,.05],['b',0xffffff,.15,-.3,.95,.1,.15,.05]])],
+// --- Unique ---
+['v100m','一億造訪','100M Visits','u','code:100mvisits',[['b',0xf2c21a,0,0,0,.6,1.8,.15],['b',0x1a1a1a,0,.4,.08,.3,.1,.02],['b',0x1a1a1a,0,0,.08,.3,.1,.02],['b',0x1a1a1a,0,-.4,.08,.3,.1,.02]]],
+['cake1','一週年蛋糕','1st Birthday Cake','u','ex:一週年派對 1st Birthday Party',[['c',0x8a5ad8,0,-.3,0,.9,.4],['c',0xffffff,0,0,0,.92,.12],['c',0xf2c21a,0,.25,0,.85,.35],['c',0x3a6ae8,.2,.75,0,.1,.6,null,0,0,.3]]],
+['glasses3d','3D 眼鏡','3D Glasses','u','ex:商店看廣告 Shop ad reward',[['b',0xffffff,0,0,0,1.6,.6,.08],['b',0xe8262a,-.4,0,.05,.55,.4,.02,0,0,0,1],['b',0x2a5aff,.4,0,.05,.55,.4,.02,0,0,0,1]]],
+['bell2','通知鈴','Bell','u','ex:開啟通知 Enable notifications',[['s',0xf2c21a,0,0,0,.8,1.1],['c',0xf2c21a,0,-.75,0,.9,.15],['s',0xc8901a,0,-.9,0,.18]]],
+['bungeo','鯛魚燒','Bungeoppang','u','ex:橋樑地圖挑戰 Bridge map challenge',[['s',0xe8a04a,0,0,0,1,.55,.35],['k',0xe8a04a,-1,0,0,.4,.5,0,0,0,PI/2],['s',0x7a4a20,.55,.15,.3,.08]]],
+['day1','第一天','Day 1','u','code:day1',[['b',0xe6b84a,0,0,0,.4,1.6,.3,0,0,0,1],['b',0xe6b84a,-.25,.6,0,.4,.3,.3,0,0,.6,1],['b',0xe6b84a,0,-.8,0,.9,.25,.3,0,0,0,1]]],
+['fireplace','壁爐','Fireplace','u','ex:降臨曆 Advent Calendar',[['b',0x8a3a2a,0,0,0,1.6,1.4,.6],['b',0x1a0a0a,0,-.15,.1,.9,.8,.5],['k',0xff8a1a,0,-.2,.2,.25,.5,0,0,0,0,1],['b',0xf4ece0,0,.75,0,1.8,.2,.7]]],
+['gamechair','冰凍電競椅','Frozen Gaming Chair','u','ex:直播掉寶 Stream drop',[['b',0x5ab8d8,0,-.4,0,1,.25,1],['b',0x5ab8d8,0,.4,-.45,1,1.4,.2],['c',0x3a3a40,0,-.8,0,.1,.6],['k',0xbff4ff,.3,.9,-.3,.15,.4,0,0,0,0,1]]],
+['headset','電競耳機','Gaming Headset','u','ex:直播掉寶 Stream drop',[['t',0x8a3ae8,0,.2,0,.8,.12,PI],['c',0xf2a81a,-.8,-.2,0,.4,.3,null,0,0,PI/2],['c',0xf2a81a,.8,-.2,0,.4,.3,null,0,0,PI/2]]],
+['hunttoken','狩獵代幣','Hunt Token','u','ex:Roblox 狩獵活動 The Hunt',[['c',0x1a2a6a,0,0,0,.9,.25,null,PI/2],['t',0x3a8aff,0,0,.15,.6,.1,null,0,0,0,1],['o',0x8ad8ff,0,0,.2,.3,1,null,0,0,0,1]]],
+['season0','第零季倖存者','I Survived Season 0','u','ex:第零季重置補償 Season 0 reset',[['b',0x1a1a2a,0,0,0,1.6,1.2,.15],['b',0xff5a3a,0,.3,.08,1.3,.25,.02,0,0,0,1],['b',0xc040ff,0,-.2,.08,1,.3,.02,0,0,0,1]]],
+['megatoken','超級代幣','Mega Token','u','ex:Roblox 狩獵活動 The Hunt',[['c',0xe8ecf4,0,0,0,.9,.25,null,PI/2],['t',0xffffff,0,0,.15,.6,.1,null,0,0,0,1]]],
+['minipresent','迷你禮物','Mini Present','u','ex:2024 節慶活動 Festive Event',[['b',0xe8262a,0,-.1,0,1.2,1,1.2],['b',0xffffff,0,-.1,0,.25,1.02,1.22],['s',0xffffff,-.25,.6,0,.25,.6],['s',0xffffff,.25,.6,0,.25,.6]]],
+['ria25','RIA25 獎','RIA25 Award','u','ex:獲獎紀念 Award celebration',[['b',0x1a1a1a,0,-.5,0,1,.5,.8],['b',0x1a1a1a,0,.3,0,.8,1,.2,0,0,.3],['k',0x3a3a40,.1,.3,.15,.2,.3,0,PI/2]]],
+['arena','ARENA','ARENA','u','ex:幫遊戲按讚 Like the game',[['b',0xf2c21a,0,0,0,.5,1.9,.25],['b',0x8a3ae8,0,0,.15,.3,1.6,.05]]],
+['shootingstar','流星','Shooting Star','u','ex:收藏遊戲 Favorite the game',[['x',0xf2c21a,0,-.5,0,.6,.3],['b',0xf2c21a,.1,.4,0,.12,1.2,.1,0,0,-.15],['b',0xf2c21a,.35,.5,0,.1,1,.1,0,0,-.3]]],
+['mic','直播麥克風','Streamer Microphone','u','ex:直播掉寶 Stream drop',[['s',0x2a2a30,0,.4,0,.45,1.3],['b',0x5a5e66,0,-.5,0,.15,.8,.15],['c',0x2a2a30,0,-.9,0,.4,.1]]],
+['dsmile','死亡微笑','Death Smile','u','ex:在線上房間淘汰 死亡微笑（deathsmile）Eliminate deathsmile online',[['s',0xf4f0e8,0,0,0,.85],['k',0xf4f0e8,-.45,.8,0,.22,.5,0,0,0,.35],['k',0xf4f0e8,.45,.8,0,.22,.5,0,0,0,-.35],['k',0xff8ab8,-.43,.78,.08,.1,.3,0,0,0,.35],['k',0xff8ab8,.43,.78,.08,.1,.3,0,0,0,-.35],['t',0xe8262a,-.32,.15,.78,.14,.05,PI,0,0,0,1],['t',0xe8262a,.32,.15,.78,.14,.05,PI,0,0,0,1],['t',0x1a1a1a,0,-.1,.8,.45,.07,PI,0,0,PI],...[-.24,-.08,.08,.24].map(x=>['b',0xffffff,x,-.45,.78,.1,.12,.05]),['t',0xffe23a,.95,.75,-.2,.3,.08,PI*1.2,0,0,1,1]]]];
+// register CH2 → CHARMS; 🎖️ ranked, 🧸 chibi (weapon contracts), 🗺️ diorama (map wins) are added below
+(function(){const RR={c:0,r:1,l:3,u:3},PRC=[12,25,0,60],CBX={hw:'chw',jl:'cjl',tr:'ctr'},SRC={cap:'從吊飾膠囊開出 Charm Capsule',hw:'從 🎃 萬聖吊飾膠囊開出（萬聖節限定）',jl:'從 🎄 節慶吊飾膠囊開出',tr:'從 🌴 熱帶吊飾膠囊開出'};
+ const add=x=>{if(!CHARMS.some(c=>c.id==x.id))CHARMS.push(x)};
+ for(const[id0,zh,en,r,src,parts]of CH2){const x={id:'c_'+id0,zh,en,r:RR[r],p:0,build:CHB(parts)};
+  if(src.startsWith('code:')){x.ex=1;x.how='兌換代碼 '+src.slice(5)}else if(src.startsWith('ex:')){x.ex=1;x.how=src.slice(3)}else{x.how=SRC[src];if(src=='cap')x.cap=1;else x.cb=CBX[src]}add(x)}
+ const RKC=[['青銅','Bronze',0xcd7f3e,'b'],['白銀','Silver',0xc8d2de,'o'],['黃金','Gold',0xf2c23c,'x'],['白金','Platinum',0x4fe0c0,'k'],['鑽石','Diamond',0x58b4ff,'o'],['黑曜','Onyx',0xa678ff,'d']];
+ for(let i=0;i<20;i++){const t=i<18?RKC[Math.floor(i/3)]:null,n=i%3+1,col=t?t[2]:i==18?0xff3b5c:0xffcf3a,sh=t?t[3]:'x';
+  const parts=sh=='b'?[['b',col,0,0,0,1,1.4,.4,0,0,0,n>2?1:0]]:sh=='k'?[['k',col,0,0,0,.8,1.6,0,PI,0,0,n>2?1:0]]:[[sh,col,0,0,0,sh=='x'?.9:.85,sh=='x'?.4:1,null,0,0,0,n>2?1:0]];
+  for(let j=1;j<n;j++)parts.push(['s',0xffffff,(j-1.5)*.35,-1.1,.1,.12,1,1,0,0,0,1]);if(i==19)parts.push(['t',0x3ad8ff,0,0,.25,.5,.08,null,0,0,0,1]);
+  add({id:'c_rk'+i,zh:'排位吊飾 '+(t?t[0]+' '+n:i==18?'宿敵':'至尊宿敵'),en:'Ranked '+(t?t[1]+' '+n:i==18?'Nemesis':'Archnemesis'),r:3,p:0,ex:1,rki:i,how:'排位達到 '+(t?t[0]+' '+n:i==18?'宿敵 Nemesis':'至尊宿敵 Archnemesis')+' 解鎖',build:CHB(parts)})}
+ for(const wn of Object.keys(MD)){if(/admin|glass cannon/i.test(wn))continue;const sl=wn.toLowerCase().replace(/[^a-z]/g,'');
+  add({id:'c_chibi_'+sl,zh:'迷你 '+wn,en:'Chibi '+wn,r:3,p:0,ex:1,chibi:wn,how:'完成 '+wn+' 的武器合約解鎖',build:g=>{const s=new T.Group();try{MD[wn](s)}catch(e){}const bb=new T.Box3().setFromObject(s),sz=bb.getSize(new T.Vector3()),c=bb.getCenter(new T.Vector3()),k=.06/Math.max(sz.x,sz.y,sz.z,.01);s.position.set(-c.x*k,-c.y*k,-c.z*k);s.scale.setScalar(k);const h=new T.Group();h.rotation.set(0,PI/2,-.6);h.add(s);g.add(h)}})}
+ const DIO={arena:[0xc8ccd8,0x8a8e96,'Arena'],backroom:[0xd8b84a,0xa88a2a,'Backroom'],crossroad:[0x8ad8ff,0xc8743a,'Cross Road'],splash:[0x3a8aff,0xffd23a,'Splash'],battleground:[0x5aa83a,0x8a8e96,'Battle Ground'],bridge:[0x3a6ae8,0x5a5e66,'Bridge'],construction:[0xf2c21a,0xe8262a,'Construction'],docks:[0x5a7aa8,0xc8743a,'Docks']};
+ for(const[mk,[a,b,nm]]of Object.entries(DIO)){
+  add({id:'c_dio_'+mk,zh:'地圖模型 '+nm,en:'Diorama '+nm,r:3,p:0,ex:1,dio:mk,how:'在 '+nm+' 地圖贏 25 場解鎖',build:CHB([['c',0x1a1a1a,0,-.7,0,1.1,.25],['b',a,0,-.4,0,1.5,.3,1.5],['b',b,-.4,0,-.3,.5,.6,.5],['b',b,.45,-.05,.35,.4,.4,.4],['b',a,.3,.25,-.4,.3,.9,.3]])})}})();
 const CHBYID=Object.fromEntries(CHARMS.map(x=>[x.id,x]));
+function giveCharm(id,msg){if(!PF||!CHBYID[id]||PF.charms.includes(id))return false;PF.charms.push(id);saveNow();const C=CHBYID[id];if(msg!==false)setTimeout(()=>toast('🔗 '+(msg||'解鎖吊飾')+'：'+C.zh+' '+C.en,'#ffd23f'),700);return true}
 function applyCharm(g,w,chId){const C=CHBYID[chId];if(!C)return;try{const anchor=new T.Group();anchor.position.set(.055,-.09,.045);
  const str=Cy(anchor,.003,.05,0,.025,0,0x2a2a2a);const body=new T.Group();body.position.y=-.01;anchor.add(body);C.build(body);g.add(anchor)}catch(e){console.error(e)}}
 var RCHM={};
@@ -2091,7 +2295,10 @@ const CRATES=[
  {id:'fpack',name:'死亡特效箱',en:'Finisher Pack',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.id!='fc'&&!x.ex&&!x.hw&&!x.fp&&(!x.xm||xmasOn())).map(x=>x.id)},
  {id:'fpack2',name:'死亡特效箱 2',en:'Finisher Pack 2',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.fp==2).map(x=>x.id)},
  {id:'hpack',name:'🎃 萬聖節特效包',en:'Halloween Finisher Pack',cur:'keys',price:15,kind:'fin',hw:1,pool:()=>FINS.filter(x=>x.hw).map(x=>x.id)},
- {id:'ccap',name:'吊飾膠囊',en:'Charm Capsule',cur:'keys',price:8,kind:'charm',pool:()=>CHARMS.filter(x=>!x.adm&&(x.p>0||x.cap)).map(x=>x.id)},
+ {id:'ccap',name:'吊飾膠囊',en:'Charm Capsule',cur:'keys',price:8,kind:'charm',pool:()=>CHARMS.filter(x=>!x.adm&&!x.cb&&(x.p>0||x.cap)).map(x=>x.id)},
+ {id:'chw',name:'🎃 萬聖吊飾膠囊',en:'Haunted Charm Capsule',cur:'keys',price:10,kind:'charm',hw:1,pool:()=>CHARMS.filter(x=>x.cb=='chw').map(x=>x.id)},
+ {id:'cjl',name:'🎄 節慶吊飾膠囊',en:'Jolly Charm Capsule',cur:'keys',price:10,kind:'charm',pool:()=>CHARMS.filter(x=>x.cb=='cjl').map(x=>x.id)},
+ {id:'ctr',name:'🌴 熱帶吊飾膠囊',en:'Tropical Charm Capsule',cur:'keys',price:10,kind:'charm',pool:()=>CHARMS.filter(x=>x.cb=='ctr').map(x=>x.id)},
  {id:'scase',name:'皮膚箱 1',en:'Skin Case',cur:'tickets',price:10,kind:'skin',pool:()=>SKINS.filter(x=>x.cs==1).map(x=>x.id)},
  {id:'scase2',name:'皮膚箱 2',en:'Skin Case 2',cur:'tickets',price:10,kind:'skin',pool:()=>SKINS.filter(x=>x.cs==2).map(x=>x.id)},
  {id:'scase3',name:'皮膚箱 3',en:'Skin Case 3',cur:'tickets',price:10,kind:'skin',pool:()=>SKINS.filter(x=>x.cs==3).map(x=>x.id)},
@@ -3183,7 +3390,7 @@ if(!by.isP&&!by.net)dmg*=DF[cfg.d].dm;const hp0=t.hp;if(!t.isP&&!t.net&&by&&by.t
 if(t.frz>0){dmg*=.5;t.frz=0;t.slow=2.5}t.hp-=dmg;if(t.isP){fl=Math.max(fl,o.dot?.2:.5);if(!o.dot){t.shk=Math.max(t.shk||0,Math.min(.6,.2+dmg/80));snd(150,.1,.08);t.hx=by.x;t.hz=by.z;da=1}}if(by.isP&&!o.dot){hm=.15;snd(900,.05,.05)}if(by.isP)dmgNum(Math.round(Math.min(dmg,t.hp+dmg)),o.hs);
 const dealt=Math.max(0,Math.min(dmg,hp0));if(by.net){if(dealt>0)netSend({t:'cr',to:by.nid,d:+dealt.toFixed(1)})}else by.td=(by.td||0)+dealt;
 if(t.hp<=0){t.alive=false;t.sl=false;t.killer=by;t.kw=wn;t.dth++;try{finOnKill(t,by,wn)}catch(err){console.error(err)}if(!by.net)by.k++;feedKill(by,t,wn,o.hs);if(by.isP){elim(t.name);creditKill(wn,o.hs)}
- if(NET){if(t.isP||t.bot)netSend({t:'k',v:t.nid,by:by.nid||'',wn,hs:o.hs?1:0,r:NET.round})}else rndCheck()}
+ if(NET){if(t.isP||t.bot)netSend({t:'k',v:t.nid,by:by.nid||'',wn,hs:o.hs?1:0,r:NET.round,ds:t.isP&&typeof isAdmin=='function'&&isAdmin()?1:0})}else rndCheck()}
 return dmg}
 function fxT(t,o){if(NET&&t.net){if(!GH&&!o.vs)netSend(Object.assign({t:'fx',to:t.nid,r:NET.round},o));return true}return false}
 function applyPush(t,p){t.vx+=p.ax||0;t.vz+=p.az||0;if(p.vy!=null)t.vy=Math.max(t.vy,p.vy);if(p.vb!=null)t.vy=Math.max(t.vy,0)+p.vb;t.sl=false}
@@ -4081,7 +4288,7 @@ function handleGame(m){if(!NET)return;const t=m.t;
  if(t==='h'){const tg=m.to===NET.me?P:(NET.host?botE(m.to):null);if(!tg)return;const src=byId(m.by||m.from);if(!src||!tg.alive)return;hurt(tg,+m.dmg||0,src,String(m.wn||''),{hs:!!m.hs,ray:!!m.ray,prc:!!m.prc,from:V(m.f[0],m.f[1],m.f[2]),net:1});return}
  if(t==='fx'){const tg=m.to===NET.me?P:(NET.host?botE(m.to):null);if(!tg||!tg.alive)return;const src=byId(m.by);if(m.burn){tg.burn=Math.max(tg.burn,m.burn);tg.bby=src||tg;tg.bwn=m.wn||''}if(m.frost){tg.frost+=m.frost;tg.slow=Math.max(tg.slow,1.2);if(tg.frost>=1){tg.frost=0;tg.frz=1.5;tg.sl=false}}if(m.paint)tg.paint=m.paint;if(m.push)applyPush(tg,m.push);if(m.grap)tg.grap={p:V(m.grap[0],m.grap[1],m.grap[2]),t:.9},tg.frz=0;return}
  if(t==='cr'){const tg=m.to===NET.me?P:(NET.host?botE(m.to):null);if(tg)tg.td=(tg.td||0)+(+m.d||0);return}
- if(t==='k'){const v=byId(m.v),k=byId(m.by);if(v&&v.net){v.alive=false;v.hp=0;if(k)try{finOnKill(v,k,m.wn)}catch(err){console.error(err)}}const kn=k?k.name:(v?v.name:'?');if(v&&v.net){if(k)feedKill(k,v,m.wn||'',m.hs);else feed(kn+'  ['+(m.wn||'')+']  '+v.name)}if(m.by===NET.me&&v){P.k++;elim(v.name);creditKill(m.wn,m.hs)}return}}
+ if(t==='k'){const v=byId(m.v),k=byId(m.by);if(v&&v.net){v.alive=false;v.hp=0;if(k)try{finOnKill(v,k,m.wn)}catch(err){console.error(err)}}const kn=k?k.name:(v?v.name:'?');if(v&&v.net){if(k)feedKill(k,v,m.wn||'',m.hs);else feed(kn+'  ['+(m.wn||'')+']  '+v.name)}if(m.by===NET.me&&v){P.k++;elim(v.name);creditKill(m.wn,m.hs);if(m.ds)giveCharm('c_dsmile','💀 你淘汰了死亡微笑！獲得吊飾')}return}}
 function byIdFromFire(m){return null}
 function removeProxy(id){const i=E.findIndex(e=>e.nid===id&&e.net);if(i<0)return;sc.remove(E[i].mesh);E.splice(i,1)}
 // ---- entering game ----
@@ -4283,7 +4490,7 @@ const I18N={en:{lbPack:'Backpack',lbWpn:'Weapons',lbTasks:'Tasks',lbShop:'Shop',
  zh:{lbPack:'背包',lbWpn:'武器',lbTasks:'任務',lbShop:'商店',lbPass:'通行證',lbLbrd:'排行榜',lbSet:'設定',lbEvent:'活動',lbUpd:'更新',lbGift:'送禮',lbEmote:'表情',lbAch:'成就',lbStats:'戰績',toDuels:'前往決鬥 ➜',ptPack:'背包',ptWpn:'武器',ptTasks:'任務',ptShop:'商店',ptPass:'通行證 Season Pass',ptParty:'隊伍',ptEmote:'表情 Emotes',ptAch:'成就 Achievements',ptStats:'戰績 Stats'}};
 function applyLang(){if(!PF)return;const d=I18N[PF.lang=='en'?'en':'zh'];for(const el of document.querySelectorAll('[data-i18n]')){const k=el.dataset.i18n;if(d[k])el.textContent=d[k]}}
 function accEnter(isNew,msg){dailyReset();loginStreak();applyProfile();applyLang();
- try{if(isAdmin()){if(!PF.unl.includes('Admin Gun'))PF.unl.push('Admin Gun');if(!PF.charms.includes('admin'))PF.charms.push('admin');if(!PF.wraps.includes('adm'))PF.wraps.push('adm');if(!PF.skins.includes('sy_bugnet'))PF.skins.push('sy_bugnet')}for(const l of PF.passP)premGive(l);rkRewards(true);if(PF.ctN>=CT_WRAP&&!PF.wraps.includes('ctw'))PF.wraps.push('ctw');for(const w of ALLW())msCheck(w.n,true)}catch(err){console.error(err)}
+ try{if(isAdmin()){if(!PF.unl.includes('Admin Gun'))PF.unl.push('Admin Gun');if(!PF.charms.includes('admin'))PF.charms.push('admin');if(!PF.charms.includes('c_dsmile'))PF.charms.push('c_dsmile');if(!PF.wraps.includes('adm'))PF.wraps.push('adm');if(!PF.skins.includes('sy_bugnet'))PF.skins.push('sy_bugnet')}for(const l of PF.passP)premGive(l);rkRewards(true);if(PF.ctN>=CT_WRAP&&!PF.wraps.includes('ctw'))PF.wraps.push('ctw');for(const w of ALLW())msCheck(w.n,true)}catch(err){console.error(err)}
  saveP();$('#auth').style.display='none';enterLobby();setTimeout(()=>{if(inCloud()&&PF){lvlPush();stPush();if(PF.rk&&PF.rk.m)rkPush()}},2500);toast((isNew?'🎉 帳號建立成功，':'👋 歡迎回來，')+accName()+'！','#2fbf71');if(msg)setTimeout(()=>toast(msg,'#4fc3f7'),700);setSync(CLOUD.st||'busy')}
 function accLogout(){saveP();if(typeof giftReset=='function')giftReset();if(NET)netLeave();if(inCloud()){const S=CLOUD;S.live=false;S.snap=PF;if(S.dirty)cloudFlush(true,S);CLOUD=newCloud(S);cloudForget();setSync('')}ACCT=null;PF=null;try{localStorage.removeItem('rvl_session');sessionStorage.removeItem('rvl_session')}catch(_){}if(typeof closePanels=='function')closePanels();showAuth()}
 function showAuth(){st='menu';paused=false;document.exitPointerLock&&document.exitPointerLock();for(const id of['#hud','#menu','#onl','#over','#pause','#lo'])$(id).style.display='none';$('#lobbyMenuBtn').style.display='none';if(typeof syncLUI=='function')syncLUI();
@@ -4327,7 +4534,7 @@ function dailyReset(){if(!PF)return;const d=today();if(PF.daily.day!==d)PF.daily
 function loginStreak(){const L=PF.login,d=today(),y=today(new Date(Date.now()-864e5));if(L.last===d)return;L.streak=L.last===y?(L.streak%7)+1:1;L.last=d}
 function baseWn(wn){return String(wn||'').split(' ·')[0]}
 function creditKill(wn,hs){if(!PF)return;const n=baseWn(wn);if(WBN(n)){PF.wk[n]=(PF.wk[n]||0)+1;if(hs)PF.whs[n]=(PF.whs[n]||0)+1;msCheck(n)}if(hs&&P)P.hsk=(P.hsk||0)+1}
-function awardMatch(won){if(!PF||!P)return null;const k=P.k||0,hs=P.hsk||0,xp=(won?100:40)+k*10+hs*5,s=PF.st;s.m++;if(won){s.w++;s.streak++;s.best=Math.max(s.best,s.streak)}else{s.l++;if(s.streak>0)PF.strRec={n:s.streak};s.streak=0}s.k+=k;s.d+=P.dth||0;s.hs+=hs;
+function awardMatch(won){if(!PF||!P)return null;if(won&&typeof curMap=='string'){PF.mw=PF.mw||{};PF.mw[curMap]=(PF.mw[curMap]|0)+1;if(PF.mw[curMap]>=25)giveCharm('c_dio_'+curMap,'🗺️ 地圖模型吊飾')}const k=P.k||0,hs=P.hsk||0,xp=(won?100:40)+k*10+hs*5,s=PF.st;s.m++;if(won){s.w++;s.streak++;s.best=Math.max(s.best,s.streak)}else{s.l++;if(s.streak>0)PF.strRec={n:s.streak};s.streak=0}s.k+=k;s.d+=P.dth||0;s.hs+=hs;
  PF.matchLog.unshift({t:Date.now(),won,k,d:P.dth||0,hs,xp,map:MAPNAME[curMap]||curMap});if(PF.matchLog.length>20)PF.matchLog.length=20;
  for(const w of P.L||[])if(w&&w.n)PF.wu[w.n]=(PF.wu[w.n]||0)+1;if(won)for(const n of new Set((P.L||[]).filter(w=>w&&w.n&&WBN(w.n)).map(w=>w.n)))PF.ww[n]=(PF.ww[n]||0)+1;dailyReset();PF.daily.pd++;PF.daily.el+=k;if(won)PF.daily.wd++;weeklyReset();PF.weekly.m++;PF.weekly.el+=k;if(won)PF.weekly.wd++;PF.weekly.hs+=hs;const keys=won&&rnd()<.5?1:0;PF.keys+=keys;const gold=GOLD_R.play+(won?GOLD_R.win:0)+k*GOLD_R.kill;PF.gold=(PF.gold||0)+gold;let snow=0;if(xmasOn()&&DAILY.every(d=>PF.daily[d.k]>=d.g)){snow=won?SNOW_WIN:SNOW_LOSS;PF.snow=(PF.snow|0)+snow}
  const lv0=PF.lv,up=addXP(xp);saveNow();if(inCloud()){lvlPush();stPush()}return{xp,keys,gold,lv0,up,k,hs,snow}}
@@ -4697,7 +4904,7 @@ function ctState(c){const s=PF.ct[c.w]||{t:0,b:0};return{g:c.g*(s.t+1),p:Math.ma
 const CT_WRAP=10;function ct2Kind(n){const w=WBN(n);return w&&(w.k=='P'||w.k=='S')?'hs':'win'}
 function ct2State(c){const s=PF.ct2[c.w]||{t:0,b:0},kd=ct2Kind(c.w),stat=kd=='hs'?(PF.whs[c.w]||0):(PF.ww[c.w]||0),base=kd=='hs'?Math.max(3,Math.round(c.g*.4)):3;return{g:base*(s.t+1),p:Math.max(0,stat-s.b),t:s.t,r:c.r+s.t,kd,stat}}
 function ctDone(){if(PF.ctN>=CT_WRAP&&!PF.wraps.includes('ctw')){PF.wraps.push('ctw');setTimeout(()=>toast('📜 累計完成 '+CT_WRAP+' 個合約！解鎖專屬包裝「合約者」','#ffd23f'),500)}}
-function ctClaim(w,line){const c=CONTRACTS.find(x=>x.w==w);if(!c)return;if(line==2){const s=ct2State(c);if(s.p<s.g)return;PF.ct2[w]={t:s.t+1,b:s.stat};PF.ctN=(PF.ctN|0)+1;ctDone();giveKeys(s.r,w+' 合約')}
+function ctClaim(w,line){const c=CONTRACTS.find(x=>x.w==w);if(!c)return;setTimeout(()=>{const C=CHARMS.find(x=>x.chibi==w);if(C)giveCharm(C.id,'🧸 合約獎勵吊飾')},300);if(line==2){const s=ct2State(c);if(s.p<s.g)return;PF.ct2[w]={t:s.t+1,b:s.stat};PF.ctN=(PF.ctN|0)+1;ctDone();giveKeys(s.r,w+' 合約')}
  else{const s=ctState(c);if(s.p<s.g)return;PF.ct[w]={t:s.t+1,b:ctStat(c)};PF.ctN=(PF.ctN|0)+1;ctDone();giveKeys(s.r,w+' 合約')}}
 function fmtDur(sec){sec=Math.floor(sec||0);const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60);return h?h+' 小時 '+m+' 分':m?m+' 分 '+(sec%60)+' 秒':sec+' 秒'}
 function ctWHTML(n){const c=CONTRACTS.find(x=>x.w==n);if(!c||!PF)return'<div class="note">這把武器沒有合約</div>';const a=ctState(c),b=ct2State(c),u=isUnl(n);
@@ -4822,7 +5029,7 @@ function rkQueueOnline(){if(!PF||!NET||!NET.host)return;if(rkLocked()){toast('�
  startOnlineMatch(2,party,[],'2v2')}
 const RK_REW=[{rp:1200,k:'wrap',id:'rkg',t:'黃金 Gold',n:'🎨 黃金段位包裝'},{rp:1200,k:'fin',id:'ct',t:'黃金 Gold',n:'✂️ Cut! 死亡特效'},{rp:2400,k:'emote',id:'rkd',t:'鑽石 Diamond',n:'🕺 冠軍之舞'},{rp:3600,k:'wrap',id:'rkn',t:'宿敵 Nemesis',n:'🎨 宿敵包裝'}];
 function rkRewHas(r){return(r.k=='wrap'?PF.wraps:r.k=='fin'?PF.fins:PF.emotes).includes(r.id)}
-function rkRewards(quiet){if(!PF||!PF.rk)return;const best=Math.max(PF.rk.best|0,PF.rk.m>=10?PF.rk.rp|0:0);let n=0;for(const r of RK_REW)if(best>=r.rp&&!rkRewHas(r)){(r.k=='wrap'?PF.wraps:r.k=='fin'?PF.fins:PF.emotes).push(r.id);n++;if(!quiet)setTimeout(()=>toast('🏆 排位獎勵解鎖：'+r.n,'#ffd23f'),900)}if(n)saveNow()}
+function rkRewards(quiet){if(!PF||!PF.rk)return;const best=Math.max(PF.rk.best|0,PF.rk.m>=10?PF.rk.rp|0:0);let n=0;if(PF.rk.m>=10||PF.rk.best){const ti=rkTier(best,1,rkArch()).i;for(const C of CHARMS)if(C.rki!=null&&C.rki<=ti&&(C.rki<18||C.rki==ti||C.rki==18&&ti==19)&&!PF.charms.includes(C.id)){PF.charms.push(C.id);n++;if(!quiet)setTimeout(()=>toast('🎖️ 排位吊飾解鎖：'+C.zh,'#ffd23f'),1100)}}for(const r of RK_REW)if(best>=r.rp&&!rkRewHas(r)){(r.k=='wrap'?PF.wraps:r.k=='fin'?PF.fins:PF.emotes).push(r.id);n++;if(!quiet)setTimeout(()=>toast('🏆 排位獎勵解鎖：'+r.n,'#ffd23f'),900)}if(n)saveNow()}
 function rkFinish(won){if(!cfg.ranked||!PF)return null;const f=cfg.ranked;return rkApply(won,f,rkFirst())}
 function rkResHTML(a){if(!a)return'';
  if(a.placement){const r=PF.rk;
