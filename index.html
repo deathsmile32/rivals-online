@@ -1190,6 +1190,33 @@ const SKINS=[
 {id:'sm_emoji',weapon:'Smoke Grenade',name:'表情雲 Emoji Cloud',rarity:'epic',cs:1,insp:'wiggle',build:g=>{const b=Sp(g,.065,0,.07,0,0xffd23f);b.scale.set(1,1,.9);for(const s of[-1,1])Sp(g,.012,s*.022,.09,-.056,0x141418);B(g,.04,.008,.01,0,.05,-.058,0x141418);Cy(g,.02,.03,0,.15,0,0x8d939c);return{}}},
 {id:'tm_dontpress',weapon:'Subspace Tripmine',name:'別按 Don\'t Press',rarity:'legendary',cs:1,insp:'flip',build:g=>{B(g,.17,.05,.17,0,.03,0,0x2a2d33);Cy(g,.05,.04,0,.07,0,0xd8262a);B(g,.12,.006,.03,0,.056,.065,0xf2c21a);return{}}},
 {id:'wh_trumpet',weapon:'War Horn',name:'小號 Trumpet',rarity:'rare',cs:1,insp:'flip',build:g=>{const Gd=0xe6b84a;Cz(g,.014,.014,.26,0,.07,-.06,Gd);const k=new T.Mesh(new T.CylinderGeometry(.065,.016,.1,14),mt(Gd));k.rotation.x=PI/2;k.position.set(0,.07,-.22);g.add(k);for(let i=0;i<3;i++)Cy(g,.008,.04,0,.1,-.02+i*.03,Gd);B(g,.03,.08,.03,0,0,.04,Gd);return{}}},
+// ----- 皮膚箱 2 Skin Case 2 batch (own blocky takes on each theme)
+{id:'ba_ban',weapon:'Battle Axe',name:'封鎖斧 Ban Axe',rarity:'legendary',cs:2,insp:'void',flashColor:0xff2a2a,build:g=>{const Bk=0x1a1a1f,Rd=0xff2a2a;B(g,.032,.72,.032,0,.2,0,Bk);for(const y of[-.1,.3])B(g,.04,.025,.04,0,y,0,Rd,{e:1});
+ B(g,.02,.3,.3,0,.56,.1,0xf4f4f4);B(g,.022,.26,.26,0,.56,.1,Rd);B(g,.024,.03,.2,0,.56,.1,0xf4f4f4);B(g,.024,.2,.03,0,.56,.1,0xf4f4f4,{rx:PI/4});B(g,.035,.08,.035,0,.6,0,Bk);return{}}},
+{id:'cs_handsaws',weapon:'Chainsaw',name:'手鋸 Handsaws',rarity:'rare',cs:2,insp:'wiggle',build:g=>{const Wd=0xa86a3a,S=0xc9ced6;B(g,.05,.16,.12,0,.05,.03,Wd);B(g,.052,.06,.06,0,.06,.03,0x141418);B(g,.008,.46,.16,0,.36,-.02,S);for(let i=0;i<14;i++)B(g,.009,.022,.022,0,.15+i*.032,-.1,S,{rx:PI/4});return{}}},
+{id:'fi_brass',weapon:'Fists',name:'指虎 Brass Knuckles',rarity:'epic',cs:2,insp:'flip',build:g=>{for(const s of[-1,1]){B(g,.1,.1,.12,s*.08,0,0,0xe6b07a);B(g,.105,.03,.125,s*.08,-.04,0,0x2a2b30);for(let i=0;i<4;i++){const r=new T.Mesh(UT,mt(0xe6b84a));r.scale.set(.022,.022,.02);r.rotation.y=PI/2;r.position.set(s*.08-.033+i*.022,.035,-.065);g.add(r)}B(g,.1,.02,.03,s*.08,.0,-.07,0xe6b84a)}return{}}},
+{id:'kt_bolt',weapon:'Katana',name:'雷霆刀 Lightning Bolt',rarity:'legendary',cs:2,insp:'pulse',flashColor:0xffe23f,build:g=>{B(g,.032,.24,.032,0,0,0,0x2a2b30);B(g,.1,.014,.08,0,.13,0,0xffd23f,{e:1});
+ const P=[[0,.14],[.05,.3],[-.03,.34],[.05,.52],[-.02,.56],[.04,.86]];for(let i=1;i<P.length;i++){const[a,b]=P[i-1],[c,d]=P[i],L=Math.hypot(c-a,d-b);B(g,.016,L*1.05,.05,0,(b+d)/2,-(a+c)/2,0xfff070,{rx:Math.atan2(c-a,d-b),e:1})}return{}}},
+{id:'rs_energy',weapon:'Riot Shield',name:'能量盾 Energy Shield',rarity:'epic',cs:2,insp:'pulse',build:g=>{const m=new T.Mesh(new T.BoxGeometry(.48,.66,.02),new T.MeshBasicMaterial({color:0x40c8ff,transparent:true,opacity:.35,depthWrite:false}));m.position.set(0,.2,-.06);g.add(m);
+ for(const[x,y,w,h]of[[0,.53,.5,.03],[0,-.13,.5,.03],[-.24,.2,.03,.68],[.24,.2,.03,.68]])B(g,w,h,.03,x,y,-.06,0x40e8ff,{e:1});B(g,.12,.12,.04,0,.2,-.06,0x2a2b30);Sp(g,.03,0,.2,-.085,0x40e8ff,1);B(g,.04,.12,.04,0,0,0,K);return{}}},
+{id:'tr_garden',weapon:'Trowel',name:'園藝鏟 Garden Shovel',rarity:'common',cs:2,insp:'flip',build:g=>{B(g,.034,.14,.034,0,0,0,0x3aa83a);B(g,.012,.08,.012,0,.1,0,0x8d939c);B(g,.01,.22,.12,0,.25,0,0xb9bec7);const k=new T.Mesh(UK,mt(0xb9bec7));k.scale.set(.06,.08,.01);k.rotation.y=PI/2;k.position.set(0,.4,0);g.add(k);const f=Sp(g,.02,0,.05,-.03,0xff7ab0);return{}}},
+{id:'dg_planes',weapon:'Daggers',name:'紙飛機 Paper Planes',rarity:'rare',cs:2,insp:'flip',build:g=>{const W=0xf8f8f8,W2=0xdedede;B(g,.02,.07,.02,0,0,0,0x2a8af0);const k=new T.Mesh(UK,mt(W));k.scale.set(.05,.26,.012);k.position.set(0,.16,0);g.add(k);for(const s of[-1,1])B(g,.09,.004,.18,s*.04,.11,0,W2,{rz:s*.25});return{dual:1}}},
+{id:'ep_void',weapon:'Energy Pistols',name:'虛空雙槍 Void Pistols',rarity:'epic',cs:2,insp:'void',build:g=>{B(g,.06,.08,.24,0,.09,-.04,0x1a0a2a);B(g,.062,.02,.2,0,.135,-.06,0x8a3aff,{e:1});Sp(g,.03,0,.09,-.17,0x050508);const r=new T.Mesh(UT,new T.MeshBasicMaterial({color:0xc040ff}));r.scale.set(.04,.04,.01);r.position.set(0,.09,-.17);g.add(r);B(g,.046,.12,.06,0,0,.03,0x1a0a2a,{rx:-.22});return{dual:1}}},
+{id:'ex_raygun',weapon:'Exogun',name:'雷射槍 Ray Gun',rarity:'rare',cs:2,insp:'flip',build:g=>{const R=0xd8262a,S=0xc9ced6;B(g,.06,.08,.14,0,.1,0,S);for(let i=0;i<3;i++)Cz(g,.05-i*.01,.05-i*.01,.025,0,.1,-.09-i*.04,i%2?R:S);Cz(g,.012,.012,.06,0,.1,-.22,R);Sp(g,.02,0,.1,-.26,0x5aff5a,1);B(g,.046,.13,.06,0,0,.05,R,{rx:-.3});return{}}},
+{id:'fg_dynamite',weapon:'Flare Gun',name:'炸藥槍 Dynamite Gun',rarity:'epic',cs:2,insp:'flip',build:g=>{Cz(g,.034,.038,.24,0,.11,-.14,0x55585f);Cz(g,.032,.032,.12,0,.11,-.3,0xd8262a);B(g,.003,.04,.003,0,.13,-.37,0x2a2b30);Sp(g,.008,0,.155,-.37,0xffb02a,1);B(g,.05,.07,.12,0,.09,0,0x55585f);B(g,.048,.13,.065,0,0,.05,0x7a4a2a,{rx:-.25});return{}}},
+{id:'hg_handgun',weapon:'Handgun',name:'手手槍 Hand Gun',rarity:'legendary',cs:2,insp:'wiggle',build:g=>{const Sk=0xf2cf9a;B(g,.06,.07,.08,0,.1,0,Sk);B(g,.03,.03,.18,0,.13,-.12,Sk);B(g,.028,.06,.03,0,.18,-.02,Sk);for(let i=0;i<3;i++)B(g,.028,.03,.06,0,.06-i*.03,-.06,Sk);B(g,.05,.13,.065,0,0,.03,0x2a8af0,{rx:-.22});return{}}},
+{id:'sh_lovely',weapon:'Shorty',name:'愛心短槍 Lovely Shorty',rarity:'rare',cs:2,insp:'wiggle',build:g=>{const Pk=0xff7ab0;Cz(g,.02,.02,.3,-.021,.1,-.2,Pk);Cz(g,.02,.02,.3,.021,.1,-.2,Pk);B(g,.07,.06,.08,0,.085,-.05,0xf4f4f4);B(g,.05,.08,.12,0,.07,.04,Pk);B(g,.05,.13,.06,0,0,.07,Pk,{rx:-.35});for(const s of[-1,1])Sp(g,.014,.037,.1+s*0,-.04+s*.012,0xd8263a);return{}}},
+{id:'sl_goal',weapon:'Slingshot',name:'球門彈弓 Goal Post',rarity:'common',cs:2,insp:'flip',build:g=>{const W=0xf4f4f4;B(g,.035,.12,.035,0,0,0,W);B(g,.22,.025,.025,0,.07,0,W);for(const s of[-1,1])B(g,.025,.16,.025,s*.1,.15,0,W);for(let i=0;i<4;i++)B(g,.2,.003,.003,0,.1+i*.04,.03,0xbfbfbf);Sp(g,.035,0,.2,.06,0xf4f4f4);return{sling:1}}},
+{id:'sp_nail',weapon:'Spray',name:'釘槍 Nailgun',rarity:'epic',cs:2,insp:'flip',build:g=>{const Yl=0xf2c21a,Bk=0x2a2b30;B(g,.07,.12,.26,0,.1,-.05,Yl);B(g,.05,.04,.08,0,.06,-.2,Bk);B(g,.03,.16,.06,0,.04,-.1,Bk,{rx:.4});B(g,.05,.13,.06,0,0,.06,Bk,{rx:-.2});return{}}},
+{id:'uz_electro',weapon:'Uzi',name:'電流衝鋒槍 Electro Uzi',rarity:'rare',cs:2,insp:'pulse',build:g=>{B(g,.06,.09,.26,0,.09,-.04,0x1a1b20);for(const z of[-.12,-.02,.06])B(g,.064,.015,.02,0,.12,z,0xffd23f,{e:1});B(g,.042,.24,.052,0,-.05,0,0x1a1b20);Cz(g,.014,.014,.08,0,.09,-.21,0xffd23f,{e:1});return{}}},
+{id:'fb_camera',weapon:'Flashbang',name:'相機 Camera',rarity:'rare',cs:2,insp:'flip',build:g=>{B(g,.16,.1,.07,0,.06,0,0x2a2b30);Cz(g,.035,.035,.04,0,.06,-.05,0x141418);Cz(g,.02,.02,.042,0,.06,-.05,0x4a8aff);B(g,.04,.02,.03,-.05,.12,0,0xf4f4f4);B(g,.03,.02,.03,.05,.12,0,0xd8262a);return{}}},
+{id:'fr_bubble',weapon:'Freeze Ray',name:'泡泡槍 Bubble Ray',rarity:'common',cs:2,insp:'wiggle',build:g=>{B(g,.07,.12,.22,0,.09,-.03,0x7ad8ff);const r=new T.Mesh(UT,mt(0xff7ab0));r.scale.set(.05,.05,.02);r.position.set(0,.1,-.19);g.add(r);const b=new T.Mesh(US,new T.MeshPhongMaterial({color:0xbfeaff,transparent:true,opacity:.4}));b.scale.setScalar(.04);b.position.set(0,.18,-.22);g.add(b);B(g,.05,.12,.06,0,0,.04,0xff7ab0,GRIP);return{}}},
+{id:'gr_waterballoon',weapon:'Grenade',name:'水球 Water Balloon',rarity:'common',cs:2,insp:'wiggle',build:g=>{const b=new T.Mesh(US,new T.MeshPhongMaterial({color:0x40a8ff,transparent:true,opacity:.85,shininess:80}));b.scale.set(.06,.07,.06);b.position.y=.04;g.add(b);Cy(g,.012,.02,0,.115,0,0x40a8ff);return{}}},
+{id:'jp_bounce',weapon:'Jump Pad',name:'充氣城堡 Bounce House',rarity:'epic',cs:2,insp:'wiggle',build:g=>{B(g,.26,.06,.26,0,.02,0,0xff5a5a);for(const[x,z]of[[-1,-1],[1,-1],[-1,1],[1,1]]){Cy(g,.03,.12,x*.11,.08,z*.11,0x2a8af0);const k=new T.Mesh(UK,mt(0xf2c21a));k.scale.set(.035,.05,.035);k.position.set(x*.11,.165,z*.11);g.add(k)}B(g,.2,.05,.012,0,.07,-.12,0x5ac83a);return{}}},
+{id:'st_notebook',weapon:'Satchel',name:'筆記本炸藥包 Notebook Satchel',rarity:'rare',cs:2,insp:'flip',build:g=>{B(g,.16,.03,.2,0,.03,0,0x2a5ad8);B(g,.15,.025,.19,.005,.03,0,0xf8f8f8);for(let i=0;i<5;i++){const r=new T.Mesh(UT,mt(0xb9bec7));r.scale.set(.012,.012,.008);r.rotation.y=PI/2;r.position.set(-.08,.03,-.08+i*.04);g.add(r)}Sp(g,.014,.05,.05,.07,0xff3030,1);return{}}},
+{id:'sm_balance',weapon:'Smoke Grenade',name:'天平 Balance',rarity:'epic',cs:2,insp:'flip',build:g=>{const Gd=0xe6b84a;Cy(g,.05,.015,0,0,0,Gd);Cy(g,.008,.18,0,.09,0,Gd);B(g,.22,.01,.01,0,.18,0,Gd);for(const s of[-1,1]){B(g,.002,.06,.002,s*.1,.15,0,Gd);Cy(g,.035,.008,s*.1,.12,0,Gd)}return{}}},
+{id:'tm_spring',weapon:'Subspace Tripmine',name:'彈簧 Spring',rarity:'rare',cs:2,insp:'wiggle',build:g=>{for(let i=0;i<6;i++){const r=new T.Mesh(UT,mt(0xc9ced6));r.scale.set(.07,.07,.025);r.rotation.x=PI/2;r.position.y=.02+i*.028;g.add(r)}Cy(g,.08,.015,0,0,0,0x2a2b30);Cy(g,.06,.015,0,.18,0,0xd8262a);return{}}},
+{id:'wh_megaphone',weapon:'War Horn',name:'大聲公 Megaphone',rarity:'common',cs:2,insp:'flip',build:g=>{const k=new T.Mesh(new T.CylinderGeometry(.075,.03,.2,14),mt(0xf4f4f4));k.rotation.x=PI/2;k.position.set(0,.07,-.12);g.add(k);Cz(g,.077,.077,.02,0,.07,-.22,0xd8262a);Cz(g,.032,.032,.08,0,.07,.01,0xd8262a);B(g,.03,.09,.03,0,0,.02,0x2a2b30);return{}}},
 {id:'ar_10b',weapon:'Assault Rifle',name:'10B 百億步槍',rarity:'legendary',how:'從皮膚箱開出 Unboxed from the Skin Case',insp:'flip',flashColor:0xffc21a,flashScale:1.3,
  build:g=>{const Gd=0xf2b81a,G2=0xd89a10,mg=new T.Group();B(g,.07,.1,.3,0,.08,-.04,Gd);Cz(g,.022,.022,.34,0,.1,-.5,Gd);Cz(g,.03,.03,.05,0,.1,-.68,G2);
   for(let i=0;i<6;i++){const o=new T.Mesh(UT,mt(i%2?G2:Gd));o.scale.set(.045,.06,.05);o.position.set(0,.14+(i%2)*.02,-.3+i*.085);o.rotation.y=PI/2;g.add(o)}
@@ -2342,6 +2369,29 @@ FD.abt={init(f){const G=f.gm=fRig(f,0x1d1f24);G.g.position.set(2.3,0,0);G.g.rota
   const sp=ph(t,2.1,2.2);f.tx.material.opacity=sp*(1-ph(t,2.9,3.1));G.aL.rotation.x-=t>2.1?(PI/2)*ph(t,2.1,2.4)*.8:0;G.aR.rotation.x-=t>2.1?(PI/2)*ph(t,2.1,2.4)*.8:0;G.hd.rotation.x=t>2.1?.2*Math.sin(ph(t,2.1,2.5)*PI):0;
   if(t>=f.D-.45&&!st.d){st.d=1;if(!f.pv)sndN(.35,.07,1500);for(let i=0;i<Q(18);i++)FE(f,{p:[2.3+RR(-.5,.5),RR(0,2),RR(-.5,.5)],v:[RR(-.8,.8),RR(.3,1.2),RR(-.8,.8)],s:RR(.2,.4),c:RP([0xbfbfbf,0x9a9a9a]),l:RR(.6,1),m:1,k:1.3,d:1})}
   rigOp(R,1-ph(t,f.D-.6,f.D-.1))}};
+// ===== 大廳音樂 Lobby BGM: original 16-bar loop in A minor at 112 BPM, synthesized live (pads, pluck arp, bass, lead hook, drums).
+// Plays only in the lobby, follows the 音樂 Music slider, fades out when a match starts.
+var BGM={on:0,bus:null,next:0,step:0,iv:0};
+const BG_BPM=112,BG_S=60/BG_BPM/4,BG_CH=[[57,60,64],[53,57,60],[48,52,55],[55,59,62],[57,60,64],[53,57,60],[50,53,57],[52,56,59]],
+ BG_LEAD=[76,0,74,72,0,72,74,0, 76,0,79,0,76,74,72,0, 72,0,71,69,0,69,71,0, 72,0,74,0,71,0,67,0, 76,0,74,72,0,72,74,0, 79,0,81,0,79,76,74,0, 74,0,72,69,0,72,74,0, 76,0,0,0,80,0,0,0],
+ bgF=m=>440*Math.pow(2,(m-69)/12);
+function bgVoice(t,f,d,v,ty,lp,at){const o=AC.createOscillator(),g=AC.createGain(),fl=AC.createBiquadFilter();o.type=ty;o.frequency.value=f;fl.type='lowpass';fl.frequency.value=lp;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+(at||.005));g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(fl);fl.connect(g);g.connect(BGM.bus);o.start(t);o.stop(t+d+.05);return o}
+function bgNoise(t,d,v,hp){const n=Math.floor(AC.sampleRate*d),b=AC.createBuffer(1,n,AC.sampleRate),a=b.getChannelData(0);for(let i=0;i<n;i++)a[i]=(Math.random()*2-1)*Math.pow(1-i/n,3);const s=AC.createBufferSource(),f=AC.createBiquadFilter(),g=AC.createGain();s.buffer=b;f.type='highpass';f.frequency.value=hp;g.gain.value=v;s.connect(f);f.connect(g);g.connect(BGM.bus);s.start(t)}
+function bgStep(t,i){const s=i%16,bar=Math.floor(i/16)%8,ch=BG_CH[bar],part=Math.floor(i/128)%2;
+ if(s==0)for(const m of ch){bgVoice(t,bgF(m),BG_S*16,.022,'sawtooth',900,.35);bgVoice(t,bgF(m)*1.004,BG_S*16,.016,'sawtooth',900,.35)}
+ if(s%2==0){const m=ch[[0,1,2,1,2,0,1,2][(s/2)%8]]+12;bgVoice(t,bgF(m),BG_S*1.6,.03,'triangle',3200)}
+ if(s==0||s==6||s==10){const m=ch[0]-24;bgVoice(t,bgF(m),BG_S*(s==0?5:3),.13,'sine',400);bgVoice(t,bgF(m)*2,BG_S*2,.03,'square',500)}
+ if(s==0||s==8||(s==14&&bar%2)){const o=AC.createOscillator(),g=AC.createGain();o.frequency.setValueAtTime(130,t);o.frequency.exponentialRampToValueAtTime(42,t+.25);g.gain.setValueAtTime(.24,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.connect(g);g.connect(BGM.bus);o.start(t);o.stop(t+.36)}
+ if(s==4||s==12)bgNoise(t,.16,.11,1600);if(s%2==1)bgNoise(t,.03,.03,7000);
+ if(part==1){const m=BG_LEAD[i%64];if(m){bgVoice(t,bgF(m),BG_S*2.6,.05,'square',2600,.01);bgVoice(t+BG_S*3,bgF(m),BG_S*2,.015,'square',1800,.01)}}}
+function bgTick(){try{const want=typeof st!='undefined'&&st=='lobby'&&PF&&(PF.set.mv??.6)>0&&!document.hidden;
+ if(!AC||AC.state!=='running'){return}
+ if(!BGM.bus){BGM.bus=AC.createGain();BGM.bus.gain.value=0;BGM.bus.connect(AC.destination)}
+ const vol=want?(PF.set.mv??.6)*1.2:0,now=AC.currentTime;BGM.bus.gain.setTargetAtTime(vol,now,want?.6:.25);
+ if(want&&!BGM.on){BGM.on=1;BGM.next=now+.08}if(!want&&BGM.on&&BGM.bus.gain.value<.005)BGM.on=0;
+ if(BGM.on)while(BGM.next<now+.35){bgStep(BGM.next,BGM.step);BGM.step=(BGM.step+1)%256;BGM.next+=BG_S}}catch(e){}}
+setInterval(bgTick,120);
+addEventListener('pointerdown',()=>{try{if(!AC)AC=new AudioContext();if(AC.state==='suspended')AC.resume()}catch(e){}},{passive:true});
 // ---- world runtime ----
 var FIN=[],FPN=null,FPA=null,RFIN=null;
 function finPS(){if(!FPN){FPN=mkPS(sc,MOBILE?450:900,0);FPA=mkPS(sc,MOBILE?300:650,1)}}
@@ -3926,7 +3976,9 @@ var UPDATES=[
 {ver:'2026.11.27',title:'📦 皮膚箱改版',rewardKeys:15,slides:[
  {e:'📦',h:200,t:'皮膚箱分成 4 種',b:['皮膚箱 1、皮膚箱 2、皮膚箱 3、🎁 聖誕皮膚箱','每個箱子只開得到自己那一批皮膚','其他舊皮膚放進 經典皮膚箱']},
  {e:'🥊',h:0,t:'皮膚箱 1 新增 25 個皮膚',b:['吉他斧、黏液鏈鋸、拳擊手套、光劍、門、死神鐮刀、塑膠鏟','撲克牌、駭客雙槍、奇點、煙火槍、太空爆能槍、不太短、樹枝、愛心噴霧、水槍','迪斯可球、時光射線、放屁坐墊、彈跳床、三明治、進階炸藥包、表情雲、別按、小號']},
- {e:'🎁',h:120,t:'謝謝你！',b:['皮膚箱 2、3 和聖誕皮膚箱的皮膚會陸續補上','點下面的按鈕領取獎勵']}]}];
+ {e:'🧲',h:200,t:'皮膚箱 2 新增 23 個皮膚',b:['封鎖斧、手鋸、指虎、雷霆刀、能量盾、園藝鏟','紙飛機、虛空雙槍、雷射槍、炸藥槍、手手槍、愛心短槍、球門彈弓、釘槍、電流衝鋒槍','相機、泡泡槍、水球、充氣城堡、筆記本炸藥包、天平、彈簧、大聲公']},
+ {e:'🎵',h:280,t:'全新大廳音樂',b:['大廳有原創背景音樂了','設定 → 聲音 → 音樂 可以調大小或關掉']},
+ {e:'🎁',h:120,t:'謝謝你！',b:['皮膚箱 3 和聖誕皮膚箱的皮膚會陸續補上','點下面的按鈕領取獎勵']}]}];
 function updLatest(){return UPDATES&&UPDATES[UPDATES.length-1]}
 function updUnclaimed(){const U=updLatest();return!!(U&&PF&&(U.rewardKeys>0||U.rewardGold>0)&&!PF.claimedUpd.includes(U.ver))}
 function updClaimUI(){const b=$('#updClaim'),U=updLatest();if(!b||!U||!PF)return;if(!(U.rewardKeys>0||U.rewardGold>0)){b.style.display='none';return}const d=PF.claimedUpd.includes(U.ver),rw=(U.rewardKeys>0?'🔑 '+U.rewardKeys:'')+(U.rewardKeys>0&&U.rewardGold>0?'　':'')+(U.rewardGold>0?'💰 '+U.rewardGold:'');b.textContent=d?'已領取 ✔':'領取 '+rw;b.disabled=d}
