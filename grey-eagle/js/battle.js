@@ -12,7 +12,14 @@
       this.nat = G.NATIONS[stage.nation];
       this.L = stage.len; this.EB = 90; this.PB = this.L - 90;
       this.t = 0; this.money = 0; this.wl = 0;
-      this.cannon = 0; this.cannonT = 22; this.cannonLv = res.cannonLv || 0;
+      this.cannon = 0; this.cannonLv = res.cannonLv || 0;
+      this.cannonT = Math.max(12, 26 - 0.7 * (res.cChargeLv || 0));
+      this.cannonRange = 650 + 40 * (res.cRangeLv || 0);
+      this.workMult = 1 + 0.05 * (res.workLv || 0);
+      this.walletMult = 1 + 0.04 * (res.walletLv || 0);
+      this.money = 40 * (res.startLv || 0);
+      this.gore = res.gore !== false;
+      this.decals = []; this.shake = 0;
       const pMax = 4000 + 1500 * (res.baseLv || 0);
       const eMax = Math.round(stage.baseHp * this.cm);
       this.base = [{ hp: pMax, max: pMax, hit: 0 }, { hp: eMax, max: eMax, hit: 0 }];
@@ -23,7 +30,24 @@
       this.buffT = 0; this.result = null; this.endT = 0;
       this.gunT = this.nat.gun ? this.nat.gun.t : 0;
       this.kills = 0;
+      this.money = Math.min(this.money, this.maxMoney());
       this.uid = 0;
+    }
+
+    maxMoney() { return Math.round(G.WALLET.max[this.wl] * this.walletMult); }
+    addShake(n) { this.shake = Math.min(14, this.shake + n); }
+    // 地上的痕跡：血跡、彈坑、焦痕、殘骸冒煙
+    decal(k, x, r, life) {
+      this.decals.push({ k, x, r: r || 20, t0: this.t, life: life || 0, seed: Math.random() });
+      if (this.decals.length > 90) {
+        const i = this.decals.findIndex(d => d.k !== 'crater'); this.decals.splice(i >= 0 ? i : 0, 1);
+      }
+    }
+    // 步兵類（會流血）
+    fleshy(u) { const k = u.def.look.k; return u.def.type === 'inf' && k !== 'gun' && k !== 'aa' && k !== 'pillbox'; }
+    blood(x, y, n, dir) {
+      if (!this.gore) return;
+      for (let i = 0; i < n; i++) this.fx.push({ k: 'blood', x, y, vx: dir * rnd(20, 110) + rnd(-30, 30), vy: rnd(-150, -40), r: rnd(1.2, 2.8), t: 0, life: rnd(0.4, 0.7) });
     }
 
     // ---------- 單位 ----------
@@ -124,9 +148,11 @@
       this.cannon = 0;
       const dmg = (120 + 60 * this.cannonLv) * this.st.mag * this.cm;
       for (const e of this.alive(1)) {
-        if (e.x > this.PB - 800 && !e.drop) { this.hit(null, e, dmg, true); if (!e.dead && !e.def.nokb) this.knock(e); }
+        if (e.x > this.PB - this.cannonRange && !e.drop) { this.hit(null, e, dmg, true); if (!e.dead && !e.def.nokb) this.knock(e); }
       }
-      this.fx.push({ k: 'beam', x: this.PB - 40, t: 0, life: 0.9 });
+      this.fx.push({ k: 'beam', x: this.PB - 40, w: this.cannonRange, t: 0, life: 0.9 });
+      for (let x = this.PB - 120; x > this.PB - this.cannonRange; x -= 160) this.decal('scorch', x + rnd(-40, 40), 30);
+      this.addShake(10);
       this.ev.push('cannon');
       return true;
     }
@@ -138,7 +164,10 @@
       this.t += dt;
       const buff = this.buffT > 0;
       if (buff) this.buffT -= dt;
-      this.money = Math.min(G.WALLET.max[this.wl], this.money + G.WALLET.rate[this.wl] * dt * (buff ? 1.5 : 1));
+      this.money = Math.min(this.maxMoney(), this.money + G.WALLET.rate[this.wl] * this.workMult * dt * (buff ? 1.5 : 1));
+      this.shake = Math.max(0, this.shake - dt * 30);
+      for (const d of this.decals) if (d.life && this.t - d.t0 > d.life) d.dead = true;
+      if (this.decals.some(d => d.dead)) this.decals = this.decals.filter(d => !d.dead);
       for (const s of this.slots) s.cd = Math.max(0, s.cd - dt * (buff ? 2 : 1));
       this.cannon = Math.min(1, this.cannon + dt / this.cannonT);
       this.base[0].hit = Math.max(0, this.base[0].hit - dt);
@@ -201,6 +230,7 @@
             const bx = f.x;
             this.fx.push({ k: 'bomb', x: bx, y: f.y + 30, t: 0, life: 0.45 });
             this.fx.push({ k: 'boom', x: bx, y: -10, r: 60, t: -0.45, life: 0.6 });
+            this.decal('crater', bx, 34); this.addShake(3);
             for (const e of this.alive(1)) if (!e.drop && Math.abs(e.x - bx) < 70) this.hit(null, e, f.dmg);
             if (Math.abs(bx - this.EB) < 70) this.hitBase(1, f.dmg);
             this.ev.push('boom');
@@ -246,7 +276,7 @@
           if (u.healT <= 0) {
             u.healT = 4;
             for (const a of pl) if (Math.abs(a.x - u.x) < 160 && a.hp < a.max) {
-              a.hp = Math.min(a.max, a.hp + a.max * 0.08 + 30 * u.atkM);
+              a.hp = Math.min(a.max, a.hp + a.max * (def.heal === true ? 0.08 : def.heal) + 30 * u.atkM);
               this.fx.push({ k: 'heal', x: a.x, y: -a.alt - 40, t: 0, life: 0.8 });
             }
           }
@@ -313,10 +343,22 @@
       const tx = tgts.length ? tgts[0].x : (u.side === 0 ? this.EB + 30 : this.PB - 30);
       const ty = tgts.length ? -tgts[0].alt - 18 : -60;
       const g = def.look.gear, k = def.look.k;
-      if (g === 'flame') this.fx.push({ k: 'flame', x: u.x, y: sy, dir: u.dir, len: def.rng, t: 0, life: 0.35 });
+      const vehicle = def.type === 'armor' || k === 'gun' || k === 'aa';
+      if (vehicle && def.rng >= 100) this.fx.push({ k: 'smoke', x: u.x + u.dir * 30 * (def.look.big || 1), y: sy - 4, r: 10 + def.atk / 40, t: 0, life: 1.4, vx: -u.dir * 8 });
+      if (g === 'flame' || def.look.flame) this.fx.push({ k: 'flame', x: u.x + u.dir * (def.look.flame ? 28 : 0), y: def.look.flame ? -26 : sy, dir: u.dir, len: def.rng, t: 0, life: 0.35 });
+      else if (def.look.bomb) {
+        this.fx.push({ k: 'bomb', x: u.x + u.dir * 10, y: -u.alt + 6, t: 0, life: 0.35 });
+        this.fx.push({ k: 'boom', x: tx, y: -12, r: 70, t: -0.3, life: 0.7 });
+        this.decal('crater', tx, 36); this.addShake(5); this.ev.push('boom');
+      } else if (def.look.lob) {
+        this.fx.push({ k: 'shell', x1: u.x, y1: sy, x2: tx, y2: ty, t: 0, life: 0.5, r: 34, low: true });
+        this.decal('scorch', tx, 16); this.ev.push('hit');
+      }
       else if (g === 'camera') this.fx.push({ k: 'flash', x: u.x, y: sy, t: 0, life: 0.3 });
       else if (def.rng >= 280 && def.area) {
         this.fx.push({ k: 'shell', x1: u.x, y1: sy, x2: tx, y2: ty, t: 0, life: 0.55, r: def.shots ? 70 : 50 });
+        if (def.shots) for (let i = 1; i < def.shots; i++) this.fx.push({ k: 'shell', x1: u.x, y1: sy - i * 6, x2: tx + rnd(-50, 50), y2: ty, t: -i * 0.15, life: 0.55, r: 45 });
+        this.decal('crater', tx + rnd(-10, 10), def.shots ? 34 : 26); this.addShake(def.atk > 200 ? 4 : 2);
         this.ev.push('boom');
       } else if (def.rng >= 90 || k === 'plane' || k === 'aa') {
         const n = def.shots || 1;
@@ -334,6 +376,7 @@
       let m = 1;
       if (a && a.def.bonus && a.def.bonus[f.def.type]) m = a.def.bonus[f.def.type];
       f.hp -= dmg * m;
+      if (this.fleshy(f) && Math.random() < 0.7) this.blood(f.x, -f.alt - 20 * (f.def.look.big || 1), 2 + (dmg * m > f.max * 0.3 ? 4 : 0), -f.dir);
       if (a && a.def.freeze) f.freeze = Math.max(f.freeze, f.def.boss ? a.def.freeze * 0.5 : a.def.freeze);
       if (a && a.def.slow) f.slow = Math.max(f.slow, a.def.slow);
       if (f.def.stealth && a && a.def.area) f.revealed = true;
@@ -353,12 +396,22 @@
         return;
       }
       f.dead = true; f.hp = 0; f.vx = -f.dir * 140; f.fade = 0;
-      if (f.def.type === 'armor' || f.def.type === 'air' || f.def.look.k === 'gun') this.fx.push({ k: 'boom', x: f.x, y: -f.alt - 15, r: 34 * (f.def.look.big || 1), t: 0, life: 0.6 });
+      const big = f.def.look.big || 1;
+      if (f.def.type === 'armor' || f.def.type === 'air' || f.def.look.k === 'gun') {
+        this.fx.push({ k: 'boom', x: f.x, y: -f.alt - 15, r: 34 * big, t: 0, life: 0.6 });
+        for (let i = 0; i < 6; i++) this.fx.push({ k: 'debris', x: f.x, y: -f.alt - 15, vx: rnd(-120, 120), vy: rnd(-220, -80), r: rnd(1.5, 3.5) * big, t: 0, life: rnd(0.6, 1) });
+        this.decal('scorch', f.x, 26 * big);
+        this.decal('wreck', f.x + f.vx * 0.3, 10 * big, 9);
+        this.addShake(f.def.boss ? 10 : 3);
+      } else if (this.fleshy(f)) {
+        this.blood(f.x, -f.alt - 18 * big, 6, -f.dir);
+        if (this.gore && !f.alt) this.decal('blood', f.x + f.vx * 0.25, (9 + Math.random() * 5) * big, 30);
+      }
       if (silent) return;
       if (f.side === 1) {
         this.kills++;
         const r = Math.round(f.def.reward * (1 + this.wl * 0.1));
-        this.money = Math.min(G.WALLET.max[this.wl], this.money + r);
+        this.money = Math.min(this.maxMoney(), this.money + r);
         if (f.def.boss) {
           this.ev.push('bossdown');
           this.fx.push({ k: 'text', txt: '★ 擊敗 ' + f.def.name + '！', t: 0, life: 2.2, big: true, col: '#ffd34a' });

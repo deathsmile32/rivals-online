@@ -7,7 +7,7 @@
 
   // ================= 存檔 =================
   const KEY = 'greyEagle.v1';
-  const defSave = () => ({ cleared: [0, 0, 0], xp: 0, medals: 0, units: { recruit: { lv: 1, plus: 0 } }, team: ['recruit'], baseLv: 0, cannonLv: 0, sound: true, draws: 0 });
+  const defSave = () => ({ cleared: [0, 0, 0], xp: 0, medals: 0, units: { recruit: { lv: 1, plus: 0 } }, team: ['recruit'], baseLv: 0, cannonLv: 0, cRangeLv: 0, cChargeLv: 0, workLv: 0, walletLv: 0, startLv: 0, sound: true, gore: true, draws: 0 });
   let S;
   function load() {
     try { S = Object.assign(defSave(), JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) { S = defSave(); }
@@ -116,7 +116,8 @@
   // ================= 標題 =================
   function renderTitle() {
     const c = S.cleared;
-    $('tProg').textContent = c[2] ? `第三章 ${c[2]}/40` : c[1] ? `第二章 ${c[1]}/40` : `第一章 ${c[0]}/40`;
+    const N = G.STAGE_COUNT;
+    $('tProg').textContent = c[2] ? `第三章 ${c[2]}/${N}` : c[1] ? `第二章 ${c[1]}/${N}` : `第一章 ${c[0]}/${N}`;
   }
   let titleRaf = 0;
   const titleUnits = [];
@@ -164,13 +165,13 @@
     const cv = document.createElement('canvas'); cv.width = w * 2; cv.height = h * 2; cv.style.width = w + 'px'; cv.style.height = h + 'px';
     const c = cv.getContext('2d'); c.scale(2, 2); D.flag(c, nat, 0, 0, w, h); return cv;
   }
-  const chUnlocked = ch => ch === 0 || S.cleared[ch - 1] >= 40;
+  const chUnlocked = ch => ch === 0 || S.cleared[ch - 1] >= G.STAGE_COUNT;
   function renderMap() {
     const tabs = $('chapTabs'); tabs.innerHTML = '';
     G.CHAPTERS.forEach((chp, k) => {
       const b = document.createElement('button');
       const ok = chUnlocked(k);
-      b.textContent = (ok ? '' : '🔒 ') + chp.name + (ok ? ` (${S.cleared[k]}/40)` : '');
+      b.textContent = (ok ? '' : '🔒 ') + chp.name + (ok ? ` (${S.cleared[k]}/${G.STAGE_COUNT})` : '');
       b.disabled = !ok; if (k === mapCh) b.classList.add('on');
       b.onclick = () => { sfx('click'); mapCh = k; renderMap(); };
       tabs.appendChild(b);
@@ -324,18 +325,14 @@
   }
   function renderResearch() {
     const el = $('research'); el.innerHTML = '';
-    const items = [
-      { key: 'baseLv', name: '🏰 碉堡耐久', val: lv => `體力 ${fmt(4000 + 1500 * lv)}` },
-      { key: 'cannonLv', name: '💥 要塞砲威力', val: lv => `基礎傷害 ${fmt(120 + 60 * lv)}` },
-    ];
-    for (const it of items) {
-      const lv = S[it.key], cost = 500 * (lv + 1);
+    for (const it of G.RESEARCH) {
+      const lv = S[it.key] || 0, cost = G.resCost(it, lv), max = lv >= it.max;
       const d = document.createElement('div'); d.className = 'rcard';
-      d.innerHTML = `<div class="t"><b>${it.name}</b> Lv${lv}<br><small>${it.val(lv)}</small></div>`;
+      d.innerHTML = `<div class="t"><b>${it.name}</b> Lv${lv}<br><small>${it.txt(lv)}${max ? '' : ' → ' + it.txt(lv + 1).replace(/^[^0-9+]*/, '')}</small></div>`;
       const b = document.createElement('button');
-      if (lv >= 20) { b.textContent = 'MAX'; b.disabled = true; }
+      if (max) { b.textContent = 'MAX'; b.disabled = true; }
       else { b.innerHTML = `⬆ ⭐${fmt(cost)}`; b.disabled = S.xp < cost; }
-      b.onclick = () => { if (S.xp < cost || lv >= 20) return; S.xp -= cost; S[it.key]++; save(); sfx('wallet'); refreshRes(); renderArmy(); };
+      b.onclick = () => { if (S.xp < cost || max) return; S.xp -= cost; S[it.key] = lv + 1; save(); sfx('wallet'); refreshRes(); renderArmy(); };
       d.appendChild(b); el.appendChild(d);
     }
   }
@@ -428,7 +425,8 @@
     curCh = ch; curSt = i;
     const st = G.STAGES[i];
     const team = S.team.filter(owned).map(id => ({ def: G.UNIT[id], lv: effLv(id) }));
-    B = new G.Battle(st, ch, team, { baseLv: S.baseLv, cannonLv: S.cannonLv });
+    const res = { gore: S.gore !== false }; for (const r of G.RESEARCH) res[r.key] = S[r.key] || 0;
+    B = new G.Battle(st, ch, team, res);
     B.nat = G.NATIONS[st.nation];
     show('battle');
     $('bStage').textContent = `${G.CHAPTERS[ch].name}・第 ${i + 1} 關　${st.name}（${B.nat.name}）`;
@@ -496,11 +494,13 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = ter.g[0]; ctx.fillRect(0, 0, W, H);
     const viewH = groundY / scale;
-    ctx.setTransform(dpr * scale, 0, 0, dpr * scale, -cam * dpr * scale, groundY * dpr);
+    const shX = B.shake ? (Math.random() - 0.5) * B.shake : 0, shY = B.shake ? (Math.random() - 0.5) * B.shake * 0.6 : 0;
+    ctx.setTransform(dpr * scale, 0, 0, dpr * scale, (-cam * scale + shX) * dpr, (groundY + shY) * dpr);
     D.background(ctx, st, cam, viewW, viewH, t, B.L);
     // 碉堡
     D.base(ctx, nat.base, B.EB, nat.baseCol, B.base[1].hp / B.base[1].max, t, nat, B.base[1].hit);
     D.base(ctx, 'player', B.PB, '#7d8273', B.base[0].hp / B.base[0].max, t, null, B.base[0].hit);
+    D.decals(ctx, B);
     baseHp(B.EB, B.base[1]); baseHp(B.PB, B.base[0]);
     // 單位：地面先畫，空中後畫
     const us = B.units.slice().sort((a, b) => (a.alt - b.alt) || (a.side - b.side) || (a.n - b.n));
@@ -528,7 +528,7 @@
 
   function hud() {
     $('moneyNow').textContent = fmt(Math.floor(B.money));
-    $('moneyMax').textContent = fmt(G.WALLET.max[B.wl]);
+    $('moneyMax').textContent = fmt(B.maxMoney());
     $('wlLv').textContent = 'Lv' + (B.wl + 1);
     const wb = $('bWallet');
     if (B.wl >= G.WALLET.cost.length) { $('wlCost').textContent = 'MAX'; wb.classList.add('max'); }
@@ -558,9 +558,9 @@
       let html = `<h2>勝利！</h2><div>${st.name}（${B.nat.name}）${first ? '　<b style="color:var(--accent)">首次通關！</b>' : ''}</div>
         <div class="rw"><span>⭐ +${fmt(xp)}</span><span>🎖️ +${fmt(medals)}</span></div><div style="color:var(--dim);font-size:13px">擊倒 ${B.kills} 個敵人・用時 ${Math.floor(B.t / 60)}:${String(Math.floor(B.t % 60)).padStart(2, '0')}</div>`;
       for (const u of got) html += `<div class="unl">🎉 新角色加入：<span class="rb ${u.rar}">${G.RAR[u.rar].name}</span> ${u.names[0]}</div>`;
-      if (first && curSt === 39) html += `<div class="unl">🏆 ${G.CHAPTERS[curCh].name}全部通關！${curCh < 2 ? G.CHAPTERS[curCh + 1].name + '開放了！' : '你是真正的灰鷹元帥！'}</div>`;
+      if (first && curSt === G.STAGE_COUNT - 1) html += `<div class="unl">🏆 ${G.CHAPTERS[curCh].name}全部通關！${curCh < 2 ? G.CHAPTERS[curCh + 1].name + '開放了！' : '你是真正的灰鷹元帥！'}</div>`;
       card.innerHTML = html;
-      if (curSt < 39) addBtn(card, '▶ 下一關', () => startBattle(curCh, curSt + 1), true);
+      if (curSt < G.STAGE_COUNT - 1) addBtn(card, '▶ 下一關', () => startBattle(curCh, curSt + 1), true);
       else if (curCh < 2) addBtn(card, `▶ 前往${G.CHAPTERS[curCh + 1].name}`, () => { mapCh = curCh + 1; endBattle('map'); }, true);
     } else {
       const xp = Math.round(st.xp * cm * 0.1);
@@ -591,9 +591,11 @@
     if (!B || B.result) return;
     paused = p; $('pause').classList.toggle('hidden', !p);
     $('pSound').textContent = '🔊 音效：' + (S.sound ? '開' : '關');
+    $('pGore').textContent = '🩸 血腥效果：' + (S.gore !== false ? '開' : '關');
   }
   $('bPause').onclick = () => setPause(true);
   $('pResume').onclick = () => setPause(false);
+  $('pGore').onclick = () => { S.gore = S.gore === false; save(); if (B) B.gore = S.gore; $('pGore').textContent = '🩸 血腥效果：' + (S.gore ? '開' : '關'); };
   $('pSound').onclick = () => { S.sound = !S.sound; save(); $('pSound').textContent = '🔊 音效：' + (S.sound ? '開' : '關'); };
   $('pRetry').onclick = () => { $('pause').classList.add('hidden'); startBattle(curCh, curSt); };
   $('pQuit').onclick = () => endBattle('map');

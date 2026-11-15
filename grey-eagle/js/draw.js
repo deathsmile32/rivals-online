@@ -58,15 +58,73 @@
       eagle(c, x + w / 2, y + h / 2, h * 0.36, '#e8e8e8', '#3f4438');
       c.restore(); return;
     }
-    const f = nat.flag, n = f.bands.length;
-    for (let i = 0; i < n; i++) {
-      c.fillStyle = f.bands[i];
-      if (f.vert) c.fillRect(x + w * i / n, y, w / n + 0.5, h); else c.fillRect(x, y + h * i / n, w, h / n + 0.5);
-    }
-    D.emblem(c, f.em, x + w / 2, y + h / 2, h * 0.34, f.emc);
+    flagBody(c, nat.flag, x, y, w, h);
     c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 0.8; c.strokeRect(x, y, w, h);
     c.restore();
   };
+  function bands(c, cols, vert, x, y, w, h) {
+    const n = cols.length;
+    for (let i = 0; i < n; i++) { c.fillStyle = cols[i]; if (vert) c.fillRect(x + w * i / n, y, w / n + 0.5, h); else c.fillRect(x, y + h * i / n, w, h / n + 0.5); }
+  }
+  function unionJack(c, x, y, w, h) {
+    c.save(); c.beginPath(); c.rect(x, y, w, h); c.clip();
+    c.fillStyle = '#012169'; c.fillRect(x, y, w, h);
+    c.strokeStyle = '#fff'; c.lineWidth = h * 0.2; c.beginPath(); c.moveTo(x, y); c.lineTo(x + w, y + h); c.moveTo(x + w, y); c.lineTo(x, y + h); c.stroke();
+    c.strokeStyle = '#c8102e'; c.lineWidth = h * 0.07; c.stroke();
+    c.fillStyle = '#fff'; c.fillRect(x + w * 0.4, y, w * 0.2, h); c.fillRect(x, y + h * 0.35, w, h * 0.3);
+    c.fillStyle = '#c8102e'; c.fillRect(x + w * 0.45, y, w * 0.1, h); c.fillRect(x, y + h * 0.4, w, h * 0.2);
+    c.restore();
+  }
+  function crescent(c, x, y, r, col, bg) { circ(c, x, y, r, col); circ(c, x + r * 0.3, y, r * 0.8, bg); }
+  function flagBody(c, f, x, y, w, h) {
+    switch (f.t) {
+      case 'nordic':
+        c.fillStyle = f.bg; c.fillRect(x, y, w, h);
+        c.fillStyle = f.cross; c.fillRect(x + w * 0.3, y, w * 0.16, h); c.fillRect(x, y + h * 0.4, w, h * 0.2);
+        if (f.inner) { c.fillStyle = f.inner; c.fillRect(x + w * 0.335, y, w * 0.09, h); c.fillRect(x, y + h * 0.45, w, h * 0.1); }
+        break;
+      case 'ensign':
+        c.fillStyle = f.bg; c.fillRect(x, y, w, h); unionJack(c, x, y, w / 2, h / 2);
+        if (f.stars === 'nz') for (const [sx, sy] of [[0.75, 0.25], [0.68, 0.55], [0.84, 0.48], [0.76, 0.8]]) { star(c, x + w * sx, y + h * sy, h * 0.09, '#fff'); star(c, x + w * sx, y + h * sy, h * 0.055, '#c8102e'); }
+        else if (f.stars === 'au') { star(c, x + w * 0.25, y + h * 0.75, h * 0.14, '#fff', 7); for (const [sx, sy] of [[0.75, 0.2], [0.62, 0.48], [0.87, 0.42], [0.75, 0.82]]) star(c, x + w * sx, y + h * sy, h * 0.07, '#fff', 7); }
+        else if (f.stars === 'ca') { fillRR(c, x + w * 0.66, y + h * 0.3, w * 0.18, h * 0.4, 2, '#f2e6c8'); D.emblem(c, 'leaf', x + w * 0.75, y + h * 0.5, h * 0.14, '#c8102e'); }
+        else if (f.stars === 'in') { circ(c, x + w * 0.75, y + h * 0.5, h * 0.2, '#f2f2f2'); star(c, x + w * 0.75, y + h * 0.5, h * 0.13, '#1f3f8a'); }
+        break;
+      case 'uk': unionJack(c, x, y, w, h); break;
+      case 'us':
+        for (let i = 0; i < 7; i++) { c.fillStyle = i % 2 ? '#fff' : '#b22234'; c.fillRect(x, y + h * i / 7, w, h / 7 + 0.5); }
+        c.fillStyle = '#3c3b6e'; c.fillRect(x, y, w * 0.42, h * 4 / 7);
+        for (let r = 0; r < 3; r++) for (let k = 0; k < 4; k++) circ(c, x + w * (0.05 + k * 0.105), y + h * (0.1 + r * 0.17), h * 0.03, '#fff');
+        break;
+      case 'lib':
+        for (let i = 0; i < 7; i++) { c.fillStyle = i % 2 ? '#fff' : '#bf0a30'; c.fillRect(x, y + h * i / 7, w, h / 7 + 0.5); }
+        c.fillStyle = '#002868'; c.fillRect(x, y, w * 0.35, h * 4 / 7); star(c, x + w * 0.175, y + h * 2 / 7, h * 0.16, '#fff');
+        break;
+      case 'gr':
+        for (let i = 0; i < 9; i++) { c.fillStyle = i % 2 ? '#fff' : '#0d5eaf'; c.fillRect(x, y + h * i / 9, w, h / 9 + 0.5); }
+        c.fillStyle = '#0d5eaf'; c.fillRect(x, y, w * 0.37, h * 5 / 9);
+        c.fillStyle = '#fff'; c.fillRect(x + w * 0.15, y, w * 0.07, h * 5 / 9); c.fillRect(x, y + h * 2 / 9, w * 0.37, h / 9);
+        break;
+      case 'cz':
+        bands(c, ['#ffffff', '#d7141a'], false, x, y, w, h);
+        poly(c, [x, y, x + w * 0.5, y + h / 2, x, y + h], '#11457e'); break;
+      case 'cuba':
+        for (let i = 0; i < 5; i++) { c.fillStyle = i % 2 ? '#fff' : '#002a8f'; c.fillRect(x, y + h * i / 5, w, h / 5 + 0.5); }
+        poly(c, [x, y, x + w * 0.43, y + h / 2, x, y + h], '#cf142b'); star(c, x + w * 0.14, y + h / 2, h * 0.17, '#fff'); break;
+      case 'br':
+        c.fillStyle = '#009c3b'; c.fillRect(x, y, w, h);
+        poly(c, [x + w * 0.08, y + h / 2, x + w / 2, y + h * 0.1, x + w * 0.92, y + h / 2, x + w / 2, y + h * 0.9], '#ffdf00');
+        circ(c, x + w / 2, y + h / 2, h * 0.24, '#002776'); break;
+      case 'crescent':
+        c.fillStyle = f.bg; c.fillRect(x, y, w, h);
+        if (f.stars === 1) { crescent(c, x + w * 0.4, y + h / 2, h * 0.25, '#fff', f.bg); star(c, x + w * 0.58, y + h / 2, h * 0.1, '#fff'); }
+        else { crescent(c, x + w * 0.45, y + h / 2, h * 0.28, '#fff', f.bg); for (const dy of [-0.18, 0, 0.18]) star(c, x + w * 0.62, y + h * (0.5 + dy), h * 0.07, '#fff'); }
+        break;
+      default:
+        bands(c, f.c, f.vert, x, y, w, h);
+        if (f.em) D.emblem(c, f.em, f.em === 'starCorner' ? x + w * 0.18 : x + w / 2, f.em === 'starCorner' ? y + h * 0.28 : y + h / 2, h * 0.34, f.emc);
+    }
+  }
   D.emblem = function (c, em, x, y, r, col) {
     c.fillStyle = col; c.strokeStyle = col;
     switch (em) {
@@ -90,6 +148,10 @@
       case 'crown': poly(c, [x - r * 0.8, y + r * 0.5, x - r * 0.8, y - r * 0.4, x - r * 0.4, y, x, y - r * 0.7, x + r * 0.4, y, x + r * 0.8, y - r * 0.4, x + r * 0.8, y + r * 0.5], col); break;
       case 'bigstar': circ(c, x, y, r * 0.95, col); star(c, x, y, r * 0.75, '#fff'); break;
       case 'star': star(c, x, y, r * 0.9, col); break;
+      case 'starCorner': star(c, x, y, r * 0.45, col); line(c, x - r * 0.35, y + r * 0.9, x + r * 0.2, y + r * 0.35, r * 0.13, col); c.lineWidth = r * 0.12; c.beginPath(); c.arc(x - r * 0.05, y + r * 0.55, r * 0.38, -0.3, 2.4); c.stroke(); break;
+      case 'eagle2': c.fillStyle = col; c.beginPath(); c.moveTo(x, y - r * 0.9); c.lineTo(x - r * 0.2, y - r * 0.5); c.lineTo(x - r, y - r * 0.7); c.lineTo(x - r * 0.6, y + r * 0.1); c.lineTo(x - r * 0.25, y + r * 0.2); c.lineTo(x, y + r); c.lineTo(x + r * 0.25, y + r * 0.2); c.lineTo(x + r * 0.6, y + r * 0.1); c.lineTo(x + r, y - r * 0.7); c.lineTo(x + r * 0.2, y - r * 0.5); c.closePath(); c.fill(); break;
+      case 'eagleSmall': ell(c, x, y, r * 0.55, r * 0.4, col); circ(c, x + r * 0.35, y - r * 0.35, r * 0.18, col); line(c, x - r * 0.5, y + r * 0.45, x + r * 0.5, y + r * 0.45, r * 0.12, '#2a7a3a'); break;
+      case 'sun': circ(c, x, y, r * 0.42, col); for (let k = 0; k < 8; k++) { const a = k * PI / 4; line(c, x + Math.cos(a) * r * 0.5, y + Math.sin(a) * r * 0.5, x + Math.cos(a) * r * 0.75, y + Math.sin(a) * r * 0.75, r * 0.1, col); } break;
     }
   };
 
@@ -148,6 +210,10 @@
         // 白鬍子
         c.fillStyle = '#f4f8fb'; c.beginPath(); c.moveTo(-3, hy + 3); c.quadraticCurveTo(4, hy + 18, 11, hy + 3); c.fill(); break;
       case 'mask': fillRR(c, 0, hy - 5, 10, 8, 3, '#2a3a44'); fillRR(c, 2, hy - 4, 7, 6, 2, '#8fd0f0'); ell(c, 0, hy - 2, 10.5, 10, 'rgba(30,40,50,.0)'); c.fillStyle = '#20272c'; c.beginPath(); c.arc(0, hy, 10, PI * 1.05, PI * 1.95); c.fill(); break;
+      case 'fez': poly(c, [-7, hy - 5, -5.5, hy - 17, 5.5, hy - 17, 7, hy - 5], '#b8222a'); ell(c, 0, hy - 17, 5.5, 1.6, '#9a1a22'); line(c, 0, hy - 17, -5, hy - 9, 1, '#222'); break;
+      case 'medic':
+        c.fillStyle = col; c.beginPath(); c.arc(0, hy - 1, 10, PI * 0.97, PI * 2.03); c.fill();
+        circ(c, 1, hy - 6, 4, '#f4f4f4'); c.fillStyle = '#2f9a4a'; c.fillRect(-0.4, hy - 9, 2.8, 6); c.fillRect(-2, hy - 7.4, 6, 2.8); break;
       default: break;
     }
   }
@@ -164,57 +230,92 @@
     if (gear === 'wire') { c.strokeStyle = '#999'; c.lineWidth = 1; for (let i = 0; i < 3; i++) { c.beginPath(); c.arc(-10, -18, 4 + i, 0, PI * 2); c.stroke(); } }
     if (gear === 'flame') { fillRR(c, -14, -27, 5, 15, 2, '#5d5d50'); fillRR(c, -10, -26, 5, 14, 2, '#6b6b5c'); }
     if (gear === 'ladle') { circ(c, -11, -18, 6, '#888'); fillRR(c, -17, -21, 12, 3, 1, '#666'); }
-    // 腿
+    const OL = 'rgba(20,18,12,.45)';
+    // 腿（褲子、綁腿、靴子）
     if (gear === 'frog') { ell(c, -3 + sw, -1, 6, 2, '#222'); ell(c, 4 - sw, -1, 6, 2, '#222'); }
     const ly = crouch ? -7 : -10;
-    fillRR(c, -5 + sw, ly, 4.5, -ly, 1.5, dk); fillRR(c, 1 - sw, ly, 4.5, -ly, 1.5, dk);
-    fillRR(c, -6 + sw, -2.5, 6, 2.8, 1, '#2a2520'); fillRR(c, 0.5 - sw, -2.5, 6, 2.8, 1, '#2a2520');
+    const frog = gear === 'frog', body = frog ? '#2a3238' : uni;
+    for (const [lx, side] of [[-5 + sw, -1], [1 - sw, 1]]) {
+      fillRR(c, lx, ly, 4.5, -ly, 1.5, side < 0 ? shade(dk, -0.12) : dk);
+      if (!frog && !crouch) { c.fillStyle = shade(uni, -0.1); c.fillRect(lx + 0.3, -6, 3.9, 3.4); c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(lx + 0.3, -4.8, 3.9, 0.6); }
+      fillRR(c, lx - 1, -2.6, 6, 3, 1, '#2a2520'); c.fillStyle = '#4a4036'; c.fillRect(lx - 1, -0.6, 6, 0.8);
+    }
     if (gear === 'ski') { line(c, -14, 0.5, 18, 0.5, 1.6, '#8a5a2a'); line(c, 18, 0.5, 21, -2, 1.6, '#8a5a2a'); }
-    // 身體
+    // 後面那隻手臂
     const by = crouch ? -21 : -24;
-    fillRR(c, -7.5, by, 15, 15, 5, gear === 'frog' ? '#2a3238' : uni);
-    c.fillStyle = shade(uni, -0.45); c.fillRect(-7.5, by + 10, 15, 2.2);
-    if (o.band && gear !== 'frog') { c.fillStyle = o.band; c.fillRect(-7.5, by + 3, 4, 4.5); }
-    if (o.big && o.big > 1.2 && gear !== 'frog') { c.fillStyle = '#d8b84a'; c.fillRect(4, by + 3, 3, 2); c.fillRect(4, by + 6, 3, 2); }
-    // 頭
+    fillRR(c, -7, by + 2, 4, 10, 2, shade(body, -0.22));
+    // 身體（上衣、領子、口袋、皮帶、彈藥袋、背帶）
+    fillRR(c, -7.5, by, 15, 15, 5, body);
+    c.fillStyle = 'rgba(0,0,0,.14)'; c.beginPath(); c.moveTo(-7.5, by + 4); c.lineTo(-2, by + 4); c.lineTo(-2.5, by + 15); c.lineTo(-7.5, by + 15); c.fill();
+    c.fillStyle = 'rgba(255,255,255,.1)'; c.fillRect(2, by + 1.5, 4, 9);
+    if (!frog) {
+      poly(c, [-4.5, by + 0.5, 0, by + 3.5, 4.5, by + 0.5], shade(uni, -0.25));
+      c.fillStyle = shade(uni, -0.2); c.fillRect(-5.5, by + 4, 3.6, 3); c.fillRect(2.3, by + 4, 3.6, 3);
+      c.fillStyle = '#c9b06a'; for (const yy of [by + 4.5, by + 7.5]) c.fillRect(-0.5, yy, 1.2, 1.2);
+      line(c, -6, by + 1, 5, by + 10, 1, 'rgba(40,32,20,.55)');
+    }
+    c.fillStyle = frog ? '#1a1f22' : '#3d3222'; c.fillRect(-7.5, by + 10, 15, 2.4);
+    if (!frog) { c.fillStyle = '#b8a060'; c.fillRect(-1, by + 10.2, 2.4, 2); c.fillStyle = '#4e4430'; c.fillRect(-6.8, by + 9.4, 3.2, 3.6); c.fillRect(3.8, by + 9.4, 3.2, 3.6); }
+    c.strokeStyle = OL; c.lineWidth = 0.8; rr(c, -7.5, by, 15, 15, 5); c.stroke();
+    if (o.band && !frog) { c.fillStyle = o.band; c.fillRect(-7.5, by + 3, 3.4, 4.5); c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(-7.5, by + 3, 3.4, 1); }
+    if (o.big && o.big > 1.2 && !frog) { c.fillStyle = '#d8b84a'; c.fillRect(4, by + 3, 3, 2); c.fillRect(4, by + 6, 3, 2); }
+    // 頭（耳朵、眉毛、鼻子、嘴巴、頭盔陰影、帽帶）
     const hy = crouch ? -30 : -33;
     c.save(); if (crouch) c.translate(0, 3);
+    circ(c, -6.5, -32, 2.2, shade(o.skin, -0.12));
     circ(c, 0, -33, 9.5, o.skin);
-    circ(c, 4.5, -33.5, 1.4, '#222');
-    circ(c, 6, -29.5, 1.6, 'rgba(255,120,120,.35)');
-    if (o.angry) line(c, 2.5, -37, 6.5, -36, 1.2, '#222');
+    c.fillStyle = 'rgba(120,70,40,.12)'; c.beginPath(); c.arc(0, -33, 9.5, PI * 0.55, PI * 1.25); c.lineTo(0, -33); c.fill();
+    c.strokeStyle = OL; c.lineWidth = 0.8; c.beginPath(); c.arc(0, -33, 9.5, 0, PI * 2); c.stroke();
+    ell(c, 4.6, -33.4, 1.25, 1.55, '#1e1a16'); circ(c, 4.9, -33.9, 0.45, '#fff');
+    line(c, 2.6, o.angry ? -37.6 : -36.6, 6.4, o.angry ? -36.2 : -36.8, 1.1, '#3a2a1a');
+    line(c, 8.2, -32.5, 9.3, -30.6, 1, shade(o.skin, -0.25));
+    line(c, 4.2, -28.4, 6.8, o.angry ? -28.8 : -28.2, 0.9, '#7a3a2a');
+    circ(c, 6, -30, 1.5, 'rgba(255,120,120,.3)');
+    if (!['hood', 'chef', 'ghillie', 'winter', 'mask', 'beret', 'fez', 'goggles', 'bearskin'].includes(o.hat || o.helm)) {
+      c.fillStyle = 'rgba(0,0,0,.16)'; c.beginPath(); c.ellipse(0, -36.5, 9.6, 2.6, 0, 0, PI); c.fill();
+    }
     helmet(c, o.hat || o.helm, o.helmCol, o);
     c.restore();
     // 武器（手的位置）
     const hx = 6, hyy = by + 7;
+    const hand = (x, y) => { line(c, 0.5, by + 3.5, x, y, 4, shade(body, -0.06)); line(c, x - 1.2, y - 0.6, x - 0.1, y - 0.1, 3.2, shade(body, -0.3)); circ(c, x, y, 2.4, o.skin); };
     const rec = an > 0 ? -2 * an / 0.3 : 0;
     c.save(); c.translate(rec, 0);
     switch (gear) {
-      case 'rifle': line(c, -4, hyy + 1, 19, hyy - 2, 2.4, '#6b4423'); line(c, 10, hyy - 1, 22, hyy - 2.5, 1.4, '#222'); circ(c, hx, hyy, 2.4, o.skin); break;
-      case 'longrifle': line(c, -5, hyy + 1, 20, hyy - 2, 2.4, '#6b4423'); line(c, 10, hyy - 1, 27, hyy - 3, 1.4, '#222'); circ(c, hx, hyy, 2.4, o.skin); break;
-      case 'sniper': line(c, -5, hyy + 1, 20, hyy - 2, 2.4, '#4a3420'); line(c, 10, hyy - 1, 32, hyy - 3.5, 1.4, '#222'); fillRR(c, 4, hyy - 5.5, 10, 2.6, 1.2, '#111'); circ(c, hx, hyy, 2.4, o.skin); break;
-      case 'smg': fillRR(c, 0, hyy - 3, 14, 4.5, 1, '#2a2a2a'); c.fillStyle = '#2a2a2a'; c.fillRect(6, hyy + 1, 2.5, 6); line(c, 13, hyy - 1, 19, hyy - 1, 1.4, '#111'); circ(c, hx, hyy, 2.4, o.skin); break;
+      case 'rifle': line(c, -4, hyy + 1, 19, hyy - 2, 2.4, '#6b4423'); line(c, 10, hyy - 1, 22, hyy - 2.5, 1.4, '#222'); line(c, 4, hyy - 1.6, 4, hyy - 3.4, 1, '#333'); c.strokeStyle = '#4a3a22'; c.lineWidth = 0.8; c.beginPath(); c.moveTo(-3, hyy + 1.6); c.quadraticCurveTo(6, hyy + 5, 15, hyy - 1); c.stroke(); hand(hx, hyy); break;
+      case 'longrifle': line(c, -5, hyy + 1, 20, hyy - 2, 2.4, '#6b4423'); line(c, 10, hyy - 1, 27, hyy - 3, 1.4, '#222'); line(c, 4, hyy - 1.6, 4, hyy - 3.4, 1, '#333'); line(c, 25, hyy - 2.8, 30, hyy - 3.5, 0.8, '#bbb'); hand(hx, hyy); break;
+      case 'sniper': line(c, -5, hyy + 1, 20, hyy - 2, 2.4, '#4a3420'); line(c, 10, hyy - 1, 32, hyy - 3.5, 1.4, '#222'); fillRR(c, 4, hyy - 5.5, 10, 2.6, 1.2, '#111'); hand(hx, hyy); break;
+      case 'smg': fillRR(c, 0, hyy - 3, 14, 4.5, 1, '#2a2a2a'); c.fillStyle = '#2a2a2a'; c.fillRect(6, hyy + 1, 2.5, 6); line(c, 13, hyy - 1, 19, hyy - 1, 1.4, '#111'); hand(hx, hyy); break;
       case 'mg':
         line(c, 14, -10, 10, 0, 1.4, '#333'); line(c, 14, -10, 19, 0, 1.4, '#333');
         fillRR(c, 3, -14, 18, 5, 1.5, '#2a2a2a'); line(c, 20, -12, 31, -12, 2, '#111'); fillRR(c, 6, -9.5, 6, 5, 1, '#4b4a32');
-        circ(c, 4, -12, 2.4, o.skin); break;
-      case 'bazooka': fillRR(c, -14, by - 1, 34, 6, 3, '#4f5a3a'); fillRR(c, 17, by - 2, 4, 8, 1, '#3a3a2a'); circ(c, 4, hyy, 2.4, o.skin);
+        hand(4, -12); break;
+      case 'bazooka': fillRR(c, -14, by - 1, 34, 6, 3, '#4f5a3a'); fillRR(c, 17, by - 2, 4, 8, 1, '#3a3a2a'); hand(4, hyy);
         if (an > 0.15) ell(c, -18, by + 2, 6, 3.5, 'rgba(255,200,120,.8)'); break;
       case 'shield': fillRR(c, 7, -40, 9, 38, 2, '#7d8288'); fillRR(c, 8.5, -38, 6, 34, 1.5, '#959ba2'); c.fillStyle = '#222'; c.fillRect(10, -30, 4, 2.5); circ(c, 11.5, -20, 1, '#555'); circ(c, 11.5, -10, 1, '#555'); break;
-      case 'flame': line(c, -8, by + 4, 6, hyy, 1.6, '#333'); fillRR(c, 2, hyy - 2.5, 16, 4.5, 1.5, '#3a3a32'); circ(c, 19, hyy - 0.5, 1.8, an > 0 ? '#ffb020' : '#555'); circ(c, hx, hyy, 2.4, o.skin); break;
-      case 'mortar': fillRR(c, 8, -3, 12, 3, 1, '#333'); line(c, 13, -2, 20, -22, 4, '#3d4436'); circ(c, 6, -12, 2.4, o.skin); break;
-      case 'ladle': line(c, hx, hyy, 18, hyy - 12, 1.8, '#999'); ell(c, 19, hyy - 13, 3.5, 2.2, '#aaa'); circ(c, hx, hyy, 2.4, o.skin); break;
-      case 'trumpet': line(c, 6, -30, 16, -30, 2, '#d8b84a'); c.fillStyle = '#e8c85a'; c.beginPath(); c.moveTo(15, -30); c.lineTo(22, -35); c.lineTo(22, -25); c.fill(); circ(c, 8, -28, 2.4, o.skin);
+      case 'flame': line(c, -8, by + 4, 6, hyy, 1.6, '#333'); fillRR(c, 2, hyy - 2.5, 16, 4.5, 1.5, '#3a3a32'); circ(c, 19, hyy - 0.5, 1.8, an > 0 ? '#ffb020' : '#555'); hand(hx, hyy); break;
+      case 'mortar': fillRR(c, 8, -3, 12, 3, 1, '#333'); line(c, 13, -2, 20, -22, 4, '#3d4436'); hand(6, -12); break;
+      case 'ladle': line(c, hx, hyy, 18, hyy - 12, 1.8, '#999'); ell(c, 19, hyy - 13, 3.5, 2.2, '#aaa'); hand(hx, hyy); break;
+      case 'trumpet': line(c, 6, -30, 16, -30, 2, '#d8b84a'); c.fillStyle = '#e8c85a'; c.beginPath(); c.moveTo(15, -30); c.lineTo(22, -35); c.lineTo(22, -25); c.fill(); hand(8, -28);
         if (an > 0 || (o.t * 2 % 1) < 0.3) { c.fillStyle = '#fff'; c.font = 'bold 8px sans-serif'; c.fillText('♪', 22, -38 - (o.t * 10 % 6)); } break;
-      case 'camera': fillRR(c, 6, -38, 10, 8, 1.5, '#222'); circ(c, 15, -34, 2.5, '#9fd8ff'); circ(c, 11, -41, 2.2, an > 0.1 ? '#fff' : '#ddd'); circ(c, 6, -30, 2.4, o.skin); break;
-      case 'wire': line(c, hx, hyy, 16, hyy - 5, 1.8, '#555'); line(c, 16, hyy - 5, 19, hyy - 2, 1.6, '#c33'); circ(c, hx, hyy, 2.4, o.skin); break;
+      case 'camera': fillRR(c, 6, -38, 10, 8, 1.5, '#222'); circ(c, 15, -34, 2.5, '#9fd8ff'); circ(c, 11, -41, 2.2, an > 0.1 ? '#fff' : '#ddd'); hand(6, -30); break;
+      case 'wire': line(c, hx, hyy, 16, hyy - 5, 1.8, '#555'); line(c, 16, hyy - 5, 19, hyy - 2, 1.6, '#c33'); hand(hx, hyy); break;
       case 'frog': line(c, hx, hyy, 15, hyy - 3, 1.6, '#ccc'); circ(c, hx, hyy, 2.4, '#2a3238'); break;
-      case 'saber': { const up = an > 0 ? 0.6 : -0.5; c.save(); c.translate(hx, hyy); c.rotate(up - 1.2); line(c, 0, 0, 0, -20, 1.8, '#dde3ea'); line(c, -3, 0, 3, 0, 2, '#d8b84a'); c.restore(); circ(c, hx, hyy, 2.4, o.skin); break; }
-      case 'flag': line(c, hx, hyy + 6, hx + 2, -60, 1.6, '#6b4423'); D.flag(c, null, hx + 2, -60, 22, 14, o.t * 4); circ(c, hx, hyy, 2.4, o.skin); break;
-      case 'wrench': c.save(); c.translate(hx, hyy); c.rotate(an > 0 ? 0.4 : -0.6); line(c, 0, 0, 14, -10, 2.6, '#9aa'); circ(c, 15, -11, 3.6, '#9aa'); circ(c, 16, -12, 1.6, '#333'); c.restore(); circ(c, hx, hyy, 2.4, o.skin);
+      case 'saber': { const up = an > 0 ? 0.6 : -0.5; c.save(); c.translate(hx, hyy); c.rotate(up - 1.2); line(c, 0, 0, 0, -20, 1.8, '#dde3ea'); line(c, -3, 0, 3, 0, 2, '#d8b84a'); c.restore(); hand(hx, hyy); break; }
+      case 'flag': line(c, hx, hyy + 6, hx + 2, -60, 1.6, '#6b4423'); D.flag(c, null, hx + 2, -60, 22, 14, o.t * 4); hand(hx, hyy); break;
+      case 'wrench': c.save(); c.translate(hx, hyy); c.rotate(an > 0 ? 0.4 : -0.6); line(c, 0, 0, 14, -10, 2.6, '#9aa'); circ(c, 15, -11, 3.6, '#9aa'); circ(c, 16, -12, 1.6, '#333'); c.restore(); hand(hx, hyy);
         c.strokeStyle = '#c9a65a'; c.lineWidth = 1.5; c.beginPath(); c.arc(-10, -40, 5, o.t, o.t + PI * 1.7); c.stroke(); break;
-      case 'baton': line(c, hx, hyy, 15, hyy - 8, 2.4, '#2a1f3a'); circ(c, 15, hyy - 8, 1.6, '#d8b84a'); circ(c, hx, hyy, 2.4, o.skin); break;
-      default: circ(c, hx, hyy, 2.4, o.skin);
+      case 'baton': line(c, hx, hyy, 15, hyy - 8, 2.4, '#2a1f3a'); circ(c, 15, hyy - 8, 1.6, '#d8b84a'); hand(hx, hyy); break;
+      case 'grenade': {
+        const up = an > 0 ? 1 : 0;
+        if (up) { hand(hx - 9, by - 9); fillRR(c, hx - 11, by - 14, 4, 6, 1.5, '#3d4a2c'); }
+        else { hand(hx, hyy); fillRR(c, hx - 1, hyy - 6, 3.5, 5, 1.2, '#3d4a2c'); line(c, hx + 0.7, hyy - 6, hx + 0.7, hyy - 10, 1.2, '#6b4423'); }
+        fillRR(c, -6, by + 9.2, 3, 4.5, 1, '#3d4a2c'); fillRR(c, 3.5, by + 9.2, 3, 4.5, 1, '#3d4a2c');
+        break;
+      }
+      case 'medkit': hand(hx, hyy); fillRR(c, hx - 1, hyy - 1, 9, 7, 1.5, '#f2f2ec'); c.fillStyle = '#2f9a4a'; c.fillRect(hx + 2.4, hyy, 2.2, 5); c.fillRect(hx + 1, hyy + 1.4, 5, 2.2);
+        fillRR(c, -14, by + 1, 6, 9, 2, '#e8e4d8'); break;
+      default: hand(hx, hyy);
     }
     c.restore();
     if (o.winter) { for (let i = 0; i < 6; i++) { const a = o.t * 1.5 + i; circ(c, Math.cos(a) * 18, -25 + Math.sin(a * 1.3) * 18, 1.6, 'rgba(220,240,255,.8)'); } }
@@ -224,19 +325,38 @@
   function tracks(c, L, h, ph, col) {
     fillRR(c, -L / 2, -h, L, h, h / 2, '#2c2c28');
     const n = Math.max(3, Math.round(L / 13));
-    for (let i = 0; i < n; i++) { const x = -L / 2 + h / 2 + i * (L - h) / (n - 1); circ(c, x, -h / 2, h * 0.34, '#555'); circ(c, x, -h / 2, h * 0.12, '#333'); }
+    for (let i = 0; i < n; i++) { const x = -L / 2 + h / 2 + i * (L - h) / (n - 1); circ(c, x, -h / 2, h * 0.36, '#4a4a44'); circ(c, x, -h / 2, h * 0.28, '#5e5e56'); circ(c, x, -h / 2, h * 0.1, '#2a2a26'); }
+    // 驅動輪齒、泥土
+    c.save(); c.translate(L / 2 - h / 2, -h / 2); c.rotate(ph * 2); for (let k = 0; k < 8; k++) { c.rotate(PI / 4); c.fillStyle = '#3a3a34'; c.fillRect(h * 0.3, -1, h * 0.16, 2); } c.restore();
+    c.fillStyle = 'rgba(110,85,55,.45)'; c.fillRect(-L / 2 + 2, -h * 0.35, L - 4, h * 0.3);
     c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 1;
     for (let x = -L / 2 + ((ph * 6) % 5); x < L / 2; x += 5) { c.beginPath(); c.moveTo(x, -h); c.lineTo(x, -h + 1.6); c.stroke(); }
   }
   function tank(c, o) {
     const v = o.v, col = o.col, ph = o.phase || 0, an = o.anim || 0;
-    const S = { light: [50, 11, 14, 24, 10, 22], med: [62, 13, 16, 28, 13, 30], heavy: [78, 15, 19, 34, 15, 38], spg: [66, 13, 15, 0, 0, 44], thor: [112, 20, 26, 50, 22, 62], bear: [100, 18, 24, 46, 20, 52] }[v];
+    const S = { light: [50, 11, 14, 24, 10, 22], med: [62, 13, 16, 28, 13, 30], heavy: [78, 15, 19, 34, 15, 38], spg: [66, 13, 15, 0, 0, 44], thor: [112, 20, 26, 50, 22, 62], bear: [100, 18, 24, 46, 20, 52], stug: [64, 13, 14, 0, 0, 34], flame: [64, 13, 16, 28, 13, 16] }[v];
     const [L, th, hh, tw, tth, gl] = S;
     const rec = an > 0 ? -3 * an / 0.3 : 0;
     tracks(c, L, th, ph, col);
     // 車身
     poly(c, [-L / 2 + 2, -th, -L / 2 + 6, -th - hh, L / 2 - 10, -th - hh, L / 2 + 1, -th - 3], col);
     c.fillStyle = shade(col, -0.18); c.fillRect(-L / 2 + 4, -th - 3, L - 6, 3);
+    // 擋泥板、鉚釘、備用履帶、工具
+    fillRR(c, -L / 2 + 1, -th - 1.5, L - 1, 2.2, 1, shade(col, -0.3));
+    c.fillStyle = shade(col, 0.18); c.fillRect(-L / 2 + 7, -th - hh, L - 18, 2);
+    for (let x = -L / 2 + 8; x < L / 2 - 12; x += 7) circ(c, x, -th - hh + 4, 0.8, shade(col, -0.35));
+    for (let k = 0; k < 3; k++) fillRR(c, -L / 2 + 6 + k * 5, -th - hh * 0.55, 4, 4, 0.6, '#3a3a34');
+    line(c, L / 4, -th - 6, L / 4 + 10, -th - 6, 1.2, '#6b4a2a');
+    // 排氣管冒煙
+    circ(c, -L / 2 - 2 - ((ph * 3) % 6), -th - hh * 0.6 - ((ph * 3) % 6), 3 + ((ph * 3) % 6) * 0.5, 'rgba(90,90,90,.25)');
+    if (v === 'stug') {
+      poly(c, [-L / 2 + 6, -th - hh, -L / 2 + 10, -th - hh - 12, 10, -th - hh - 12, 22, -th - hh], shade(col, 0.06));
+      c.save(); c.translate(18 + rec, -th - hh - 6); fillRR(c, 0, -2.6, gl, 5.2, 2, shade(col, -0.3)); fillRR(c, gl - 5, -3.6, 7, 7.2, 1.5, shade(col, -0.4)); c.restore();
+      fillRR(c, -6, -th - hh - 15, 9, 4, 1.5, shade(col, -0.2));
+      if (o.player) eagle(c, -L / 4, -th - hh / 2, hh * 0.32, '#e8e8e8', '#3f4438');
+      if (an > 0.12) muzzle(c, 18 + gl + 2, -th - hh - 6, 9);
+      return;
+    }
     if (v === 'spg') {
       poly(c, [-L / 2 + 6, -th - hh, -L / 2 + 8, -th - hh - 14, 6, -th - hh - 14, 12, -th - hh], shade(col, 0.08));
       c.save(); c.translate(6 + rec, -th - hh - 9); c.rotate(-0.22); fillRR(c, 0, -2.5, gl, 5, 2, shade(col, -0.3)); fillRR(c, gl - 4, -3.5, 6, 7, 1.5, shade(col, -0.4)); c.restore();
@@ -252,6 +372,9 @@
       fillRR(c, turretX - tw / 2, ty - tth, tw, tth + 2, tth * 0.45, shade(col, 0.07));
       if (v === 'bear') { circ(c, turretX - tw / 2 + 6, ty - tth, 6, shade(col, 0.07)); circ(c, turretX + tw / 2 - 8, ty - tth, 6, shade(col, 0.07)); circ(c, turretX - tw / 2 + 6, ty - tth, 3, '#e8a0a0'); circ(c, turretX + tw / 2 - 8, ty - tth, 3, '#e8a0a0'); circ(c, turretX + tw / 2 - 2, ty - tth * 0.55, 2.2, '#111'); }
       fillRR(c, turretX - 5, ty - tth - 3, 10, 4, 2, shade(col, -0.2));
+      c.fillStyle = 'rgba(255,255,255,.12)'; c.fillRect(turretX - tw / 2 + 3, ty - tth + 1, tw - 6, 2);
+      line(c, turretX - tw / 2 + 3, ty - tth, turretX - tw / 2 - 2, ty - tth - 16, 0.8, '#333');
+      if (v === 'flame') { fillRR(c, -L / 2 + 2, -th - hh - 9, 14, 9, 3, '#5a5a4a'); circ(c, turretX + tw / 2 + gl + 1, ty - tth / 2, 2.4, an > 0 ? '#ffb020' : '#444'); }
       // 標誌
       if (o.em) { if (o.player) eagle(c, -L / 4 + 2, -th - hh / 2, hh * 0.32, '#e8e8e8', '#3f4438'); else circ(c, -L / 4 + 2, -th - hh / 2, hh * 0.3, o.em); }
       if (v === 'thor') { c.fillStyle = '#ffd34a'; c.beginPath(); c.moveTo(turretX, ty - tth + 4); c.lineTo(turretX - 5, ty - 4); c.lineTo(turretX, ty - 6); c.lineTo(turretX - 3, ty + 1); c.lineTo(turretX + 5, ty - 8); c.lineTo(turretX, ty - 7); c.fill(); }
@@ -267,7 +390,7 @@
   }
   function plane(c, o) {
     const v = o.v, col = o.col, t = o.t || 0;
-    const W = { fighter: 44, bomber: 74, transport: 82, ghost: 50, ark: 210 }[v];
+    const W = { fighter: 44, bomber: 74, transport: 82, ghost: 50, ark: 210, dive: 54 }[v];
     const H = W * 0.22;
     // 機身
     ell(c, 0, 0, W / 2, H / 2, col);
@@ -281,6 +404,12 @@
       const n = v === 'ark' ? 4 : 2;
       for (let i = 0; i < n; i++) { const ex = -W * 0.1 + i * W * 0.14; ell(c, ex, H * 0.32, W * 0.06, H * 0.2, shade(col, -0.3)); ell(c, ex + W * 0.06, H * 0.32, 1.5, H * 0.45 * Math.abs(Math.sin(t * 40 + i)), 'rgba(200,200,200,.7)'); }
       for (let i = 0; i < (v === 'ark' ? 8 : 3); i++) circ(c, -W * 0.25 + i * W * 0.08, -H * 0.05, H * 0.1, 'rgba(160,215,255,.7)');
+    }
+    if (v === 'dive') {
+      c.strokeStyle = shade(col, -0.25); c.lineWidth = 3; c.beginPath(); c.moveTo(-W * 0.2, H * 0.1); c.lineTo(0, H * 0.45); c.lineTo(W * 0.22, H * 0.1); c.stroke();
+      for (const gx of [W * 0.12, W * 0.24]) { line(c, gx, H * 0.3, gx + 1, H * 1.1, 1.6, '#333'); ell(c, gx + 1, H * 1.15, 3.2, 2.2, shade(col, -0.2)); }
+      fillRR(c, -6, H * 0.4, 12, 3.5, 1.7, '#333');
+      ell(c, W * 0.18, -H * 0.42, W * 0.16, H * 0.3, 'rgba(160,215,255,.9)');
     }
     // 螺旋槳
     ell(c, W / 2 + 1, 0, 2, H * 0.75 * Math.abs(Math.sin(t * 45)), 'rgba(220,220,220,.8)');
@@ -424,17 +553,41 @@
     fillRR(c, -6, -16, 10, 5, 1.5, '#5b6152'); c.fillStyle = '#c33'; c.fillRect(8, -13, 6, 1.6);
   }
 
+  function pillbox(c, o) {
+    const an = o.anim || 0, col = '#8d8f86';
+    ell(c, 0, -1, 30, 4, 'rgba(90,80,60,.6)');
+    c.fillStyle = col; c.beginPath(); c.moveTo(-28, 0); c.quadraticCurveTo(-26, -34, 0, -36); c.quadraticCurveTo(26, -34, 28, 0); c.fill();
+    c.fillStyle = 'rgba(0,0,0,.15)'; c.beginPath(); c.moveTo(-28, 0); c.quadraticCurveTo(-26, -34, 0, -36); c.lineTo(0, 0); c.fill();
+    c.strokeStyle = 'rgba(0,0,0,.2)'; c.lineWidth = 0.8; for (const y of [-10, -20, -28]) { c.beginPath(); c.moveTo(-26, y); c.lineTo(26, y); c.stroke(); }
+    fillRR(c, 6, -22, 18, 5, 2, '#1e1e1a'); fillRR(c, 18, -21, 14, 3, 1, '#2a2a2a');
+    if (an > 0.1) muzzle(c, 32, -19.5, 6);
+    for (let k = 0; k < 6; k++) fillRR(c, -30 + k * 10, -7, 10, 7, 3, k % 2 ? '#a89a72' : '#9a8c66');
+    eagle(c, -10, -22, 5, '#e8e8e8', '#3f4438');
+  }
+  function halftrack(c, o) {
+    const ph = o.phase || 0, col = o.col, an = o.anim || 0;
+    c.save(); c.translate(-10, 0); tracks(c, 36, 10, ph, col); c.restore();
+    circ(c, 20, -7, 7, '#222'); circ(c, 20, -7, 3, '#666'); line(c, 20, -7, 20 + Math.cos(ph * 2) * 5, -7 + Math.sin(ph * 2) * 5, 1, '#888');
+    poly(c, [-30, -10, -29, -26, 12, -26, 16, -18, 30, -16, 30, -10], col);
+    c.fillStyle = shade(col, -0.2); c.fillRect(14, -16, 16, 2); for (let k = 0; k < 4; k++) c.fillRect(17 + k * 3, -14, 1.5, 4);
+    fillRR(c, 4, -30, 10, 5, 1, 'rgba(160,215,255,.8)');
+    for (const dx of [-22, -12]) { circ(c, dx, -30, 4.2, '#f2c9a0'); c.fillStyle = o.helmCol || '#5f666f'; c.beginPath(); c.arc(dx, -32, 5, PI, 0); c.fill(); }
+    line(c, -4, -27, -4, -36, 1.6, '#333'); fillRR(c, -6, -38, 18, 3.4, 1, '#2a2a2a');
+    if (an > 0.1) muzzle(c, 13, -36.5, 5);
+    if (o.player) eagle(c, -14, -18, 5, '#e8e8e8', '#3f4438'); else if (o.em) circ(c, -14, -18, 4, o.em);
+  }
+
   // ---------- 單位（總入口） ----------
   // def.look 決定畫法；side 0 = 我方（灰色、面向左），1 = 敵方（國家配色、面向右）
   D.drawLook = function (c, look, side, nat, o) {
     const P = D.PLAYER;
     const uni = side ? nat.uni : P.uni;
     const veh = side ? shade(nat.uni, -0.05) : P.veh;
-    const em = side ? nat.flag.emc : P.em;
+    const em = side ? nat.em : P.em;
     const base = {
       uni, helm: side ? nat.helm : P.helm, helmCol: side ? shade(nat.uni, -0.12) : P.helmCol, skin: '#f2c9a0',
       gear: look.gear, hat: look.hat, pack: look.pack, cape: look.cape, big: look.big, winter: look.hat === 'winter',
-      phase: o.phase, anim: o.anim, t: o.t, col: veh, em, player: !side, band: side ? nat.flag.emc : null, nat, angry: !!side, v: look.v, mill: look.mill, wings: look.wings, submerged: o.submerged,
+      phase: o.phase, anim: o.anim, t: o.t, col: veh, em, player: !side, band: side ? nat.band : null, nat, angry: !!side, v: look.v, mill: look.mill, wings: look.wings, submerged: o.submerged,
     };
     switch (look.k) {
       case 'inf': soldier(c, base); break;
@@ -455,6 +608,8 @@
       case 'colossus': colossus(c, Object.assign(base, { col: '#5a6152' })); break;
       case 'sub': sub(c, Object.assign(base, { col: '#4d5560' })); break;
       case 'pigeon': pigeon(c, base); break;
+      case 'pillbox': pillbox(c, base); break;
+      case 'halftrack': halftrack(c, base); break;
       case 'dog': dog(c, base); break;
     }
   };
@@ -497,8 +652,8 @@
     const dpr = 2; cv.width = w * dpr; cv.height = h * dpr; cv.style.width = w + 'px'; cv.style.height = h + 'px';
     const c = cv.getContext('2d'); c.scale(dpr, dpr);
     const look = def.look, k = look.k;
-    const sizes = { inf: 52, squad: 60, tank: def.look.v === 'thor' ? 140 : 90, plane: def.look.v === 'ark' ? 220 : 90, horse: 60, bike: 50, bicycle: 50, car: 60, gun: 70, rocket: 66, aa: 60, train: 150, landship: 200, colossus: 240, sub: 140, pigeon: 44, dog: 50 };
-    const hgt = { inf: 50, squad: 50, tank: 46, plane: 30, horse: 70, bike: 50, bicycle: 50, car: 40, gun: 40, rocket: 40, aa: 40, train: 60, landship: 130, colossus: 220, sub: 55, pigeon: 25, dog: 30 };
+    const sizes = { pillbox: 70, halftrack: 70, inf: 52, squad: 60, tank: def.look.v === 'thor' ? 140 : 90, plane: def.look.v === 'ark' ? 220 : 90, horse: 60, bike: 50, bicycle: 50, car: 60, gun: 70, rocket: 66, aa: 60, train: 150, landship: 200, colossus: 240, sub: 140, pigeon: 44, dog: 50 };
+    const hgt = { pillbox: 40, halftrack: 42, inf: 50, squad: 50, tank: 46, plane: 30, horse: 70, bike: 50, bicycle: 50, car: 40, gun: 40, rocket: 40, aa: 40, train: 60, landship: 130, colossus: 220, sub: 55, pigeon: 25, dog: 30 };
     const big = look.big || 1;
     const sx = w / (sizes[k] * (k === 'inf' ? big : 1)), sy = h / (hgt[k] * (k === 'inf' ? big : 1) + 6);
     const s = Math.min(sx, sy) * 0.95;
@@ -620,6 +775,48 @@
         for (const dx of [-56, 56]) { fillRR(c, dx - 14, -130, 28, 62, 2, lt); c.fillStyle = '#d8b84a'; c.beginPath(); c.moveTo(dx - 16, -130); c.quadraticCurveTo(dx - 20, -160, dx, -172); c.quadraticCurveTo(dx + 20, -160, dx + 16, -130); c.fill(); }
         win(-8, -170, 16, 24); circ(c, 0, -120, 12, '#f2f2f2'); line(c, 0, -120, 0, -128, 1.5, '#222'); line(c, 0, -120, 6 * Math.cos(t), -120 + 6 * Math.sin(t), 1.5, '#222');
         fillRR(c, -16, -50, 32, 50, 16, '#3a1a1a'); break;
+      case 'bastion':
+        poly(c, [-90, 0, -70, -40, 70, -40, 90, 0], '#8a7a5a');
+        fillRR(c, -60, -110, 120, 72, 2, col); for (let i = -3; i <= 3; i++) fillRR(c, i * 17 - 6, -120, 12, 12, 1, col);
+        fillRR(c, -78, -140, 34, 102, 14, lt); for (let i = 0; i < 3; i++) fillRR(c, -76 + i * 11, -150, 8, 12, 1, lt);
+        for (const yy of [-120, -95, -70]) win(-64, yy, 4, 12); win(-20, -90, 4, 14); win(18, -90, 4, 14);
+        fillRR(c, -14, -78, 28, 40, 14, '#3a2a20'); flagAt(30, -120, 1); break;
+      case 'colonial':
+        fillRR(c, -70, -100, 140, 100, 2, col); poly(c, [-80, -100, 0, -136, 80, -100], '#3d6a4a');
+        fillRR(c, -74, -60, 148, 6, 1, lt); for (let i = 0; i < 6; i++) fillRR(c, -66 + i * 26, -54, 6, 54, 2, '#fff');
+        for (let i = 0; i < 4; i++) win(-56 + i * 32, -90, 16, 22); fillRR(c, -12, -44, 24, 44, 2, '#5a3a20');
+        for (let k = 0; k < 7; k++) fillRR(c, -70 + k * 20, -12, 20, 12, 5, k % 2 ? '#a89a72' : '#9a8c66'); flagAt(56, -136, 1); break;
+      case 'obelisk':
+        poly(c, [-50, 0, -42, -190, -30, -204, -18, -190, -10, 0], '#8a7a64'); for (let y = -170; y < -10; y += 26) win(-36, y, 12, 9);
+        circ(c, -30, -200, 6, '#9a8a74');
+        fillRR(c, 0, -60, 80, 60, 30, col); poly(c, [-6, -56, 40, -110, 86, -56], '#a8884a');
+        fillRR(c, 28, -36, 24, 36, 12, '#3a2a20'); flagAt(70, -100, 1); break;
+      case 'colonialfort':
+        poly(c, [-84, 0, -76, -80, 76, -80, 84, 0], col); fillRR(c, -86, -10, 172, 10, 1, dk);
+        for (let i = -4; i <= 4; i++) fillRR(c, i * 17 - 6, -90, 12, 12, 1, col);
+        for (const dx of [-74, 62]) { fillRR(c, dx, -120, 14, 34, 4, lt); c.fillStyle = '#c86a3a'; c.beginPath(); c.arc(dx + 7, -120, 8, PI, 0); c.fill(); win(dx + 4, -110, 6, 8); }
+        fillRR(c, -16, -56, 32, 56, 16, '#4a3020'); flagAt(0, -90, 1); break;
+      case 'persian':
+        fillRR(c, -80, -110, 160, 110, 2, col); fillRR(c, -40, -150, 80, 50, 2, lt);
+        c.fillStyle = '#2a6aa8'; c.beginPath(); c.moveTo(-28, 0); c.lineTo(-28, -90); c.quadraticCurveTo(0, -130, 28, -90); c.lineTo(28, 0); c.fill();
+        c.fillStyle = '#3a2a20'; c.beginPath(); c.moveTo(-18, 0); c.lineTo(-18, -70); c.quadraticCurveTo(0, -98, 18, -70); c.lineTo(18, 0); c.fill();
+        c.fillStyle = '#4a9ad0'; c.beginPath(); c.arc(0, -150, 26, PI, 0); c.fill(); circ(c, 0, -178, 3, '#d8b84a');
+        for (const dx of [-62, 46]) { win(dx, -90, 14, 20); win(dx, -50, 14, 20); } flagAt(60, -110, 1); break;
+      case 'pyramid':
+        poly(c, [-110, 0, 0, -170, 110, 0], col); c.fillStyle = 'rgba(0,0,0,.14)'; c.beginPath(); c.moveTo(0, -170); c.lineTo(110, 0); c.lineTo(0, 0); c.fill();
+        c.strokeStyle = 'rgba(0,0,0,.12)'; c.lineWidth = 1; for (let y = -150; y < 0; y += 16) { const w2 = (170 + y) / 170 * 110; c.beginPath(); c.moveTo(-w2, y); c.lineTo(w2, y); c.stroke(); }
+        fillRR(c, -50, -44, 100, 44, 8, '#8f949a'); fillRR(c, -38, -30, 76, 7, 2, '#1e1e1a'); c.save(); c.translate(20, -26); fillRR(c, 0, -3, 46, 6, 2, '#333'); c.restore();
+        flagAt(-60, -44, 1); break;
+      case 'ottoman':
+        fillRR(c, -70, -96, 140, 96, 2, col); for (let i = -3; i <= 3; i++) fillRR(c, i * 20 - 7, -108, 14, 14, 1, col);
+        for (const dx of [-84, 56]) { fillRR(c, dx, -150, 30, 150, 3, lt); poly(c, [dx - 4, -150, dx + 15, -190, dx + 34, -150], '#7a5a3a'); win(dx + 10, -130, 10, 16); win(dx + 10, -90, 10, 16); }
+        c.fillStyle = '#3a2a20'; c.beginPath(); c.moveTo(-18, 0); c.lineTo(-18, -44); c.quadraticCurveTo(0, -64, 18, -44); c.lineTo(18, 0); c.fill();
+        flagAt(0, -108, 1); break;
+      case 'inca':
+        for (let k = 0; k < 4; k++) { const w2 = 90 - k * 16, y0 = -k * 34; poly(c, [-w2, y0, -w2 + 6, y0 - 34, w2 - 6, y0 - 34, w2, y0], k % 2 ? col : lt);
+          c.strokeStyle = 'rgba(0,0,0,.18)'; c.lineWidth = 1; for (let x = -w2 + 14; x < w2 - 8; x += 18) { c.beginPath(); c.moveTo(x, y0); c.lineTo(x + 3, y0 - 34); c.stroke(); } }
+        poly(c, [-14, 0, -10, -46, 10, -46, 14, 0], '#3a2a20'); poly(c, [-10, -102, -7, -126, 7, -126, 10, -102], '#2a2016');
+        flagAt(40, -136, 1); break;
     }
     // 損壞效果
     if (frac < 0.6) for (let i = 0; i < (frac < 0.3 ? 3 : 1); i++) { const sx = -30 + i * 30, sy = -60 - ((t * 20 + i * 13) % 40); circ(c, sx, sy, 10 + ((t * 20 + i * 13) % 40) * 0.4, `rgba(60,60,60,${0.5 - ((t * 20 + i * 13) % 40) / 90})`); }
@@ -653,6 +850,9 @@
     snowfield: { sky: ['#b8c8d8', '#eef2f6'], far: 'flat', farCol: '#d8e0e8', mid: 'birches', midCol: '#e8e8e8', g: ['#f2f5f8', '#e2e8ee'] },
     steppe:    { sky: ['#b8c0b0', '#e8e8d8'], far: 'flat', farCol: '#a8a878', mid: 'grass', midCol: '#8a8a5a', g: ['#9a9a64', '#888852'] },
     ruins:     { sky: ['#8a8a8a', '#c8c4bc'], far: 'skyline', farCol: '#6a6a6a', mid: 'ruins', midCol: '#7a7068', g: ['#7a746a', '#6a645a'] },
+    highland:  { sky: ['#8ec5ff', '#e6f2ff'], far: 'mountains', farCol: '#8a8a6a', mid: 'acacia', midCol: '#4a6a2a', g: ['#9aa060', '#888e50'] },
+    tropic:    { sky: ['#7ec8ff', '#eaf8ff'], far: 'sea', farCol: '#2aa0c8', mid: 'palms', midCol: '#3a8a3a', g: ['#c8b878', '#b4a464'] },
+    persia:    { sky: ['#ffd8a0', '#fff4e0'], far: 'mesa', farCol: '#c8a070', mid: 'ruins', midCol: '#c8a878', g: ['#d8bc88', '#c8aa74'] },
     capital:   { sky: ['#9aa8b8', '#e0e6ec'], far: 'domes', farCol: '#8a98a8', mid: 'birches', midCol: '#e8e8e8', g: ['#eef2f6', '#dde4ea'] },
   };
   D.TER = TER;
@@ -720,12 +920,61 @@
     const px0 = camX * 0.7 - 120, px1 = camX * 0.7 + viewW + 120;
     for (let x = -200; x < L + 200; x += 70 + r() * 60) { if (x > px0 && x < px1) midProp(c, ter.mid, x, -40, 0.7 + r() * 0.4, ter.midCol, r, t); else r(); }
     c.restore();
+    // 遠方戰火的黑煙
+    const r2 = srand(stage.i * 7 + 3);
+    for (let k = 0; k < 4; k++) {
+      const sx = camX * 0.55 + (r2() * 1.3 - 0.15) * viewW, base = -44;
+      for (let j = 0; j < 7; j++) {
+        const q = ((t * 0.08 + j / 7 + k * 0.3) % 1);
+        circ(c, sx + q * 40 + Math.sin(q * 6 + k) * 6, base - q * 150, 8 + q * 26, `rgba(70,66,62,${0.32 * (1 - q)})`);
+      }
+    }
+    // 地平線的戰場煙塵
+    const hz = c.createLinearGradient(0, -80, 0, -30);
+    hz.addColorStop(0, 'rgba(150,140,120,0)'); hz.addColorStop(1, 'rgba(150,140,120,.35)');
+    c.fillStyle = hz; c.fillRect(camX - 10, -80, viewW + 20, 50);
     // 地面
     c.fillStyle = ter.g[1]; c.fillRect(camX - 10, -42, viewW + 20, 60);
     c.fillStyle = ter.g[0]; c.fillRect(camX - 10, -8, viewW + 20, 200);
     if (ter.water) { c.fillStyle = 'rgba(80,140,220,.55)'; c.fillRect(camX - 10, -40, viewW + 20, 10); }
     c.fillStyle = shade(ter.g[0], -0.08);
     for (let x = Math.floor((camX - 10) / 30) * 30; x < camX + viewW + 10; x += 30) c.fillRect(x + ((x * 7) % 13), 6 + ((x * 3) % 20), 8, 2);
+    // 戰場上原本就有的東西：舊彈坑、沙包、鐵絲網、燒焦的樹樁、坦克殘骸
+    const r3 = srand(stage.i * 31 + 11), dark = shade(ter.g[1], -0.3);
+    for (let x = 240; x < L - 240; x += 90 + r3() * 140) {
+      const kind = r3(), sc = 0.7 + r3() * 0.6;
+      if (x < camX - 80 || x > camX + viewW + 80) continue;
+      if (kind < 0.3) { ell(c, x, -36, 26 * sc, 4.5 * sc, dark); ell(c, x, -37.5, 20 * sc, 2.6 * sc, shade(dark, -0.25)); }
+      else if (kind < 0.5) { for (let k = 0; k < 4; k++) fillRR(c, x + k * 11 * sc, -41 - (k % 2) * 0, 12 * sc, 6 * sc, 3, k % 2 ? '#a89a72' : '#988a64'); for (let k = 0; k < 3; k++) fillRR(c, x + 5 * sc + k * 11 * sc, -46.5 * sc / sc, 12 * sc, 6 * sc, 3, '#a09268'); }
+      else if (kind < 0.68) { for (let k = 0; k < 4; k++) line(c, x + k * 16, -36, x + k * 16, -50, 1.4, '#5a4a3a'); c.strokeStyle = 'rgba(60,60,60,.8)'; c.lineWidth = 0.8; c.beginPath(); for (let k = 0; k <= 12; k++) c.lineTo(x + k * 4, -44 + (k % 2 ? -4 : 3)); c.stroke(); }
+      else if (kind < 0.84) { poly(c, [x - 4, -36, x - 3, -58 * sc, x + 1, -62 * sc, x + 4, -36], '#2e2620'); line(c, x, -52 * sc, x + 10, -60 * sc, 1.6, '#2e2620'); }
+      else { fillRR(c, x - 24 * sc, -48 * sc, 48 * sc, 12 * sc, 4, '#3a3a34'); fillRR(c, x - 10 * sc, -58 * sc, 20 * sc, 10 * sc, 4, '#34342e'); line(c, x + 8 * sc, -54 * sc, x + 30 * sc, -64 * sc, 3 * sc, '#2e2e28');
+        for (let j = 0; j < 4; j++) { const q = ((t * 0.25 + j / 4 + x) % 1); circ(c, x + q * 8, -60 * sc - q * 60, 4 + q * 12, `rgba(60,58,54,${0.4 * (1 - q)})`); } }
+    }
+  };
+
+  // ---------- 地上的痕跡（戰鬥中產生的） ----------
+  D.decals = function (c, B) {
+    for (const d of B.decals) {
+      const age = B.t - d.t0;
+      switch (d.k) {
+        case 'blood': {
+          const a = d.life ? Math.min(1, (d.life - age) / 8) : 1;
+          c.globalAlpha = Math.max(0, a) * 0.85;
+          ell(c, d.x, 1, d.r, d.r * 0.28, '#6a0d0d'); ell(c, d.x + d.r * 0.5 * (d.seed - 0.5), 1.5, d.r * 0.55, d.r * 0.16, '#8a1414');
+          circ(c, d.x + d.r * 0.9, 2, 1.3, '#6a0d0d'); circ(c, d.x - d.r * 0.8, 1, 1, '#6a0d0d');
+          c.globalAlpha = 1; break;
+        }
+        case 'crater': ell(c, d.x, 2, d.r, d.r * 0.22, 'rgba(40,30,20,.55)'); ell(c, d.x, 0, d.r * 0.7, d.r * 0.12, 'rgba(20,15,10,.6)'); ell(c, d.x - d.r * 0.9, 0, d.r * 0.25, d.r * 0.1, 'rgba(110,90,60,.6)'); ell(c, d.x + d.r * 0.9, 0, d.r * 0.25, d.r * 0.1, 'rgba(110,90,60,.6)'); break;
+        case 'scorch': { const g = c.createRadialGradient(d.x, 1, 1, d.x, 1, d.r); g.addColorStop(0, 'rgba(20,16,12,.55)'); g.addColorStop(1, 'rgba(20,16,12,0)'); c.fillStyle = g; c.beginPath(); c.ellipse(d.x, 1, d.r, d.r * 0.25, 0, 0, PI * 2); c.fill(); break; }
+        case 'wreck': {
+          const a = Math.max(0, Math.min(1, (d.life - age) / 3));
+          circ(c, d.x, -4, 3 + Math.sin(age * 20) * 1.2, `rgba(255,150,40,${0.8 * a})`);
+          for (let j = 0; j < 6; j++) { const q = ((age * 0.45 + j / 6) % 1); circ(c, d.x + q * 18 + Math.sin(q * 5 + d.seed * 9) * 5, -6 - q * 90, (5 + q * 18) * (d.r / 10), `rgba(50,48,45,${0.5 * (1 - q) * a})`); }
+          break;
+        }
+      }
+    }
   };
 
   // 天氣（畫在世界座標上方）
@@ -778,10 +1027,13 @@
       case 'flash': circ(c, f.x, f.y - 14, 40 * (1 - p) + 10, `rgba(255,255,255,${0.9 - p})`); break;
       case 'heal': c.fillStyle = `rgba(90,230,110,${1 - p})`; c.font = 'bold 14px sans-serif'; c.fillText('+', f.x - 4, f.y - p * 20); break;
       case 'dust': ell(c, f.x, -2, 18 * (0.5 + p), 5, `rgba(160,140,110,${0.6 - p * 0.6})`); break;
+      case 'blood': { const tt = f.t, x = f.x + f.vx * tt, y = Math.min(0, f.y + f.vy * tt + 300 * tt * tt); circ(c, x, y, f.r * (1 - p * 0.3), `rgba(150,10,14,${0.95 - p * 0.4})`); break; }
+      case 'debris': { const tt = f.t, x = f.x + f.vx * tt, y = Math.min(0, f.y + f.vy * tt + 380 * tt * tt); c.save(); c.translate(x, y); c.rotate(tt * 12 + f.vx); c.fillStyle = `rgba(40,38,34,${1 - p})`; c.fillRect(-f.r, -f.r * 0.6, f.r * 2, f.r * 1.2); c.restore(); break; }
+      case 'smoke': circ(c, f.x + (f.vx || 0) * f.t, f.y - p * 26, f.r * (0.6 + p * 1.4), `rgba(180,175,165,${0.55 * (1 - p)})`); break;
       case 'splash': for (let i = 0; i < 8; i++) circ(c, f.x + (i - 4) * 8, -p * 40 * Math.sin(i), 4, `rgba(110,80,50,${1 - p})`); break;
       case 'bomb': { const y = f.y + (0 - f.y) * p; fillRR(c, f.x - 2.5, y - 7, 5, 12, 2.5, '#333'); break; }
       case 'beam': {
-        const w = 820;
+        const w = f.w || 820;
         const g = c.createLinearGradient(f.x, 0, f.x - w, 0);
         g.addColorStop(0, `rgba(255,255,220,${1 - p})`); g.addColorStop(1, `rgba(255,200,80,${0.5 - p * 0.5})`);
         c.fillStyle = g; c.fillRect(f.x - w * Math.min(1, p * 3), -110, w * Math.min(1, p * 3), 26 * (1 - p) + 4);
