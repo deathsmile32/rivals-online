@@ -266,7 +266,8 @@
     circ(c, 0, -33, 9.5, o.skin);
     c.fillStyle = 'rgba(120,70,40,.12)'; c.beginPath(); c.arc(0, -33, 9.5, PI * 0.55, PI * 1.25); c.lineTo(0, -33); c.fill();
     c.strokeStyle = OL; c.lineWidth = 0.8; c.beginPath(); c.arc(0, -33, 9.5, 0, PI * 2); c.stroke();
-    ell(c, 4.6, -33.4, 1.25, 1.55, '#1e1a16'); circ(c, 4.9, -33.9, 0.45, '#fff');
+    if (o.ko) { line(c, 3.4, -34.6, 5.8, -32.2, 0.9, '#1e1a16'); line(c, 5.8, -34.6, 3.4, -32.2, 0.9, '#1e1a16'); }
+    else { ell(c, 4.6, -33.4, 1.25, 1.55, '#1e1a16'); circ(c, 4.9, -33.9, 0.45, '#fff'); }
     line(c, 2.6, o.angry ? -37.6 : -36.6, 6.4, o.angry ? -36.2 : -36.8, 1.1, '#3a2a1a');
     line(c, 8.2, -32.5, 9.3, -30.6, 1, shade(o.skin, -0.25));
     line(c, 4.2, -28.4, 6.8, o.angry ? -28.8 : -28.2, 0.9, '#7a3a2a');
@@ -586,7 +587,7 @@
     const em = side ? nat.em : P.em;
     const base = {
       uni, helm: side ? nat.helm : P.helm, helmCol: side ? shade(nat.uni, -0.12) : P.helmCol, skin: '#f2c9a0',
-      gear: look.gear, hat: look.hat, pack: look.pack, cape: look.cape, big: look.big, winter: look.hat === 'winter',
+      gear: look.gear, hat: look.hat, pack: look.pack, cape: look.cape, big: look.big, winter: look.hat === 'winter', ko: !!o.ko,
       phase: o.phase, anim: o.anim, t: o.t, col: veh, em, player: !side, band: side ? nat.band : null, nat, angry: !!side, v: look.v, mill: look.mill, wings: look.wings, submerged: o.submerged,
     };
     switch (look.k) {
@@ -640,6 +641,43 @@
       const w = 60, f = Math.max(0, u.hp / u.max);
       c.fillStyle = 'rgba(0,0,0,.6)'; c.fillRect(u.x - w / 2, y - 75 * big - 12, w, 6);
       c.fillStyle = '#ff4d4d'; c.fillRect(u.x - w / 2 + 1, y - 75 * big - 11, (w - 2) * f, 4);
+    }
+  };
+
+  // 地上的屍體／燒焦的車殼
+  // pose 0 仰躺、1 趴著、2 側躺縮著、3 靠坐（垂著頭）
+  const POSE = [
+    { rot: -PI / 2, lift: 8, sx: 1, sy: 1 },
+    { rot: PI / 2, lift: 7, sx: 1, sy: 1 },
+    { rot: -PI / 2 + 0.25, lift: 9, sx: 0.92, sy: 0.85 },
+    { rot: 0.5, lift: -2, sx: 1, sy: 0.72 },
+    { rot: 0.12, lift: -1, sx: 1.05, sy: 0.42 },
+  ];
+  D.corpses = function (c, B, nat, t) {
+    for (const k of B.corpses) {
+      const age = B.t - k.t0, big = k.def.look.big || 1;
+      const fall = Math.min(1, age / 0.45), e = 1 - Math.pow(1 - fall, 3);
+      const x = k.x0 + (k.x1 - k.x0) * e;
+      const a = Math.min(1, (k.t0 + k.life - B.t) / 5);
+      if (a <= 0) continue;
+      c.save(); c.globalAlpha = a;
+      if (k.hull) {
+        c.translate(x, 0); c.scale(k.dir * big, big);
+        c.filter = 'brightness(0.32) saturate(0.3)';
+        D.drawLook(c, k.def.look, k.side, nat, { phase: 0, anim: 0, t: 0 });
+        c.filter = 'none';
+        for (let j = 0; j < 3; j++) { const q = ((age * 0.5 + j / 3 + k.n * 0.37) % 1); circ(c, -6 + q * 10, -28 - q * 50, 4 + q * 10, `rgba(55,52,48,${0.35 * (1 - q)})`); }
+      } else {
+        const P = POSE[k.pose];
+        c.fillStyle = 'rgba(0,0,0,.16)'; c.beginPath(); c.ellipse(x, 1, 22 * big, 3.5, 0, 0, PI * 2); c.fill();
+        c.translate(x, -P.lift * big * e);
+        const fd = k.flip ? -k.dir : k.dir;
+        c.scale(fd * big, big);
+        c.rotate(P.rot * e * (k.flip ? -1 : 1) * (k.pose === 3 ? 1 : 1));
+        c.scale(P.sx, 1 - (1 - P.sy) * e);
+        D.drawLook(c, Object.assign({}, k.def.look, { big: 1 }), k.side, nat, { phase: 1.6, anim: 0, t: 0, ko: true });
+      }
+      c.restore();
     }
   };
 

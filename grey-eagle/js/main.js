@@ -418,7 +418,8 @@
   // ================= 戰鬥 =================
   const cv = $('cv'), ctx = cv.getContext('2d');
   let B = null, curCh = 0, curSt = 0, raf = 0, last = 0, speed = 1, paused = false, resultShown = false;
-  let cam = 0, scale = 1, viewW = 800, groundY = 300, dpr = 1, dragging = null;
+  let cam = 0, scale = 1, baseScale = 1, zoom = 1, viewW = 800, groundY = 300, dpr = 1, dragging = null;
+  const ZMIN = 0.45, ZMAX = 2.4;
   const slotEls = [];
 
   function startBattle(ch, i) {
@@ -444,6 +445,7 @@
       box.appendChild(b); slotEls.push(b);
     }
     speed = 1; $('bSpeed').textContent = '▶ 1x';
+    zoom = 1; $('bZoom').textContent = '100%';
     paused = false; resultShown = false;
     $('pause').classList.add('hidden'); $('result').classList.add('hidden');
     layout();
@@ -460,7 +462,8 @@
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     const barH = $('bBar').offsetHeight || 130;
     groundY = H - barH - 10;
-    scale = Math.max(0.42, Math.min(1.15, (groundY - 30) / 340));
+    baseScale = Math.max(0.42, Math.min(1.15, (groundY - 30) / 340));
+    scale = baseScale * zoom;
     viewW = W / scale;
     $('rotateTip').classList.toggle('hidden', !(H > W && W < 700));
   }
@@ -501,6 +504,7 @@
     D.base(ctx, nat.base, B.EB, nat.baseCol, B.base[1].hp / B.base[1].max, t, nat, B.base[1].hit);
     D.base(ctx, 'player', B.PB, '#7d8273', B.base[0].hp / B.base[0].max, t, null, B.base[0].hit);
     D.decals(ctx, B);
+    D.corpses(ctx, B, nat, t);
     baseHp(B.EB, B.base[1]); baseHp(B.PB, B.base[0]);
     // 單位：地面先畫，空中後畫
     const us = B.units.slice().sort((a, b) => (a.alt - b.alt) || (a.side - b.side) || (a.n - b.n));
@@ -600,23 +604,81 @@
   $('pRetry').onclick = () => { $('pause').classList.add('hidden'); startBattle(curCh, curSt); };
   $('pQuit').onclick = () => endBattle('map');
 
-  cv.addEventListener('pointerdown', e => { dragging = { x: e.clientX, cam }; cv.setPointerCapture(e.pointerId); ac(); });
-  cv.addEventListener('pointermove', e => { if (dragging) cam = dragging.cam - (e.clientX - dragging.x) / scale; });
-  cv.addEventListener('pointerup', () => { dragging = null; });
-  cv.addEventListener('pointercancel', () => { dragging = null; });
-  cv.addEventListener('wheel', e => { e.preventDefault(); cam += (e.deltaX || e.deltaY) / scale; }, { passive: false });
-  const keys = {};
-  function keyScroll(dt) { if (keys.ArrowLeft || keys.a) cam -= 700 * dt; if (keys.ArrowRight || keys.d) cam += 700 * dt; }
-  window.addEventListener('keydown', e => {
-    keys[e.key] = true;
-    if (cur !== 'battle' || !B) return;
-    if (e.key === 'Escape' || e.key === 'p') { setPause(!paused); return; }
-    if (paused) return;
-    if (/^[0-9]$/.test(e.key)) tryDeploy((+e.key + 9) % 10);
-    else if (e.key === 'q' || e.key === 'Q') B.upgradeWallet();
-    else if (e.key === ' ' || e.key === 'w' || e.key === 'W') { e.preventDefault(); B.fireCannon(); }
+  // ---- 視角：拖曳移動、滾輪／雙指縮放 ----
+  // 以螢幕上的 ax 點為中心縮放（那個位置的東西不會跑掉）
+  function setZoom(z, ax) {
+    if (!B) return;
+    z = Math.max(ZMIN, Math.min(ZMAX, z));
+    if (ax == null) ax = cv.clientWidth / 2;
+    const wx = cam + ax / scale;
+    zoom = z; scale = baseScale * zoom; viewW = cv.clientWidth / scale;
+    cam = wx - ax / scale; clampCam();
+    $('bZoom').textContent = Math.round(zoom * 100) + '%';
+  }
+  const ptrs = new Map();
+  let pinch = null;
+  cv.addEventListener('pointerdown', e => {
+    ac(); cv.setPointerCapture(e.pointerId);
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ptrs.size === 2) {
+      const [a, b] = [...ptrs.values()];
+      pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, z: zoom }; dragging = null;
+    } else if (ptrs.size === 1) dragging = { x: e.clientX, cam };
   });
-  window.addEventListener('keyup', e => { keys[e.key] = false; });
+  cv.addEventListener('pointermove', e => {
+    if (!ptrs.has(e.pointerId)) return;
+    ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pinch && ptrs.size >= 2) {
+      const [a, b] = [...ptrs.values()];
+      const d = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+      setZoom(pinch.z * d / pinch.d, (a.x + b.x) / 2 - cv.getBoundingClientRect().left);
+    } else if (dragging) { cam = dragging.cam - (e.clientX - dragging.x) / scale; }
+  });
+  const ptrEnd = e => {
+    ptrs.delete(e.pointerId);
+    if (ptrs.size < 2) pinch = null;
+    if (ptrs.size === 1) { const p = [...ptrs.values()][0]; dragging = { x: p.x, cam }; } else if (!ptrs.size) dragging = null;
+  };
+  cv.addEventListener('pointerup', ptrEnd);
+  cv.addEventListener('pointercancel', ptrEnd);
+  // 滑鼠滾輪：上下滾 = 縮放；左右滾（或按住 Shift）= 移動
+  cv.addEventListener('wheel', e => {
+    e.preventDefault();
+    const ax = e.clientX - cv.getBoundingClientRect().left;
+    if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) cam += (e.deltaX || e.deltaY) / scale;
+    else setZoom(zoom * Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0015)), ax);
+  }, { passive: false });
+  $('bZoomIn').onclick = () => setZoom(zoom * 1.25);
+  $('bZoomOut').onclick = () => setZoom(zoom / 1.25);
+  $('bZoom').onclick = () => setZoom(1);
+  // ---- 鍵盤：用 e.code 判斷實體按鍵，開著注音等中文輸入法也能用 ----
+  const keys = {};
+  function keyScroll(dt) {
+    const sp = 800 / Math.sqrt(zoom);
+    if (keys.ArrowLeft || keys.KeyA) cam -= sp * dt;
+    if (keys.ArrowRight || keys.KeyD) cam += sp * dt;
+    if (keys.ArrowUp) setZoom(zoom * Math.exp(dt * 1.5));
+    if (keys.ArrowDown) setZoom(zoom * Math.exp(-dt * 1.5));
+  }
+  const DIGIT = /^(?:Digit|Numpad)([0-9])$/;
+  window.addEventListener('keydown', e => {
+    const code = e.code || '';
+    keys[code] = true;
+    if (cur !== 'battle' || !B) return;
+    if (code === 'Escape' || code === 'KeyP') { setPause(!paused); return; }
+    if (paused) return;
+    const m = code.match(DIGIT);
+    if (m) { e.preventDefault(); if (!e.repeat) tryDeploy((+m[1] + 9) % 10); }
+    else if (code === 'KeyQ') B.upgradeWallet();
+    else if (code === 'Space' || code === 'KeyW') { e.preventDefault(); B.fireCannon(); }
+    else if (code === 'Equal' || code === 'NumpadAdd') setZoom(zoom * 1.25);
+    else if (code === 'Minus' || code === 'NumpadSubtract') setZoom(zoom / 1.25);
+    else if (code === 'Home') cam = B.L;
+    else if (code === 'End') cam = -100;
+    else if (code === 'KeyF') { const pl = B.alive(0); if (pl.length) cam = Math.min(...pl.map(u => u.x)) - viewW * 0.35; }
+  });
+  window.addEventListener('keyup', e => { keys[e.code || ''] = false; });
+  window.addEventListener('blur', () => { for (const k in keys) keys[k] = false; });
   document.addEventListener('pointerdown', () => ac(), { once: true });
   document.addEventListener('visibilitychange', () => { if (document.hidden && B && !B.result) setPause(true); });
 
