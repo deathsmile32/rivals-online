@@ -1,8 +1,15 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2b2f26">
 <title>灰鷹軍團</title>
 <link rel="stylesheet" href="style.css">
-<style>:root{color-scheme:dark}html,body{background:#23271f}</style>
-
+</head>
+<body>
 
 <!-- 共用：資源列 -->
 <div id="topbar" class="hidden">
@@ -25,7 +32,7 @@
     </div>
     <div class="titleRes"><span>🎖️ <b id="tMedal">0</b></span><span>⭐ <b id="tXp">0</b></span><span id="tProg"></span></div>
     <button id="cloudBtn">☁️ 登入 / 註冊</button>
-    <div class="note">所有國家、陣營、人物都是虛構的。</div>
+    <div class="note">我方「灰鷹軍團」與所有人物都是虛構的，劇情不代表真實歷史。</div>
   </div>
 </div>
 
@@ -86,9 +93,10 @@
     </ul>
     <h2>世界篇</h2>
     <ul>
-      <li>40 關：小國 → 遠方參戰國 → 四大強國，最後是紅星聯盟。</li>
+      <li>48 關、28 個國家：小國 → 遠方參戰國 → 四大強國（法國、英國、美國），最後是蘇聯。</li>
       <li>每個國家的碉堡長得都不一樣，有些碉堡還會開砲。</li>
-      <li>通過第一章 40 關會開放第二章、第三章（敵人更強，獎勵更多）。</li>
+      <li>通過第一章 48 關會開放第二章、第三章（敵人更強，獎勵更多）。</li>
+      <li>「部隊」裡的碉堡研究可以用軍功升級工作效率、軍費上限、要塞砲射程與充能等。</li>
     </ul>
   </div>
 </div>
@@ -116,6 +124,7 @@
     <h2>暫停</h2>
     <button id="pResume" class="big">▶ 繼續</button>
     <button id="pSound">🔊 音效：開</button>
+    <button id="pGore">🩸 血腥效果：開</button>
     <button id="pRetry">↻ 重新開始</button>
     <button id="pQuit">🏳️ 撤退（回地圖）</button>
   </div>
@@ -152,5 +161,5 @@
 <script src="js/draw.js"></script>
 <script src="js/cloud.js"></script>
 <script src="js/main.js"></script>
-
-</body></html>
+</body>
+</html>

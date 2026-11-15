@@ -17,8 +17,8 @@ window.GE = window.GE || {};
 
   // 錢包（後勤）等級：上限、每秒收入、升級花費
   G.WALLET = {
-    max:  [1000, 1600, 2200, 2800, 3400, 4000, 4800, 6000],
-    rate: [25, 32, 40, 48, 56, 64, 74, 90],
+    max:  [600, 1000, 1500, 2100, 2800, 3600, 4600, 6000],
+    rate: [14, 19, 25, 32, 40, 48, 58, 70],
     cost: [80, 160, 240, 320, 400, 480, 560],
   };
 
@@ -41,23 +41,27 @@ window.GE = window.GE || {};
     look: { k: 'inf', gear: 'mg' }, desc: '範圍掃射，專門對付一大群步兵。' });
   unit('bazooka', 'basic', ['火箭筒兵', '反坦克小隊'], { unlock: 6, cost: 300, cd: 8, hp: 280, atk: 100, rng: 190, spd: 32, atkT: 3.0,
     bonus: { armor: 3 }, look: { k: 'inf', gear: 'bazooka' }, desc: '對裝甲單位造成 3 倍傷害。' });
-  unit('mortar', 'basic', ['迫擊砲組', '砲兵連'], { unlock: 8, cost: 420, cd: 12, hp: 240, atk: 80, rng: 350, spd: 24, atkT: 3.5, area: true,
+  unit('mortar', 'basic', ['迫擊砲組', '砲兵連'], { unlock: 9, cost: 420, cd: 12, hp: 240, atk: 80, rng: 350, spd: 24, atkT: 3.5, area: true,
     look: { k: 'inf', gear: 'mortar' }, desc: '從很遠的地方往前線轟炸，範圍攻擊。' });
-  unit('ltank', 'basic', ['輕型坦克', '中型坦克'], { unlock: 11, cost: 650, cd: 15, hp: 1800, atk: 70, rng: 170, spd: 34, atkT: 2.2, area: true, kb: 4, type: 'armor',
+  unit('ltank', 'basic', ['輕型坦克', '中型坦克'], { unlock: 12, cost: 650, cd: 15, hp: 1800, atk: 70, rng: 170, spd: 34, atkT: 2.2, area: true, kb: 4, type: 'armor',
     look: { k: 'tank', v: 'light' }, desc: '又硬又能打的裝甲主力。' });
-  unit('transport', 'basic', ['運輸機', '空降師'], { unlock: 15, cost: 900, cd: 30, special: 'drop', hp: 1, atk: 0, rng: 0, spd: 0, atkT: 1,
+  unit('transport', 'basic', ['運輸機', '空降師'], { unlock: 18, cost: 900, cd: 30, special: 'drop', hp: 1, atk: 0, rng: 0, spd: 0, atkT: 1,
     look: { k: 'plane', v: 'transport' }, desc: '飛到前線上空，一次空降 4 名傘兵。' });
+  unit('grenadier', 'basic', ['擲彈兵', '精銳擲彈兵'], { unlock: 14, cost: 260, cd: 7, hp: 260, atk: 45, rng: 130, spd: 34, atkT: 2.2, area: true,
+    look: { k: 'inf', gear: 'grenade', lob: true }, desc: '丟手榴彈，炸傷一整群敵人。' });
+  unit('halftrack', 'basic', ['半履帶車', '裝甲運兵車'], { unlock: 26, cost: 500, cd: 12, hp: 1400, atk: 18, rng: 140, spd: 60, atkT: 0.5, type: 'armor',
+    look: { k: 'halftrack' }, desc: '速度快的半履帶裝甲車，車上機槍不停掃射。' });
 
   // 🟢 EX（達成條件取得）
   unit('cook', 'ex', ['炊事兵', '主廚'], { exNeed: 5, exText: '通過第 5 關', cost: 200, cd: 10, hp: 400, atk: 10, rng: 45, spd: 30, atkT: 1.5,
     heal: true, look: { k: 'inf', gear: 'ladle', hat: 'chef' }, desc: '每 4 秒用熱湯幫附近友軍補血。' });
-  unit('dog', 'ex', ['軍犬', '獵犬隊長'], { exNeed: 8, exText: '通過第 8 關', cost: 90, cd: 2.5, hp: 110, atk: 22, rng: 30, spd: 170, atkT: 0.6, kb: 2,
+  unit('dog', 'ex', ['軍犬', '獵犬隊長'], { exNeed: 9, exText: '通過第 9 關', cost: 90, cd: 2.5, hp: 110, atk: 22, rng: 30, spd: 170, atkT: 0.6, kb: 2,
     look: { k: 'dog' }, desc: '全遊戲最快的偷襲兵。' });
-  unit('pigeon', 'ex', ['信鴿兵', '信鴿中隊'], { exNeed: 10, exText: '通過第 10 關', cost: 75, cd: 3, hp: 70, atk: 14, rng: 40, spd: 150, atkT: 0.7, kb: 1, type: 'air',
+  unit('pigeon', 'ex', ['信鴿兵', '信鴿中隊'], { exNeed: 11, exText: '通過第 11 關', cost: 75, cd: 3, hp: 70, atk: 14, rng: 40, spd: 150, atkT: 0.7, kb: 1, type: 'air',
     look: { k: 'pigeon' }, desc: '又便宜又快的空中單位。' });
-  unit('band', 'ex', ['軍樂隊', '皇家樂團'], { exNeed: 17, exText: '通過小國篇（第 17 關）', cost: 250, cd: 12, hp: 350, atk: 6, rng: 45, spd: 35, atkT: 1.5,
+  unit('band', 'ex', ['軍樂隊', '皇家樂團'], { exNeed: 19, exText: '通過小國篇（第 19 關）', cost: 250, cd: 12, hp: 350, atk: 6, rng: 45, spd: 35, atkT: 1.5,
     aura: 'speed', look: { k: 'inf', gear: 'trumpet' }, desc: '吹號讓附近友軍移動速度 +30%。' });
-  unit('reporter', 'ex', ['戰地記者', '王牌攝影師'], { exNeed: 24, exText: '通過遠方參戰國篇（第 24 關）', cost: 280, cd: 10, hp: 300, atk: 15, rng: 200, spd: 35, atkT: 4, area: true,
+  unit('reporter', 'ex', ['戰地記者', '王牌攝影師'], { exNeed: 32, exText: '通過遠方參戰國篇（第 32 關）', cost: 280, cd: 10, hp: 300, atk: 15, rng: 200, spd: 35, atkT: 4, area: true,
     freeze: 1.2, look: { k: 'inf', gear: 'camera', hat: 'cap' }, desc: '相機閃光讓範圍內敵人暫停 1.2 秒。' });
 
   // 🔵 稀有
@@ -73,6 +77,14 @@ window.GE = window.GE || {};
     slow: 3, look: { k: 'inf', gear: 'wire' }, desc: '鐵絲網讓敵人緩速 3 秒。' });
   unit('smg', 'rare', ['衝鋒槍兵', '突擊隊員'], { cost: 210, cd: 4, hp: 300, atk: 13, rng: 100, spd: 42, atkT: 0.28,
     look: { k: 'inf', gear: 'smg' }, desc: '超高攻速，近距離火力很猛。' });
+  unit('medic', 'rare', ['醫護兵', '戰地醫官'], { cost: 300, cd: 12, hp: 450, atk: 8, rng: 45, spd: 32, atkT: 1.5,
+    heal: 0.12, look: { k: 'inf', gear: 'medkit', hat: 'medic' }, desc: '每 4 秒治療附近友軍，比炊事兵補得更多。' });
+  unit('cavalry', 'rare', ['騎兵', '驃騎兵'], { cost: 280, cd: 6, hp: 420, atk: 60, rng: 55, spd: 120, atkT: 1.0,
+    look: { k: 'horse' }, desc: '衝鋒速度極快，又有不錯的血量。' });
+  unit('atgun', 'rare', ['反坦克砲', '重型反坦克砲'], { cost: 420, cd: 12, hp: 380, atk: 160, rng: 300, spd: 18, atkT: 3.2,
+    bonus: { armor: 3 }, look: { k: 'gun', at: true }, desc: '長射程反坦克砲，對裝甲 3 倍傷害。' });
+  unit('pillbox', 'rare', ['機槍碉堡', '鋼筋碉堡'], { cost: 600, cd: 25, hp: 4500, atk: 10, rng: 170, spd: 7, atkT: 0.35, area: true, type: 'armor',
+    nokb: true, look: { k: 'pillbox' }, desc: '慢慢往前推的水泥碉堡，又硬又能掃射。' });
 
   // 🟣 激稀有
   unit('heavy', 'super', ['重型坦克', '虎牙重戰車'], { cost: 1500, cd: 30, hp: 7000, atk: 220, rng: 210, spd: 22, atkT: 3, area: true, type: 'armor',
@@ -85,6 +97,12 @@ window.GE = window.GE || {};
     special: 'front', look: { k: 'squad' }, desc: '出場直接空降到戰場中段。' });
   unit('train', 'super', ['裝甲列車', '鋼鐵巨龍號'], { cost: 2000, cd: 35, hp: 5500, atk: 130, rng: 260, spd: 45, atkT: 1.5, area: true, type: 'armor',
     nokb: true, nonstop: true, look: { k: 'train' }, desc: '只會一路往前開，邊走邊開火。' });
+  unit('rockettruck', 'super', ['火箭砲車', '風暴火箭陣'], { cost: 1400, cd: 28, hp: 1500, atk: 120, shots: 3, rng: 420, spd: 22, atkT: 4.5, area: true, type: 'armor',
+    look: { k: 'rocket' }, desc: '一次齊射三發火箭，遠距離範圍轟炸。' });
+  unit('stug', 'super', ['突擊砲', '重型突擊砲'], { cost: 1300, cd: 25, hp: 4200, atk: 320, rng: 240, spd: 26, atkT: 2.8, type: 'armor',
+    bonus: { armor: 2.5 }, look: { k: 'tank', v: 'stug' }, desc: '沒有砲塔的低矮戰車，專門獵殺坦克。' });
+  unit('flametank', 'super', ['火焰坦克', '煉獄戰車'], { cost: 1600, cd: 30, hp: 5000, atk: 60, rng: 110, spd: 28, atkT: 0.5, area: true, type: 'armor',
+    bonus: { inf: 2 }, look: { k: 'tank', v: 'flame', flame: true }, desc: '噴出火焰燒光前面的步兵，對步兵 2 倍。' });
 
   // 🟡 超激稀有
   unit('thor', 'uber', ['「雷神」超重戰車', '雷神・天罰型'], { cost: 3000, cd: 60, hp: 16000, atk: 600, rng: 290, spd: 16, atkT: 4, area: true, type: 'armor',
@@ -97,6 +115,8 @@ window.GE = window.GE || {};
     stealth: true, look: { k: 'inf', gear: 'sniper', hat: 'ghillie' }, desc: '隱形狙擊手，只有範圍攻擊打得到它。' });
   unit('battleship', 'uber', ['陸地戰艦', '陸地戰艦・不沉號'], { cost: 4200, cd: 80, hp: 22000, atk: 380, rng: 420, spd: 12, atkT: 2.5, area: true, type: 'armor',
     nokb: true, look: { k: 'landship' }, desc: '會移動的要塞，艦砲對整條線開火。' });
+  unit('dive', 'uber', ['俯衝轟炸機', '鋼鷹俯衝隊'], { cost: 2000, cd: 40, hp: 2200, atk: 450, rng: 90, spd: 110, atkT: 2.5, area: true, kb: 3, type: 'air',
+    look: { k: 'plane', v: 'dive', bomb: true }, desc: '從空中俯衝投彈，炸出大範圍爆炸。' });
 
   // 🌈 傳說稀有
   unit('ark', 'legend', ['「末日方舟」空中要塞', '末日方舟・終焉型'], { cost: 4500, cd: 120, special: 'ark', hp: 1, atk: 350, rng: 0, spd: 0, atkT: 1,
@@ -167,67 +187,83 @@ window.GE = window.GE || {};
   en('b_winter', '冬將軍', Object.assign({}, B, { hp: 150000, atk: 380, rng: 320, spd: 10, atkT: 2.5, area: true, nokb: true, freezeAll: 12, reward: 5000, look: { k: 'inf', gear: 'saber', hat: 'winter', big: 3 } }));
   G.ENEMY = E;
 
-  // ---------------- 國家（全部虛構） ----------------
-  // uni 軍服色、helm 帽型、flag 旗幟、base 碉堡造型、baseCol 碉堡主色、gun 碉堡砲台
+  // ---------------- 國家（敵方用真實國名；我方灰鷹軍團是虛構的） ----------------
+  // uni 軍服色、helm 帽型、flag 國旗（簡化畫法）、em 載具圓標顏色、band 臂章顏色、base 碉堡造型、baseCol 碉堡主色、gun 碉堡砲台
   G.NATIONS = {
-    lux: { name: '銀塔大公國', proto: '盧森堡', uni: '#5d7fa8', helm: 'kepi', flag: { bands: ['#c9d3df', '#7aa5d6'], em: 'tower', emc: '#fff' }, base: 'tower', baseCol: '#b9c2cf' },
-    den: { name: '白帆王國', proto: '丹麥', uni: '#8b7d5a', helm: 'cap', flag: { bands: ['#f2f2f2'], em: 'sail', emc: '#c8323a' }, base: 'lighthouse', baseCol: '#f0ece0' },
-    nl:  { name: '鬱金香共和國', proto: '荷蘭', uni: '#5f6b4c', helm: 'm1', flag: { bands: ['#f08a24', '#ffffff', '#2e5aa8'], vert: true, em: 'tulip', emc: '#d8344a' }, base: 'windmill', baseCol: '#c47a4a' },
-    be:  { name: '鐵盾王國', proto: '比利時', uni: '#6b6a4e', helm: 'adrian', flag: { bands: ['#e8c547', '#7d8590'], em: 'shield', emc: '#2c4f8a' }, base: 'fort', baseCol: '#9a9a90' },
-    no:  { name: '峽灣王國', proto: '挪威', uni: '#4f5b45', helm: 'hood', flag: { bands: ['#2c4f8a'], em: 'wave', emc: '#fff' }, base: 'battery', baseCol: '#7d8590',
+    lux: { name: '盧森堡', uni: '#5d7fa8', helm: 'kepi', em: '#e8e8e8', band: '#7aa5d6', flag: { t: 'bands', c: ['#ed2939', '#ffffff', '#00a1de'] }, base: 'tower', baseCol: '#b9c2cf' },
+    den: { name: '丹麥', uni: '#8b7d5a', helm: 'cap', em: '#c8102e', band: '#c8102e', flag: { t: 'nordic', bg: '#c8102e', cross: '#ffffff' }, base: 'lighthouse', baseCol: '#f0ece0' },
+    alb: { name: '阿爾巴尼亞', uni: '#6b6a4a', helm: 'kepi', em: '#e41e20', band: '#e41e20', flag: { t: 'bands', c: ['#e41e20'], em: 'eagle2', emc: '#111' }, base: 'bastion', baseCol: '#a89a84' },
+    nl:  { name: '荷蘭', uni: '#5f6b4c', helm: 'm1', em: '#f08a24', band: '#f08a24', flag: { t: 'bands', c: ['#ae1c28', '#ffffff', '#21468b'] }, base: 'windmill', baseCol: '#c47a4a' },
+    be:  { name: '比利時', uni: '#6b6a4e', helm: 'adrian', em: '#fdda24', band: '#fdda24', flag: { t: 'bands', c: ['#2d2926', '#fdda24', '#ef3340'], vert: true }, base: 'fort', baseCol: '#9a9a90' },
+    lib: { name: '賴比瑞亞', uni: '#5a6a4a', helm: 'cap', em: '#bf0a30', band: '#002868', flag: { t: 'lib' }, base: 'colonial', baseCol: '#f2ede2' },
+    no:  { name: '挪威', uni: '#4f5b45', helm: 'hood', em: '#ba0c2f', band: '#ba0c2f', flag: { t: 'nordic', bg: '#ba0c2f', cross: '#ffffff', inner: '#00205b' }, base: 'battery', baseCol: '#7d8590',
       gun: { atk: 60, rng: 380, t: 7 } },
-    cz:  { name: '雙峰聯邦', proto: '捷克斯洛伐克', uni: '#6b6b47', helm: 'cap', flag: { bands: ['#ffffff', '#2b56a3'], em: 'peaks', emc: '#c8323a' }, base: 'factory', baseCol: '#8c6b5a' },
-    gr:  { name: '橄欖城邦', proto: '希臘', uni: '#7a7550', helm: 'adrian', flag: { bands: ['#4a90d9', '#ffffff', '#4a90d9'], em: 'olive', emc: '#3d7a3a' }, base: 'temple', baseCol: '#ece4d2' },
-    yu:  { name: '山鷹聯邦', proto: '南斯拉夫', uni: '#5c5a3c', helm: 'cap', flag: { bands: ['#1f3c88', '#ffffff', '#b8322f'], em: 'peak', emc: '#333' }, base: 'logfort', baseCol: '#7a5a3a' },
-    pl:  { name: '白鷹王國', proto: '波蘭', uni: '#6a6b46', helm: 'square', flag: { bands: ['#ffffff', '#c23b3b'], em: 'wing', emc: '#e8e8e8' }, base: 'manor', baseCol: '#e8dcc0' },
-    nz:  { name: '銀蕨群島', proto: '紐西蘭', uni: '#857552', helm: 'lemon', flag: { bands: ['#1a1a1a'], em: 'fern', emc: '#d8dde4' }, base: 'palisade', baseCol: '#8a6a44' },
-    sa:  { name: '金角聯邦', proto: '南非', uni: '#a08b5b', helm: 'pith', flag: { bands: ['#2f7a3a', '#e8b830'], em: 'horn', emc: '#fff' }, base: 'stonefort', baseCol: '#b59a72' },
-    au:  { name: '袋鼠大陸', proto: '澳洲', uni: '#9a8456', helm: 'slouch', flag: { bands: ['#1d3a7a'], em: 'stars', emc: '#fff' }, base: 'station', baseCol: '#a8aeb4' },
-    ca:  { name: '楓葉自治領', proto: '加拿大', uni: '#7a6f48', helm: 'brodie', flag: { bands: ['#ffffff', '#c0392b', '#ffffff'], vert: true, em: 'leaf', emc: '#c0392b' }, base: 'timber', baseCol: '#8a5a34' },
-    in:  { name: '孔雀邦', proto: '印度', uni: '#a38c5c', helm: 'brodie', flag: { bands: ['#2a8a7a', '#f2c14e'], em: 'feather', emc: '#1f5fa8' }, base: 'hillfort', baseCol: '#c99a64' },
-    mx:  { name: '仙人掌共和國', proto: '墨西哥', uni: '#6f7a55', helm: 'kepi', flag: { bands: ['#2f8f4e', '#ffffff', '#c0392b'], vert: true, em: 'cactus', emc: '#2f8f4e' }, base: 'adobe', baseCol: '#d6a873' },
-    br:  { name: '翠綠合眾國', proto: '巴西', uni: '#5f7a4a', helm: 'm1', flag: { bands: ['#2d9b4f'], em: 'snake', emc: '#f2d22e' }, base: 'jungle', baseCol: '#5d7a3a' },
-    fr:  { name: '藍玫共和國', proto: '法國', uni: '#6a8fd0', helm: 'adrian', flag: { bands: ['#2c4f9e', '#ffffff', '#d8455a'], vert: true, em: 'rose', emc: '#d8455a' }, base: 'line', baseCol: '#8f949a',
+    cz:  { name: '捷克斯洛伐克', uni: '#6b6b47', helm: 'cap', em: '#11457e', band: '#d7141a', flag: { t: 'cz' }, base: 'factory', baseCol: '#8c6b5a' },
+    gr:  { name: '希臘', uni: '#7a7550', helm: 'adrian', em: '#0d5eaf', band: '#0d5eaf', flag: { t: 'gr' }, base: 'temple', baseCol: '#ece4d2' },
+    yu:  { name: '南斯拉夫', uni: '#5c5a3c', helm: 'cap', em: '#c6363c', band: '#0c4076', flag: { t: 'bands', c: ['#0c4076', '#ffffff', '#c6363c'] }, base: 'logfort', baseCol: '#7a5a3a' },
+    pl:  { name: '波蘭', uni: '#6a6b46', helm: 'square', em: '#dc143c', band: '#dc143c', flag: { t: 'bands', c: ['#ffffff', '#dc143c'] }, base: 'manor', baseCol: '#e8dcc0' },
+    nz:  { name: '紐西蘭', uni: '#857552', helm: 'lemon', em: '#c8102e', band: '#012169', flag: { t: 'ensign', bg: '#012169', stars: 'nz' }, base: 'palisade', baseCol: '#8a6a44' },
+    sa:  { name: '南非', uni: '#a08b5b', helm: 'pith', em: '#e07020', band: '#e07020', flag: { t: 'bands', c: ['#e07020', '#ffffff', '#00247d'] }, base: 'stonefort', baseCol: '#b59a72' },
+    eth: { name: '衣索比亞', uni: '#8a7a52', helm: 'pith', em: '#078930', band: '#fcdd09', flag: { t: 'bands', c: ['#078930', '#fcdd09', '#da121a'] }, base: 'obelisk', baseCol: '#9a8a74' },
+    cub: { name: '古巴', uni: '#8a8456', helm: 'cap', em: '#cf142b', band: '#002a8f', flag: { t: 'cuba' }, base: 'colonialfort', baseCol: '#e6c88a' },
+    au:  { name: '澳洲', uni: '#9a8456', helm: 'slouch', em: '#c8102e', band: '#012169', flag: { t: 'ensign', bg: '#012169', stars: 'au' }, base: 'station', baseCol: '#a8aeb4' },
+    ca:  { name: '加拿大', uni: '#7a6f48', helm: 'brodie', em: '#d52b1e', band: '#d52b1e', flag: { t: 'ensign', bg: '#c8102e', stars: 'ca' }, base: 'timber', baseCol: '#8a5a34' },
+    in:  { name: '印度', uni: '#a38c5c', helm: 'brodie', em: '#ff9933', band: '#ff9933', flag: { t: 'ensign', bg: '#c8102e', stars: 'in' }, base: 'hillfort', baseCol: '#c99a64' },
+    ir:  { name: '伊朗', uni: '#7a7452', helm: 'adrian', em: '#239f40', band: '#239f40', flag: { t: 'bands', c: ['#239f40', '#ffffff', '#da0000'], em: 'sun', emc: '#e0a020' }, base: 'persian', baseCol: '#d8c8a8' },
+    eg:  { name: '埃及', uni: '#a08c5c', helm: 'fez', em: '#007a3d', band: '#007a3d', flag: { t: 'crescent', bg: '#007a3d', stars: 3 }, base: 'pyramid', baseCol: '#e0c48c' },
+    tr:  { name: '土耳其', uni: '#6e6a48', helm: 'adrian', em: '#e30a17', band: '#e30a17', flag: { t: 'crescent', bg: '#e30a17', stars: 1 }, base: 'ottoman', baseCol: '#c8bca4' },
+    mx:  { name: '墨西哥', uni: '#6f7a55', helm: 'kepi', em: '#006847', band: '#006847', flag: { t: 'bands', c: ['#006847', '#ffffff', '#ce1126'], vert: true, em: 'eagleSmall', emc: '#8a5a2a' }, base: 'adobe', baseCol: '#d6a873' },
+    pe:  { name: '秘魯', uni: '#7a7a52', helm: 'kepi', em: '#d91023', band: '#d91023', flag: { t: 'bands', c: ['#d91023', '#ffffff', '#d91023'], vert: true }, base: 'inca', baseCol: '#a89880' },
+    br:  { name: '巴西', uni: '#5f7a4a', helm: 'm1', em: '#009c3b', band: '#ffdf00', flag: { t: 'br' }, base: 'jungle', baseCol: '#5d7a3a' },
+    fr:  { name: '法國', uni: '#6a8fd0', helm: 'adrian', em: '#0055a4', band: '#0055a4', flag: { t: 'bands', c: ['#0055a4', '#ffffff', '#ef4135'], vert: true }, base: 'line', baseCol: '#8f949a',
       gun: { atk: 150, rng: 420, t: 6 } },
-    uk:  { name: '獅冠王國', proto: '英國', uni: '#8a7a50', helm: 'brodie', flag: { bands: ['#203f80', '#c8102e', '#203f80'], em: 'crown', emc: '#ffd34a' }, base: 'castle', baseCol: '#9c9488',
+    uk:  { name: '英國', uni: '#8a7a50', helm: 'brodie', em: '#c8102e', band: '#012169', flag: { t: 'uk' }, base: 'castle', baseCol: '#9c9488',
       gun: { atk: 200, rng: 420, t: 6 } },
-    us:  { name: '星條聯邦', proto: '美國', uni: '#6b6b3f', helm: 'm1', flag: { bands: ['#b22234', '#ffffff', '#b22234', '#ffffff', '#b22234'], em: 'bigstar', emc: '#1f3a7a' }, base: 'steel', baseCol: '#7a8088',
+    us:  { name: '美國', uni: '#6b6b3f', helm: 'm1', em: '#ffffff', band: '#3c3b6e', flag: { t: 'us' }, base: 'steel', baseCol: '#7a8088',
       gun: { atk: 260, rng: 430, t: 5.5 } },
-    su:  { name: '紅星聯盟', proto: '蘇聯', uni: '#7b7a52', helm: 'ushanka', flag: { bands: ['#c0211f'], em: 'star', emc: '#ffd34a' }, base: 'kremlin', baseCol: '#a8322c',
+    su:  { name: '蘇聯', uni: '#7b7a52', helm: 'ushanka', em: '#cc0000', band: '#cc0000', flag: { t: 'bands', c: ['#cc0000'], em: 'starCorner', emc: '#ffd700' }, base: 'kremlin', baseCol: '#a8322c',
       gun: { atk: 320, rng: 450, t: 5 } },
   };
 
-  // ---------------- 40 關 ----------------
+  // ---------------- 48 關 ----------------
   // [國家, 關名, 場地長度, 地形, 天氣, 出兵表[[兵種, 首次出現秒, 間隔秒]], 魔王, 第二魔王]
   const S = [
-    ['lux', '銀塔小鎮', 1400, 'town', '', [['conscript', 3, 7]]],
-    ['den', '白帆港口', 1500, 'harbor', '', [['conscript', 2, 6], ['cyclist', 15, 12]]],
+    ['lux', '邊境小鎮', 1400, 'town', '', [['conscript', 3, 7]]],
+    ['den', '海港小鎮', 1500, 'harbor', '', [['conscript', 2, 6], ['cyclist', 15, 12]]],
     ['den', '王宮廣場', 1600, 'harbor', '', [['conscript', 2, 5], ['cyclist', 10, 10], ['rifleman', 25, 18]], 'b_guard'],
+    ['alb', '山城要塞', 1600, 'hills', '', [['conscript', 2, 5], ['mountaineer', 12, 14]]],
     ['nl', '運河小徑', 1600, 'canal', 'flood', [['conscript', 2, 5], ['rifleman', 12, 14]]],
     ['nl', '風車平原', 1700, 'canal', 'flood', [['conscript', 2, 5], ['rifleman', 10, 12], ['mger', 30, 25]], 'b_windmill'],
     ['be', '邊境碉堡', 1700, 'fortland', '', [['conscript', 2, 5], ['shieldman', 8, 16], ['rifleman', 20, 14]]],
-    ['be', '鐵壁要塞', 1800, 'fortland', '', [['shieldman', 4, 12], ['conscript', 2, 4], ['mger', 20, 20]], 'b_fort'],
+    ['be', '要塞防線', 1800, 'fortland', '', [['shieldman', 4, 12], ['conscript', 2, 4], ['mger', 20, 20]], 'b_fort'],
+    ['lib', '橡膠園', 1800, 'jungle', '', [['conscript', 2, 4], ['rifleman', 10, 12], ['guerrilla', 15, 16]]],
     ['no', '雪峰峽灣', 1800, 'fjord', 'snow', [['skier', 3, 8], ['conscript', 2, 5], ['rifleman', 15, 14]]],
     ['no', '海岸砲台', 1900, 'fjord', 'snow', [['skier', 3, 7], ['rifleman', 8, 12], ['shieldman', 20, 18]], 'b_battery'],
-    ['cz', '雙峰隘口', 1900, 'industry', '', [['conscript', 2, 4], ['lighttank', 25, 30], ['rifleman', 10, 12]]],
+    ['cz', '山區隘口', 1900, 'industry', '', [['conscript', 2, 4], ['lighttank', 25, 30], ['rifleman', 10, 12]]],
     ['cz', '兵工廠', 2000, 'industry', '', [['conscript', 2, 4], ['lighttank', 15, 22], ['mger', 10, 18]], 'b_mech'],
     ['gr', '橄欖山丘', 2000, 'olive', '', [['mountaineer', 4, 9], ['rifleman', 8, 12], ['conscript', 2, 5]]],
     ['gr', '古城遺跡', 2100, 'olive', '', [['mountaineer', 3, 8], ['mger', 10, 16], ['shieldman', 15, 15]], 'b_stone'],
     ['yu', '迷霧森林', 2100, 'forest', 'fog', [['guerrilla', 6, 10], ['conscript', 2, 4], ['rifleman', 12, 12]]],
     ['yu', '深谷伏擊', 2200, 'forest', 'fog', [['guerrilla', 4, 8], ['mountaineer', 8, 10], ['mger', 15, 16]], 'b_guerrilla'],
     ['pl', '金色麥田', 2200, 'wheat', '', [['cav', 8, 10], ['conscript', 2, 4], ['rifleman', 10, 11]]],
-    ['pl', '白鷹大平原', 2300, 'wheat', '', [['cav', 5, 8], ['lighttank', 20, 22], ['rifleman', 8, 10]], 'b_wing'],
-    ['nz', '銀蕨丘陵', 2300, 'hills', '', [['warcry', 3, 7], ['rifleman', 8, 10], ['mger', 15, 15]]],
+    ['pl', '大平原', 2300, 'wheat', '', [['cav', 5, 8], ['lighttank', 20, 22], ['rifleman', 8, 10]], 'b_wing'],
+    ['nz', '蕨葉丘陵', 2300, 'hills', '', [['warcry', 3, 7], ['rifleman', 8, 10], ['mger', 15, 15]]],
     ['sa', '黃金草原', 2300, 'savanna', '', [['armoredcar', 8, 14], ['conscript', 2, 4], ['lighttank', 20, 20]]],
+    ['eth', '高原山道', 2300, 'highland', '', [['mountaineer', 2, 6], ['cav', 8, 10], ['rifleman', 6, 9]]],
+    ['cub', '甘蔗田', 2400, 'tropic', '', [['landing', 2, 4], ['rifleman', 6, 9], ['armoredcar', 12, 16]]],
     ['au', '紅土荒野', 2400, 'outback', '', [['armoredcar', 5, 12], ['warcry', 3, 7], ['mger', 12, 15]], 'b_outback'],
     ['ca', '楓林海灘', 2400, 'maple', '', [['landing', 2, 4], ['rifleman', 6, 9], ['tank', 30, 30]]],
     ['in', '雲霧山脈', 2400, 'mountain', 'fog', [['mountaineer', 2, 6], ['artillery', 20, 25], ['rifleman', 8, 10]]],
+    ['ir', '沙漠古道', 2500, 'persia', '', [['cav', 4, 9], ['armoredcar', 8, 12], ['artillery', 20, 25]]],
+    ['eg', '金字塔沙漠', 2500, 'desert', '', [['armoredcar', 3, 9], ['tank', 15, 20], ['rifleman', 4, 8]]],
+    ['tr', '海峽要塞', 2500, 'cliffs', '', [['mountaineer', 2, 6], ['artillery', 15, 20], ['mger', 5, 10]]],
     ['mx', '仙人掌高原', 2500, 'plateau', '', [['fighter', 10, 14], ['conscript', 2, 4], ['rifleman', 8, 10]], 'b_eagle'],
-    ['br', '翡翠叢林', 2500, 'jungle', '', [['jungle', 3, 7], ['fighter', 15, 18], ['artillery', 25, 25]], 'b_snake'],
+    ['pe', '安地斯山', 2600, 'mountain', '', [['mountaineer', 2, 5], ['fighter', 10, 14], ['artillery', 18, 22]]],
+    ['br', '翡翠叢林', 2600, 'jungle', '', [['jungle', 3, 7], ['fighter', 15, 18], ['artillery', 25, 25]], 'b_snake'],
     ['fr', '薰衣草鄉村', 2600, 'lavender', '', [['conscript', 2, 4], ['rifleman', 5, 8], ['tank', 20, 25]]],
     ['fr', '陰影森林', 2600, 'forest', 'fog', [['mger', 4, 10], ['tank', 12, 20], ['guerrilla', 6, 10]]],
     ['fr', '藍色防線', 2700, 'lavender', '', [['shieldman', 3, 8], ['artillery', 12, 20], ['tank', 20, 22], ['rifleman', 5, 8]]],
-    ['fr', '玫瑰之都', 2700, 'city', '', [['rifleman', 3, 6], ['tank', 10, 18], ['artillery', 15, 20], ['heavytank', 60, 60]], 'b_line'],
+    ['fr', '花都巷戰', 2700, 'city', '', [['rifleman', 3, 6], ['tank', 10, 18], ['artillery', 15, 20], ['heavytank', 60, 60]], 'b_line'],
     ['uk', '沙海綠洲', 2700, 'desert', '', [['armoredcar', 3, 9], ['tank', 12, 18], ['rifleman', 4, 8]]],
     ['uk', '沙漠之王', 2800, 'desert', '', [['tank', 6, 14], ['fighter', 12, 16], ['armoredcar', 4, 9]], 'b_desert'],
     ['uk', '白崖海峽', 2800, 'cliffs', '', [['fighter', 4, 10], ['bomber', 30, 30], ['rifleman', 3, 7]]],
@@ -241,23 +277,41 @@ window.GE = window.GE || {};
     ['su', '廢墟之城', 3200, 'ruins', '', [['sniper', 5, 12], ['horde', 1, 3], ['rocket', 15, 20], ['heavytank', 25, 28]]],
     ['su', '紅色首都', 3300, 'capital', 'snow', [['horde', 1, 2.5], ['heavytank', 10, 18], ['rocket', 12, 18], ['fighter', 8, 12]], 'b_bear', 'b_winter'],
   ];
-  G.STAGES = S.map((s, i) => ({
-    i, nation: s[0], name: s[1], len: s[2], terrain: s[3], weather: s[4], pool: s[5], boss: s[6] || null, boss2: s[7] || null,
-    mag: 1 + i * 0.05,
-    baseHp: Math.round(1200 * Math.pow(1.13, i) / 100) * 100,
-    xp: 300 + 150 * i,
-    medals: s[6] ? 150 : 60,
-  }));
+  // 難度沿用原本 40 關調好的曲線，平均攤到 48 關上
+  const LAST = S.length - 1;
+  G.STAGES = S.map((s, i) => {
+    const d = i * 39 / LAST;
+    return {
+      i, nation: s[0], name: s[1], len: s[2], terrain: s[3], weather: s[4], pool: s[5], boss: s[6] || null, boss2: s[7] || null,
+      mag: 1 + d * 0.05,
+      baseHp: Math.round(1200 * Math.pow(1.13, d) / 100) * 100,
+      xp: Math.round((300 + 150 * d) / 10) * 10,
+      medals: s[6] ? 150 : 60,
+    };
+  });
+  G.STAGE_COUNT = S.length;
   G.STAGE_GROUPS = [
-    { name: '第一階段：小國', from: 0, to: 16 },
-    { name: '第二階段：遠方的參戰國', from: 17, to: 23 },
-    { name: '第三階段：四大強國', from: 24, to: 39 },
+    { name: '第一階段：小國', from: 0, to: 18 },
+    { name: '第二階段：遠方的參戰國', from: 19, to: 31 },
+    { name: '第三階段：四大強國', from: 32, to: 47 },
   ];
   G.CHAPTERS = [
     { name: '第一章', mult: 1 },
     { name: '第二章', mult: 1.8 },
     { name: '第三章', mult: 3 },
   ];
+
+  // ---------------- 碉堡研究（用軍功升級） ----------------
+  G.RESEARCH = [
+    { key: 'baseLv',    name: '🏰 碉堡耐久',   max: 20, base: 400, txt: lv => `碉堡體力 ${(4000 + 1500 * lv).toLocaleString()}` },
+    { key: 'cannonLv',  name: '💥 要塞砲威力', max: 20, base: 400, txt: lv => `基礎傷害 ${120 + 60 * lv}` },
+    { key: 'cRangeLv',  name: '🎯 要塞砲射程', max: 20, base: 300, txt: lv => `射程 ${650 + 40 * lv}` },
+    { key: 'cChargeLv', name: '⚡ 要塞砲充能', max: 20, base: 350, txt: lv => `充能 ${(26 - 0.7 * lv).toFixed(1)} 秒` },
+    { key: 'workLv',    name: '💼 工作效率',   max: 20, base: 300, txt: lv => `賺錢速度 +${lv * 5}%` },
+    { key: 'walletLv',  name: '💰 軍費上限',   max: 20, base: 300, txt: lv => `軍費上限 +${lv * 4}%` },
+    { key: 'startLv',   name: '🪙 開場軍費',   max: 10, base: 500, txt: lv => `開場就有 ${lv * 40} 軍費` },
+  ];
+  G.resCost = (r, lv) => r.base * (lv + 1);
 
   G.WEATHER_TEXT = { flood: '🌊 淹水：我方移動變慢', snow: '❄️ 下雪：我方移動變慢（滑雪兵加速）', fog: '🌫️ 濃霧：看不清遠方的敵人' };
 
