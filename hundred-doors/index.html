@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#050403">
+<title>百門飯店 Hundred Doors</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22%3E%3Crect width=%2216%22 height=%2216%22 fill=%22%232a1608%22/%3E%3Crect x=%224%22 y=%222%22 width=%228%22 height=%2214%22 fill=%22%237a4a1e%22/%3E%3Crect x=%229%22 y=%229%22 width=%222%22 height=%222%22 fill=%22%23e8c868%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div id="tint"></div><div id="vig"></div><div id="hideOv"></div><div id="flash"></div>
+
+<!-- 主選單 -->
+<div id="menu" class="scr">
+  <div class="panel">
+    <h1>百門飯店</h1>
+    <div class="sub">HUNDRED DOORS · 1～4 人恐怖合作</div>
+    <label class="lbl">你的名字<input id="name" maxlength="12" autocomplete="off"></label>
+    <div class="row"><button id="bSolo" class="big">單人遊戲</button><button id="bHost" class="big">建立房間</button></div>
+    <div class="row"><input id="code" maxlength="5" placeholder="房間代碼" autocomplete="off"><button id="bJoin">加入房間</button></div>
+    <div class="row"><button id="bShop">商店 · <span class="goldTxt">0</span> 金幣</button><button id="bHelp">怪物圖鑑 / 操作</button><button id="bSet">設定</button></div>
+    <div id="menuMsg" class="note"></div>
+  </div>
+</div>
+
+<!-- 大廳 -->
+<div id="lobby" class="scr hide">
+  <div class="panel">
+    <h2>房間代碼</h2>
+    <div id="lCode" class="code">-----</div>
+    <div class="note">把代碼傳給朋友，最多 4 人</div>
+    <ul id="lList"></ul>
+    <div id="lLoad" class="note"></div>
+    <div class="row"><button id="bStart" class="big">開始遊戲</button><button id="bShop2">商店</button><button id="bLeave">離開</button></div>
+    <div id="lMsg" class="note"></div>
+  </div>
+</div>
+
+<!-- 商店 -->
+<div id="shop" class="scr hide">
+  <div class="panel">
+    <h2>商店 · <span class="goldTxt">0</span> 金幣</h2>
+    <div class="note">買的道具會帶進下一局</div>
+    <div id="shopList"></div>
+    <div class="row"><button class="back">返回</button></div>
+  </div>
+</div>
+
+<!-- 說明 -->
+<div id="help" class="scr hide">
+  <div class="panel wide">
+    <h2>怪物圖鑑</h2>
+    <div class="mons">
+      <div><b>狂嘯</b>燈光閃爍、遠處傳來轟隆聲 → 馬上躲進衣櫃。</div>
+      <div><b>回馬槍</b>燈光變綠閃爍 → 躲進衣櫃，它會來回衝好幾次，等聲音完全消失再出來。</div>
+      <div><b>暗嘶</b>只出現在黑暗房間。聽到「噓」→ 轉頭找到它、看著它。</div>
+      <div><b>千眼</b>房間裡發出紫光 → 不要看它，低頭或背對它走。</div>
+      <div><b>逆行者</b>藍色長走廊。看到「轉身！」→ 往回走，等它消失再前進。</div>
+      <div><b>追獵者</b>第 30～45 門之間的追逐戰 → 一直往前跑，閃過障礙物。</div>
+      <div><b>盲魔</b>第 50 門圖書館和第 100 門。看不見但聽得到 → 蹲著慢慢走，或躲衣櫃。</div>
+      <div><b>假門</b>三扇門的房間 → 看清楚門牌，只有下一個號碼是真的。</div>
+      <div><b>抽屜蛛</b>打開抽屜時偶爾跳出來，會咬你一下。</div>
+    </div>
+    <h2>操作</h2>
+    <div class="note">電腦：WASD 移動 · 滑鼠看 · E 或左鍵 互動 · C 蹲下 · F 開關燈 · V 吃維他命 · Esc 暫停<br>手機：左下搖桿移動 · 右邊滑動看 · 右下按鈕互動</div>
+    <div class="note">圖書館：找到 5 本藍色的書，每本會告訴你密碼的一位數，再到出口旁的密碼鎖輸入。<br>第 100 門：拉下 3 個拉桿打開大門，跑出飯店就贏了。</div>
+    <div class="row"><button class="back">返回</button></div>
+  </div>
+</div>
+
+<!-- 設定 -->
+<div id="settings" class="scr hide">
+  <div class="panel">
+    <h2>設定</h2>
+    <label class="lbl">視角靈敏度 <input id="sSens" type="range" min="0.3" max="2.5" step="0.1"></label>
+    <label class="lbl">音量 <input id="sVol" type="range" min="0" max="1" step="0.05"></label>
+    <label class="lbl">畫質 <select id="sGfx"><option value="high">高（電腦）</option><option value="low">低（手機／舊電腦）</option></select></label>
+    <div class="row"><button class="back">返回</button></div>
+  </div>
+</div>
+
+<!-- 遊戲中 HUD -->
+<div id="hud" class="hide">
+  <div id="topL"><div id="doorN">門 0000</div><div id="hpbar"><div id="hp"></div></div><div id="goldH">金幣 0</div></div>
+  <div id="team"></div>
+  <div id="inv"></div>
+  <div id="cross"></div>
+  <div id="prompt"></div>
+  <div id="msg"></div>
+  <div id="big"></div>
+  <div id="hints"></div>
+</div>
+
+<!-- 密碼鎖 -->
+<div id="keypad" class="scr hide">
+  <div class="panel">
+    <h2>密碼鎖</h2>
+    <div id="kpShow" class="code">_____</div>
+    <div id="kpKeys"></div>
+    <div class="row"><button id="kpOk" class="big">確定</button><button id="kpX">取消</button></div>
+    <div id="kpMsg" class="note"></div>
+  </div>
+</div>
+
+<!-- 死亡 -->
+<div id="dead" class="scr hide">
+  <div class="panel">
+    <h2 class="red">你死了</h2>
+    <div id="dCause" class="note"></div>
+    <div id="dHint" class="hint"></div>
+    <div class="row"><button id="bSpec" class="big">觀戰隊友</button><button id="bQuit2">回主選單</button></div>
+  </div>
+</div>
+<div id="specBar" class="hide"><span id="specName"></span><button id="bNext">下一位</button><button id="bQuit3">回主選單</button></div>
+
+<!-- 結算 -->
+<div id="end" class="scr hide">
+  <div class="panel">
+    <h2 id="eTitle">逃出成功！</h2>
+    <div id="eInfo" class="note"></div>
+    <div class="row"><button id="bEnd" class="big">回主選單</button></div>
+  </div>
+</div>
+
+<!-- 暫停 -->
+<div id="pause" class="scr hide">
+  <div class="panel">
+    <h2>暫停</h2>
+    <div class="note" id="pInfo"></div>
+    <div class="row"><button id="bResume" class="big">繼續</button><button id="bSet2">設定</button><button id="bQuit">離開遊戲</button></div>
+  </div>
+</div>
+
+<!-- 手機操控 -->
+<div id="touch" class="hide">
+  <div id="joy"><div id="knob"></div></div>
+  <div id="tbtns">
+    <button data-k="v" class="tb">維他命</button><button data-k="f" class="tb">燈</button>
+    <button data-k="c" class="tb">蹲</button><button data-k="e" class="tb main">互動</button>
+  </div>
+  <button id="tPause">❚❚</button>
+</div>
+
+<div id="loading" class="scr hide"><div class="panel"><h2 id="loadTxt">連線中…</h2></div></div>
+
+<script src="js/three.min.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/world.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/net.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
