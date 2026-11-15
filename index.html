@@ -1927,7 +1927,8 @@ function xmasOn(){return today()<=XMAS_END}
 function giveSnow(n,why){if(!PF||!n)return;PF.snow=(PF.snow|0)+n;saveNow();toast('❄️ +'+n+' 雪花'+(why?' · '+why:''),'#9fdcff');renderLUI()}
 const CRATES=[
  {id:'wbox',name:'包裝箱',en:'Wrap Box',cur:'keys',price:5,kind:'wrap',pool:()=>WRAPS.filter(x=>x.id!='bc'&&!x.ex).map(x=>x.id)},
- {id:'fpack',name:'死亡特效箱',en:'Finisher Pack',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.id!='fc'&&!x.ex&&!x.hw&&(!x.xm||xmasOn())).map(x=>x.id)},
+ {id:'fpack',name:'死亡特效箱',en:'Finisher Pack',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.id!='fc'&&!x.ex&&!x.hw&&!x.fp&&(!x.xm||xmasOn())).map(x=>x.id)},
+ {id:'fpack2',name:'死亡特效箱 2',en:'Finisher Pack 2',cur:'keys',price:10,kind:'fin',pool:()=>FINS.filter(x=>x.fp==2).map(x=>x.id)},
  {id:'hpack',name:'🎃 萬聖節特效包',en:'Halloween Finisher Pack',cur:'keys',price:15,kind:'fin',hw:1,pool:()=>FINS.filter(x=>x.hw).map(x=>x.id)},
  {id:'ccap',name:'吊飾膠囊',en:'Charm Capsule',cur:'keys',price:8,kind:'charm',pool:()=>CHARMS.filter(x=>!x.adm&&(x.p>0||x.cap)).map(x=>x.id)},
  {id:'scase',name:'皮膚箱 1',en:'Skin Case',cur:'tickets',price:10,kind:'skin',pool:()=>SKINS.filter(x=>x.cs==1).map(x=>x.id)},
@@ -2611,6 +2612,173 @@ function bgTick(){try{const want=typeof st!='undefined'&&st=='lobby'&&PF&&(PF.se
 setInterval(bgTick,120);
 addEventListener('pointerdown',()=>{try{if(!AC)AC=new AudioContext();if(AC.state==='suspended')AC.resume()}catch(e){}},{passive:true});
 // ---- world runtime ----
+// ===== 2026.11 wiki finisher list: one spec-driven engine FGN(S) builds init/upd for the ~90 extra finishers in FIN2 =====
+// S.b body: fly rise sink flat back squash shrink pop inflate spin stand shake tip run · S.po pose: t up flail cross sit
+// S.tn tint {c,e,ei,a,b} · S.pr props [{k:'e' emoji|'t' text|'beam'|'disc'|'ring'|'box'|'cone', mv:drop pop float side orb follow stay spin grow, a,b,y,x,z,s,c}]
+// S.fx particles [{k:burst rain fount ring aura flash shock trail bolt,a,b,c:[colors],n,s,sp,y,r,g,l,add}] · S.sd [freq,dur,vol,type,at]
+function fCv(f,w,h,draw,sx,sy){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new T.CanvasTexture(c);f.tex.push(t);const m=new T.SpriteMaterial({map:t,transparent:true,depthWrite:false,opacity:0});f.mats.push(m);const s=new T.Sprite(m);s.scale.set(sx,sy,1);f.g.add(s);return s}
+function fEmo(f,ch,s){return fCv(f,128,128,(x)=>{x.font='96px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(ch,64,72)},s,s)}
+function fTxt(f,tx,col,ol,s){return fCv(f,512,160,(x,w,h)=>{x.font='900 '+(tx.length>8?64:96)+'px '+FNT;x.textAlign='center';x.textBaseline='middle';x.lineJoin='round';x.lineWidth=16;x.strokeStyle=ol||'#000';x.strokeText(tx,w/2,h/2+4);x.fillStyle=col||'#fff';x.fillText(tx,w/2,h/2+4)},s*3.2,s)}
+const _fc0=new T.Color(),_fc1=new T.Color();
+function FGN(S){return{init(f){f.pr=[];f.sd=0;for(const p of S.pr||[]){let o;const k=p.k;
+  if(k=='e')o=fEmo(f,p.ch,p.s||1);else if(k=='t')o=fTxt(f,p.tx,p.c,p.o,p.s||1.2);
+  else if(k=='beam'){o=mm(f,UCO,ba(f,p.c,0));o.material.map=ftex('beam');const h=p.h||12;o.scale.set(p.r||.8,h,p.r||.8);o.position.y=h/2}
+  else if(k=='cone'){o=mm(f,new T.CylinderGeometry(.25,p.r||1.6,p.h||6,24,1,true),ba(f,p.c,0));o.position.y=(p.h||6)/2}
+  else if(k=='disc'){o=mm(f,UD,bm(f,p.c,0));o.scale.setScalar(p.r||1.3);o.position.y=.03}
+  else if(k=='ring'){o=mm(f,UR,ba(f,p.c,0));o.scale.setScalar(p.r||1.5);o.position.y=.05}
+  else if(k=='box'){o=mm(f,UB,bm(f,p.c,0));o.scale.set(p.w||1.4,p.h||2.4,p.d||1.2);o.position.y=(p.h||2.4)/2}
+  else if(k=='ball'){o=mm(f,US,lm(f,p.c));o.material.opacity=0;o.scale.setScalar(p.r||1)}
+  o.visible=false;if(o.position.y==0||p.y!=null)o.position.y=p.y==null?1.1:p.y;if(p.x)o.position.x=p.x;if(p.z)o.position.z=p.z;f.pr.push({o,p,y0:o.position.y,s0:o.scale.clone()})}},
+ upd(f,t,dt){const R=f.rig,st=f.st,D=f.D,out=S.keep?0:ph(t,D-.45,D),b=S.b||'tip',A=S.at==null?.15:S.at;let bp=R.g.position;
+  // ---- pose ----
+  const pz=S.po;if(pz=='t'){R.aL.rotation.z=-PI/2;R.aR.rotation.z=PI/2}else if(pz=='up'){R.aL.rotation.z=-2.7;R.aR.rotation.z=2.7}else if(pz=='flail'){const w=Math.sin(t*18);R.aL.rotation.z=-1.2-w*.8;R.aR.rotation.z=1.2+w*.8;R.lL.rotation.x=w*.6;R.lR.rotation.x=-w*.6}
+  else if(pz=='cross'){R.aL.rotation.set(-1.2,0,-.6);R.aR.rotation.set(-1.2,0,.6)}else if(pz=='sit'){R.lL.rotation.x=R.lR.rotation.x=-PI/2}else if(pz=='run'){const w=Math.sin(t*22);R.lL.rotation.x=w;R.lR.rotation.x=-w;R.aL.rotation.x=-w;R.aR.rotation.x=w}
+  // ---- body motion ----
+  if(b=='fly'){const u=ph(t,A,D-.2),d=S.dir||[0,1,1],v=S.v||7;bp.set(d[0]*v*u,Math.max(0,d[1]*v*.7*u-4*u*u*(S.grav||0)+(d[1]?0:0)),d[2]*v*u);R.g.rotation.x=u*(S.rx==null?9:S.rx);R.g.rotation.y=u*(S.ry||0)}
+  else if(b=='rise'){const u=ez(ph(t,A,D));bp.y=u*(S.h||5);R.g.rotation.y+=dt*(S.sp||1.5)}
+  else if(b=='sink'){const u=ez(ph(t,A,D-.2));bp.y=-u*2.4;R.g.rotation.y+=dt*(S.sp||0)*u*6}
+  else if(b=='flat'){R.g.rotation.x=-PI/2*ez(ph(t,A,A+.35));bp.y=.22*ph(t,A,A+.35);bp.z=-.9*ez(ph(t,A,A+.35))}
+  else if(b=='back'){R.g.rotation.x=PI/2*ez(ph(t,A,A+.4));bp.y=.22*ph(t,A,A+.4);bp.z=.9*ez(ph(t,A,A+.4))}
+  else if(b=='squash'){const u=ez(ph(t,A,A+.12));R.g.scale.set(1+.5*u,1-.86*u,1+.5*u)}
+  else if(b=='shrink'){const u=ez(ph(t,A,A+(S.du||.6)));R.g.scale.setScalar(Math.max(.001,1-u));R.g.rotation.y+=dt*(S.sp||0)}
+  else if(b=='inflate'){const u=ph(t,0,A);R.g.scale.set(1+u*1.3,1+u*.5,1+u*1.3);if(t>=A&&!st.pp){st.pp=1;R.g.visible=false}}
+  else if(b=='spin'){const u=ph(t,0,A);R.g.rotation.y+=dt*(4+u*20);if(t>A){R.g.rotation.x=PI/2*ez(ph(t,A,A+.3));bp.y=.22*ph(t,A,A+.3)}}
+  else if(b=='shake'){bp.x=RR(-.05,.05);bp.z=RR(-.05,.05)}
+  else if(b=='tip'){R.g.rotation.x=PI/2*ez(ph(t,A,A+.6));bp.y=.22*ph(t,A,A+.6)}
+  else if(b=='run'){const u=ph(t,A,D-.2);bp.z=-u*9;bp.x=Math.sin(u*9)*.3}
+  else if(b=='hover'){bp.y=.6*ez(ph(t,0,.5))+Math.sin(t*3)*.1;R.g.rotation.y+=dt*(S.sp||0)}
+  if((b=='pop'||S.pop!=null)&&t>=(S.pop==null?A:S.pop)&&!st.pp){st.pp=1;R.g.visible=false}
+  if(st.pp==1){st.pp=2;const cs=S.pc||[R.col,0xf2cf9a,0x2b2f3a];for(let i=0;i<Q(S.pn||26);i++){const a=RR(0,6.28),sp=RR(1.5,4.5);FE(f,{p:[bp.x+RR(-.3,.3),bp.y+RR(.3,1.9),bp.z+RR(-.3,.3)],v:[Math.cos(a)*sp,RR(2,5),Math.sin(a)*sp],s:RR(.12,.3),c:RP(cs),l:RR(1.2,2),g:9,b:.45,w:[RR(-6,6),RR(-6,6),RR(-6,6)]})}}
+  if(S.head)R.hd.scale.setScalar(1+(S.head-1)*ez(ph(t,0,.5)));if(S.rz)R.g.rotation.z=-ph(t,A,D)*S.rz;if(S.sz)R.g.scale.setScalar(1-(1-S.sz)*ez(ph(t,A,A+.4)));if(S.str){const u=ez(ph(t,A,D));R.g.scale.set(1-.7*u,1+S.str*u,1-.7*u)}
+  // ---- tint ----
+  if(S.tn){const n=S.tn,k=ez(ph(t,n.a==null?.1:n.a,n.b==null?.8:n.b));_fc1.setHex(n.c);for(const[m,c0]of[[R.sh,R.col],[R.sk,0xf2cf9a],[R.pn,0x2b2f3a]]){m.color.copy(_fc0.setHex(c0)).lerp(_fc1,k);if(n.e!=null){m.emissive.setHex(n.e);m.emissiveIntensity=(n.ei||.5)*k}}}
+  if(S.op!=null)rigOp(R,1-(1-S.op)*ph(t,A,A+.5));
+  if(out&&!S.keep)rigOp(R,Math.min(S.op==null?1:S.op,1-out));
+  // ---- props ----
+  for(const q of f.pr){const p=q.p,o=q.o,a=p.a||0,e=p.b==null?D:p.b;if(t<a||t>e){o.visible=false;continue}o.visible=true;const u=ph(t,a,a+(p.du||.35)),fo=Math.min(ph(t,a,a+.12),1-ph(t,e-.3,e)),m=o.material;m.opacity=(p.al==null?1:p.al)*fo;
+   const mv=p.mv||'pop';if(mv=='drop'){o.position.y=q.y0+7*(1-ez(u))}else if(mv=='pop'){const s=u<1?ez(u)*1.15:1;o.scale.copy(q.s0).multiplyScalar(Math.max(.01,s))}else if(mv=='float'){o.position.y=q.y0+(t-a)*(p.sp||1)}
+   else if(mv=='side'){o.position.x=-7+14*ph(t,a,e)}else if(mv=='orb'){const w=(t-a)*(p.sp||4);o.position.set(Math.cos(w)*(p.r2||1),q.y0+Math.sin(w*1.7)*.2,Math.sin(w)*(p.r2||1))}
+   else if(mv=='follow'){o.position.set(bp.x+(p.x||0),bp.y+q.y0,bp.z+(p.z||0))}else if(mv=='spin'){o.rotation.y+=dt*(p.sp||4)}else if(mv=='grow'){o.scale.copy(q.s0).multiplyScalar(.05+ez(ph(t,a,e))*1)}else if(mv=='bob'){o.position.y=q.y0+Math.sin(t*6)*.15}
+   else if(mv=='swing'){const k2=ph(t,a,a+.3);o.rotation.z=(1-k2)*1.4;o.position.y=q.y0}}
+  // ---- particles ----
+  for(let j=0;j<(S.fx||[]).length;j++){const x=S.fx[j],a=x.a||0,e=x.b==null?a:x.b,cs=x.c||[0xffffff],y=x.y==null?1.1:x.y,ad=x.add?FA2:FE,P=x.fol?[bp.x,bp.y,bp.z]:[0,0,0];
+   if(e==a){const key='f'+j;if(st[key]||t<a)continue;st[key]=1;
+    if(x.k=='flash'){flash(f,[P[0],P[1]+y,P[2]],cs[0],x.s||4,.45);continue}if(x.k=='shock'){shock(f,.1,cs[0],x.r||3,.55);continue}
+    for(let i=0;i<Q(x.n||30);i++){const an=RR(0,6.28),sp=RR(.5,1)*(x.sp||3);if(x.k=='ring')ad(f,{p:[P[0],P[1]+.15,P[2]],v:[Math.cos(an)*sp,RR(.2,1),Math.sin(an)*sp],s:RR(.06,.14)*(x.s||1),c:RP(cs),l:RR(.6,1.1)*(x.l||1),d:1.5});
+     else ad(f,{p:[P[0]+RR(-.3,.3),P[1]+y+RR(-.4,.4),P[2]+RR(-.3,.3)],v:[Math.cos(an)*sp,RR(.5,1.6)*(x.up||sp*.8),Math.sin(an)*sp],s:RR(.06,.16)*(x.s||1),c:RP(cs),l:RR(.8,1.5)*(x.l||1),g:x.g==null?6:x.g,d:x.d||.6,b:x.g===0?0:.4,w:[RR(-6,6),RR(-6,6),RR(-6,6)],m:x.m||0})}continue}
+   if(t<a||t>e)continue;const n=Q(x.n||2);
+   for(let i=0;i<n;i++){const an=RR(0,6.28),r=RR(.2,x.r||1.1);
+    if(x.k=='rain')ad(f,{p:[P[0]+Math.cos(an)*r,P[1]+(x.y||4.5),P[2]+Math.sin(an)*r],v:[0,-(x.sp||4),0],s:RR(.05,.12)*(x.s||1),c:RP(cs),l:x.l||1.2,g:x.g||0,b:.3,w:[RR(-4,4),0,RR(-4,4)]});
+    else if(x.k=='fount')ad(f,{p:[P[0]+RR(-.2,.2),P[1]+y,P[2]+RR(-.2,.2)],v:[Math.cos(an)*RR(.5,1.6),RR(3,6)*(x.sp||1)/1,Math.sin(an)*RR(.5,1.6)],s:RR(.06,.14)*(x.s||1),c:RP(cs),l:x.l||1.3,g:x.g==null?9:x.g,b:.4});
+    else if(x.k=='aura')ad(f,{p:[P[0]+Math.cos(an)*r,P[1]+RR(0,2.2),P[2]+Math.sin(an)*r],v:[0,RR(.6,1.8)*(x.sp||1),0],s:RR(.04,.1)*(x.s||1),c:RP(cs),l:x.l||1.1,m:x.m||0});
+    else if(x.k=='trail')ad(f,{p:[bp.x+RR(-.3,.3),bp.y+RR(.2,1.8),bp.z+RR(-.3,.3)],v:[RR(-.4,.4),RR(-.2,.6),RR(-.4,.4)],s:RR(.06,.16)*(x.s||1),c:RP(cs),l:x.l||.8});
+    else if(x.k=='bolt'){const a2=an+RR(1.5,4);bolt(f,[P[0]+Math.cos(an)*.8,RR(0,2.2),P[2]+Math.sin(an)*.8],[P[0]+Math.cos(a2)*.8,RR(0,2.2),P[2]+Math.sin(a2)*.8],RP(cs),.07)}
+    else if(x.k=='spray'){const d=x.dir||[0,0,-1];ad(f,{p:[P[0],P[1]+y,P[2]],v:[d[0]*(x.sp||5)+RR(-.6,.6),d[1]*(x.sp||5)+RR(0,1.2),d[2]*(x.sp||5)+RR(-.6,.6)],s:RR(.07,.16)*(x.s||1),c:RP(cs),l:x.l||.9,g:x.g==null?7:x.g,b:.3})}}}
+  // ---- sound ----
+  if(S.sd&&!f.sd&&t>=(S.sd[4]||0)&&!f.pv){f.sd=1;try{snd(S.sd[0],S.sd[1],S.sd[2],S.sd[3])}catch(e){}}}}}
+// ----- FIN2: the rest of the wiki finisher list (own takes, built by FGN). Row: [id,zh,en,r,D,tile emoji,c1,c2,source,spec]
+// source: f1 Finisher Pack · f2 Finisher Pack 2 · tr 🌴 Tropical Chest · jl 🎄 Jolly Chest · hw 🎃 Halloween pack · code:xxx redeem code
+const CF=[0xff4a6a,0xffd23f,0x3ad8ff,0x7aff6a,0xb070ff,0xff8a2a,0xffffff],GD=[0xffd23f,0xffe9a0,0xfff6d0],SNW=[0xffffff,0xe8f4ff,0xcfe8ff],ICE=[0xbfeaff,0x8ad4ff,0xffffff],FIR=[0xff6a1a,0xffb02e,0xffe08a,0xff3a1a];
+const FIN2=[
+['wbs','蝙蝠爆','Batsplosion',0,2.6,'🦇','#a05cff','#12081f','hw',{b:'pop',at:.45,pc:[0x2a1a3a,0x5a2a8a,0xffd23f],fx:[{k:'burst',a:.45,c:[0x2a1a3a,0x5a2a8a],n:30}],pr:[{k:'e',ch:'🦇',mv:'float',a:.45,x:-.7,y:1.4,s:.8,sp:2},{k:'e',ch:'🦇',mv:'float',a:.5,x:.7,y:1.2,s:.7,sp:2.4},{k:'e',ch:'🦇',mv:'float',a:.55,y:2,s:.9,sp:1.6}]}],
+['wbl','閃逝','Blip',0,2.2,'💠','#c08aff','#1a1040','f1',{b:'shrink',at:.5,du:.4,sp:8,fx:[{k:'burst',a:.85,c:[0xb070ff,0x5ad0ff,0xffffff],n:30,add:1,g:0},{k:'flash',a:.85,c:[0xc08aff]}],sd:[880,.12,.05,'square',.85]}],
+['wch','冷靜一下','Chill Out',0,3,'❄️','#d8f2ff','#2a6aa8','f1',{b:'stand',po:'t',tn:{c:0xbfe8ff,a:.1,b:.9},fx:[{k:'aura',a:0,b:2.4,c:SNW,n:2}],pr:[{k:'e',ch:'❄️',mv:'orb',a:.2,y:1.6,s:.6,r2:1.1},{k:'e',ch:'❄️',mv:'orb',a:.4,y:1,s:.5,r2:1.2,sp:-3}]}],
+['wco','煤炭化','Coalify',0,3,'⚫','#4a4a4a','#ff7a2a','f1',{b:'tip',at:1.1,tn:{c:0x1c1c1e,a:.1,b:.9},fx:[{k:'aura',a:0,b:1.2,c:[0xff6a1a,0xffb02e],add:1},{k:'burst',a:1.5,c:[0x222222,0x333333,0x111111],n:24,y:.4}]}],
+['wcf','彩帶','Confetti',0,2.6,'🎊','#ffd23f','#ff4a6a','f1',{b:'pop',at:.2,fx:[{k:'burst',a:.2,c:CF,n:70,sp:4,g:3,d:1.2},{k:'flash',a:.2,c:[0xffffff],s:3}],sd:[1400,.1,.05,'triangle',.2]}],
+['wdl','刪除','Delete',0,2.4,'🗑️','#ffffff','#1a5ad8','f2',{b:'shrink',at:1,du:.25,pr:[{k:'t',tx:'Delete?',c:'#fff',o:'#1a5ad8',y:2.7,a:.15,b:1.1,s:.7}],fx:[{k:'flash',a:1,c:[0x3a8aff]},{k:'burst',a:1.05,c:[0x3a8aff,0xffffff],n:20,add:1,g:0}],sd:[300,.15,.05,'square',1]}],
+['wdg','數位化','Digitize',0,2.8,'📡','#7af0ff','#0a2a3a','f2',{b:'shrink',at:.9,du:.9,tn:{c:0x7af0ff,e:0x2ad8ff,ei:.7,a:.2,b:.8},pr:[{k:'disc',c:0x2ad8ff,al:.6,r:1.1},{k:'cone',c:0x7af0ff,al:.35,r:1.2,h:3,a:.1}],fx:[{k:'aura',a:.2,b:1.8,c:[0x7af0ff,0xffffff],add:1,n:3}]}],
+['wfp','臉著地','Faceplant',0,2.6,'🤕','#c8b090','#3a3020','f1',{b:'flat',at:.05,fx:[{k:'burst',a:.4,c:[0xc8b090,0xa89070],n:22,y:.15,sp:2,up:1.5}],sd:[120,.12,.07,'sine',.4]}],
+['wfl','啪嗒魚','Flop',0,2.6,'🐟','#5ab8ff','#ffd23f','f1',{b:'squash',at:.35,pr:[{k:'e',ch:'🐟',mv:'drop',a:0,y:1.6,s:1.6,b:1.4}],fx:[{k:'burst',a:.35,c:[0x5ab8ff,0xbfeaff,0xffffff],n:28,y:.4}],sd:[200,.1,.07,'square',.35]}],
+['wfd','摺疊','Folded',0,2.4,'📄','#f4f4f4','#5a5a6a','f2',{b:'squash',at:.25,tn:{c:0xf0ece0,a:.25,b:.5},fx:[{k:'burst',a:.25,c:[0xffffff,0xe0e0e0],n:14,y:.3,sp:1.5}],sd:[600,.06,.05,'triangle',.25]}],
+['wgy','榮耀雕像','For Glory',0,3.2,'⚔️','#c8ccd2','#4a4e58','f1',{b:'stand',po:'cross',tn:{c:0x9aa0a8,a:.1,b:.8},pr:[{k:'e',ch:'⚔️',mv:'pop',a:.3,y:1.3,z:-.4,s:1}],fx:[{k:'flash',a:.1,c:[0xffffff]},{k:'burst',a:2.6,c:[0x9aa0a8,0x7a7e86],n:30}],pop:2.6}],
+['wpz','狗仔閃光','Paparazzi Flash',0,2.8,'📸','#ffffff','#2a2a3a','f1',{b:'tip',at:1.3,po:'cross',fx:[{k:'flash',a:.15,c:[0xffffff],s:5},{k:'flash',a:.45,c:[0xffffff],s:5},{k:'flash',a:.75,c:[0xffffff],s:5},{k:'flash',a:1.05,c:[0xffffff],s:5}],pr:[{k:'e',ch:'📸',mv:'orb',a:0,y:1.4,s:.7,r2:1.4,b:1.3}],sd:[2400,.05,.05,'square',.15]}],
+['wsc','萬聖彩帶','Spooky Confetti',0,2.6,'🍬','#ff8a2a','#3a1060','hw',{b:'pop',at:.2,fx:[{k:'burst',a:.2,c:[0xff8a2a,0xb070ff,0x7aff6a,0x1a1a1a],n:70,sp:4,g:3,d:1.2}],pr:[{k:'e',ch:'🍬',mv:'float',a:.2,x:-.5,y:1.3,s:.6},{k:'e',ch:'🍭',mv:'float',a:.25,x:.5,y:1.6,s:.6}]}],
+['wsl','聚光燈','Spotlight',0,3,'🔦','#fff6c0','#3a3420','f1',{b:'tip',at:.5,pr:[{k:'cone',c:0xfff2b0,al:.3,r:1.3,h:7},{k:'disc',c:0xfff2b0,al:.35,r:1.3}],fx:[{k:'aura',a:0,b:2.5,c:[0xfff6c0],add:1,n:1}]}],
+['wsq','嘎嘎','Squawk',0,2.6,'🪶','#ffffff','#3a6ad8','f2',{b:'pop',at:.3,pc:[0xffffff,0xf4f4f4],pn:16,fx:[{k:'burst',a:.3,c:[0xffffff,0xf0f0f0],n:40,g:.6,d:2,sp:3}],pr:[{k:'e',ch:'🐔',mv:'pop',a:.3,y:1,s:1.2}],sd:[900,.15,.05,'sawtooth',.3]}],
+['wsr','陽光','Sun Rays',0,3,'☀️','#ffe27a','#ff9a2a','tr',{b:'tip',at:.2,pr:[{k:'beam',c:0xffe08a,r:1.4,h:14}],fx:[{k:'aura',a:0,b:2.5,c:GD,add:1,n:3}]}],
+['wsz','烤焦','Sizzled',0,3,'🔥','#ff6a3a','#5a1a0a','tr',{b:'tip',at:.6,tn:{c:0xd84a2a,e:0xff3a1a,ei:.4,a:0,b:.8},fx:[{k:'aura',a:0,b:2.6,c:[0x888888,0x555555],n:2},{k:'aura',a:0,b:1.5,c:FIR,add:1}],sd:[300,.4,.03,'sawtooth',0]}],
+['wtt','噗！','Toot',0,2.6,'💨','#9ad84a','#2a4a1a','f1',{b:'fly',dir:[0,1,0],v:6,rx:2,at:.15,fx:[{k:'burst',a:.15,c:[0x9ad84a,0x7ab83a,0xb8e86a],n:40,y:.3,g:0,sp:1.5,d:2,s:2}],sd:[90,.35,.08,'sawtooth',.15]}],
+['wbp','香蕉皮慘劇','Very Tragic Banana Peel Accident',0,2.6,'🍌','#ffe27a','#3a6a2a','f2',{b:'back',at:.2,pr:[{k:'e',ch:'🍌',mv:'stay',a:0,y:.2,z:-.3,s:.8}],fx:[{k:'burst',a:.6,c:[0xffffff],n:10,y:.4,sp:2}],sd:[700,.25,.05,'sine',.2]}],
+['wwa','傳送離開','Warped Away',0,2.6,'🌀','#c05cff','#1a0a3a','f1',{b:'sink',at:.2,sp:3,pr:[{k:'disc',c:0x8a3aff,al:.85,r:1.2},{k:'ring',c:0xd8a0ff,r:1.4,mv:'spin'}],fx:[{k:'aura',a:0,b:2,c:[0xb070ff,0xffffff],add:1,n:3}]}],
+['wwb','水球','Water Balloons',0,2.8,'🎈','#5ab8ff','#ff4a6a','tr',{b:'tip',at:1,tn:{c:0x6aa8e8,a:.3,b:1},fx:[{k:'burst',a:.3,c:[0x5ab8ff,0xbfeaff],n:24,y:1.8},{k:'burst',a:.6,c:[0x5ab8ff,0xbfeaff],n:24,y:1.2},{k:'burst',a:.9,c:[0x5ab8ff,0xbfeaff],n:24,y:1.6}],pr:[{k:'e',ch:'🎈',mv:'drop',a:0,y:1.9,s:.7,b:.3},{k:'e',ch:'🎈',mv:'drop',a:.3,y:1.3,s:.7,b:.6,x:.3},{k:'e',ch:'🎈',mv:'drop',a:.6,y:1.6,s:.7,b:.9,x:-.3}]}],
+['wyk','搶走','Yoink',0,2,'🫳','#ffffff','#3a3a5a','f1',{b:'fly',dir:[1,.25,0],v:10,rx:0,ry:5,at:.2,fx:[{k:'trail',a:.2,b:1.6,c:[0xffffff],n:2}],sd:[500,.2,.05,'triangle',.2]}],
+['wbm','壞心情','Bad Mood',1,3.2,'🌩️','#5a6a8a','#1a1a2a','f2',{b:'stand',po:'sit',tn:{c:0x6a7a9a,a:.2,b:1.2},pr:[{k:'e',ch:'🌩️',mv:'bob',a:0,y:3,s:1.6}],fx:[{k:'rain',a:.2,b:2.8,c:[0x6ab8ff],y:2.6,r:.7,sp:6,n:3}],sd:[80,.5,.06,'sawtooth',.3]}],
+['wbd','沙灘日','Beach Day',1,3.2,'🏖️','#ffe8a0','#2aa8d8','tr',{b:'back',at:.3,po:'sit',pr:[{k:'disc',c:0xe8d090,r:1.6},{k:'e',ch:'😎',mv:'pop',a:.6,y:2.6,s:.9},{k:'e',ch:'⛱️',mv:'pop',a:.4,x:1.2,y:1,s:1.6}]}],
+['wbg','打歪','Bogey',1,2.6,'⛳','#c05cff','#2a6a2a','f1',{b:'fly',dir:[0,1,-1],v:7,at:.25,pr:[{k:'e',ch:'⛳',mv:'pop',a:0,x:.8,y:.6,s:1.1,b:1.2},{k:'e',ch:'🌀',mv:'pop',a:.4,y:4,z:-4,s:2.4}],fx:[{k:'trail',a:.3,b:2,c:[0xffffff,0xc05cff],add:1}],sd:[1000,.08,.05,'square',.25]}],
+['wcl','崩塌','Collapse',1,2.6,'🧱','#ffffff','#3a3a4a','f1',{b:'pop',at:.5,fx:[{k:'flash',a:.5,c:[0xffffff],s:5},{k:'shock',a:.5,c:[0xffffff],r:2.6}]}],
+['wcc','謝幕','Curtain Call',1,3.4,'🎭','#d8262a','#3a0a0a','f1',{b:'stand',po:'up',pr:[{k:'box',c:0xc81a2a,w:.9,h:3.2,d:.15,x:-1.1,z:-.6},{k:'box',c:0xc81a2a,w:.9,h:3.2,d:.15,x:1.1,z:-.6},{k:'e',ch:'🌹',mv:'drop',a:.5,x:.4,y:.2,s:.6},{k:'e',ch:'🌹',mv:'drop',a:.8,x:-.5,y:.2,s:.6}],fx:[{k:'rain',a:.4,b:2.6,c:[0xd8262a,0x2a8a3a],y:3,r:1.2,n:1}]}],
+['wdp','聖誕樹裝飾','Decorated Player',1,3.2,'🎄','#2a8a3a','#ffd23f','jl',{b:'shrink',at:.4,du:.3,pr:[{k:'e',ch:'🎄',mv:'pop',a:.35,y:1.3,s:2.8},{k:'e',ch:'⭐',mv:'pop',a:.6,y:2.9,s:.7}],fx:[{k:'aura',a:.4,b:2.6,c:[0xffd23f,0xff4a4a],add:1,n:2}]}],
+['wfk','彈飛','Flick',1,2.4,'👌','#ffffff','#3a5ad8','f2',{b:'fly',dir:[-1,.6,0],v:9,at:.35,rx:6,pr:[{k:'e',ch:'👌',mv:'pop',a:0,x:.8,y:1.2,s:1.2,b:.6}],fx:[{k:'flash',a:.35,c:[0xffffff],s:2}],sd:[1200,.06,.06,'square',.35]}],
+['wfr','冰封','Frozen',1,3.2,'🧊','#bfeaff','#2a6aa8','jl',{b:'stand',po:'t',tn:{c:0x7ad0ff,e:0x3aa0ff,ei:.4,a:.1,b:.5},pr:[{k:'disc',c:0xbfeaff,al:.7,r:1.3}],fx:[{k:'burst',a:.15,c:ICE,n:30,add:1},{k:'aura',a:.2,b:2.7,c:SNW,n:2}],sd:[1800,.2,.04,'sine',.15]}],
+['wgb','薑餅人化','Gingerbreadify',1,3.2,'🍪','#c8843a','#5a2a1a','jl',{b:'tip',at:2,po:'t',tn:{c:0xb87a3a,a:.2,b:.8},fx:[{k:'burst',a:.5,c:[0xffffff,0xff4a4a,0x3ad83a],n:30,s:.7}]}],
+['wgh','鉤爪拉走','Grapple Hooked',1,2.4,'🪝','#8a96a8','#2a2a3a','f1',{b:'fly',dir:[0,1.1,-1],v:7,rx:2,at:.2,pr:[{k:'e',ch:'🪝',mv:'follow',a:0,y:2.4,s:.8}],fx:[{k:'trail',a:.2,b:2,c:[0x8a96a8,0xffffff]}]}],
+['whh','大頭','Heavy Head',1,2.8,'🗿','#ffd27a','#5a3a1a','f2',{b:'flat',at:.55,head:2.4,fx:[{k:'burst',a:.9,c:[0xc8b090,0xa89070],n:20,y:.2,sp:2}],sd:[80,.2,.08,'sine',.9]}],
+['whg','高重力','High Gravity',1,2.6,'⬇️','#6a5aaa','#0a0a1a','f1',{b:'squash',at:.4,pr:[{k:'ring',c:0x8a6aff,r:1.6},{k:'disc',c:0x2a1a4a,al:.6,r:1.4}],fx:[{k:'rain',a:0,b:.5,c:[0xb8a8ff],y:4,r:1,sp:12,n:3,add:1},{k:'shock',a:.4,c:[0x8a6aff],r:3}],sd:[60,.3,.08,'sawtooth',.4]}],
+['whk','勾走','Hooked',1,2.6,'🎣','#3a8ad8','#1a1a2a','f2',{b:'fly',dir:[0,1.3,1],v:7,rx:3,at:.3,pr:[{k:'e',ch:'🪝',mv:'follow',a:0,y:2.3,s:.8}],fx:[{k:'trail',a:.3,b:2,c:[0xffffff]}]}],
+['wif','漫畫衝擊','Impact Frame',1,2.4,'💥','#ffffff','#000000','f1',{b:'tip',at:.4,tn:{c:0xf4f4f4,a:.1,b:.15},pr:[{k:'t',tx:'BAM!!',c:'#ffffff',o:'#000',y:2.8,a:.1,b:1.8,s:.9}],fx:[{k:'flash',a:.1,c:[0xffffff],s:8},{k:'shock',a:.1,c:[0x111111],r:4},{k:'burst',a:.12,c:[0x111111,0xffffff],n:40,sp:5}],sd:[100,.25,.1,'square',.1]}],
+['wkp','兒童泳池','Kiddie Pool',1,3.2,'🦆','#ff8ab8','#3ad8ff','tr',{b:'stand',po:'sit',pr:[{k:'disc',c:0xff8ab8,r:1.35},{k:'disc',c:0x5ad8ff,r:1.15,y:.08},{k:'e',ch:'🦆',mv:'orb',a:.3,y:.5,s:.6,r2:.9,sp:2}],fx:[{k:'burst',a:.1,c:[0x5ad8ff,0xffffff],n:20,y:.3}]}],
+['wls','迷失靈魂','Lost Soul',1,3,'👻','#e8f4ff','#3a5a8a','hw',{b:'tip',at:.2,pr:[{k:'e',ch:'👻',mv:'float',a:.4,y:1.4,s:1.1,sp:1.3}],fx:[{k:'aura',a:.4,b:2,c:[0xe8f4ff],add:1,n:1}]}],
+['wmt','點石成金','Midas Touch',1,3.2,'👑','#ffe27a','#8a5a00','f1',{b:'stand',po:'cross',tn:{c:0xffd23f,e:0x8a5a00,ei:.5,a:.1,b:.8},fx:[{k:'flash',a:.1,c:[0xffe27a]},{k:'aura',a:.1,b:2.8,c:GD,add:1,n:3}],sd:[1600,.25,.04,'sine',.1]}],
+['wrr','死神','Reaper',1,3.2,'💀','#1a1a1a','#d8262a','hw',{b:'sink',at:1.4,tn:{c:0x0e0e10,a:.1,b:.7},pr:[{k:'e',ch:'😡',mv:'pop',a:.6,y:1.9,z:-.3,s:.55,b:1.6}],fx:[{k:'aura',a:0,b:2.6,c:[0xd8262a,0x3a0a0a],add:1,n:2}]}],
+['wrn','走鵑跑走','Roadrunner',1,2.8,'🕳️','#ffd23f','#1a1a1a','f2',{b:'sink',at:.6,po:'flail',pr:[{k:'disc',c:0x050505,r:1.2}],fx:[{k:'burst',a:.1,c:[0xc8b090],n:16,y:.2,sp:2}],sd:[1200,.5,.04,'sine',.6]}],
+['wsp','噴濺','Splatter',1,2.6,'🎨','#ff4a8a','#3ad8ff','f1',{b:'pop',at:.25,pc:CF,pr:[{k:'disc',c:0xff4a8a,r:1.5,a:.3},{k:'disc',c:0x3ad8ff,r:.9,x:.6,y:.04,a:.35}],fx:[{k:'burst',a:.25,c:CF,n:50,sp:4}]}],
+['wsw','被沖走','Swept Away',1,2.8,'🌊','#5ab8ff','#0a3a6a','tr',{b:'fly',dir:[1,.2,0],v:9,rx:3,at:.6,pr:[{k:'e',ch:'🌊',mv:'side',a:.1,b:2.2,y:1.2,s:3.2}],fx:[{k:'burst',a:.6,c:[0x5ab8ff,0xffffff,0xbfeaff],n:40}],sd:[150,.6,.05,'sawtooth',.5]}],
+['wtw','風滾草','Tumbleweed',1,3,'🌵','#c8a060','#5a3a1a','f1',{b:'fly',dir:[1,0,0],v:7,rx:0,rz:14,at:.3,pr:[{k:'e',ch:'🌵',mv:'pop',a:0,x:-1.2,y:.8,s:1.4}],fx:[{k:'trail',a:.3,b:2.5,c:[0xc8a060,0xa88040]}]}],
+['wws','傳送暈眩','Warp Sickness',1,3,'🤢','#d8c8ff','#5a3aaa','f1',{b:'shake',tn:{c:0xd0c8ff,e:0x8a6aff,ei:.5,a:.1,b:.6},op:.6,at:.3,fx:[{k:'aura',a:0,b:2.6,c:[0xb070ff,0xffffff],add:1,n:2}],pop:2.2,pc:[0xd0c8ff,0xb070ff]}],
+['wac','酸液','Acid Splash',3,3,'🧪','#9aff3a','#1a3a0a','f1',{b:'sink',at:.8,tn:{c:0x7ad83a,e:0x3a8a0a,ei:.5,a:.1,b:.8},pr:[{k:'disc',c:0x7aff3a,r:1.4,al:.85}],fx:[{k:'fount',a:0,b:2,c:[0x9aff3a,0x5ad81a],n:2},{k:'aura',a:.3,b:2.4,c:[0xbfff7a],add:1}],sd:[200,.5,.04,'sawtooth',0]}],
+['wbn','碰！','BANG!',3,2.6,'🔫','#ffd23f','#d8262a','f1',{b:'back',at:.25,pr:[{k:'t',tx:'BANG!',c:'#ffd23f',o:'#c81a1a',y:2.8,a:.2,s:1},{k:'e',ch:'🔫',mv:'pop',a:0,x:-1.1,y:1.6,s:1,b:1}],fx:[{k:'flash',a:.2,c:[0xffe08a],s:5}],sd:[120,.3,.1,'square',.2]}],
+['wbe','信標','Beacon',3,3.2,'🔦','#7ac8ff','#0a2a6a','f1',{b:'rise',at:.3,h:6,po:'up',tn:{c:0xbfe8ff,e:0x3a8aff,ei:.8,a:0,b:.6},pr:[{k:'beam',c:0x6ab8ff,r:1,h:16},{k:'beam',c:0xffffff,r:.3,h:16}],fx:[{k:'aura',a:0,b:2.6,c:[0x7ac8ff,0xffffff],add:1,n:3}],sd:[600,.6,.04,'sine',.3]}],
+['wbr','騎掃帚','Broom Ride',3,3,'🧹','#ffb02e','#3a1060','hw',{b:'fly',dir:[0,.6,-1],v:9,rx:0,at:.4,po:'sit',pr:[{k:'e',ch:'🧹',mv:'follow',a:.1,y:.4,s:1.6}],fx:[{k:'trail',a:.4,b:2.6,c:[0xb070ff,0xffd23f],add:1,n:3}]}],
+['wbb','泡泡球','Bubble Ball',3,3.2,'🫧','#bfeaff','#3a8ad8','tr',{b:'rise',at:.5,h:4,po:'sit',pr:[{k:'ball',c:0xbfeaff,al:.38,r:1.35,mv:'follow',y:1.1,a:.2}],fx:[{k:'aura',a:.2,b:2.6,c:[0xffffff,0xbfeaff],add:1}],sd:[900,.2,.04,'sine',.2]}],
+['wca','鯊雞攻擊','Chark Attack',3,2.6,'🦈','#ffd23f','#2a6ad8','f2',{b:'pop',at:.55,pr:[{k:'e',ch:'🦈',mv:'pop',a:.2,y:1.3,z:-.2,s:2.8,b:1.4}],fx:[{k:'burst',a:.55,c:[0x5ab8ff,0xffffff,0xffd23f],n:40}],sd:[90,.3,.1,'sawtooth',.55]}],
+['wcm','蛤蜊夾','Clammed',3,3,'🦪','#bfeaff','#2a5a8a','f1',{b:'shrink',at:.6,du:.3,pr:[{k:'e',ch:'🦪',mv:'pop',a:.3,y:1.1,s:2.8}],fx:[{k:'aura',a:.6,b:2.6,c:[0xffffff,0xbfeaff],add:1}],sd:[300,.15,.07,'square',.6]}],
+['wcp','拍飛','Clapped',3,2.4,'👏','#ffffff','#5a5a8a','f2',{b:'fly',dir:[0,1,1],v:10,at:.35,pr:[{k:'e',ch:'👏',mv:'pop',a:0,x:.4,y:1.4,s:2.2,b:.7}],fx:[{k:'flash',a:.35,c:[0xffffff],s:4}],sd:[1500,.07,.1,'square',.35]}],
+['wcr','壓碎','Crushed',3,2.8,'🪨','#c8a878','#3a2a1a','f2',{b:'squash',at:.45,pr:[{k:'e',ch:'🪨',mv:'drop',a:.1,y:1,s:2.4}],fx:[{k:'burst',a:.45,c:[0xc8a878,0x8a7a5a],n:40,y:.3},{k:'shock',a:.45,c:[0xc8a878],r:2.4}],sd:[60,.3,.1,'sawtooth',.45]}],
+['wdv','雪人大衛','David',3,3.2,'⛄','#ffffff','#ff7a2a','jl',{b:'squash',at:.45,pr:[{k:'e',ch:'⛄',mv:'drop',a:.15,y:1.4,s:3}],fx:[{k:'burst',a:.45,c:SNW,n:40,y:.3}],sd:[90,.25,.08,'sine',.45]}],
+['wdm','去物質化','Dematerialize',3,3,'🔷','#5ad8ff','#0a1a4a','f1',{b:'shrink',at:1.1,du:1.2,tn:{c:0x5ad8ff,e:0x2a6aff,ei:.8,a:0,b:.5},op:.55,fx:[{k:'aura',a:.2,b:2.4,c:[0x5ad8ff,0x2a8aff,0xffffff],add:1,n:4,s:1.5}]}],
+['wdi','鑽石手','Diamond Hands',3,3.2,'💎','#f2fbff','#4a7aa8','f1',{b:'stand',po:'cross',tn:{c:0xe0f4ff,e:0x6aa8ff,ei:.5,a:.1,b:.7},fx:[{k:'flash',a:.1,c:[0xffffff]},{k:'aura',a:.1,b:2.8,c:[0xffffff,0xbfeaff],add:1,n:3}],sd:[2000,.2,.04,'sine',.1]}],
+['wdz','瓦解','Disintegrate',3,2.6,'⚡','#fff6a0','#3a2a6a','hw',{b:'pop',at:.8,pc:[0xfff6a0,0xffffff,0xffd23f],fx:[{k:'spray',a:0,b:.8,c:[0xffffff,0xfff6a0],dir:[1,0,0],sp:-6,y:1.2,add:1,g:0,n:4},{k:'flash',a:.8,c:[0xfff6a0],s:5}],sd:[1200,.6,.04,'sawtooth',0]}],
+['wdr','墓碑 DRIP','DRIP',3,3,'🪦','#ffd23f','#5a3a1a','f1',{b:'sink',at:.3,pr:[{k:'disc',c:0x5a3a1a,r:1.2},{k:'e',ch:'🪦',mv:'pop',a:.6,y:.8,z:.6,s:1.6}],fx:[{k:'aura',a:.6,b:2.6,c:GD,add:1}]}],
+['wen','開悟','Enlightened',3,3.4,'🧘','#bfffff','#ffd23f','f2',{b:'rise',at:.3,h:3,sp:.6,po:'sit',tn:{c:0xfff6c0,e:0xffd23f,ei:.6,a:.2,b:1},pr:[{k:'beam',c:0xbfffff,r:1.1,h:14}],fx:[{k:'aura',a:0,b:3,c:[0xbfffff,0xffd23f,0xffffff],add:1,n:3}],sd:[520,.8,.04,'sine',.2]}],
+['wfi','冰錐雨','Falling Icicles',3,3,'🧊','#bfeaff','#1a3a6a','f1',{b:'tip',at:.9,tn:{c:0x9ad4ff,a:.9,b:1.4},fx:[{k:'rain',a:0,b:.9,c:ICE,y:6,sp:12,n:4,r:.9,s:2},{k:'burst',a:.9,c:ICE,n:30,add:1}],sd:[2200,.15,.04,'square',.9]}],
+['wfw','煙火秀','Firework Show',3,3,'🎆','#ff4a6a','#1a1a4a','f1',{b:'fly',dir:[0,1,0],v:10,rx:0,ry:12,at:.3,pop:1.5,fx:[{k:'trail',a:.3,b:1.5,c:FIR,add:1,n:3},{k:'burst',a:1.5,c:CF,n:80,add:1,sp:6,g:1,fol:1,y:.8},{k:'flash',a:1.5,c:[0xffffff],s:7,fol:1}],sd:[300,.5,.06,'sawtooth',1.5]}],
+['wgi','巨冰刺','Giant Ice Spike',3,2.8,'🗻','#bfeaff','#2a6aa8','f1',{b:'fly',dir:[0,1,.3],v:7,at:.25,pr:[{k:'box',c:0xa8e0ff,w:.7,h:4.5,d:.7,mv:'grow',a:.15,b:2.6,al:.85}],fx:[{k:'burst',a:.25,c:ICE,n:40,add:1}],sd:[1500,.3,.06,'square',.25]}],
+['wgs','巨雪球','Giant Snowball',3,2.6,'☃️','#ffffff','#3a8ad0','f1',{b:'fly',dir:[1,.2,0],v:9,rx:0,rz:8,at:.45,pr:[{k:'ball',c:0xffffff,r:1.4,mv:'side',a:0,b:2.4,y:1.4}],fx:[{k:'burst',a:.45,c:SNW,n:50}],sd:[100,.3,.08,'sine',.45]}],
+['wgf','搞笑亂鬥','Goofy Brawl',3,3,'💫','#ffffff','#ffd23f','f1',{b:'stand',po:'flail',op:0,at:.3,pr:[{k:'ball',c:0xf4f4f4,r:1.3,al:.95,mv:'bob',a:.2,b:2.4,y:1.1},{k:'e',ch:'💫',mv:'orb',a:.3,b:2.4,y:2.3,s:.7}],fx:[{k:'aura',a:.3,b:2.3,c:[0xffd23f,0xffffff],n:3,r:1.3},{k:'burst',a:2.4,c:[0xffffff,0xdddddd],n:40,sp:3}],sd:[400,.3,.05,'square',.3]}],
+['wig','點燃','Ignite',3,3,'🔥','#ff6a1a','#3a0a0a','f1',{b:'tip',at:1.6,tn:{c:0x1a1a1a,a:.4,b:1.6},fx:[{k:'aura',a:0,b:2.2,c:FIR,add:1,n:5,s:2},{k:'fount',a:0,b:1.8,c:FIR,add:1,n:2,g:-1}],sd:[200,.8,.04,'sawtooth',0]}],
+['wim','穿刺','Impaled',3,2.8,'🗡️','#e8e8f0','#3a3a5a','f1',{b:'back',at:.45,pr:[{k:'e',ch:'🗡️',mv:'drop',a:.1,y:1.5,s:2.2}],fx:[{k:'burst',a:.45,c:[0xffffff,0xe8e8f0],n:24,add:1}],sd:[900,.12,.07,'square',.45]}],
+['win','膨脹','Inflate',3,2.6,'🎈','#5a8aff','#7aff6a','f1',{b:'inflate',at:1.3,fx:[{k:'burst',a:1.3,c:[0x5a8aff,0x7aff6a,0xffd23f],n:50,sp:5},{k:'flash',a:1.3,c:[0xffffff],s:4}],sd:[1400,.12,.1,'square',1.3]}],
+['wis','不穩定','Instability',3,2.6,'⚠️','#5affd8','#0a2a3a','f1',{b:'shake',tn:{c:0x7affe8,e:0x2ad8c8,ei:.8,a:0,b:1},pop:1.5,pc:[0x5affd8,0x2ad8c8,0xffffff],fx:[{k:'bolt',a:0,b:1.5,c:[0x5affd8,0xffffff],n:2},{k:'flash',a:1.5,c:[0x5affd8],s:5}],sd:[1000,.4,.04,'sawtooth',0]}],
+['wlp','小矮妖化','Leprechaunify',3,3.2,'🍀','#3ad83a','#ffd23f','f1',{b:'stand',sz:.6,at:.2,tn:{c:0x2aa83a,a:.2,b:.7},pr:[{k:'e',ch:'🍀',mv:'orb',a:.2,y:1.2,s:.6},{k:'e',ch:'🪙',mv:'pop',a:.5,x:.8,y:.4,s:1}],fx:[{k:'fount',a:.4,b:2.6,c:GD,n:2}]}],
+['wlc','掉椰子','Loose Coconut',3,2.8,'🥥','#8a5a2a','#2a8a3a','tr',{b:'flat',at:.55,pr:[{k:'e',ch:'🌴',mv:'pop',a:0,x:1.1,y:1.6,s:3},{k:'e',ch:'🥥',mv:'drop',a:.2,y:2.1,s:.8,b:.6}],fx:[{k:'burst',a:.55,c:[0xffd23f,0xffffff],n:16,y:2,add:1}],sd:[300,.1,.1,'sine',.55]}],
+['wlg','低重力','Low Gravity',3,3.4,'🧑‍🚀','#ffffff','#2a2a6a','f1',{b:'rise',at:.2,h:4,sp:.4,po:'flail',fx:[{k:'aura',a:0,b:3,c:[0xffffff,0xbfd8ff],add:1}]}],
+['wmw','割草機','Mow Them Down',3,2.6,'🚜','#d8262a','#3a8a2a','tr',{b:'pop',at:.9,pc:[0x3ad83a,0x7aff6a,0x2a8a2a],pr:[{k:'e',ch:'🚜',mv:'side',a:.2,b:1.6,y:.7,s:1.8}],fx:[{k:'burst',a:.9,c:[0x3ad83a,0x7aff6a],n:50}],sd:[110,.8,.04,'sawtooth',.2]}],
+['wop','富麗堂皇','Opulent',3,3.2,'✨','#ffe27a','#5a3a00','f1',{b:'stand',po:'up',tn:{c:0xffe27a,e:0xffb000,ei:.7,a:.1,b:.7},pr:[{k:'ring',c:0xffd23f,r:1.4,mv:'spin'}],fx:[{k:'aura',a:0,b:2.8,c:GD,add:1,n:4},{k:'flash',a:.1,c:[0xffe27a],s:5}],sd:[1700,.3,.04,'sine',.1]}],
+['wpc','像素金幣','Pixel Coins',3,2.8,'🪙','#ffd23f','#5a3a00','f1',{b:'pop',at:.5,pc:[0xffd23f,0xffe08a],fx:[{k:'burst',a:.5,c:[0xffd23f,0xffb000,0xffe08a],n:60,s:1.4,sp:4}],pr:[{k:'e',ch:'🪙',mv:'orb',a:.5,y:1.2,s:.7}],sd:[1320,.12,.06,'square',.5]}],
+['wpl','玩偶化','Plushify',3,3,'🧸','#ffd27a','#8a5a2a','f1',{b:'tip',at:.9,sz:.6,tn:{c:0xf2c24a,a:.2,b:.8},fx:[{k:'burst',a:.3,c:[0xffffff,0xffd8e8],n:20,g:1}],sd:[800,.15,.04,'sine',.3]}],
+['wpf','噗咻','Poof',3,2.6,'☁️','#ffc8e8','#d84a9a','f1',{b:'shrink',at:.5,du:.2,pr:[{k:'ball',c:0xffc8e8,r:1.5,al:.9,mv:'pop',a:.25,b:1.6,y:1.1}],fx:[{k:'burst',a:.4,c:[0xffc8e8,0xffffff],n:40,g:0,d:2,s:2}],sd:[500,.2,.06,'triangle',.4]}],
+['wrb','彩虹吐','Rainbow Barf',3,3,'🌈','#ff4a6a','#3ad8ff','f2',{b:'tip',at:2.2,fx:[{k:'spray',a:.2,b:2.1,c:[0xff3a3a,0xff9a2a,0xffe23a,0x3ad83a,0x3a8aff,0xa05cff],dir:[0,-.2,-1],sp:4,y:1.85,n:4}],sd:[200,1,.04,'sawtooth',.2]}],
+['wrip','安息','RIP',3,3,'🪦','#9aa0a8','#3a2a1a','f1',{b:'sink',at:.4,pr:[{k:'disc',c:0x5a3a1a,r:1.2},{k:'e',ch:'🪦',mv:'pop',a:.7,y:.8,z:.6,s:1.6}],fx:[{k:'burst',a:.4,c:[0x5a3a1a,0x7a5a3a],n:20,y:.2}]}],
+['wsa','雪橇飛走','Sleigh Away',3,3,'🛷','#d8262a','#ffd23f','f1',{b:'fly',dir:[0,.7,-1],v:9,rx:0,at:.5,po:'sit',pr:[{k:'e',ch:'🛷',mv:'follow',a:0,y:.4,s:1.6}],fx:[{k:'trail',a:.5,b:2.6,c:GD,add:1,n:3}],sd:[2000,.4,.04,'triangle',.5]}],
+['wsb','雪球砸','Snowballed',3,2.8,'❄️','#ffffff','#2a6aa8','jl',{b:'tip',at:1,tn:{c:0xeef6ff,a:.3,b:1.2},fx:[{k:'burst',a:.3,c:SNW,n:24,y:1.8},{k:'burst',a:.6,c:SNW,n:24,y:1.2},{k:'burst',a:.9,c:SNW,n:30,y:1.6}],sd:[180,.1,.07,'sine',.3]}],
+['wsg','麵條化','Spaghettified',3,2.8,'🌀','#3ad8c8','#0a2a4a','f1',{b:'sink',at:.3,str:3,pr:[{k:'disc',c:0x0a3a4a,r:1.3},{k:'ring',c:0x3ad8c8,r:1.5,mv:'spin',sp:6}],fx:[{k:'aura',a:0,b:2.4,c:[0x3ad8c8,0xffffff],add:1,n:3}],sd:[400,.8,.04,'sine',.3]}],
+['wso','起立鼓掌','Standing Ovation',3,3.2,'🌹','#d8262a','#2a6a2a','f1',{b:'tip',at:2.4,po:'up',pr:[{k:'e',ch:'👏',mv:'orb',a:.2,y:1.8,s:.7},{k:'e',ch:'🌹',mv:'drop',a:.6,x:.5,y:.2,s:.6}],fx:[{k:'rain',a:.2,b:2.6,c:[0xd8262a,0x2a8a3a],y:4,r:1.4,n:2}]}],
+['wsf','僵硬','Stiff',3,2.6,'🧍','#ffd23f','#2a5ad8','f1',{b:'tip',at:.6,po:'t',fx:[{k:'burst',a:1.2,c:[0xc8b090],n:16,y:.2,sp:2}],sd:[90,.15,.08,'sine',1.2]}],
+['wsx','幽靈化','Spectralized',3,3.2,'👻','#40e0d0','#0a3a3a','f1',{b:'hover',tn:{c:0x40e0d0,e:0x20a0a0,ei:.7,a:0,b:.6},op:.5,at:.2,fx:[{k:'aura',a:0,b:2.8,c:[0x40e0d0,0xbfffff],add:1,n:3}],sd:[300,.8,.04,'sine',0]}],
+['wtk','懂的都懂','Those Who Know',3,3.2,'💀','#e8e8e8','#1a1a1a','hw',{b:'stand',tn:{c:0x8a8a8a,a:.2,b:.6},pr:[{k:'e',ch:'💀',mv:'pop',a:.3,y:1.21,z:-.25,s:.9}],fx:[{k:'flash',a:.3,c:[0xffffff],s:3},{k:'burst',a:2.7,c:[0x8a8a8a,0xffffff],n:30}],pop:2.7,sd:[55,.9,.08,'sawtooth',.3]}],
+['wtc','噓聲一片','Tough Crowd',3,2.8,'🍅','#ff4a3a','#3a8a2a','f1',{b:'back',at:1,pr:[{k:'e',ch:'🍅',mv:'drop',a:.1,x:.4,y:1.8,s:.7,b:.4},{k:'e',ch:'🍅',mv:'drop',a:.4,x:-.4,y:1.4,s:.7,b:.7},{k:'e',ch:'🍅',mv:'drop',a:.7,y:2,s:.8,b:1}],fx:[{k:'burst',a:.4,c:[0xd8262a,0xff6a4a],n:16,y:1.8},{k:'burst',a:.7,c:[0xd8262a,0xff6a4a],n:16,y:1.4},{k:'burst',a:1,c:[0xd8262a,0xff6a4a],n:20,y:2}],sd:[160,.3,.04,'sawtooth',.1]}],
+['wwm','打地鼠','Whack A Mole',3,2.6,'🔨','#c87a4a','#3a2a1a','f1',{b:'sink',at:.35,pr:[{k:'disc',c:0x0a0a0a,r:1},{k:'e',ch:'🔨',mv:'swing',a:0,b:1,x:.5,y:2.6,s:2}],fx:[{k:'burst',a:.35,c:[0xffd23f,0xffffff],n:14,y:2,add:1}],sd:[200,.1,.1,'square',.35]}],
+['wwp','漩渦','Whirlpool',3,3,'🌊','#3a8ad8','#0a2a5a','tr',{b:'sink',at:.3,sp:4,pr:[{k:'disc',c:0x2a7ad8,r:2},{k:'ring',c:0xbfeaff,r:1.6,mv:'spin',sp:6},{k:'ring',c:0x5ab8ff,r:1,mv:'spin',sp:-8,y:.07}],fx:[{k:'ring',a:.3,c:[0xbfeaff,0xffffff],n:40},{k:'aura',a:.3,b:2.6,c:[0xbfeaff],add:1,n:2}],sd:[150,1,.04,'sawtooth',.3]}],
+['w5b','50 億次造訪','5B Visits',3,3.2,'🏆','#ffd23f','#3a8a2a','code:5bvisits',{b:'fly',dir:[0,1,0],v:8,rx:0,ry:6,at:.4,pr:[{k:'t',tx:'5,000,000,000',c:'#ffd23f',o:'#5a3a00',y:2.6,a:.1,b:2.8,s:.8,mv:'float',sp:2.4}],fx:[{k:'fount',a:.3,b:2.6,c:GD,n:3},{k:'flash',a:.3,c:[0xffd23f],s:4}],sd:[1320,.3,.05,'square',.3]}],
+['wdc','導演剪輯','Director\'s Cut',3,3,'🎬','#ffffff','#1a1a1a','code:directorscut',{b:'stand',po:'cross',tn:{c:0x9a9a9a,a:.5,b:.7},pr:[{k:'e',ch:'🎬',mv:'pop',a:.2,x:.7,y:1.8,s:1.5}],fx:[{k:'flash',a:.5,c:[0xffffff],s:4}],pop:2.5,pc:[0x9a9a9a,0x3a3a3a,0xffffff],sd:[2000,.06,.1,'square',.5]}],
+['wel','精靈化','Elfify',3,3,'🧝','#2aa83a','#d8262a','code:elfify2025',{b:'stand',sz:.7,at:.3,tn:{c:0x2aa83a,a:.3,b:.9},pr:[{k:'e',ch:'🎄',mv:'pop',a:.3,y:2.1,s:.8},{k:'e',ch:'✨',mv:'orb',a:.3,y:1.2,s:.6}],fx:[{k:'aura',a:.3,b:2.6,c:[0xffd23f,0xffffff,0xd8262a],add:1,n:3}],sd:[1600,.3,.04,'triangle',.3]}],
+['wjj','歡樂審判','Jolly Judgement',3,3.2,'📜','#d8262a','#f4e8c8','code:jollyjudgement',{b:'tip',at:1.8,pr:[{k:'e',ch:'📜',mv:'pop',a:.2,x:.8,y:1.5,s:1.6,b:1.9},{k:'e',ch:'🎅',mv:'pop',a:.3,x:-.9,y:1.9,s:1.2,b:1.9}],fx:[{k:'burst',a:1.8,c:SNW,n:30}],sd:[440,.3,.05,'triangle',.3]}]];
+
+// register FIN2 into FINS / FBYID / FD (price by rarity; f2 rows go to 死亡特效箱 2)
+(function(){const PR=[12,30,55,90],SRC={f1:'從死亡特效箱開出 Finisher Pack',f2:'從死亡特效箱 2 開出 Finisher Pack 2',tr:'從死亡特效箱開出（🌴 熱帶系列）',jl:'從死亡特效箱開出（🎄 歡樂系列）',hw:'從 🎃 萬聖節特效包開出 Halloween Finisher Pack（萬聖節限定）'};
+ for(const[id,zh,en,r,D,e,c1,c2,src,S]of FIN2){const x={id,zh,en,r,p:PR[r],D,e,c:[c1,c2]};
+  if(src.startsWith('code:')){x.ex=1;x.p=0;x.how='兌換代碼 '+src.slice(5)}else{x.how=SRC[src];if(src=='hw'){x.hw=1;x.p=0}if(src=='f2')x.fp=2}
+  FINS.push(x);FBYID[id]=x;FD[id]=FGN(S)}})();
 var FIN=[],FPN=null,FPA=null,RFIN=null;
 function finPS(){if(!FPN){FPN=mkPS(sc,MOBILE?450:900,0);FPA=mkPS(sc,MOBILE?300:650,1)}}
 function finClear(){if(typeof FIN==='undefined'||!FIN)return;for(const f of FIN)finDispose(f);FIN=[];psClear(FPN);psClear(FPA)}
@@ -4072,7 +4240,7 @@ const CODE_KEYS={free:10,bonus:15,chill:20};
 function redeem(){const c=$('#codeIn').value.trim().toLowerCase(),m=$('#codeMsg');if(!PF)return;if(!c){m.style.color='#ff8a8a';m.textContent='請輸入代碼';return}
  const already=()=>{m.style.color='#ffc93c';m.textContent='這個代碼已經兌換過了'};
  if(c==='deathsmilexux'){if(PF.codes.includes(c)){if(WRAPS.every(x=>x.adm||x.ms||PF.wraps.includes(x.id))&&FINS.every(x=>x.ms||PF.fins.includes(x.id))&&SKINS.every(x=>x.adm||PF.skins.includes(x.id)))return already();for(const x of WRAPS)if(!x.adm&&!x.ms&&!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!x.ms&&!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!x.adm&&!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！新增解鎖全部武器包裝、死亡特效與皮膚';toast('🎉 全部包裝與死亡特效已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}PF.codes.push(c);let n=0;for(const w of ALLW())if(!PF.unl.includes(w.n)){PF.unl.push(w.n);n++}for(const x of WRAPS)if(!x.adm&&!x.ms&&!PF.wraps.includes(x.id))PF.wraps.push(x.id);for(const x of FINS)if(!x.ms&&!PF.fins.includes(x.id))PF.fins.push(x.id);for(const x of SKINS)if(!x.adm&&!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已解鎖全部武器、包裝、死亡特效與皮膚（新增武器 '+n+' 把）';toast('🎉 代碼兌換成功：全部武器已解鎖！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
- for(const[cd,fid]of[['thanksfor100players','c1'],['technobladeneverdies','tb'],['aura1000','aur'],['auro1000','aur']])if(c===cd){if(PF.codes.includes(c)||PF.fins.includes(fid))return already();PF.codes.push(c);PF.fins.push(fid);saveNow();const F=FBYID[fid];m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得死亡特效 '+F.e+' '+F.zh+' '+F.en+'（所有武器都能用）';toast(F.e+' 獲得死亡特效：'+F.zh+' '+F.en,'#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
+ for(const[cd,fid]of[['thanksfor100players','c1'],['technobladeneverdies','tb'],['aura1000','aur'],['5bvisits','w5b'],['directorscut','wdc'],['elfify2025','wel'],['jollyjudgement','wjj'],['auro1000','aur']])if(c===cd){if(PF.codes.includes(c)||PF.fins.includes(fid))return already();PF.codes.push(c);PF.fins.push(fid);saveNow();const F=FBYID[fid];m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得死亡特效 '+F.e+' '+F.zh+' '+F.en+'（所有武器都能用）';toast(F.e+' 獲得死亡特效：'+F.zh+' '+F.en,'#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='aight bet!'){if(PF.codes.includes(c)||PF.skins.includes('rv_deagle'))return already();PF.codes.push(c);PF.skins.push('rv_deagle');saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 沙漠之鷹 Desert Eagle（左輪皮膚）';toast('🔫 獲得 沙漠之鷹 Desert Eagle！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='skintest'){if(PF.codes.includes(c))return already();PF.codes.push(c);for(const x of SKINS)if(!x.adm&&!PF.skins.includes(x.id))PF.skins.push(x.id);saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！已獲得全部測試皮膚（'+SKINS.filter(x=>!x.adm).map(x=>x.name).join('、')+'）';toast('🎨 已獲得全部皮膚！','#35d07f');snd(880,.15,.06,'sine');renderLUI();return}
  if(c==='goldtest'){if(PF.codes.includes(c))return already();PF.codes.push(c);PF.gold=(PF.gold||0)+5000;saveNow();m.style.color='#35d07f';m.textContent='✅ 兌換成功！獲得 💰 5000 金幣（測試用）';toast('💰 +5000 金幣','#ffcf40');snd(880,.15,.06,'sine');renderLUI();if(PANEL=='Shop')PRENDER.Shop();return}
