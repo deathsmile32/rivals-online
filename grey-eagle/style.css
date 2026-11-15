@@ -230,3 +230,9 @@ kbd { background: #111; border: 1px solid #555; border-radius: 4px; padding: 0 5
 #acctMsg { margin-top: 10px; font-weight: 700; font-size: 14px; min-height: 1.2em; }
 #acctMsg.bad { color: #ff8a7a; }
 .acctCard > .close { display: inline-block; width: auto; margin: 0; }
+
+/* ---------- 縮放按鈕 ---------- */
+#bZoomBox { display: flex; background: rgba(0,0,0,.55); border: 2px solid rgba(255,255,255,.35); border-radius: 999px; overflow: hidden; }
+#bZoomBox button { background: transparent; border: 0; border-radius: 0; padding: 2px 9px; font-size: 15px; font-weight: 900; }
+#bZoom { font-size: 12px !important; min-width: 46px; font-variant-numeric: tabular-nums; border-left: 1px solid rgba(255,255,255,.2) !important; border-right: 1px solid rgba(255,255,255,.2) !important; }
+@media (max-width: 560px) { #bZoom { display: none; } }

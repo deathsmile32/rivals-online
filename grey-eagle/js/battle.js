@@ -19,7 +19,7 @@
       this.walletMult = 1 + 0.04 * (res.walletLv || 0);
       this.money = 40 * (res.startLv || 0);
       this.gore = res.gore !== false;
-      this.decals = []; this.shake = 0;
+      this.decals = []; this.corpses = []; this.shake = 0;
       const pMax = 4000 + 1500 * (res.baseLv || 0);
       const eMax = Math.round(stage.baseHp * this.cm);
       this.base = [{ hp: pMax, max: pMax, hit: 0 }, { hp: eMax, max: eMax, hit: 0 }];
@@ -310,7 +310,8 @@
           }
         }
       }
-      this.units = this.units.filter(u => !(u.dead && u.fade > 1.2));
+      this.units = this.units.filter(u => !(u.dead && (u.gone || u.fade > 1.2)));
+      if (this.corpses.length && this.corpses[0].t0 + this.corpses[0].life < this.t) this.corpses = this.corpses.filter(c => c.t0 + c.life > this.t);
     }
 
     // 可以打到的目標（依距離排序）
@@ -403,9 +404,11 @@
         this.decal('scorch', f.x, 26 * big);
         this.decal('wreck', f.x + f.vx * 0.3, 10 * big, 9);
         this.addShake(f.def.boss ? 10 : 3);
+        if (!f.alt && f.def.look.k !== 'gun') this.corpse(f, true);
       } else if (this.fleshy(f)) {
         this.blood(f.x, -f.alt - 18 * big, 6, -f.dir);
         if (this.gore && !f.alt) this.decal('blood', f.x + f.vx * 0.25, (9 + Math.random() * 5) * big, 30);
+        this.corpse(f, false);
       }
       if (silent) return;
       if (f.side === 1) {
@@ -421,6 +424,20 @@
           }
         }
       }
+    }
+
+    // 倒下的士兵留在地上（每個姿勢都不一樣），被打爆的戰車留下燒焦的車殼
+    corpse(f, hull) {
+      f.gone = true;
+      this.corpses.push({
+        def: f.def, side: f.side, dir: f.dir, n: f.n, hull,
+        x0: f.x, x1: f.x + f.vx * (hull ? 0.15 : 0.3) + rnd(-6, 6),
+        pose: hull ? 0 : f.def.look.k !== 'inf' ? 4 : Math.floor(Math.random() * 4), flip: Math.random() < 0.3,
+        t0: this.t, life: hull ? 25 : 40,
+      });
+      const lim = (k) => this.corpses.filter(c => c.hull === k).length;
+      while (lim(false) > 70) this.corpses.splice(this.corpses.findIndex(c => !c.hull), 1);
+      while (lim(true) > 12) this.corpses.splice(this.corpses.findIndex(c => c.hull), 1);
     }
 
     hitBase(side, dmg) {
