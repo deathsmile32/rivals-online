@@ -309,7 +309,11 @@ class Bot extends Fighter {
     const ws = cands.map(t => {
       const d = Math.hypot(t.spawn.x - this.pos.x, t.spawn.z - this.pos.z);
       let wgt = 60 / (d + 20);
-      if (t.members.some(m => m.human)) wgt *= 1.5;
+      // 4×2 才稍微偏好真人；1v1v1v1 一視同仁
+      if (g.teamSize > 1 && t.members.some(m => m.human)) wgt *= 1.2;
+      // 已經有別隊電腦在打這隊 → 降低機率，避免大家一起圍攻同一個人
+      const already = g.fighters.filter(f => f !== this && f.isBot && f.alive && f.team !== this.team && f.targetTeam === t && (f.state === 'attack' || f.state === 'return')).length;
+      wgt *= Math.pow(0.25, already);
       tot += wgt; return wgt;
     });
     let r = Math.random() * tot;
