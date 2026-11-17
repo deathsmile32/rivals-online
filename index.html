@@ -444,7 +444,7 @@ body.crop #touchUI,body.crop #leaveRange,body.crop #lprompt{display:none!importa
 <div class="note">把房號傳給朋友，他們在「加入朋友的房間」輸入就能進來。隊伍人數可以不一樣（不公平對決）。</div>
 <div class="row" style="margin-top:10px"><div class="tcol" id="tA"><h3 style="color:#6db0ff;margin-top:0">藍隊</h3><div class="pls"></div><button data-t="0">加入藍隊</button></div><div class="tcol" id="tB"><h3 style="color:#ff7b7b;margin-top:0">紅隊</h3><div class="pls"></div><button data-t="1">加入紅隊</button></div></div>
 <h3>先贏幾回合</h3><div class="row" id="wins"><button data-w="3">3</button><button data-w="5" class="on">5</button><button data-w="7">7</button></div>
-<div class="lchat" id="lchat"></div><input id="lcin" maxlength="120" placeholder="聊天：輸入後按 Enter" style="width:100%;box-sizing:border-box">
+<div class="lchat" id="lchat"></div><div style="display:flex;gap:4px"><button id="pchB" title="切換聊天頻道：全部 / 隊伍（也可以打 /p 開頭只傳給隊伍）" style="flex:none;padding:2px 8px;font-size:12px">💬 全部</button><input id="lcin" maxlength="120" placeholder="聊天：輸入後按 Enter" style="flex:1;min-width:0;box-sizing:border-box"></div>
 <button class="big" id="ostart">開始對戰（依上方分隊）</button><p class="note" id="onMsg2"></p><div class="row"><button id="onLobby" class="gbtn">🏠 回到 3D 大廳（保持連線）</button><button id="leave">離開房間</button></div><p class="note">在大廳裡：房主按 <b>Play</b> 帶隊伍打機器人；或兩邊玩家分別站上 Duels 配對墊（房主要在其中一邊），空位由機器人補上。</p></div>
 </div></div>
 <div id="auth" class="ov" style="display:none"><div class="card">
@@ -4185,10 +4185,11 @@ if(MOBILE){
 }
 // ===== chat =====
 let chatOn=false;const CH=[];
-function chatAdd(name,team,text,sys){const el=document.createElement('div');const b=document.createElement('b');b.textContent=sys?'':name+'：';b.style.color=sys?'#ffd23f':(P&&team===P.team?'#6db0ff':'#ff7b7b');if(!P||team==null)b.style.color=team===1?'#ff7b7b':'#6db0ff';el.appendChild(b);el.appendChild(document.createTextNode(text));if(sys)el.style.color='#ffd23f';$('#chat').appendChild(el);CH.push({el,t:performance.now()});while($('#chat').children.length>8)$('#chat').firstChild.remove();
+function chatAdd(name,team,text,sys,pc){const el=document.createElement('div');const b=document.createElement('b');b.textContent=sys?'':name+'：';b.style.color=sys?'#ffd23f':(P&&team===P.team?'#6db0ff':'#ff7b7b');if(!P||team==null)b.style.color=team===1?'#ff7b7b':'#6db0ff';if(pc){b.style.color='#35d07f';el.style.color='#b8ffd0'}el.appendChild(b);el.appendChild(document.createTextNode(text));if(sys)el.style.color='#ffd23f';$('#chat').appendChild(el);CH.push({el,t:performance.now()});while($('#chat').children.length>8)$('#chat').firstChild.remove();
  const l=$('#lchat');if(l){const d2=el.cloneNode(true);d2.style.opacity=1;l.appendChild(d2);l.scrollTop=1e9}}
 function chatTick(){const now=performance.now();for(const c of CH)c.el.style.opacity=chatOn||now-c.t<8000?1:0}
-function chatSend(text){text=String(text||'').trim().slice(0,120);if(!text)return;const nm=NET?NET.name:'你',tm=P?P.team:(NET&&NET.lb?(NET.lb.players.find(p=>p.id==NET.me)||{}).team:0);chatAdd(nm,tm,text);if(NET)netSend({t:'c',n:nm,tm,x:text})}
+var PCH=0;function inParty(){return!!NET&&partyIds().length>1&&partyIds().includes(NET.me)}
+function chatSend(text){text=String(text||'').trim().slice(0,120);let pc=PCH&&inParty();if(/^\/p\s/i.test(text)){text=text.slice(3).trim();pc=1}if(!text)return;if(pc&&!inParty()){toast('你還沒有隊伍，先邀請好友組隊','#ffc93c');return}const nm=NET?NET.name:'你',tm=P?P.team:(NET&&NET.lb?(NET.lb.players.find(p=>p.id==NET.me)||{}).team:0);if(pc){chatAdd('[隊伍] '+nm,null,text,0,1);netSend({t:'c',n:nm,tm,x:text,pc:1,id:NET.me})}else{chatAdd(nm,tm,text);if(NET)netSend({t:'c',n:nm,tm,x:text})}}
 function chatKey(e){const ci=$('#cin');if(chatOn){if(e.code=='Enter'){chatSend(ci.value);ci.value='';closeChat();e.preventDefault()}else if(e.code=='Escape'){ci.value='';closeChat();e.preventDefault()}return true}
  if(e.code=='Enter'&&P&&(st=='play'||st=='count'||st=='end')&&!paused){chatOn=true;keys={};mL=mR=false;ci.style.display='block';setTimeout(()=>ci.focus(),0);e.preventDefault();return true}return false}
 function closeChat(){chatOn=false;const ci=$('#cin');ci.blur();ci.style.display='none';if(document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end'))lock()}
@@ -4265,7 +4266,7 @@ function hostRound(){NET.round++;NET.rdy=new Set(NET.lb.players.map(p=>p.id));ne
 function clientMsg(m){if(!m||typeof m!=='object')return;
  if(m.t==='hi'){onMsgUI('');return}
  if(m.t==='full'){onMsgUI('這個房間正在對戰中，請等這場打完再加入');NET.tr.close();NET=null;return}
- if(m.t==='lb'){if(INVJ&&INVJ.code===NET.code){const f=INVJ.from;INVJ=null;invJoined(f)}NET.lb=m.lb;if($('#onB').style.display!=='block'&&!NET.inGame)roomUI();else renderLobby();if(PANEL=='Party')renderParty();return}
+ if(m.t==='lb'){if(INVJ&&INVJ.code===NET.code){const f=INVJ.from,pty=INVJ.party;INVJ=null;invJoined(f);if(pty){netSend({t:'pacc',id:NET.me});setTimeout(()=>{$('#onl').style.display='none';if(st!=='lobby')enterLobby();toast('👥 你加入了 '+f+' 的隊伍！隊長選模式，你會自動跟著同隊','#35d07f')},400)}}NET.lb=m.lb;if($('#onB').style.display!=='block'&&!NET.inGame)roomUI();else renderLobby();if(PANEL=='Party')renderParty();return}
  if(m.t==='pinv'){showInvite(String(m.from||'房主').slice(0,14));return}
  if(m.t==='st'){if(m.rk){cfg.ranked=m.rk;const rp=PF&&PF.rk?PF.rk.rp:0;cfg.d=rkDiff(rp)}else cfg.ranked=0;enterGame(m.roster,m.win,m.map);return}
  if(m.t==='rd'){if(!NET.inGame)return;NET.round=m.r;score=m.sc.slice();if(st=='lo'||NET.midLo){NET.midLo=0;ready()}startRound();return}
@@ -4276,7 +4277,7 @@ function hostGone(){if(!NET)return;const wasGame=NET.inGame&&st!=='over'&&P;let 
  clearLPX();const inG=wasGame;NET=null;if(inG){showOver(-1,'房主離線，對戰結束')}else{toast('房主離開了，房間已關閉');$('#onB').style.display='none';$('#onA').style.display='block';onMsgUI('房主離開了，房間已關閉');if(PF)renderLUI()}}
 // ---- shared game messages ----
 function handleGame(m){if(!NET)return;const t=m.t;
- if(t==='c'){chatAdd(m.sys?'':String(m.n||'').slice(0,14),m.tm,String(m.x||'').slice(0,120),m.sys);return}
+ if(t==='c'){if(m.pc){if(!inParty()||!partyIds().includes(m.id))return;chatAdd('[隊伍] '+String(m.n||'').slice(0,14),null,String(m.x||'').slice(0,120),0,1);return}chatAdd(m.sys?'':String(m.n||'').slice(0,14),m.tm,String(m.x||'').slice(0,120),m.sys);return}
  if(t==='lv'){removeProxy(m.id);return}
  if(t==='ls'){lpxUpd(m);return}
  if(t==='re'){if(!NET.host&&NET.inGame)endRound(m.w,m.sc);return}
@@ -4333,6 +4334,7 @@ $('#ostart').onclick=()=>{if(NET&&NET.host)hostStart()};
 $('#wins').onclick=e=>{const b=e.target.closest('button');if(!b||!NET||!NET.host)return;NET.lb.win=+b.dataset.w;hostLb()};
 for(const b of document.querySelectorAll('.tcol button'))b.onclick=()=>{if(!NET||!NET.lb)return;const t=+b.dataset.t;if(NET.host){const p=NET.lb.players.find(p=>p.id===NET.me);p.team=t;hostLb()}else netSend({t:'tm',id:NET.me,team:t})};
 $('#lcin').addEventListener('keydown',e=>{if(e.code=='Enter'){chatSend(e.target.value);e.target.value=''}});
+$('#pchB').onclick=()=>{if(!PCH&&!inParty()){toast('組隊後才能用隊伍頻道：在好友名單按「👥 組隊」或在大廳雙擊其他玩家','#ffc93c');return}PCH=PCH?0:1;$('#pchB').textContent=PCH?'👥 隊伍':'💬 全部';$('#pchB').style.background=PCH?'#1f7a45':'';$('#lcin').placeholder=PCH?'隊伍聊天（只有隊友看得到）':'聊天：輸入後按 Enter'};
 
 // ===== accounts / profile (browser-local localStorage, plus optional Firebase cloud accounts below) =====
 var ACCT=null,PF=null,ACCDB=null;
@@ -5627,9 +5629,9 @@ async function frAdd(raw){if(!inCloud()){toast('好友系統需要登入雲端�
 function frRemove(uid){PF.friends=PF.friends.filter(f=>f.uid!==uid);saveNow();renderParty()}
 // ===== 好友邀請 Friend invites: rides on the gifts inbox (kind 'crate', item '@inv', msg = room code) so no new Firestore rules are needed.
 var INV={busy:false,t:0,sent:{},shown:{},cur:null},INVJ=null;const INV_TTL=10*60*1000;
-async function invSend(f){if(!inCloud()||!PF)return;if(!NET||!NET.code){toast('先到「線上房間」建立或加入一個房間，再邀請好友','#ffc93c');return}if(NET.inGame){toast('對戰中不能邀請，回到房間再邀請','#ffc93c');return}
+async function invSend(f){if(!inCloud()||!PF)return;if(!NET){toast('👥 正在建立你的隊伍房間…','#4aa3ff');netCreate();for(let i=0;i<40&&!(NET&&NET.code&&$('#onB').style.display==='block');i++)await new Promise(r=>setTimeout(r,250));if(!NET||!NET.code){toast('❌ 建立隊伍失敗，請再試一次','#ff6a6a');return}$('#onl').style.display='none';if(st!=='lobby')enterLobby()}if(NET.inGame){toast('對戰中不能邀請，回到房間再邀請','#ffc93c');return}const pty=NET.host;
  if(Date.now()-(INV.sent[f.uid]||0)<20000){toast('剛剛已經邀請過 '+f.name+' 了，稍等一下');return}INV.sent[f.uid]=Date.now();
- try{await giftReg();await fsCall('/gifts','POST',fsEnc({toUid:f.uid,toName:f.name,fromUid:CLOUD.uid,fromName:CLOUD.name,kind:'crate',item:'@inv',qty:1,msg:String(NET.code).slice(0,12),free:false,ts:Date.now()}));toast('📨 已邀請 '+f.name+' 加入房間 '+NET.code,'#35d07f');snd(990,.1,.05,'sine')}
+ try{await giftReg();await fsCall('/gifts','POST',fsEnc({toUid:f.uid,toName:f.name,fromUid:CLOUD.uid,fromName:CLOUD.name,kind:'crate',item:'@inv',qty:1,msg:String(NET.code).slice(0,12)+(pty?'|P':''),free:false,ts:Date.now()}));toast(pty?'👥 已邀請 '+f.name+' 加入你的隊伍':'📨 已邀請 '+f.name+' 加入房間 '+NET.code,'#35d07f');snd(990,.1,.05,'sine')}
  catch(e){INV.sent[f.uid]=0;toast('❌ 邀請失敗：'+fbMsg(e),'#ff6a6a')}}
 async function invPoll(){if(!inCloud()||!PF||INV.busy||NET||st!=='lobby'||INV.cur)return;INV.busy=true;const S=CLOUD;
  try{const r=await fsCall(':runQuery','POST',{structuredQuery:{from:[{collectionId:'gifts'}],where:{fieldFilter:{field:{fieldPath:'toUid'},op:'EQUAL',value:{stringValue:S.uid}}},limit:50}});if(S!==CLOUD)return;const L=[];
@@ -5637,15 +5639,15 @@ async function invPoll(){if(!inCloud()||!PF||INV.busy||NET||st!=='lobby'||INV.cu
   L.sort((a,b)=>(b.ts||0)-(a.ts||0));if(L.length)invShow(L[0])}catch(_){}finally{INV.busy=false}}
 function invFrom(L){if(NET||INV.cur||!PF)return;const M=[];for(const g of L){if(g.item!=='@inv')continue;if(Date.now()-(+g.ts||0)>INV_TTL||!g.msg||!PF.friends.some(f=>f.uid===g.fromUid)&&!g.fromName){fsCall('/gifts/'+encodeURIComponent(g.id),'DELETE').catch(()=>{});continue}if(!INV.shown[g.id])M.push(g)}M.sort((a,b)=>(b.ts||0)-(a.ts||0));if(M.length)invShow(M[0])}
 function invShow(g){INV.cur=g;INV.shown[g.id]=1;let d=$('#invPop');if(!d){d=document.createElement('div');d.id='invPop';d.style.cssText='position:fixed;left:50%;top:calc(74px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:60;background:linear-gradient(#2a3157,#151a30);border:2px solid #4ff0ff;border-radius:16px;padding:12px 16px;color:#fff;font:700 15px system-ui;box-shadow:0 8px 30px #000a;display:flex;gap:10px;align-items:center;max-width:92vw;flex-wrap:wrap;justify-content:center';document.body.appendChild(d)}
- d.innerHTML='<span style="font-size:26px">📨</span><span><b style="color:#4ff0ff">'+esc(String(g.fromName||'好友').slice(0,16))+'</b> 邀請你加入線上房間 <b>'+esc(String(g.msg).slice(0,12))+'</b></span><button class="gbtn" id="invOk">加入</button><button id="invNo">忽略</button>';d.style.display='flex';snd(880,.12,.06,'sine');setTimeout(()=>snd(1180,.12,.06,'sine'),140);
+ d.innerHTML='<span style="font-size:26px">📨</span><span><b style="color:#4ff0ff">'+esc(String(g.fromName||'好友').slice(0,16))+(String(g.msg).includes('|P')?'</b> 邀請你加入隊伍 👥':'</b> 邀請你加入線上房間 <b>'+esc(String(g.msg).split('|')[0].slice(0,12))+'</b>')+'</span><button class="gbtn" id="invOk">加入</button><button id="invNo">忽略</button>';d.style.display='flex';snd(880,.12,.06,'sine');setTimeout(()=>snd(1180,.12,.06,'sine'),140);
  const done=()=>{d.style.display='none';INV.cur=null;fsCall('/gifts/'+encodeURIComponent(g.id),'DELETE').catch(()=>{})};
  $('#invNo').onclick=done;$('#invOk').onclick=()=>{done();invAccept(g)};setTimeout(()=>{if(INV.cur===g)done()},45000)}
-function invAccept(g){if(NET){toast('你已經在其他房間了，先離開再加入','#ffc93c');return}if(st!=='lobby'){toast('回到大廳再加入','#ffc93c');return}closePanels();INVJ={code:String(g.msg).toUpperCase(),from:String(g.fromName||'好友')};
+function invAccept(g){if(NET){toast('你已經在其他房間了，先離開再加入','#ffc93c');return}if(st!=='lobby'){toast('回到大廳再加入','#ffc93c');return}closePanels();INVJ={code:String(g.msg).split('|')[0].toUpperCase(),from:String(g.fromName||'好友'),party:String(g.msg).includes('|P')};
  $('#onl').style.display='flex';$('#onA').style.display='block';$('#onB').style.display='none';$('#jc').value=INVJ.code;netJoin()}
 function invJoined(from){toast('🎉 已加入 '+from+' 的房間！','#35d07f');if(PF&&!PF.wraps.includes('cr')){PF.wraps.push('cr');saveNow();setTimeout(()=>toast('🎨 獲得包裝「奶油 Cream」！（加入好友邀請的房間）','#ffd23f'),900)}}
 function renderFriends(pl){if(!inCloud()){pl.innerHTML='<div class="cd"><h4>Friends 好友</h4><div class="sub2" style="line-height:1.6">好友系統需要登入雲端帳號才能使用（這樣好友名單可以跨裝置同步，也才能用 ID 查到對方）。</div></div>';return}
  let h='<div class="cd" style="display:flex;gap:6px;align-items:center"><input id="frAddI" type="text" placeholder="輸入對方的帳號 ID" maxlength="16" style="flex:1;min-width:0"><button class="gbtn" id="frAddB">+ 加好友</button></div>';
- h+=PF.friends.length?'<div style="margin-top:8px">'+PF.friends.map(f=>'<div class="pcard"><span style="flex:1">👤 '+esc(f.name)+'<span class="note" id="frs_'+f.uid+'" style="margin-left:8px">讀取中…</span></span><button class="gbtn" data-frinv="'+f.uid+'" title="邀請進你的線上房間">📨 邀請</button><button data-frx="'+f.uid+'">移除</button></div>').join('')+'</div>'+'<div class="note" style="margin-top:6px">📨 邀請：先建立或加入線上房間，好友會收到通知，按「加入」就進到你的房間（第一次加入好友邀請的房間會送 🎨 奶油 Cream 包裝）</div>':'<div class="note" style="margin-top:8px">還沒有好友，輸入對方的帳號名稱加好友吧！</div>';
+ h+=PF.friends.length?'<div style="margin-top:8px">'+PF.friends.map(f=>'<div class="pcard"><span style="flex:1">👤 '+esc(f.name)+'<span class="note" id="frs_'+f.uid+'" style="margin-left:8px">讀取中…</span></span><button class="gbtn" data-frinv="'+f.uid+'" title="邀請好友加入你的隊伍（沒有房間會自動建立）">👥 組隊</button><button data-frx="'+f.uid+'">移除</button></div>').join('')+'</div>'+'<div class="note" style="margin-top:6px">👥 組隊：按一下就會幫你開好隊伍房間並邀請好友，對方按「加入」就會進到你的大廳、成為你的隊友。隊長選模式或站上配對墊，隊友會自動跟你同隊。左下聊天可以切換到「👥 隊伍」頻道（或打 /p 開頭）。第一次加入好友的隊伍會送 🎨 奶油 Cream 包裝。</div>':'<div class="note" style="margin-top:8px">還沒有好友，輸入對方的帳號名稱加好友吧！</div>';
  pl.innerHTML=h;const go=()=>{const v=$('#frAddI').value;if(v.trim())frAdd(v)};$('#frAddB').onclick=go;$('#frAddI').onkeydown=e=>{if(e.key=='Enter')go()};
  for(const b of pl.querySelectorAll('[data-frx]'))b.onclick=()=>frRemove(b.dataset.frx);
  for(const b of pl.querySelectorAll('[data-frinv]'))b.onclick=()=>{const f=PF.friends.find(x=>x.uid===b.dataset.frinv);if(f)invSend(f)};
@@ -5668,7 +5670,12 @@ function fitProfile(){const c=$('#profCard');if(!c)return;c.style.transform='';c
 addEventListener('resize',()=>{if(PANEL=='Prof')fitProfile()});
 function openProfile(){if(!PF)return;openPanel('Prof')}PRENDER.Prof=renderProfile;
 function avatarHit(x,y){if(!hubTP()||PANEL||!P||!P.mesh)return false;rc.setFromCamera({x:x/innerWidth*2-1,y:-(y/innerHeight)*2+1},cam);rc.far=200;return rc.intersectObject(P.mesh,true).length>0}
-cv.addEventListener('dblclick',e=>{if(avatarHit(e.clientX,e.clientY))openProfile()});
+function lpxHit(x,y){if(!hubTP()||PANEL||typeof LPX=='undefined')return null;rc.setFromCamera({x:x/innerWidth*2-1,y:-(y/innerHeight)*2+1},cam);rc.far=200;let best=null,bd=1e9;for(const id in LPX){const q=LPX[id];if(!q.mesh||!q.mesh.visible)continue;const h=rc.intersectObject(q.mesh,true)[0];if(h&&h.distance<bd){bd=h.distance;best=q}}return best}
+function lpxMenu(q,x,y){let d=$('#lpxM');if(!d){d=document.createElement('div');d.id='lpxM';d.style.cssText='position:fixed;z-index:61;background:#1c2036f5;border:2px solid #4aa3ff;border-radius:12px;padding:10px 12px;color:#fff;font:800 14px system-ui;box-shadow:0 8px 30px #000a;display:flex;flex-direction:column;gap:6px;min-width:170px';document.body.appendChild(d);addEventListener('pointerdown',e=>{if(!d.contains(e.target))d.style.display='none'},true)}
+ const mem=partyIds(),inP=mem.includes(q.id),host=NET&&NET.host;d.innerHTML='<div>👤 '+esc(q.name)+' <span class="lvb">'+q.lv+'</span></div>'+(inP?'<div style="color:#35d07f">✔ 已經是你的隊友</div>':host?'<button class="gbtn" id="lpxI"'+(mem.length>=5?' disabled':'')+'>👥 Invite to Party 邀請組隊</button>':'<div style="color:#9fb0e0;font-size:12px">只有隊長（房主）能邀請組隊</div>')+(inCloud()?'<button id="lpxF">🤝 加好友</button>':'')+'<button id="lpxX">關閉</button>';
+ d.style.left=Math.min(x,innerWidth-200)+'px';d.style.top=Math.min(y,innerHeight-160)+'px';d.style.display='flex';
+ const I=$('#lpxI');if(I)I.onclick=()=>{hostInvite(q.id);toast('📨 已邀請 '+q.name+' 加入隊伍','#4aa3ff');d.style.display='none'};const F=$('#lpxF');if(F)F.onclick=()=>{frAdd(q.name);d.style.display='none'};$('#lpxX').onclick=()=>d.style.display='none'}
+cv.addEventListener('dblclick',e=>{if(avatarHit(e.clientX,e.clientY)){openProfile();return}const q=lpxHit(e.clientX,e.clientY);if(q)lpxMenu(q,e.clientX,e.clientY)});
 {let lt=0,lx=0,ly=0,st0=0,sx=0,sy=0;const tl=$('#tlook');
  tl.addEventListener('touchstart',e=>{const t=e.changedTouches[0];st0=performance.now();sx=t.clientX;sy=t.clientY},{passive:true});
  tl.addEventListener('touchend',e=>{const t=e.changedTouches[0],now=performance.now();if(now-st0>300||Math.hypot(t.clientX-sx,t.clientY-sy)>14)return;
