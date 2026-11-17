@@ -141,7 +141,7 @@ const UI = {
     // 計分板
     const mm = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
     const ev = EVENTS[g.eventIdx];
-    let sb = `<div class="sbt">床戰 BED WARS</div><div class="sbs">${DIFF[g.difficulty].label}模式　${mm(g.time)}</div>`;
+    let sb = `<div class="sbt">床戰 BED WARS</div><div class="sbs">${g.teamSize === 1 ? '1v1v1v1' : '4×2'}・電腦${DIFF[g.difficulty].label}　${mm(g.time)}</div>`;
     if (ev) sb += `<div class="sbs">${ev.name}：${mm(Math.max(0, ev.t - g.time))}</div>`;
     sb += '<div class="sbl"></div>';
     for (const t of g.teams) {
@@ -232,7 +232,7 @@ const UI = {
 };
 
 // ===================== 啟動與輸入 =====================
-let renderer = null, game = null, lastT = 0, sens = 0.0022, curDiff = 'normal';
+let renderer = null, game = null, lastT = 0, sens = 0.0022, curDiff = 'normal', curSize = 2;
 // 觸控裝置偵測（手機、平板）
 const TOUCH = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 if (TOUCH) document.body.classList.add('touch');
@@ -262,7 +262,8 @@ function startGame(opts) {
   const name = playerName();
   if (game) game.scene.traverse(o => { if (o.geometry) o.geometry.dispose(); });
   const mode = opts.mode || 'solo';
-  game = new Game(renderer, { difficulty: curDiff, playerName: name, testMode, mode, roster: opts.roster, localId: opts.localId, net: mode === 'solo' ? null : Net.gameIface() });
+  if (opts.size) curSize = opts.size;
+  game = new Game(renderer, { difficulty: curDiff, teamSize: curSize, playerName: name, testMode, mode, roster: opts.roster, localId: opts.localId, net: mode === 'solo' ? null : Net.gameIface() });
   window.game = game;
   game.camera.aspect = innerWidth / innerHeight; game.camera.updateProjectionMatrix();
   UI.bind(game);
@@ -372,6 +373,11 @@ function renderMenuBg(dt) {
 }
 
 // 選單按鈕
+document.querySelectorAll('.msize').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.msize').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); curSize = +b.dataset.s;
+  $('modeSub').textContent = curSize === 1 ? '1v1v1v1：4 個人各自一隊，沒有隊友' : '4 隊 × 2 人：你和電腦隊友一隊';
+}));
 document.querySelectorAll('.diff').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.diff').forEach(x => x.classList.remove('on'));
   b.classList.add('on'); curDiff = b.dataset.d;

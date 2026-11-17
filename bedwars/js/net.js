@@ -104,7 +104,7 @@ const Net = {
   async host(name) {
     this.leave();
     this.role = 'host'; this.name = name; this.code = QP.code || rid(5); this.me = 'H';
-    this.lobby = { players: [{ id: 'H', name, team: 0 }], diff: 'normal' };
+    this.lobby = { players: [{ id: 'H', name, team: 0 }], diff: 'normal', size: curSize };
     const h = {
       open: () => { LobbyUI.show(); this.sync(); },
       msg: (cid, m) => this.hostMsg(cid, m),
@@ -166,10 +166,11 @@ const Net = {
     if (m.t === 'hello') {
       if (!this.lobby) return;
       if (window.game && game.mode === 'host' && !game.over) { this.tr.to(cid, { t: 'full', why: '遊戲已經開始了，請等下一場' }); return; }
-      if (this.lobby.players.length >= 8) { this.tr.to(cid, { t: 'full', why: '房間已滿（最多 8 人）' }); return; }
+      if (this.lobby.players.length >= 4 * (this.lobby.size || 2)) { this.tr.to(cid, { t: 'full', why: '房間已滿（最多 8 人）' }); return; }
       if (!this.lobby.players.find(p => p.id === cid)) {
         let team = 0, best = 9;
-        for (let t = 0; t < 4; t++) { const c = this.teamCount(t); if (c < 2 && c < best) { best = c; team = t; } }
+        if (this.lobby.players.length >= 4 * this.lobby.size) { this.tr.to(cid, { t: 'full', why: '房間已滿' }); return; }
+        for (let t = 0; t < 4; t++) { const c = this.teamCount(t); if (c < this.lobby.size && c < best) { best = c; team = t; } }
         this.lobby.players.push({ id: cid, name: String(m.name || '玩家').slice(0, 10), team });
       }
       this.tr.to(cid, { t: 'welcome', id: cid });
@@ -179,7 +180,7 @@ const Net = {
     }
     if (m.t === 'team') {
       const p = this.lobby && this.lobby.players.find(x => x.id === cid);
-      if (p && m.team >= 0 && m.team < 4 && this.teamCount(m.team) < 2) { p.team = m.team; this.sync(); }
+      if (p && m.team >= 0 && m.team < 4 && this.teamCount(m.team) < this.lobby.size) { p.team = m.team; this.sync(); }
       return;
     }
     if (m.t === 'bye') { this.hostLeave(cid); return; }
@@ -196,10 +197,23 @@ const Net = {
   setTeam(team) {
     if (this.role === 'host') {
       const p = this.lobby.players.find(x => x.id === 'H');
-      if (this.teamCount(team) < 2) { p.team = team; this.sync(); }
+      if (this.teamCount(team) < this.lobby.size) { p.team = team; this.sync(); }
     } else if (this.tr) this.tr.send({ t: 'team', team });
   },
   setDiff(d) { if (this.role === 'host') { this.lobby.diff = d; this.sync(); } },
+  setSize(n) {
+    if (this.role !== 'host' || this.lobby.size === n) return;
+    if (n === 1) {
+      if (this.lobby.players.length > 4) { UI.toast('超過 4 人，不能切換成 1v1v1v1'); return; }
+      // 每隊只留一人，多出來的人移到空的隊伍
+      for (const p of this.lobby.players) {
+        if (this.lobby.players.filter(q => q.team === p.team && q !== p && this.lobby.players.indexOf(q) < this.lobby.players.indexOf(p)).length) {
+          for (let t = 0; t < 4; t++) if (!this.lobby.players.some(q => q.team === t)) { p.team = t; break; }
+        }
+      }
+    }
+    this.lobby.size = n; this.sync();
+  },
   start() {
     if (this.role !== 'host') return;
     const names = BOT_NAMES.slice().sort(() => Math.random() - 0.5);
@@ -208,9 +222,10 @@ const Net = {
     for (let t = 0; t < 4; t++) {
       const humans = this.lobby.players.filter(p => p.team === t);
       for (const h of humans) roster.push({ id: h.id, team: t, kind: 'human', name: h.name });
-      while (roster.filter(r => r.team === t).length < 2) {
+      const size = this.lobby.size || 2;
+      while (roster.filter(r => r.team === t).length < size) {
         const cnt = roster.filter(r => r.team === t).length;
-        roster.push({ team: t, kind: 'bot', name: names[ni++], role: humans.length ? 'defend' : (cnt === 0 ? 'attack' : 'defend') });
+        roster.push({ team: t, kind: 'bot', name: names[ni++], role: size === 1 ? 'solo' : humans.length ? 'defend' : (cnt === 0 ? 'attack' : 'defend') });
       }
     }
     roster.forEach((r, i) => r.variant = i * 3 + 1);
@@ -263,14 +278,16 @@ const LobbyUI = {
       const ps = L.players.filter(p => p.team === t);
       const D = TEAM_DEFS[t];
       h += `<div class="tbox" style="border-color:${D.css}" onclick="Net.setTeam(${t})"><div class="tname" style="color:${D.css}">${D.name}</div>`;
-      for (let i = 0; i < 2; i++) {
+      for (let i = 0; i < (L.size || 2); i++) {
         const p = ps[i];
         h += `<div class="slotp">${p ? (p.id === 'H' ? '👑 ' : '') + escapeHtml(p.name) + (p.id === (Net.role === 'host' ? 'H' : Net.me) ? '（你）' : '') : '<span class="botslot">電腦</span>'}</div>`;
       }
       h += '</div>';
     }
-    h += '</div><div class="hint2">點一下隊伍可以換隊（每隊最多 2 人，空位由電腦補上）</div>';
+    h += `</div><div class="hint2">點一下隊伍可以換隊（每隊最多 ${L.size || 2} 人，空位由電腦補上）</div>`;
     h += '<div class="row">';
+    for (const [n, label] of [[2, '4 隊 × 2 人'], [1, '1v1v1v1']]) h += `<button class="${(L.size || 2) === n ? 'on' : ''}" ${host ? `onclick="Net.setSize(${n})"` : 'disabled'}>${label}</button>`;
+    h += '</div><div class="row">';
     for (const d of ['easy', 'normal', 'hard']) h += `<button class="${L.diff === d ? 'on' : ''}" ${host ? `onclick="Net.setDiff('${d}')"` : 'disabled'}>電腦${DIFF[d].label}</button>`;
     h += '</div>';
     h += host ? `<button class="big" onclick="Net.start()">開始遊戲（${L.players.length} 人）</button>` : '<div class="sub">等待房主開始遊戲…</div>';

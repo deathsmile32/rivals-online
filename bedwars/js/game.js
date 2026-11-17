@@ -109,9 +109,11 @@ function makeTextSprite(lines, scale) {
   return sp;
 }
 
-function soloRoster(name) {
+// size：每隊人數（2 = 4 隊 × 2 人，1 = 1v1v1v1）
+function soloRoster(name, size) {
   const r = [];
   for (let t = 0; t < 4; t++) {
+    if (size === 1) { r.push(t === 0 ? { id: 'me', team: 0, kind: 'human', name } : { team: t, kind: 'bot', role: 'solo' }); continue; }
     if (t === 0) { r.push({ id: 'me', team: 0, kind: 'human', name }); r.push({ team: 0, kind: 'bot', role: 'defend' }); }
     else { r.push({ team: t, kind: 'bot', role: 'attack' }); r.push({ team: t, kind: 'bot', role: 'defend' }); }
   }
@@ -155,7 +157,9 @@ class Game {
     this.buildTeams();
     this.buildGens();
     this.buildNPCs();
-    this.buildFighters(opts.roster || soloRoster(opts.playerName || '玩家'), opts.localId || 'me');
+    this.teamSize = opts.teamSize || 2;
+    this.buildFighters(opts.roster || soloRoster(opts.playerName || '玩家', this.teamSize), opts.localId || 'me');
+    this.teamSize = Math.max(...this.teams.map(t => t.members.length));
     this.buildViewmodel();
     this.buildHighlight();
     this.mesher.update();
@@ -944,7 +948,7 @@ class Game {
   cycleMateCmd(f) {
     f = f || this.player;
     const mate = f.team.members.find(m => m !== f && m.isBot);
-    if (!mate || mate.eliminated) { this.tell(f, 'toast', '你的隊友不是電腦，不能下指令'); return; }
+    if (!mate || mate.eliminated) { this.tell(f, 'toast', f.team.members.length < 2 ? '1v1v1v1 模式沒有隊友' : '你的隊友不是電腦，不能下指令'); return; }
     const order = ['defend', 'follow', 'attack'];
     mate.cmd = order[(order.indexOf(mate.cmd) + 1) % 3];
     mate.leader = f;

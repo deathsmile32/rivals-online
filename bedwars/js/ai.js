@@ -76,6 +76,8 @@ class Bot extends Fighter {
       if (Math.abs(e.pos.y - this.pos.y) > 6) continue;
       let range = mode === 'defend' ? 9 : mode === 'follow' ? 11 : 10;
       if (mode === 'defend' && Math.hypot(e.pos.x - bed.x, e.pos.z - bed.z) < 16) range = 22;
+      // 1v1v1v1：自己在家附近時也會守床
+      if (mode === 'solo' && Math.hypot(e.pos.x - bed.x, e.pos.z - bed.z) < 16 && Math.hypot(this.pos.x - bed.x, this.pos.z - bed.z) < 20) range = 20;
       if (this.state === 'hunt') range = 16;
       if (e === this.lastAttacker && g.time - this.lastAttackerT < 3) range = Math.max(range, 14);
       // 拆床中：除非敵人貼身，否則專心拆床
@@ -270,6 +272,15 @@ class Bot extends Fighter {
     const lead = this.leader || g.player;
     if (mode === 'follow' && lead.eliminated) mode = 'attack';
     if (mode === 'follow') return this.setState('follow');
+    // 1v1v1v1：一個人要先防床，再出去進攻
+    if (mode === 'solo') {
+      if (!this.team.defenseDone && this.team.bedAlive) {
+        if (this.blockCount() >= 12) return this.setState('defense');
+        return this.setState('gather');
+      }
+      if (this.team.bedAlive && g.missingDefense(this.team) >= 3 && this.blockCount() >= 8 && Math.random() < 0.5) return this.setState('defense');
+      mode = 'attack';
+    }
     if (mode === 'defend') {
       if (!this.team.defenseDone && this.team.bedAlive) {
         if (this.blockCount() >= 12) return this.setState('defense');
@@ -457,7 +468,8 @@ class Bot extends Fighter {
   doShopping() {
     const g = this.game, P = this.P;
     const mode = this.cmd || this.role;
-    const rules = mode === 'defend' ? [
+    const defendFirst = mode === 'defend' || (mode === 'solo' && !this.team.defenseDone);
+    const rules = defendFirst ? [
       () => this.blockCount() < 32 && g.buy(this, 'wool'),
       () => !this.team.defenseDone && this.count('endstone') < 12 && this.res.iron >= 28 && g.buy(this, 'endstone'),
       () => this.sword < 2 && g.buy(this, 'sword2'),
