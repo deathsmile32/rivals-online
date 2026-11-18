@@ -577,13 +577,18 @@ const LB_PILLARS=[[12,46.5],[4,50.5],[-4,46.5],[-10,50.5],[18,50.5],[-20,47],[25
 const MAPLIST=['arena','backroom','crossroad','splash','battleground','bridge','construction','docks'];
 const MAPNAME={arena:'Arena',backroom:'Backroom',crossroad:'Cross Road',splash:'Splash',battleground:'Battle Ground',bridge:'Bridge',construction:'Construction',docks:'Docks'};
 const MAPDATA={
- // Arena: floating grey stone box in the sky, long axis = z (spawns at both short ends), symmetric cover + 4 tilted slabs
- arena:{floor:0x6e7075,grid:0,wallColor:0x8b8e94,bg:0x8ec5f2,fogc:0xd8e8f6,fogn:70,fogf:190,bx:(()=>{const W=0x8b8e94,S=0xb4b7bd,C=0xc4c7cd,D=0x5c5e63;return[
-  [-21,0,2,62,12,W],[21,0,2,62,12,W],[0,-30,44,1,12,W],[0,30,44,1,12,W],
-  [0,0,8,8,5,C],[-10.5,0,7,4,2.6,S],[10.5,0,7,4,2.6,S],
-  [0,-16.5,8,5,3,S],[0,16.5,8,5,3,S],[-12.5,-13.5,9,6,3,S],[12.5,-14,9,5,2.5,S],[-12.5,13.5,9,5,2.5,S],[12.5,13,9,6,3,S],
-  [-18,-21,4,8,.8,D],[18,20,4,10,.8,D],[-17,25,6,4,.6,D],[16,-25,8,4,.6,D]]})(),
-  rot:[[-6,-8.5,9,3.5,3,0xb4b7bd,.55],[6,-8.5,9,3.5,3,0xb4b7bd,-.55],[-6,8.5,9,3.5,3,0xb4b7bd,-.55],[6,8.5,9,3.5,3,0xb4b7bd,.55]],
+ // Arena (2026.11 redesign from 月狼's sketch): long axis z, spawns at both short ends. Arched centre house, 8 walls in a ring,
+ // a ramp in two opposite corners, and a wall block with a hole you can stand in on each side. Bounds = the walls (no outside strips).
+ arena:{floor:0x6e7075,grid:0,wallColor:0x8b8e94,bg:0x8ec5f2,fogc:0xd8e8f6,fogn:70,fogf:190,fw:42,fd:60,bnd:[[0,-30.5,44,1,12],[0,30.5,44,1,12],[-21.5,0,1,62,12],[21.5,0,1,62,12]],
+  bx:(()=>{const S=0xb4b7bd,C=0xc4c7cd,Y=0xd9b44a,o=[
+   // centre house: 4 corner L-pieces (door gaps on every side), roof added in fb
+   [-3.4,-2.4,1.6,1.6,3.4,C],[3.4,-2.4,1.6,1.6,3.4,C],[-3.4,2.4,1.6,1.6,3.4,C],[3.4,2.4,1.6,1.6,3.4,C],[-2.1,-2.9,1,.6,3.4,C],[2.1,-2.9,1,.6,3.4,C],[-2.1,2.9,1,.6,3.4,C],[2.1,2.9,1,.6,3.4,C]];
+   // hole walls (yellow in the sketch): base step + two posts; the lintel is a floating box (fb)
+   for(const[sx,sz]of[[1,-1],[-1,1]]){const x=sx*17,z=sz*15.5;o.push([x,z,6,2.6,1.2,Y],[x-2.25,z,1.5,2.6,4.6,S],[x+2.25,z,1.5,2.6,4.6,S])}
+   return o})(),
+  fb:[[0,0,8.4,6.4,3.4,4.1,0xa9acb2],[17,-15.5,3,2.6,3.4,4.6,0xb4b7bd],[-17,15.5,3,2.6,3.4,4.6,0xb4b7bd]],
+  rot:(()=>{const o=[];for(let k=0;k<8;k++){const a=k*PI/4;o.push([Math.sin(a)*9.6,Math.cos(a)*11.6,6.4,1,3.2,0x8b8e94,a])}return o})(),
+  ramps:[[-15.75,-23.5,8.5,11,3.6,-1],[15.75,23.5,8.5,11,3.6,1]],
   decor:g=>mkClouds(g)},
  backroom:{floor:0x9c7a35,grid:0,wallColor:0xcda75a,bx:[
   [-15,-10,1.5,18,8,0xd9b45c],[15,-10,1.5,18,8,0xd9b45c],[-15,10,1.5,18,8,0xd9b45c],[15,10,1.5,18,8,0xd9b45c],
@@ -609,8 +614,7 @@ const MAPDATA={
   decor:g=>{const a=[],P4=[[-24,-24],[24,24],[-24,24],[24,-24]];for(const[x,z]of P4){a.push(Cy(g,.5,5,x,2.5,z,0x7a5230));a.push(Sp(g,2.4,x,5.2,z,0x3fa24a))}
    a.push(B(g,.3,2.2,.3,-4,5.1,-4,0xd6413f));a.push(B(g,.3,2.2,.3,4,5.1,-4,0xf2cf3a));return a}},
  // Battle Ground: floating green square with tall white walls, cream bases at both ends, mauve centre wall
- battleground:{floor:0x8fcf86,grid:0,wallColor:0xe9eaee,bg:0x8ec5f2,fogc:0xd8e8f6,fogn:70,fogf:190,bx:(()=>{const W=0xe9eaee,Wb=0xd9dbe0,Cr=0xf1e6cf,Bu=0x8193e3,Lb=0xaec6ef;return[
-  [-27,0,2,56,12,W],[27,0,2,56,12,W],[0,-27,56,2,12,W],[0,27,56,2,12,W],
+ battleground:{floor:0x8fcf86,grid:0,wallColor:0xe9eaee,bg:0x8ec5f2,fogc:0xd8e8f6,fogn:70,fogf:190,fw:56,fd:56,bnd:[[-27,0,2,56,12],[27,0,2,56,12],[0,-27,56,2,12],[0,27,56,2,12]],bx:(()=>{const W=0xe9eaee,Wb=0xd9dbe0,Cr=0xf1e6cf,Bu=0x8193e3,Lb=0xaec6ef;return[
   [-25,-12,2,4,12,Wb],[-25,12,2,4,12,Wb],[25,-12,2,4,12,Wb],[25,12,2,4,12,Wb],[-12,-25.2,4,2,12,Wb],[12,25.2,4,2,12,Wb],
   [0,-18,22,4,1.2,Cr],[0,-13.5,6,5,1.2,Cr],[0,18,22,4,1.2,Cr],[0,13.5,6,5,1.2,Cr],
   [1,-1,26,4,4.5,0xc7a6ad],[3,5,4.5,8,3,0xf2a37f],
@@ -692,6 +696,11 @@ function buildMap(key){finClear();clearMapGeo();const M=MAPDATA[key]||MAPDATA.ar
  for(const[x,z,w,d,h,c,ry]of M.rot||[]){const m=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshLambertMaterial({color:c}));m.position.set(x,h/2,z);m.rotation.y=ry;sc.add(m);walls.push(m);
   const n=Math.max(2,Math.ceil(w/1.5)),L=w/n,cs=Math.cos(ry),sn=Math.sin(ry),bw=(Math.abs(L*cs)+Math.abs(d*sn))*.85,bd=(Math.abs(L*sn)+Math.abs(d*cs))*.85;
   for(let k=0;k<n;k++){const u=-w/2+(k+.5)*L;boxes.push({x:x+u*cs,z:z-u*sn,w:bw,d:bd,h})}}
+ for(const[x,z,w,d,y0,h,c]of M.fb||[]){const m=new T.Mesh(new T.BoxGeometry(w,h-y0,d),new T.MeshLambertMaterial({color:c}));m.position.set(x,(y0+h)/2,z);sc.add(m);walls.push(m);boxes.push({x,z,w,d,h,y0})}
+ for(const[x,z,w,d,H,dir]of M.ramps||[]){const run=d*.72,n=Math.ceil(H/.3),zl=z-dir*d/2,a=Math.atan2(H,run),L=Math.hypot(run,H),cm=c=>new T.MeshLambertMaterial({color:c});
+  const m=new T.Mesh(new T.BoxGeometry(w,.4,L),cm(0x9aa8c8));m.position.set(x,H/2-.12,zl+dir*run/2);m.rotation.x=-dir*a;sc.add(m);walls.push(m);
+  const tz=zl+dir*(run+(d-run)/2),top=new T.Mesh(new T.BoxGeometry(w,H,d-run),cm(0x8193b8));top.position.set(x,H/2,tz);sc.add(top);walls.push(top);boxes.push({x,z:tz,w,d:d-run,h:H});
+  for(let k=1;k<=n;k++)boxes.push({x,z:zl+dir*run*(k-.5)/n,w,d:run/n+.02,h:H*k/n})}
  for(const[x,z,w,d]of BB)boxes.push({x,z,w,d,h:999});
  solid.push(...walls,fl0);
  if(M.decor)decor=M.decor(sc)||[];
@@ -1536,6 +1545,69 @@ const SKINS=[
  return{fore:[0,.09,-.86],mag:mg}},
  reloadFx:()=>{snd(1750,.025,.06,'square');setTimeout(()=>snd(2350,.03,.06,'square'),80);setTimeout(()=>snd(900,.08,.05,'sine'),180)},
  fireFx:p=>{skBurst(p,12,[0xffd23f,0xffffff,0xc9ced6],2.4,.28,.06);snd(60,.3,.14,'sawtooth');snd(2093,.2,.03,'sine')}},
+// ----- 二戰組合包 World War II Bundle skins (from 月狼's notebook: M1 Gunblade, M1911 Handgun, M9 Bayonet, German Grenade, Anti-tank RPG)
+{id:'gb_m1',weapon:'Gunblade',name:'M1 刺刀槍 M1 Gunblade',rarity:'legendary',ex:1,how:'二戰組合包限定 World War II Bundle — 刀刃命中補子彈時會像 M1 一樣壓進彈夾',insp:'m1g',inspT:3.2,
+ build:g=>{const W=0x8a5530,W2=0x6e4224,M=0x3a3d42,M2=0x5a5e66,S=0xcfd4dc;
+  B(g,.05,.1,.24,0,.075,.17,W,{rx:.1});B(g,.054,.15,.03,0,.05,.3,W2);B(g,.044,.12,.06,0,-.01,.05,W,GRIP);
+  B(g,.05,.075,.18,0,.13,-.04,M);B(g,.05,.06,.42,0,.11,-.33,W);B(g,.036,.024,.2,0,.152,-.27,W2);Cz(g,.013,.013,.36,0,.155,-.52,M);
+  for(const z of[-.2,-.5])B(g,.056,.074,.022,0,.12,z,M2);B(g,.02,.03,.025,0,.185,-.08,M);B(g,.008,.03,.008,0,.18,-.68,M);
+  B(g,.012,.04,.012,.03,.13,.0,M2);// operating rod handle
+  const BL=new T.Group();BL.position.set(0,.125,-.68);g.add(BL);B(BL,.024,.03,.05,0,0,.02,M2);B(BL,.007,.03,.25,0,-.008,-.13,S);const tp=new T.Mesh(UK,mt(S));tp.scale.set(.012,.05,.004);tp.rotation.x=-PI/2;tp.position.set(0,-.008,-.28);BL.add(tp);
+  const CL=new T.Group();CL.position.set(0,.2,-.04);CL.visible=false;g.add(CL);B(CL,.034,.03,.05,0,0,0,0xc8a040);for(let i=0;i<4;i++)B(CL,.03,.012,.01,0,.02,-.018+i*.012,0xd8b050);
+  return{fore:[0,.05,-.3],m1:{BL,CL}}},
+ inspFx:()=>{[.68,.8].forEach(k=>setTimeout(()=>{if(P&&P.insp>0){snd(2600,.06,.05,'triangle');snd(3900,.04,.03,'sine')}},k*3200))},
+ vm:(o,U,u)=>{const sS=P.S&&P.S[P.cur],bm=sS?sS.bm|0:0,nw=performance.now();if(u.m1b===1&&bm===0)u.m1t=nw;u.m1b=bm;o.rl=u.m1t&&nw-u.m1t<900?(nw-u.m1t)/900:-1;if(o.ip>=0){const e=kf(o.ip,[[0,0],[.12,1],[.9,1],[1,0]]);o.ry-=.35*e;o.rz-=.18*e;o.py+=.02*e;o.px-=.03*e}
+  if(o.rl>=0){const e=kf(o.rl,[[0,0],[.15,1],[.85,1],[1,0]]);o.rz+=.35*e;o.rx+=.18*e;o.py-=.02*e}},
+ vm2:(o,U,u)=>{const m=u.m1;if(!m)return;let bz=0;if(o.ip>=0){for(const c of[.68,.8])if(o.ip>c)bz+=Math.sin((o.ip-c)*90)*Math.exp(-(o.ip-c)*28)*.12}m.BL.rotation.z=bz;
+  m.CL.visible=o.rl>.18&&o.rl<.6;if(m.CL.visible)m.CL.position.y=.2+kf(o.rl,[[.18,.12],[.38,.05],[.55,0]]);
+  if(o.rl<0){u.m1p=0}else if(o.rl>.56&&!u.m1p){u.m1p=1;snd(2900,.05,.05,'triangle');snd(1400,.04,.05,'square')}},
+ vm3:(o,U)=>{if(!U.la||!U.laRest)return;const L=U.la.position,R=U.laRest;
+  if(o.ip>=0){const s=kf(o.ip,[[.18,0],[.6,1],[.92,1],[1,0]]);L.z=R.z-.34*s;L.y=R.y+.02*s+kf(o.ip,[[.64,0],[.68,.035],[.72,0],[.76,0],[.8,.035],[.84,0]])}
+  else if(o.rl>=0){const s=kf(o.rl,[[0,0],[.18,1],[.6,1],[.75,0]]);L.z=R.z+.28*s;L.y=R.y+kf(o.rl,[[0,0],[.18,.16],[.32,.16],[.55,.08],[.75,0]]);L.x=R.x+.02*s}}},
+{id:'hg_m1911',weapon:'Handgun',name:'M1911 手槍 M1911 Handgun',rarity:'rare',ex:1,how:'二戰組合包限定 World War II Bundle',insp:'m19',inspT:2.8,
+ build:g=>{const St=0x3a3d44,St2=0x2c2e34,Wd=0x7a4a28;
+  const SL=new T.Group();g.add(SL);B(SL,.042,.05,.24,0,.125,-.06,St);for(let i=0;i<5;i++)B(SL,.044,.035,.005,0,.125,.03+i*.012,St2);B(SL,.012,.012,.012,0,.155,-.17,St2);B(SL,.022,.012,.012,0,.155,.05,St2);
+  Cz(g,.012,.012,.02,0,.13,-.185,0x15161a);B(g,.04,.035,.22,0,.085,-.05,St2);B(g,.014,.03,.015,0,.15,.075,St2);
+  B(g,.046,.14,.064,0,0,.06,Wd,GRIP);B(g,.04,.14,.07,0,0,.06,St2,GRIP);const tg=new T.Mesh(UT,mt(St2));tg.scale.set(.03,.03,.02);tg.rotation.y=PI/2;tg.position.set(0,.05,-.005);g.add(tg);
+  const MG=new T.Group();MG.position.set(0,-.06,.07);MG.rotation.x=-.28;MG.visible=false;g.add(MG);B(MG,.032,.12,.05,0,0,0,St2);B(MG,.034,.015,.054,0,-.06,0,St);
+  return{m19:{SL,MG}}},
+ inspFx:()=>{setTimeout(()=>{if(P&&P.insp>0)snd(1500,.04,.05,'square')},.2*2800);setTimeout(()=>{if(P&&P.insp>0){snd(1100,.05,.05,'square');snd(2200,.03,.04,'triangle')}},.92*2800)},
+ vm:o=>{if(o.ip>=0){const e=kf(o.ip,[[.15,0],[.3,1],[.75,1],[.92,0]]);o.ry+=.75*e;o.rz+=.35*e;o.px-=.05*e;o.py+=.04*e}},
+ vm2:(o,U,u)=>{const m=u.m19;if(!m)return;let sz=0;if(o.ip>=0)sz=kf(o.ip,[[.1,0],[.22,.07],[.72,.07],[.95,0]]);
+  m.MG.visible=false;if(o.rl>=0){const r=o.rl;if(r<.3){m.MG.visible=true;m.MG.position.y=-.06-r/.3*.3}else if(r>.42&&r<.72){m.MG.visible=true;m.MG.position.y=-.06-(1-(r-.42)/.3)*.3}
+   sz=kf(r,[[.78,0],[.86,.07],[.95,0]]);if(r>.85&&!u.m19r){u.m19r=1;snd(1300,.05,.06,'square')}}else u.m19r=0;
+  if(o.rl>=0&&o.rl<.08&&!u.m19d){u.m19d=1;snd(700,.04,.04,'square')}if(o.rl<0||o.rl>.2)u.m19d=0;m.SL.position.z=sz}},
+{id:'kb_m9',weapon:'Knife',name:'M9 刺刀 M9 Bayonet',rarity:'legendary',ex:1,how:'二戰組合包限定 World War II Bundle',insp:'m9',inspT:2.8,inspR:.3,insp2:'m9s',insp2T:6,
+ build:g=>{const Hd=0x2a2b2e,S=0xc9ced6,S2=0x9aa2ad;Cy(g,.024,.15,0,0,0,Hd);for(let i=0;i<5;i++)Cy(g,.026,.008,0,-.055+i*.026,0,0x1a1b1e);Cy(g,.028,.02,0,-.08,0,0x55585f);
+  B(g,.1,.016,.05,0,.083,0,0x55585f);B(g,.012,.25,.052,0,.215,0,S);const tp=new T.Mesh(UK,mt(S));tp.scale.set(.006,.07,.026);tp.position.set(0,.37,-.0);g.add(tp);
+  B(g,.013,.24,.006,0,.215,-.026,0xe6eaf0);for(let i=0;i<7;i++){const t=new T.Mesh(UK,mt(S2));t.scale.set(.006,.012,.008);t.position.set(0,.13+i*.028,.03);t.rotation.x=.6;g.add(t)}
+  B(g,.014,.035,.012,0,.16,.008,0x15161a);return{}},
+ inspFx:()=>{if(P&&P.inspV=='m9s'){[.12,.82].forEach(k=>setTimeout(()=>{if(P&&P.insp>0)snd(1700,.04,.04,'triangle')},k*6000));setTimeout(()=>{if(P&&P.insp>0)toast('🗡️ 特殊展示！M9 Balance','#ffd23f')},300)}else[.3,.72].forEach(k=>setTimeout(()=>{if(P&&P.insp>0)snd(1800,.03,.04,'triangle')},k*2800))},
+ vm:o=>{if(o.ip>=0){const e=kf(o.ip,[[0,0],[.08,1],[.92,1],[1,0]]);o.py+=.07*e;o.px-=.04*e;o.pz-=.03*e}},
+ vm2:(o,U)=>{if(!U.m||o.ip<0)return;const M=U.m,p=o.ip;let y=0,rx=0,ry=0,rz=0;
+  if(P.inspV=='m9s'){y=kf(p,[[0,0],[.06,.38],[.13,.2],[.18,.2],[.78,.2],[.84,.5],[.95,0]]);rx=-kf(p,[[0,0],[.13,PI*4],[.16,PI*5],[.78,PI*5],[.95,PI*11]]);
+   const bal=p>.16&&p<.78;if(bal){rz=Math.sin(p*60)*.14*(1-Math.abs(p-.47)*1.5);ry=Math.sin(p*37)*.08}}
+  else{ry=kf(p,[[.05,0],[.28,PI*2]]);const q=Math.min(1,Math.max(0,(p-.36)/.3));y=Math.sin(q*PI)*.45;rx=-q*PI*2;ry+=kf(p,[[.72,0],[.95,PI*2]])}
+  M.position.y=y;M.rotation.set(rx,ry,rz)}},
+{id:'gr_stick',weapon:'Grenade',name:'德軍手榴彈 German Grenade',rarity:'rare',ex:1,how:'二戰組合包限定 World War II Bundle',insp:'ggr',inspT:2.4,
+ build:g=>{const Hd=0x5a6248,Wd=0xa8763e;Cy(g,.05,.11,0,.24,0,Hd);Cy(g,.052,.012,0,.29,0,0x6a7258);Cy(g,.052,.012,0,.19,0,0x6a7258);B(g,.003,.03,.03,0,.24,.051,0xd8d0b0);
+  Cy(g,.018,.22,0,.08,0,Wd);for(const y of[.02,.06,.1])Cy(g,.019,.004,0,y,0,0x8a5a2a);Cy(g,.022,.025,0,-.04,0,0x55585f);return{}},
+ inspFx:()=>{setTimeout(()=>{if(P&&P.insp>0)snd(500,.06,.04,'sine')},.15*2400);setTimeout(()=>{if(P&&P.insp>0)snd(380,.06,.05,'square')},.78*2400)},
+ vm2:(o,U)=>{if(!U.m||o.ip<0)return;const q=Math.min(1,Math.max(0,(o.ip-.15)/.6));U.m.position.y=Math.sin(q*PI)*.55;U.m.rotation.set(-q*PI*4,0,q*.4)}},
+{id:'rp_panzer',weapon:'RPG',name:'反坦克砲 Anti-Tank Launcher',rarity:'legendary',ex:1,how:'二戰組合包限定 World War II Bundle',insp:'atr',inspT:3.4,
+ build:g=>{const Ol=0x4f5a3a,Ol2=0x434d31,M=0x2e3036;Cz(g,.065,.065,.95,0,.15,-.2,Ol);for(const z of[-.66,.27])Cz(g,.075,.075,.035,0,.15,z,Ol2);Cz(g,.07,.07,.01,0,.15,-.68,0x111111);
+  const sh=new T.Group();sh.position.set(0,.19,-.2);g.add(sh);B(sh,.22,.17,.012,0,0,0,Ol2);B(sh,.06,.045,.014,.045,.035,0,0x8ab0c0);B(sh,.23,.015,.03,0,-.085,.01,Ol);
+  B(g,.04,.12,.055,0,0,.0,M,GRIP);B(g,.035,.1,.05,0,0,-.32,M);B(g,.06,.03,.16,0,.08,.17,Ol2);B(g,.01,.06,.01,.06,.23,-.3,M);
+  const RK=new T.Group();RK.position.set(0,.15,-.69);g.add(RK);const wh=new T.Mesh(UK,mt(0x6a6e48));wh.scale.set(.05,.11,.05);wh.rotation.x=-PI/2;wh.position.z=-.04;RK.add(wh);Cz(RK,.035,.035,.08,0,0,.04,0x55585f);
+  return{fore:[0,.07,-.32],atr:{RK}}},
+ inspFx:()=>{[.66,.78].forEach(k=>setTimeout(()=>{if(P&&P.insp>0){snd(1900,.07,.05,'square');snd(950,.09,.04,'triangle')}},k*3400))},
+ vm:o=>{if(o.ip>=0){o.ry+=kf(o.ip,[[0,0],[.12,.55],[.3,.55],[.42,-.45],[.58,-.45],[.66,0]]);o.rz+=kf(o.ip,[[0,0],[.12,.15],[.3,.15],[.42,-.12],[.58,-.12],[.66,0]])}
+  if(o.rl>=0){const e=kf(o.rl,[[0,0],[.15,1],[.85,1],[1,0]]);o.px=o.px*(1-e)+.18*e;o.py=o.py*(1-e)-.12*e;o.pz=o.pz*(1-e)-.32*e;o.rx=o.rx*(1-e)+.15*e;o.ry=o.ry*(1-e)+.5*e;o.rz=o.rz*(1-e)}},
+ vm2:(o,U,u)=>{const m=u.atr;if(!m)return;m.RK.visible=true;m.RK.position.set(0,.15,-.69);m.RK.scale.setScalar(1);
+  if(o.rl>=0){const r=o.rl;if(r<.25)m.RK.visible=false;else{const s=kf(r,[[.25,0],[.7,1]]);m.RK.position.set(-.09*(1-s),.15+(1-s)*.12,-.69-(1-s)*.32);m.RK.scale.setScalar(1+.4*(1-s))}if(r>.7&&!u.atrr){u.atrr=1;snd(600,.08,.06,'square');snd(1500,.04,.04,'triangle')}}else u.atrr=0},
+ vm3:(o,U)=>{if(!U.la||!U.laRest)return;const L=U.la.position,R=U.laRest;
+  if(o.ip>=0){const s=kf(o.ip,[[.6,0],[.64,1],[.86,1],[.9,0]]);L.y=R.y+.1*s+kf(o.ip,[[.64,0],[.66,.04],[.68,0],[.76,0],[.78,.04],[.8,0]]);L.z=R.z+.05*s}
+  else if(o.rl>=0){const s=kf(o.rl,[[0,0],[.25,1],[.75,1],[.9,0]]);L.z=R.z-.45*s;L.x=R.x-.06*s;L.y=R.y-.12*s}}},
 // ----- Meme Bundle skins (blocky original takes on internet meme cats / "67"); per-skin viewmodel hooks: vm(o,U,u) adjusts the hand pose, vm2(o,U,u) moves the skin's own parts
 {id:'gl_popcat',weapon:'Grenade Launcher',name:'Pop Cat 爆嘴貓',rarity:'legendary',ex:1,how:'Meme 組合包限定 Meme Bundle Exclusive',insp:'popcat',inspT:3,flashColor:0xfff0d0,
  build:g=>{const Gy=0x5c616c,Cr=0xf3e6d0,Ck=0xd9c8ac,Pk=0xffa8b8,Bk=0x141418;B(g,.1,.12,.26,0,.09,.02,Gy);B(g,.05,.13,.06,0,0,.06,K,GRIP);B(g,.07,.1,.18,0,.07,.23,Gy);B(g,.045,.1,.05,0,0,-.13,K);
@@ -1947,6 +2019,12 @@ const WR2=[
  for(const[id0,zh,en,r,src,k,pa,fl]of WR2){const id='w_'+id0;if(WBYID[id])continue;const x=Object.assign({id,zh,en,r:RR2[r],p:PRW[RR2[r]]},fl||{});if(r=='m')x.myth=1;
   if(src.startsWith('code:')){x.ex=1;x.how='兌換代碼 '+src.slice(5)}else if(src.startsWith('ex:')){x.ex=1;x.how=src.slice(3)}else{x.how=SRC[src];x.wb=BX[src];if(src=='hw')x.hw=1}
   WG[id]=(c,R)=>WP[k](c,R,pa);WRAPS.push(x);WBYID[id]=x}})();
+WG.w_blooddirt=(c,R)=>{c.fillStyle='#ffffff';c.fillRect(0,0,256,256);const blob=(x,y,r,col,a)=>{c.globalAlpha=a;c.fillStyle=col;c.beginPath();for(let k=0;k<12;k++){const an=k/12*PI*2,rr=r*(.6+R()*.6);c.lineTo(x+Math.cos(an)*rr,y+Math.sin(an)*rr)}c.closePath();c.fill()};
+ for(let i=0;i<26;i++)blob(R()*256,R()*256,10+R()*26,['#8a6a44','#6e5232','#a08058'][i%3],.35+R()*.3);for(let i=0;i<300;i++){c.globalAlpha=.4+R()*.4;c.fillStyle=R()<.5?'#5a4028':'#7a5a38';c.fillRect(R()*256,R()*256,1+R()*3,1+R()*3)}
+ for(let i=0;i<9;i++){const x=R()*256,y=R()*256;blob(x,y,6+R()*14,'#8a0d0d',.85);for(let k=0;k<6;k++)blob(x+(R()-.5)*50,y+(R()-.5)*50,1.5+R()*4,'#a01010',.9);if(R()<.6){c.globalAlpha=.85;c.fillStyle='#7a0a0a';c.fillRect(x-2,y,4,20+R()*40)}}
+ c.globalAlpha=1};
+WRAPS.push({id:'w_blooddirt',zh:'血與泥',en:'Blood with Dirt',r:3,p:0,ex:1,ov:1,how:'二戰組合包限定 World War II Bundle — 武器保留原本的顏色，再沾上諾曼第登陸的泥巴和血跡'});WBYID.w_blooddirt=WRAPS[WRAPS.length-1];
+const WOV={};function ovMat(id,col){const k=id+col;if(WOV[k])return WOV[k];wrapMat(id);return WOV[k]=new T.MeshLambertMaterial({map:WTX[id],color:col})}
 const WTX={},WCV={},WMT={},WSW={};
 function wrapCanvas(id){if(WCV[id])return WCV[id];const cv=document.createElement('canvas');cv.width=cv.height=256;try{WG[id](cv.getContext('2d'),mkRng(id.charCodeAt(0)*977+id.charCodeAt(1)*31+7))}catch(e){console.error(e)}return WCV[id]=cv}
 function wrapSwatch(id){if(WSW[id])return WSW[id];const c=document.createElement('canvas');c.width=c.height=96;c.getContext('2d').drawImage(wrapCanvas(id),0,0,96,96);return WSW[id]=c.toDataURL('image/jpeg',.88)}
@@ -1964,6 +2042,7 @@ function applyWrap(g,w,key){const inv=key.slice(-1)=='!',id=inv?key.slice(0,-1):
  g.traverse(o=>{if(!o.isMesh||!o.geometry||!o.geometry.parameters)return;const m=o.material;if(!m||m.transparent||(m.emissive&&m.emissive.getHex()))return;if((WSK[w.n]||[]).includes(m.color.getHex()))return;
   const p=o.geometry.parameters,ty=o.geometry.type,d=ty=='BoxGeometry'?[p.width,p.height,p.depth]:ty=='CylinderGeometry'?[Math.max(p.radiusTop,p.radiusBottom)*2,p.height,Math.max(p.radiusTop,p.radiusBottom)*2]:ty=='SphereGeometry'?[p.radius*2,p.radius*2,p.radius*2]:null;if(!d)return;
   const s=d.slice().sort((a,b)=>b-a);if(s[1]<.02||s[0]<.04)return;const v=s[0]*s[1]*s[2];mx=Math.max(mx,v);ms.push([o,v])});
+ if(WBYID[id].ov){for(const[o]of ms){o.userData.oc=o.material.color.getHex();wrapUV(o);o.material=ovMat(id,o.userData.oc)}return}
  for(const[o,v]of ms){const main=v>=.3*mx;o.userData.oc=o.material.color.getHex();if(main!==inv){wrapUV(o);o.material=wrapMat(id)}else if(inv)o.material=mt(0x14151a)}}
 var RWRAP=null,RWM={};
 // resolve the wrap key a given entity shows on weapon w (own = equipped wrap; shooting-range trial override; others = synced value)
@@ -3147,6 +3226,14 @@ const FIN2=[
  for(const[id,zh,en,r,D,e,c1,c2,src,S]of FIN2){const x={id,zh,en,r,p:PR[r],D,e,c:[c1,c2]};
   if(src.startsWith('code:')){x.ex=1;x.p=0;x.how='兌換代碼 '+src.slice(5)}else{x.how=SRC[src];if(src=='hw'){x.hw=1;x.p=0}if(src=='f2')x.fp=2}
   FINS.push(x);FBYID[id]=x;FD[id]=FGN(S)}})();
+(function(){const base=FGN({b:'back',at:1.6,pr:[{k:'disc',c:0x6a0808,r:1.1,al:.8,a:2,mv:'grow'}],fx:[{k:'flash',a:1.55,c:[0xfff0b0],s:2.5,y:1.9},{k:'burst',a:1.56,c:[0xb01010,0x7a0a0a,0xe02020],n:46,y:1.9,sp:3.5}],sd:[140,.3,.12,'square',1.55]});
+ FINS.push({id:'gsh',zh:'中彈',en:'Got Shot',r:3,p:0,D:3.4,e:'🪖',c:['#5a6a3a','#b01010'],ex:1,how:'二戰組合包限定 World War II Bundle'});FBYID.gsh=FINS[FINS.length-1];
+ FD.gsh={init(f){base.init(f);const R=f.rig,L=c=>lm(f,c);R.sh.color.setHex(0x5a6a3a);R.pn.color.setHex(0x454d2e);
+  const hm=mm(f,US,L(0x4a5632),R.hd);hm.scale.set(.33,.22,.35);hm.position.set(0,.2,0);const br=mm(f,UB,L(0x3f4a2a),R.hd);br.scale.set(.66,.04,.7);br.position.set(0,.13,.02);
+  const gun=new T.Group();gun.position.set(.05,1.3,-.34);gun.rotation.set(0,0,.55);R.g.add(gun);for(const[w,h,d,x,y,z,c]of[[.08,.09,1.1,0,0,-.05,0x8a5530],[.04,.04,.5,0,.07,-.55,0x3a3d42],[.09,.12,.3,0,-.02,.45,0x6e4224]]){const q=mm(f,UB,L(c),gun);q.scale.set(w,h,d);q.position.set(x,y,z)}
+  gun.rotation.y=1.45},
+ upd(f,t,dt){base.upd(f,t,dt);const R=f.rig;R.aL.rotation.set(-1.25,0,.35);R.aR.rotation.set(-1.0,0,-.25);
+  if(t<1.55){R.hd.rotation.y=kf(t,[[0,0],[.25,.85],[.5,.85],[.75,-.85],[1,-.85],[1.2,.4],[1.45,.1]]);R.hd.rotation.x=0}else{R.hd.rotation.y=.1;R.hd.rotation.x=-kf(t,[[1.55,0],[1.65,.6],[2,.4]])}}}})();
 var FIN=[],FPN=null,FPA=null,RFIN=null;
 function finPS(){if(!FPN){FPN=mkPS(sc,MOBILE?450:900,0);FPA=mkPS(sc,MOBILE?300:650,1)}}
 function finClear(){if(typeof FIN==='undefined'||!FIN)return;for(const f of FIN)finDispose(f);FIN=[];psClear(FPN);psClear(FPA)}
@@ -3505,7 +3592,7 @@ function rel(e){const w=e.L[e.cur],s=e.S[e.cur];if(w.norl||(w.res!=null&&!(s.r>0
 // per-skin FX hooks (Sniper skins etc): reuse SKBYID entries' reloadFx/fireFx/inspFx, local player only.
 function skRelFx(e,w){if(!e.isP||!w)return;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.reloadFx)try{S.reloadFx()}catch(err){console.error(err)}}
 function skFireFx(e,w){if(!e.isP||!w)return false;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.fireFx){try{S.fireFx(muz(e))}catch(err){console.error(err)}return true}return false}
-function skInspFx(e){if(!e||!e.isP||!e.alive)return;const w=e.L[e.cur];const S=w&&SKBYID[skinKey(e,w)];e.inspV=null;e.inspT=2.4;if(S&&S.weapon==w.n&&S.insp2&&(keys.KeyW||keys.KeyA||keys.KeyS||keys.KeyD))e.inspV=S.insp2;if(S&&S.weapon==w.n&&S.inspT&&!e.inspV)e.inspT=S.inspT;
+function skInspFx(e){if(!e||!e.isP||!e.alive)return;const w=e.L[e.cur];const S=w&&SKBYID[skinKey(e,w)];e.inspV=null;e.inspT=2.4;if(S&&S.weapon==w.n&&S.insp2&&(keys.KeyW||keys.KeyA||keys.KeyS||keys.KeyD))e.inspV=S.insp2;if(S&&S.weapon==w.n&&S.inspR&&!e.inspV&&rnd()<S.inspR)e.inspV=S.insp2;if(S&&S.weapon==w.n&&S.inspT&&!e.inspV)e.inspT=S.inspT;if(S&&S.weapon==w.n&&e.inspV&&e.inspV==S.insp2&&S.insp2T)e.inspT=S.insp2T;
  // 稀有展示: ~8% of inspects (weapons/skins without their own custom inspect) toss the weapon up, flip it twice and catch it
  if(!e.inspV&&!(S&&S.weapon==w.n&&(S.inspT||S.insp2))&&w.n!='Fists'&&rnd()<.08){e.inspV='lucky';e.inspT=2.6;setTimeout(()=>{if(P.inspV=='lucky'&&P.insp>0){toast('✨ 稀有展示！Rare Inspect','#ffd23f');snd(1500,.08,.05,'triangle');snd(2100,.1,.04,'sine')}},700)}
  if(e.insp>0)e.insp=e.inspT;if(S&&S.weapon==w.n&&S.inspFx)try{S.inspFx(muz(e))}catch(err){console.error(err)}}
@@ -3527,7 +3614,7 @@ function swE(e,i){if(i===e.cur||!e.alive||e.frz>0)return;const o=e.S[e.cur];o.rl
 function skDrawFx(e,w){if(!e.isP||!w)return;if(KEYSK.has(skinKey(e,w)))P.ktk=.5;const S=SKBYID[skinKey(e,w)];if(S&&S.weapon==w.n&&S.drawFx)try{S.drawFx(muz(e))}catch(err){console.error(err)}}
 function spdMul(e){const w=e.L[e.cur];return(e.frz>0?0:1)*(e.slow>0?.5:1)*(w.n=='Chainsaw'&&e.altH?1.85:w.mv||(w.k=='M'?1.15:1))*(e.buff>0?1.25:1)*(e.shd?.8:1)}
 function phys(e,dt,wx,wz){move(e,wx+e.vx*dt,wz+e.vz*dt);const og=onGround(e),fr=og&&e.vy<=0?Math.max(0,1-9*dt):Math.max(0,1-(e.isP?.06:.4)*dt);e.vx*=fr;e.vz*=fr;
-e.vy-=(cfg.ltm=='bunny'?8:22)*dt;e.y+=e.vy*dt;const g=ground(e.x,e.z,e.y);if(e.y<=g&&e.vy<=0){e.y=g;e.vy=0;e.djd=0;if(e.djs)e.djs.clear()}}
+e.vy-=(cfg.ltm=='bunny'?8:22)*dt;const y0f=e.y;e.y+=e.vy*dt;const g=ground(e.x,e.z,e.vy<0?Math.max(e.y,y0f):e.y);if(e.y<=g&&e.vy<=0){e.y=g;e.vy=0;e.djd=0;if(e.djs)e.djs.clear()}}
 function stat(e,dt){if(!e.alive)return;e.age+=dt;
 if(e.net){if(e.pin!=null){e.pin-=dt;if(e.pin<=0){e.pin=null;boom(V(e.x,e.y+1,e.z),{r:16,dmg:75},e,'Grenade')}}e.mesh.userData.ice.visible=e.frz>0;e.mesh.userData.mat.emissive.setHex(e.frz>0?0x2a7fff:e.burn>0?0x5a1a00:0);return}
 for(let i=0;i<4;i++){const w=e.L[i],s=e.S[i];if(s.acd>0)s.acd-=dt;if(s.out>0)s.out-=dt;if(w.cdr&&s.c<w.lim){s.rc+=dt;if(s.rc>=w.cdr){s.rc=0;s.c++}}if(w.regen&&e.age-(s.lf||0)>1)s.a=Math.min(w.mag,s.a+w.regen*dt);if(w.heat){s.h=Math.max(0,s.h-w.cool*dt);if(s.ov&&s.h<=.25)s.ov=0}}
@@ -3743,7 +3830,7 @@ if(s.rl>0&&w.rl&&P.qmT<=0){const p=1-s.rl/w.rl,t=RS[w.n]||'mag';
  else if(t=='box'){py+=kf(p,[[0,0],[.2,-.1],[.8,-.1],[1,0]]);rz+=kf(p,[[0,0],[.2,.3],[.8,.3],[1,0]]);lo=kf(p,[[.2,0],[.4,1],[.7,1],[.85,0]])}}
 if(P.insp>0){const p=1-P.insp/(P.inspT||2.4),t=P.inspV||U.insp;
  if(t=='lucky'){py+=kf(p,[[0,0],[.12,-.06],[.26,.38],[.5,.5],[.72,.08],[.8,-.05],[.9,0]]);pz+=kf(p,[[0,0],[.26,-.1],[.72,-.1],[.9,0]]);rx+=kf(p,[[.22,0],[.74,PI*4]]);rz+=kf(p,[[.22,0],[.5,.4],[.74,0]])}
- else if(t=='twirl'||t=='sturn'||t=='side'||t=='knuck'||t=='popcat'||t=='six7'||t=='cspin'||t=='oiiai'||t=='kspin'||t=='bfly'){}
+ else if(t=='twirl'||t=='sturn'||t=='side'||t=='knuck'||t=='popcat'||t=='six7'||t=='cspin'||t=='oiiai'||t=='kspin'||t=='bfly'||t=='m1g'||t=='m19'||t=='m9'||t=='m9s'||t=='ggr'||t=='atr'){}
  else if(t=='keyspin'){py+=kf(p,[[0,0],[.3,.03],[.9,.03],[1,0]]);rx+=kf(p,[[.28,0],[.4,.12],[.6,.12],[.7,0]])}
  else if(t=='keytoss'){ry+=kf(p,[[0,0],[.15,.12],[.55,.12],[.62,-.1],[.8,-.1],[1,0]]);py+=kf(p,[[.52,0],[.58,-.03],[.66,0]])}
  else if(t=='pxflip'){rx+=kf(p,[[0,0],[.15,.9],[.4,.9],[.55,0],[1,0]]);ry+=kf(p,[[0,0],[.15,.25],[.4,.25],[.55,0],[1,0]]);py+=kf(p,[[0,0],[.15,.05],[.4,.05],[1,0]])}
@@ -3790,6 +3877,7 @@ if(KPS)psU(KPS,dt);
 if(U.mag){U.mag.position.y=U.magY+mo;U.mag.visible=!mh}
 if(U.la){if(lo!=null&&lo>0){const t2=U.mag?V(U.mag.position.x,U.magY-.06+mo,U.mag.position.z+.02):V(U.laRest.x,U.laRest.y-.15,U.laRest.z+.06);U.la.position.lerpVectors(U.laRest,t2,lo)}else U.la.position.copy(U.laRest)}
 if(U.la&&!(P.insp>0))U.la.visible=true;if(U.la&&P.insp>0&&U.insp=='akey'){const T=(1-P.insp/(P.inspT||2.4))*5.5,K=a=>kf(T,a);U.la.position.y+=K([[.5,0],[.9,.13],[2.5,.13],[2.9,0]]);U.la.visible=!(T>3.05&&T<4.9);U.la.position.z-=K([[.5,0],[.9,.12],[2.5,.12],[2.9,0]]);U.la.position.x-=K([[.5,0],[.9,.05],[2.5,.05],[2.9,0]])}
+if(SKO&&SKX.vm3)try{SKX.vm3(SKO,U,u)}catch(e){}
 if(U.arrow){const c=s.ch||0;for(const a of U.arrow)a.position.z=a.userData.z0+c*.16}
 if(U.m)U.m.visible=!(w.n=='Spear'&&s.c<=0)&&!(P.thr>0&&P.thr<.2);
 if(w.n=='Daggers'&&U.m){const rl=s.rl>0&&w.rl?1-s.rl/w.rl:0;U.m.visible=(s.a>=2||rl>.55)&&U.m.userData.kv!==0;if(U.m2)U.m2.visible=(s.a>=1||rl>.55)&&U.m2.userData.kv!==0}
@@ -5191,6 +5279,7 @@ const KBUNDLES=[
  // starter bundles (one purchase per account). wall:N = every non-admin weapon that costs <= N keys; wdup = keys given instead when a listed weapon is already owned
  {id:'startp',zh:'新手包',en:'Starter Pack',gold:49,keys:10,cr:{ccap:3},wpn:['Shorty'],wdup:20,skins:['sh_tooshort'],sp:1,once:1,art:'🔫'},
  {id:'meme',zh:'Meme 組合包',en:'Meme Bundle',gold:2499,keys:67,cr:{wbox:10,fpack:5,ccap:15},wpn:['Grenade Launcher','Daggers','Riot Shield','Subspace Tripmine'],wdup:'cost',skins:['gl_popcat','dg_67','rs_catshield','tm_oiiai'],fins:['aur'],wraps:['bmel'],sp:1,once:1,art:'😹'},
+ {id:'ww2',zh:'二戰組合包',en:'World War II Bundle',gold:1944,keys:500,cr:{wbox:10,fpack:5,ccap:15},wpn:['Gunblade','Handgun','Knife','Grenade'],wdup:'cost',skins:['gb_m1','hg_m1911','kb_m9','gr_stick','rp_panzer'],fins:['gsh'],wraps:['w_blooddirt'],sp:1,once:1,red:1,art:'🪖'},
  {id:'startw',zh:'新手武器組合包',en:'Starter Weapons Bundle',gold:999,keys:30,cr:{wbox:5,fpack:3,ccap:10},wall:100,fins:['dc'],sp:1,once:1,art:'🎒'},
  {id:'medic',zh:'醫療組合包',en:'Medic Bundle',gold:1400,keys:40,cr:{wbox:3},rw:1,wpn:['Medkit'],skins:['mk_laptop'],fins:['hr'],sp:1,art:'🩹'},
  {id:'crafty',zh:'手作組合包',en:'Crafty Bundle',gold:850,keys:15,cr:{wbox:5},rw:1,skins:['kb_pencil','ba_sign','dg_toast','st_pizza','ft_spray'],fins:['er'],sp:1,art:'✏️'},
