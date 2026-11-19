@@ -2278,8 +2278,9 @@ const CH2=[
   add({id:'c_dio_'+mk,zh:'地圖模型 '+nm,en:'Diorama '+nm,r:3,p:0,ex:1,dio:mk,how:'在 '+nm+' 地圖贏 25 場解鎖',build:CHB([['c',0x1a1a1a,0,-.7,0,1.1,.25],['b',a,0,-.4,0,1.5,.3,1.5],['b',b,-.4,0,-.3,.5,.6,.5],['b',b,.45,-.05,.35,.4,.4,.4],['b',a,.3,.25,-.4,.3,.9,.3]])})}})();
 const CHBYID=Object.fromEntries(CHARMS.map(x=>[x.id,x]));
 function giveCharm(id,msg){if(!PF||!CHBYID[id]||PF.charms.includes(id))return false;PF.charms.push(id);saveNow();const C=CHBYID[id];if(msg!==false)setTimeout(()=>toast('🔗 '+(msg||'解鎖吊飾')+'：'+C.zh+' '+C.en,'#ffd23f'),700);return true}
+var CHSW={ax:0,az:0,wx:0,wz:0,vR:0,vF:0,vy:0};
 function applyCharm(g,w,chId){const C=CHBYID[chId];if(!C)return;try{const anchor=new T.Group();anchor.position.set(.055,-.09,.045);
- const str=Cy(anchor,.003,.05,0,.025,0,0x2a2a2a);const body=new T.Group();body.position.y=-.01;anchor.add(body);C.build(body);g.add(anchor)}catch(e){console.error(e)}}
+ const str=Cy(anchor,.003,.05,0,.025,0,0x2a2a2a);const body=new T.Group();body.position.y=-.01;anchor.add(body);C.build(body);g.add(anchor);if(g.userData)g.userData.chA=anchor}catch(e){console.error(e)}}
 var RCHM={};
 // resolve the preview/display charm id for weapon w: '?' resolves to a random owned charm (cached per-weapon so it doesn't flicker every frame)
 function chShowKey(w){if(!PF||!w)return'';const id=(PF.charm||{})[w.n]||'';if(id=='?'){const o=PF.charms.filter(x=>CHBYID[x]);return RCHM[w.n]||(RCHM[w.n]=o.length?o[Math.floor(rnd()*o.length)]:'')}return CHBYID[id]?id:''}
@@ -3239,7 +3240,7 @@ function finPS(){if(!FPN){FPN=mkPS(sc,MOBILE?450:900,0);FPA=mkPS(sc,MOBILE?300:6
 function finClear(){if(typeof FIN==='undefined'||!FIN)return;for(const f of FIN)finDispose(f);FIN=[];psClear(FPN);psClear(FPA)}
 function finTick(dt){if(!FPN)return;for(let i=FIN.length-1;i>=0;i--){const f=FIN[i];finStep(f,dt);if(f.dead)FIN.splice(i,1)}psU(FPN,dt);psU(FPA,dt)}
 function finPlay(x,y,z,yaw,col,id,pose,ex){if(!FBYID[id])return null;finPS();const act=FIN.filter(f=>!f.done);while(act.length>=4)finFF(act.shift());while(FIN.filter(f=>f.done&&!f.dead).length>10){const o=FIN.find(f=>f.done&&!f.dead);finDispose(o);FIN.splice(FIN.indexOf(o),1)}
- const f=finNew(sc,FPN,FPA,id,{x,y,z,yaw,col,pose,nm:ex&&ex.nm,byP:ex&&ex.byP,vicP:ex&&ex.vicP});if(f)FIN.push(f);return f}
+ const f=finNew(sc,FPN,FPA,id,{x,y,z,yaw,col,pose,nm:ex&&ex.nm,byP:ex&&ex.byP,vicP:ex&&ex.vicP});if(f){FIN.push(f);try{finStep(f,Math.min(.4,f.D*.12))}catch(e){}}return f}
 function finBegin(e,id,by){if(e.fin)return;const u=e.mesh.userData,pose=u&&u.lL?{lL:u.lL.rotation.clone(),lR:u.lR.rotation.clone(),aL:u.aL.rotation.clone(),aR:u.aR.rotation.clone(),hd:u.hd?u.hd.rotation.clone():null,cr:!!e.cr}:null,gy=Math.min(e.y,ground(e.x,e.z,e.y+.5)),f=finPlay(e.x,gy,e.z,e.yaw||0,u.mat.color.getHex(),id,pose,{nm:e.isP?accName():e.name,byP:!!(by&&by.isP),vicP:!!e.isP});if(f){e.fin=f;e.mesh.visible=false}}
 // resolve the finisher id an entity plays for a kill with weapon w (own = equipped; range trial override; others = synced value)
 function finKey(e,w){if(!e||!w)return'';if(e.isP&&PF){let id=(PF.fin||{})[w.n]||'';if(st=='lobby'&&LB.inRange&&RFIN)id=RFIN=='_'?'':RFIN;if(id=='?'){const o=FINS.filter(x=>finHas(x.id,w.n)).map(x=>x.id);id=o.length?o[Math.floor(rnd()*o.length)]:''}return FBYID[id]&&(id==RFIN||finHas(id,w.n))?id:''}
@@ -3267,7 +3268,7 @@ function renderFin(){if(!FINM||!PF||!WSEL)return;$('#wrInv').style.display='';co
  $('#wrTitle').innerHTML='<div class="wrt">'+(isF?'<span class="wri">'+X.e+'</span>':'<span class="wri">'+(FPREV=='?'?'🔀':'⊘')+'</span>')+'<b>'+nm+'</b></div><div class="wrp">'+how+(isF?' · '+WRN[X.r]:'')+'</div>'+(isF&&!own(FPREV)&&!X.ex?'<button class="gbtn" id="wrBuy">🛒 前往商店</button>':'')+'<div class="wrw">'+w.n+(cur&&cur!='?'&&FBYID[cur]?' · 已裝備 '+FBYID[cur].zh:cur=='?'?' · 已裝備 隨機':'')+'</div>';
  const bb=$('#wrBuy');if(bb)bb.onclick=()=>crGo('fpack');
  $('#wrInv').innerHTML='▶ 重播 Replay';$('#wrInv').className='';const fv=isF&&PF.finFav.includes(FPREV);$('#wrFav').innerHTML=(fv?'♥':'♡')+' 最愛 Favorited';$('#wrFav').className=fv?'on':'';$('#wrFav').disabled=!isF;
- const q=FQ.trim().toLowerCase();let L=FINS.filter(x=>!q||(x.zh+' '+x.en).toLowerCase().includes(q));L=L.filter(x=>PF.finFav.includes(x.id)).concat(L.filter(x=>!PF.finFav.includes(x.id)));
+ const q=FQ.trim().toLowerCase();let L=FINS.filter(x=>!q||(x.zh+' '+x.en).toLowerCase().includes(q));{const fv=x=>PF.finFav.includes(x.id);L=L.filter(x=>own(x.id)&&fv(x)).concat(L.filter(x=>own(x.id)&&!fv(x)),L.filter(x=>!own(x.id)))}
  const tile=(id,img,name,col,fav,lock)=>'<button class="wtile'+(FPREV===id?' sel':'')+'" data-w="'+id+'" style="border-color:'+col+'">'+img+'<span>'+name+'</span>'+(cur===id?'<em class="ck">✔</em>':'')+(fav?'<em class="hf">♥</em>':'')+(lock?'<em class="lkx">🔒</em>':'')+'</button>';
  let h=q?'':tile('','<b class="wti">⊘</b>','預設 None','#666',0,0)+tile('?','<b class="wti">🔀</b>','隨機 Random','#666',0,0);
  for(const x of L)h+=tile(x.id,finTile(x),x.zh,WRC[x.r],PF.finFav.includes(x.id),!own(x.id));
@@ -3419,7 +3420,7 @@ const ice=new T.Mesh(new T.BoxGeometry(1.3,2.35,1.1),new T.MeshLambertMaterial({
 const TWOH=new Set(['Maul','Battle Axe','Scythe','Spear','Chainsaw','Fists']);
 function isTwo(w){return w.k=='P'||w.k=='S'||TWOH.has(w.n)}
 function animBody(e,dt,mvd){const spd=mvd/Math.max(dt,1e-3),u=e.mesh.userData,w=e.L[e.cur];
- if(e.emoteId){const em=EMBYID[e.emoteId];if(em&&spd<.3&&!(e===P&&(mL||mR))){e.emoteT+=dt;if(e.emoteT>=em.dur){emoteCancel(e)}else{em.pose(u,e.mesh,e.emoteT);return}}else emoteCancel(e)}
+ if(e.emoteId){const em=EMBYID[e.emoteId];e.emMv=spd>=.3?(e.emMv||0)+dt:0;if(em&&e.emMv<1.5&&!(e===P&&mL)){e.emoteT+=dt;if(e.emoteT>=em.dur){emoteCancel(e)}else{em.pose(u,e.mesh,e.emoteT);return}}else emoteCancel(e)}
  e.ph=(e.ph||0)+dt*spd*1.6;const swg=Math.min(1,spd/4)*.7,k=(e.kick||0)*.3,p=Math.max(-1,Math.min(1,e.pitch||0));u.lL.rotation.x=Math.sin(e.ph)*swg;u.lR.rotation.x=-Math.sin(e.ph)*swg;
  if(st=='lobby'&&!inRangeXZ(e.x,e.z)){u.aR.rotation.set(Math.sin(e.ph)*swg*.8,0,.07);u.aL.rotation.set(-Math.sin(e.ph)*swg*.8,0,-.07);e.kick=0;return}// lobby hub: no weapon → arms hang by the thighs, natural walk swing
  u.aR.rotation.set(PI/2+p-k,0,0);if(w&&isTwo(w))u.aL.rotation.set(PI/2+p-k,0,w.n=='Fists'?0:.75);else u.aL.rotation.set(-Math.sin(e.ph)*swg*.8,0,0);e.kick=Math.max(0,(e.kick||0)-dt*6)}
@@ -3436,6 +3437,20 @@ const EMBYID=Object.fromEntries(EMOTES.map(x=>[x.id,x]));
 function emoteOwned(id){return FREE()||(PF&&PF.emotes&&PF.emotes.includes(id))}
 function emotePlay(e,id){const em=EMBYID[id];if(!em||!e||!e.alive)return;if(e===P&&!emoteOwned(id)){toast('🔑 還沒解鎖這個表情');return}e.emoteId=id;e.emoteT=0;e.emoteDur=em.dur;if(e===P)closePanels()}
 function buyEmote(id){const em=EMBYID[id];if(!em||em.nob||PF.emotes.includes(id))return;const fr=FREE();if(!fr&&PF.keys<em.p){toast('🔑 鑰匙不足');return}if(!fr)PF.keys-=em.p;PF.emotes.push(id);saveNow();toast('🕺 購買成功：'+em.zh,'#35d07f');snd(880,.12,.06,'sine');renderLUI();PRENDER.Shop()}
+const EMI={wave:'👋',clap:'👏',shrug:'🤷',nod:'🎵',scoot:'🕺',rkd:'🏆',victory:'🎉'};
+function emSlots(){if(!PF)return[];if(!Array.isArray(PF.emSlots)||PF.emSlots.length!=8){const o=EMOTES.filter(x=>emoteOwned(x.id)).map(x=>x.id).slice(0,8);while(o.length<8)o.push(null);PF.emSlots=o}return PF.emSlots}
+const EW={on:0,x:0,y:0,sel:-1,lock:0};
+function ewOpen(){if(EW.on||!P||!P.alive)return;let d=$('#emW');if(!d){d=document.createElement('div');d.id='emW';d.style.cssText='position:fixed;left:50%;top:50%;width:380px;height:380px;margin:-190px 0 0 -190px;z-index:62;pointer-events:none;font:800 13px system-ui;color:#fff';document.body.appendChild(d)}
+ const S=emSlots();let h='<div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(#0000 0 26%,#141a2ecc 27% 100%);border:3px solid #ffffff33"></div>';
+ for(let i=0;i<8;i++){const a=i/8*PI*2-PI/2,x=190+Math.cos(a)*128,y=190+Math.sin(a)*128,id=S[i],em=id&&EMBYID[id];h+='<div data-ew="'+i+'" style="pointer-events:auto;cursor:pointer;position:absolute;left:'+(x-50)+'px;top:'+(y-38)+'px;width:100px;height:76px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#ffffff14;border:2px solid #ffffff26;text-align:center"><div style="font-size:28px">'+(em?(EMI[id]||'💃'):'＋')+'</div><div style="font-size:11px;line-height:1.15">'+(em?esc(em.zh)+'<br><span style="opacity:.6">'+esc(em.en)+'</span>':'<span style="opacity:.6">空格</span>')+'</div></div>'}
+ h+='<div style="position:absolute;left:140px;top:150px;width:100px;text-align:center;opacity:.85">按住 T<br>點一格跳舞<br><button data-ewm style="pointer-events:auto;margin-top:6px;font-size:12px">➡️ 更多 Emote</button></div><div id="ewC" style="position:absolute;width:12px;height:12px;margin:-6px;border-radius:50%;background:#ffd23f;left:190px;top:190px;box-shadow:0 0 8px #ffd23f"></div>';
+ d.innerHTML=h;d.style.display='block';EW.on=1;EW.x=EW.y=0;EW.sel=-1;EW.lock=!!document.pointerLockElement;$('#ewC').style.display=EW.lock?'block':'none';
+ for(const b of d.querySelectorAll('[data-ew]')){b.onmouseenter=()=>ewSel(+b.dataset.ew);b.onclick=()=>{ewSel(+b.dataset.ew);ewPick()}}d.querySelector('[data-ewm]').onclick=()=>{ewClose();openPanel('Emote')}}
+function ewSel(i){EW.sel=i;for(const b of document.querySelectorAll('#emW [data-ew]')){const on=+b.dataset.ew===i;b.style.background=on?'#ffd23f55':'#ffffff14';b.style.borderColor=on?'#ffd23f':'#ffffff26';b.style.transform=on?'scale(1.08)':''}}
+function ewMove(e){if(!EW.lock)return;EW.x=Math.max(-170,Math.min(170,EW.x+e.movementX));EW.y=Math.max(-170,Math.min(170,EW.y+e.movementY));const c=$('#ewC');if(c){c.style.left=190+EW.x+'px';c.style.top=190+EW.y+'px'}
+ if(Math.hypot(EW.x,EW.y)>45){let a=Math.atan2(EW.y,EW.x)+PI/2;if(a<0)a+=PI*2;ewSel(Math.round(a/(PI/4))%8)}}
+function ewPick(){const id=EW.sel>=0&&emSlots()[EW.sel];ewClose();if(id)emotePlay(P,id);else if(EW.sel>=0)openPanel('Emote')}
+function ewClose(){EW.on=0;const d=$('#emW');if(d)d.style.display='none'}
 function emoteCancel(e){if(!e)return;e.emoteId=null;e.emoteT=0;const u=e.mesh&&e.mesh.userData;if(u&&u.hd)u.hd.rotation.x=0}
 function setHold(e){const u=e.mesh.userData;if(e.hold)u.aR.remove(e.hold);const w=e.L[e.cur];e.hold=model(w,wrapKey(e,w),skinKey(e,w),charmKey(e,w));e.hold.scale.setScalar(1.35);
 e.hold.position.set(0,-.74,.05);e.hold.rotation.x=w.k=='M'?-PI/2-.5:-PI/2;
@@ -3757,7 +3772,7 @@ if(AUTOP&&st!='lobby'){cam.position.set(P.x,P.y+1.6,P.z);cam.rotation.set(P.pitc
 if(RAON)keys.KeyW=keys.KeyA=keys.KeyS=keys.KeyD=keys.Space=0;
 const tp=hubTP();if(tp){P.yaw=LBC.yaw;P.pitch=0;if(PANEL||RAON||CRO){keys.KeyW=keys.KeyA=keys.KeyS=keys.KeyD=0;if(CRO)keys.Space=keys.ShiftLeft=0}}const f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0),og=onGround(P);let wx=0,wz=0;if(P.wasG&&!og){P.vx+=P.gwx||0;P.vz+=P.gwz||0}
 const act=st=='play'||st=='end'||st=='lobby';if(!act&&P.sl)P.sl=false;
-if(act){P.scd-=dt;const n=Math.hypot(f,s)||1,air=false,spd=(keys.ShiftLeft&&!P.cr?8:6)/n*dt*spdMul(P)*(air?.35:1)*(P.cr?.5:1);
+if(act){P.scd-=dt;const n=Math.hypot(f,s)||1,air=false,spd=(keys.ShiftLeft&&!P.cr?8:6)/n*dt*spdMul(P)*(air?.35:1)*(P.cr?.5:1)*(P.emoteId?.4:1);
  wx=(s*Math.cos(P.yaw)-f*Math.sin(P.yaw))*spd;wz=(-s*Math.sin(P.yaw)-f*Math.cos(P.yaw))*spd;
  if(!og&&!P.sl){const il=Math.hypot(wx,wz);if(il>0&&P.frz<=0){const dx=wx/il,dz=wz/il,add=2.2-(P.vx*dx+P.vz*dz);if(add>0){const ac=Math.min(add,40*dt);P.vx+=dx*ac;P.vz+=dz*ac}}wx=0;wz=0}
  if(P.sl){P.sv*=Math.pow(.92,dt*60);P.slT-=dt;wx=P.sdx*P.sv*dt;wz=P.sdz*P.sv*dt;if(P.slT<=0||P.sv<3||!og||P.frz>0){P.sl=false;P.scd=.3}else if(keys.Space){P.sl=false;P.vy=8.9;P.vx=P.sdx*P.sv;P.vz=P.sdz*P.sv;P.scd=.5;wx=wz=0}}
@@ -3878,6 +3893,10 @@ if(U.mag){U.mag.position.y=U.magY+mo;U.mag.visible=!mh}
 if(U.la){if(lo!=null&&lo>0){const t2=U.mag?V(U.mag.position.x,U.magY-.06+mo,U.mag.position.z+.02):V(U.laRest.x,U.laRest.y-.15,U.laRest.z+.06);U.la.position.lerpVectors(U.laRest,t2,lo)}else U.la.position.copy(U.laRest)}
 if(U.la&&!(P.insp>0))U.la.visible=true;if(U.la&&P.insp>0&&U.insp=='akey'){const T=(1-P.insp/(P.inspT||2.4))*5.5,K=a=>kf(T,a);U.la.position.y+=K([[.5,0],[.9,.13],[2.5,.13],[2.9,0]]);U.la.visible=!(T>3.05&&T<4.9);U.la.position.z-=K([[.5,0],[.9,.12],[2.5,.12],[2.9,0]]);U.la.position.x-=K([[.5,0],[.9,.05],[2.5,.05],[2.9,0]])}
 if(SKO&&SKX.vm3)try{SKX.vm3(SKO,U,u)}catch(e){}
+{const A=U.u&&U.u.chA;if(A&&dt>0){const c=CHSW,yw=P.yaw,vx=(P.x-(c.px??P.x))/dt,vz=(P.z-(c.pz??P.z))/dt,vy=(P.y-(c.py??P.y))/dt,vR=vx*Math.cos(yw)-vz*Math.sin(yw),vF=-vx*Math.sin(yw)-vz*Math.cos(yw);let dy=yw-(c.yw??yw);dy=Math.atan2(Math.sin(dy),Math.cos(dy));
+ const aR=Math.max(-60,Math.min(60,(vR-c.vR)/dt)),aF=Math.max(-60,Math.min(60,(vF-c.vF)/dt)),aY=Math.max(-60,Math.min(60,(vy-c.vy)/dt)),yr=Math.max(-12,Math.min(12,dy/dt));
+ c.wz+=(-38*c.az-3.2*c.wz+aR*.9+yr*2.6+Math.sin(bob)*1.2)*dt;c.wx+=(-38*c.ax-3.2*c.wx-aF*.9+aY*.25)*dt;c.az=Math.max(-1.1,Math.min(1.1,c.az+c.wz*dt));c.ax=Math.max(-1.1,Math.min(1.1,c.ax+c.wx*dt));
+ A.rotation.z=c.az;A.rotation.x=c.ax;c.px=P.x;c.pz=P.z;c.py=P.y;c.yw=yw;c.vR=vR;c.vF=vF;c.vy=vy}}
 if(U.arrow){const c=s.ch||0;for(const a of U.arrow)a.position.z=a.userData.z0+c*.16}
 if(U.m)U.m.visible=!(w.n=='Spear'&&s.c<=0)&&!(P.thr>0&&P.thr<.2);
 if(w.n=='Daggers'&&U.m){const rl=s.rl>0&&w.rl?1-s.rl/w.rl:0;U.m.visible=(s.a>=2||rl>.55)&&U.m.userData.kv!==0;if(U.m2)U.m2.visible=(s.a>=1||rl>.55)&&U.m2.userData.kv!==0}
@@ -4176,7 +4195,7 @@ function frame(){const dt=Math.min(clk.getDelta(),.05);
 if(st!='menu'&&st!='over'&&(!paused||NET)){tick(dt);if(st!='lo'&&st!='over'&&st!='wait'&&st!='msel')hud(dt)}
 for(let i=Fx.length-1;i>=0;i--){const f=Fx[i];f.t-=dt;const k=Math.max(0,f.t/f.T);if(f.g){f.m.scale.setScalar(f.g*(1-k)+.1);f.m.material.opacity=k*.7}if(f.v){f.m.position.addScaledVector(f.v,dt);f.m.scale.multiplyScalar(1+dt*(f.gr||0));f.m.material.opacity=k*.85}if(f.kt){const a=f.T-f.t;if(a>.2&&!f.lt){f.lt=1;f.m.material.color.setHex(0xfff3c4)}f.m.material.opacity=a<.2?1:Math.max(0,1-(a-.2)/.8)}
  if(f.t<=0){sc.remove(f.m);if(f.m.geometry!==PG&&f.m.geometry!==FG)f.m.geometry.dispose();f.m.material.dispose();Fx.splice(i,1)}}
-try{finTick(dt)}catch(err){if(!finTick.er){finTick.er=1;console.error(err)}}
+try{finTick(dt)}catch(err){if(!finTick.er){finTick.er=1;console.error(err)}}try{if(WOPS.length)wopTick(dt)}catch(err){if(!wopTick.er){wopTick.er=1;console.error(err)}}
 const menu=st=='menu'||st=='over'||st=='lo'||st=='wait'||st=='msel';if(menu){cam.position.set(0,14,0);cam.rotation.set(-.45,performance.now()/6000,0);if(cam.fov!=75){cam.fov=75;cam.updateProjectionMatrix()}}
 R.clear();R.render(sc,cam);if(!menu&&st!='vic'&&vm.visible&&!(st=='lobby'&&!LB.inRange)){R.clearDepth();R.render(vs,vcam)}
 try{wpnFrame(dt);syncLUI();if(st=='lobby'&&PF&&(frame.lt=(frame.lt||0)+dt)>1){frame.lt=0;renderPList()}}catch(err){if(!frame.er){frame.er=1;console.error(err)}}}
@@ -4204,11 +4223,11 @@ document.addEventListener('pointerlockchange',()=>{if(!MOBILE&&document.pointerL
 document.addEventListener('pointerlockerror',()=>{fb=true;paused=false;$('#pause').style.display='none'});
 const live=()=>P&&!paused&&!RAON&&!CRO&&(st=='play'||st=='count'||st=='end'||st=='lobby');
 function applyLook(dx,dy,tch){if(!live()||!P.alive||P.frz>0||PANEL)return;if(hubTP()){camRot(dx/TOUCH_LOOK_SENS,dy/TOUCH_LOOK_SENS,tch);return}P.lookT=performance.now();const S=PF?PF.set:{ms:1,ts:1,ads:1},m=tch?S.ts:S.ms,k=(P.zoom?.0009*S.ads:.0022)*m*(P.aaSlow&&aaOn()?.6:1);P.yaw-=dx*k;if(P.sl){const a=-dx*k*.4,c=Math.cos(a),sn=Math.sin(a),x=P.sdx;P.sdx=x*c+P.sdz*sn;P.sdz=-x*sn+P.sdz*c}P.pitch=Math.max(-1.5,Math.min(1.5,P.pitch-dy*k))}
-addEventListener('mousemove',e=>{if(hubTP()){if(mR&&!PANEL&&!paused)camRot(e.movementX,e.movementY);return}applyLook(e.movementX,e.movementY)});
-addEventListener('mousedown',e=>{if(!live())return;if(!P.alive){sp++;return}if(e.button==0)mL=true;if(e.button==2)mR=true});
+addEventListener('mousemove',e=>{if(EW.on){ewMove(e);return}if(hubTP()){if(mR&&!PANEL&&!paused)camRot(e.movementX,e.movementY);return}applyLook(e.movementX,e.movementY)});
+addEventListener('mousedown',e=>{if(EW.on&&e.button==0){ewPick();e.preventDefault();return}if(!live())return;if(!P.alive){sp++;return}if(e.button==0)mL=true;if(e.button==2)mR=true});
 addEventListener('mouseup',e=>{if(e.button==0)mL=false;if(e.button==2)mR=false});
 addEventListener('contextmenu',e=>e.preventDefault());
-function slideKey(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive)return;if(P.sl){P.sl=false;P.scd=.3;return}
+function slideKey(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive)return;emoteCancel(P);if(P.sl){P.sl=false;P.scd=.3;return}
 const f=(keys.KeyW?1:0)-(keys.KeyS?1:0),s=(keys.KeyD?1:0)-(keys.KeyA?1:0);if(!(f||s)){if(onGround(P))P.cr=!P.cr;return}if(P.scd>0||!onGround(P)||P.frz>0)return;P.cr=false;
 const x=s*Math.cos(P.yaw)-f*Math.sin(P.yaw),z=-s*Math.sin(P.yaw)-f*Math.cos(P.yaw),l=Math.hypot(x,z);P.sl=true;P.sv=16*Math.max(1,spdMul(P));P.slT=.6;P.sdx=x/l;P.sdz=z/l;P.zoom=false}
 function dblJump(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||P.sl)return;let w=P.L[P.cur];if(P.qmT>0&&P.L[2].dj&&!P.djs.has(P.L[2].n))w=P.L[2];if(!w.dj||onGround(P)||P.djs.has(w.n))return;P.djs.add(w.n);P.vy=7.5;
@@ -4218,9 +4237,9 @@ function dblJump(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||P.sl)retur
  puff(V(P.x,P.y,P.z),V(0,-1,0),0xffffff,.3,1);snd(600,.08,.04)}
 function qmelee(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qm||0)>performance.now()||P.cur==2)return;const w=P.L[2];if(w.can&&!w.can(P,P.S[2]))return;P.qm=performance.now()+500;P.wnm=w.n;if(NET)netFire('m',2);w.fire(P,w,P.S[2],{});P.kick=1;P.qmT=.4;setVM(w);P.eq=0;P.sw=P.swT=.32;P.swd=-(P.swd||1);P.swk='n';snd(800,.09,.06);skDrawFx(P,w)}
 function qutil(){if((st!='play'&&st!='end'&&st!='lobby')||!P.alive||(P.qu||0)>performance.now())return;const w=P.L[3],s=P.S[3];if(w.can?!w.can(P,s):(w.lim&&s.c<=0))return;if(w.lim&&!w.selfLim)s.c--;P.qu=performance.now()+400;P.wnm=w.n;if(NET)netFire('u',3);w.fire(P,w,s,{});if(w.f)snd(w.f,.08,.05)}
-addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyM'&&st=='lobby'&&LB.inRange&&!e.repeat)leaveRange();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat){if(cfg.ltm=='rng')rngQuickF();else qmelee()}if(e.code=='KeyG'&&!e.repeat){if(cfg.ltm=='rng')rngRoll(P);else qutil()}if(e.code=='KeyV'&&!e.repeat&&P.alive){P.insp=2.4;skInspFx(P)}if(e.code=='KeyT'&&!e.repeat&&P.alive&&!PANEL)openPanel('Emote');const m=/^Digit([1-4])$/.exec(e.code);if(m)swE(P,+m[1]-1);if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&LB.lbAim&&!PANEL){lbOpen(LB.lbAim);return}if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！');if(e.code=='KeyQ'&&!e.repeat&&st=='lobby'&&LB.inRange&&LB.trashPrompt&&!RAON)showRangeLo()});
+addEventListener('keydown',e=>{if(chatKey(e))return;const tg=e.target;if(tg&&(tg.tagName=='INPUT'||tg.tagName=='TEXTAREA'||tg.tagName=='SELECT'))return;keys[e.code]=1;if(e.code=='Tab'||e.code=='Space')e.preventDefault();if(!live())return;if(e.code=='Space'&&!e.repeat)dblJump();if(e.code=='KeyM'&&st=='count'&&!(NET&&NET.midLo))openLo();if(e.code=='KeyM'&&st=='lobby'&&LB.inRange&&!e.repeat)leaveRange();if(e.code=='KeyC'&&!e.repeat)slideKey();if(e.code=='KeyF'&&!e.repeat){if(cfg.ltm=='rng')rngQuickF();else qmelee()}if(e.code=='KeyG'&&!e.repeat){if(cfg.ltm=='rng')rngRoll(P);else qutil()}if(e.code=='KeyV'&&!e.repeat&&P.alive){emoteCancel(P);P.insp=2.4;skInspFx(P)}if(e.code=='KeyT'&&!e.repeat&&P.alive&&!PANEL)ewOpen();const m=/^Digit([1-4])$/.exec(e.code);if(m){emoteCancel(P);swE(P,+m[1]-1)}if(e.code=='KeyR')rel(P);if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&LB.lbAim&&!PANEL){lbOpen(LB.lbAim);return}if(e.code=='KeyE'&&!e.repeat&&st=='lobby'&&wasNearShop)feed('🛒 開箱系統（Crate Shop）敬請期待，下個版本開放！');if(e.code=='KeyQ'&&!e.repeat&&st=='lobby'&&LB.inRange&&LB.trashPrompt&&!RAON)showRangeLo()});
 addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('button,input,.pnl,#lui,.ov,#leaveRange'))return;if(PANEL)return;if(!MOBILE&&!paused&&!chatOn&&document.pointerLockElement!==cv&&(st=='play'||st=='count'||st=='end'||(st=='lobby'&&lobbyFP())))lock()});
-addEventListener('keyup',e=>keys[e.code]=0);
+addEventListener('keyup',e=>{keys[e.code]=0;if(e.code=='KeyT')ewClose()});
 addEventListener('wheel',e=>{if(PANEL)return;if(st=='lobby'){const lk=lbAimed();if(lk){lbScroll(lk,e.deltaY>0?60:-60);return}}if(hubTP()){LBC.dist=Math.max(3,Math.min(16,LBC.dist+(e.deltaY>0?.9:-.9)));return}if(live())swE(P,(P.cur+(e.deltaY>0?1:3))%4)});
 // ===== touch / mobile controls =====
 const isTouch=(('ontouchstart' in window)||navigator.maxTouchPoints>0)&&(matchMedia('(pointer:coarse)').matches||/Android|iPhone|iPad|iPod|Mobile|Silk/i.test(navigator.userAgent)||innerWidth<880);
@@ -4855,7 +4874,7 @@ function renderWrap(){if(SKNM)return renderSkin();if(FINM)return renderFin();if(
  $('#wrTitle').innerHTML='<div class="wrt">'+(isW?'<img src="'+wrapSwatch(WPREV)+'" style="border-color:'+WRC[X.r]+'">':'<span class="wri">'+(WPREV=='?'?'🔀':'⊘')+'</span>')+'<b>'+nm+'</b></div><div class="wrp">'+how+'</div>'+(isW&&!own(WPREV)&&!X.ex?'<button class="gbtn" id="wrBuy">🛒 前往商店</button>':'')+'<div class="wrw">'+w.n+(cur&&cur!='?'&&WBYID[cur]?' · 已裝備 '+WBYID[cur].zh:cur=='?'?' · 已裝備 隨機':'')+'</div>';
  const bb=$('#wrBuy');if(bb)bb.onclick=()=>crGo('wbox');
  $('#wrInv').innerHTML=(inv?'☑':'☐')+' 反轉 Inverted';$('#wrInv').className=inv?'on':'';const fv=isW&&PF.wrapFav.includes(WPREV);$('#wrFav').innerHTML=(fv?'♥':'♡')+' 最愛 Favorited';$('#wrFav').className=fv?'on':'';$('#wrFav').disabled=!isW;
- const q=WQ.trim().toLowerCase();let L=WRAPS.filter(x=>!q||(x.zh+' '+x.en).toLowerCase().includes(q));L=L.filter(x=>PF.wrapFav.includes(x.id)).concat(L.filter(x=>!PF.wrapFav.includes(x.id)));
+ const q=WQ.trim().toLowerCase();let L=WRAPS.filter(x=>!q||(x.zh+' '+x.en).toLowerCase().includes(q));{const fv=x=>PF.wrapFav.includes(x.id);L=L.filter(x=>own(x.id)&&fv(x)).concat(L.filter(x=>own(x.id)&&!fv(x)),L.filter(x=>!own(x.id)))}
  const tile=(id,img,name,col,fav,lock)=>'<button class="wtile'+(WPREV===id?' sel':'')+'" data-w="'+id+'" style="border-color:'+col+'">'+img+'<span>'+name+'</span>'+(cur===id?'<em class="ck">✔</em>':'')+(fav?'<em class="hf">♥</em>':'')+(lock?'<em class="lkx">🔒</em>':'')+'</button>';
  let h=q?'':tile('','<b class="wti">⊘</b>','無 None','#666',0,0)+tile('?','<b class="wti">🔀</b>','隨機 Random','#666',0,0);
  for(const x of L)h+=tile(x.id,'<img src="'+wrapSwatch(x.id)+'">',x.zh,WRC[x.r],PF.wrapFav.includes(x.id),!own(x.id));
@@ -4895,12 +4914,12 @@ function charmPick(id){const w=WSEL;charmSetPrev(id);if(id===''||id=='?'||PF.cha
 function renderCharm(){if(!CHNM||!PF||!WSEL)return;const w=WSEL,own=id=>PF.charms.includes(id),cur=charmCur(),isC=!!CHBYID[CHPREV],X=isC?CHBYID[CHPREV]:null;
  $('#wkeys').textContent='　🔑 '+PF.keys;$('#wrInv').style.display='none';
  const nm=CHPREV==''?'無 None':CHPREV=='?'?'隨機 Random':X.zh,how=CHPREV==''?'不裝備吊飾':CHPREV=='?'?'每場對戰隨機使用一個已擁有的吊飾':(own(CHPREV)?X.how:'🔒 用鑰匙購買');
- $('#wrTitle').innerHTML='<div class="wrt">'+(isC?'<span class="wri" style="font-size:28px">🔮</span>':'<span class="wri">'+(CHPREV=='?'?'🔀':'⊘')+'</span>')+'<b>'+nm+'</b></div><div class="wrp">'+how+'</div>'+(isC&&!own(CHPREV)?'<button class="gbtn" id="wrBuy">🛒 前往商店</button>':'')+'<div class="wrw">'+w.n+(cur&&cur!='?'&&CHBYID[cur]?' · 已裝備 '+CHBYID[cur].zh:cur=='?'?' · 已裝備 隨機':'')+'</div>';
+ $('#wrTitle').innerHTML='<div class="wrt">'+(isC?'<img class="wri" src="'+charmIcon(CHPREV)+'" style="object-fit:contain;background:#2a2d40;width:44px;height:44px;border-radius:8px">':'<span class="wri">'+(CHPREV=='?'?'🔀':'⊘')+'</span>')+'<b>'+nm+'</b></div><div class="wrp">'+how+'</div>'+(isC&&!own(CHPREV)?'<button class="gbtn" id="wrBuy">🛒 前往商店</button>':'')+'<div class="wrw">'+w.n+(cur&&cur!='?'&&CHBYID[cur]?' · 已裝備 '+CHBYID[cur].zh:cur=='?'?' · 已裝備 隨機':'')+'</div>';
  {const bb=$('#wrBuy');if(bb)bb.onclick=()=>shopTab('more')}const fv=isC&&PF.charmFav.includes(CHPREV);$('#wrFav').innerHTML=(fv?'♥':'♡')+' 最愛 Favorited';$('#wrFav').className=fv?'on':'';$('#wrFav').disabled=!isC;
- const q=CHQ.trim().toLowerCase();let L=CHARMS.filter(x=>!q||(x.zh+' '+x.en).toLowerCase().includes(q));L=L.filter(x=>PF.charmFav.includes(x.id)).concat(L.filter(x=>!PF.charmFav.includes(x.id)));
+ const q=CHQ.trim().toLowerCase();let L=CHARMS.filter(x=>!q||(x.zh+' '+x.en).toLowerCase().includes(q));{const fv=x=>PF.charmFav.includes(x.id);L=L.filter(x=>own(x.id)&&fv(x)).concat(L.filter(x=>own(x.id)&&!fv(x)),L.filter(x=>!own(x.id)))}
  const tile=(id,img,name,col,fav,lock)=>'<button class="wtile'+(CHPREV===id?' sel':'')+'" data-w="'+id+'" style="border-color:'+col+'">'+img+'<span>'+name+'</span>'+(cur===id?'<em class="ck">✔</em>':'')+(fav?'<em class="hf">♥</em>':'')+(lock?'<em class="lkx">🔒</em>':'')+'</button>';
  let h=q?'':tile('','<b class="wti">⊘</b>','無 None','#666',0,0)+tile('?','<b class="wti">🔀</b>','隨機 Random','#666',0,0);
- for(const x of L)h+=tile(x.id,'<b class="wti" style="font-size:22px">🔮</b>',x.zh,WRC[x.r],PF.charmFav.includes(x.id),!own(x.id));
+ for(const x of L)h+=tile(x.id,'<img src="'+charmIcon(x.id)+'" style="object-fit:contain;background:#2a2d40">',x.zh,WRC[x.r],PF.charmFav.includes(x.id),!own(x.id));
  const c0=$('#wrStrip'),cl=c0.scrollLeft;c0.innerHTML=h||'<div class="note" style="padding:14px">找不到符合的吊飾</div>';c0.scrollLeft=cl}
 // ---- lobby HUD ----
 var LUIt=0;
@@ -5250,9 +5269,11 @@ function shRefDo(){const n=shRefN(),cost=SHREF_COST[Math.min(n,SHREF_COST.length
  if(!FREE())PF.gold-=cost;PF.shRef={day:today(),n:n+1};saveNow();toast(n?'🔄 已重新整理（花費 💰 '+cost+'）':'🔄 已重新整理（今天第一次免費）','#35d07f');snd(700,.1,.06,'sine');renderLUI();PRENDER.Shop()}
 function buyW(names,price,label){const fr=FREE();if(!fr&&PF.keys<price){toast('🔑 鑰匙不足');return}if(!fr)PF.keys-=price;for(const n of names)if(!PF.unl.includes(n))PF.unl.push(n);saveNow();toast('🛒 購買成功：'+label,'#35d07f');snd(880,.12,.06,'sine');renderLUI();PRENDER.Shop()}
 function buyCharm(id){const C=CHBYID[id];if(!C||PF.charms.includes(id))return;const fr=FREE();if(!fr&&PF.keys<C.p){toast('🔑 鑰匙不足');return}if(!fr)PF.keys-=C.p;PF.charms.push(id);saveNow();toast('🔮 購買成功：'+C.zh,'#35d07f');snd(880,.12,.06,'sine');renderLUI();PRENDER.Shop()}
-PRENDER.Emote=()=>{$('#emoteBody').innerHTML='<div class="note" style="margin-bottom:8px">在大廳使用效果最好；按 T 鍵或點右上角 🕺 按鈕可以快速打開 Emotes · 還沒解鎖的表情可以到 商店 → More 購買</div><div class="cards">'+EMOTES.map(em=>{const own=emoteOwned(em.id);return'<div class="cd"><div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:30px">'+(own?'🕺':'🔒')+'</div><h4>'+em.zh+'</h4><div class="sub2">'+em.en+'</div>'+(own?'<button class="gbtn" style="width:100%;margin-top:6px" data-em="'+em.id+'">▶ 播放</button>':em.nob?'<div class="note" style="margin-top:6px">🔒 '+em.how+'</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-emb="'+em.id+'">🔑 '+em.p+'</button>')+'</div>'}).join('')+'</div>';
+var EWS=0;PRENDER.Emote=()=>{const SL=emSlots();$('#emoteBody').innerHTML='<div class="note" style="margin-bottom:8px">按住 <b>T</b> 會出現 8 格表情輪盤，點一格就跳舞，放開 T 輪盤就消失。跳舞時會變第三人稱，可以慢慢走（0.4 倍速）；持續移動、滑鏟、展示武器、換武器（1–4）會停止跳舞，轉視角不會。<br>⬇ 先點一格，再點下面的表情「裝到輪盤」</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">'+SL.map((id,i)=>'<button data-ews="'+i+'" style="min-width:86px;'+(i==EWS?'outline:3px solid #ffd23f':'')+'">'+(i+1)+'. '+(id&&EMBYID[id]?(EMI[id]||'💃')+' '+esc(EMBYID[id].zh):'（空）')+'</button>').join('')+'</div><div class="cards">'+EMOTES.map(em=>{const own=emoteOwned(em.id);return'<div class="cd"><div style="width:100%;height:60px;display:flex;align-items:center;justify-content:center;font-size:30px">'+(own?'🕺':'🔒')+'</div><h4>'+em.zh+'</h4><div class="sub2">'+em.en+'</div>'+(own?'<button class="gbtn" style="width:100%;margin-top:6px" data-em="'+em.id+'">▶ 播放</button><button style="width:100%;margin-top:4px" data-emq="'+em.id+'">🎡 裝到第 '+(EWS+1)+' 格</button>':em.nob?'<div class="note" style="margin-top:6px">🔒 '+em.how+'</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-emb="'+em.id+'">🔑 '+em.p+'</button>')+'</div>'}).join('')+'</div>';
  for(const b of $('#emoteBody').querySelectorAll('[data-em]'))b.onclick=()=>{if(!P||!P.alive){toast('復活後才能使用表情');return}emotePlay(P,b.dataset.em)};
- for(const b of $('#emoteBody').querySelectorAll('[data-emb]'))b.onclick=()=>{buyEmote(b.dataset.emb);PRENDER.Emote()}};
+ for(const b of $('#emoteBody').querySelectorAll('[data-emb]'))b.onclick=()=>{buyEmote(b.dataset.emb);PRENDER.Emote()};
+ for(const b of $('#emoteBody').querySelectorAll('[data-ews]'))b.onclick=()=>{EWS=+b.dataset.ews;PRENDER.Emote()};
+ for(const b of $('#emoteBody').querySelectorAll('[data-emq]'))b.onclick=()=>{const S=emSlots(),id=b.dataset.emq,j=S.indexOf(id);if(j>=0)S[j]=null;S[EWS]=id;EWS=(EWS+1)%8;saveNow();PRENDER.Emote();toast('🎡 已裝到輪盤','#35d07f')}};
 PRENDER.Shop=()=>{const T2=[['home','<b>🏠</b>Home'],['crates','<b>📦</b>Crates'],['bundles','<b>🎁</b>Bundles'],['daily','<b>📅</b>Daily'],['keys','<b>🔑</b>Keys'],['more','<b>➕</b>More']];$('#shopTabs').innerHTML=T2.map(([k,n])=>'<button data-st="'+k+'" class="'+(SHOPT==k?'on':'')+'">'+n+'</button>').join('');for(const b of $('#shopTabs').children)b.onclick=()=>shopTab(b.dataset.st);$('#skeys').insertAdjacentHTML('beforebegin',FREE()?'<span class="note" style="color:#35d07f;font-weight:900">　👑 管理員：全部免費</span>':'');
  $('#skeys').textContent='　🔑 '+PF.keys+'　🎫 '+PF.tickets+'　💰 '+(PF.gold|0);let h='';const soon=t=>'<div class="cd" style="opacity:.75"><h4>'+t+'</h4><div class="soon">Robux 付費項目 · 敬請期待</div></div>';
  const wcard=(w,price,old)=>'<div class="cd rv '+(price>=300?'rr':price>=60?'rb':'rg')+'"><img src="'+icon(w)+'" style="width:100%;height:80px;object-fit:contain"><h4>'+w.n+'</h4><div class="sub2">'+CATN[wcat(w)]+'</div>'+(isUnl(w.n)?'<div style="color:#35d07f;font-weight:900;margin-top:6px">✔ 已擁有</div>':'<button class="gbtn" style="width:100%;margin-top:6px" data-bw="'+w.n+'" data-pr="'+price+'"'+((FREE()||PF.keys>=price)?'':' disabled')+'>'+(old?'<s style="opacity:.6">'+old+'</s> ':'')+'🔑 '+price+'</button>')+'</div>';
@@ -5507,14 +5528,14 @@ function crDlg(id,mode,back){const C=CRBYID[id];if(!C||!PF)return;CRD={id,mode,b
  if(mode=='odds'){const n=left.length,rk=i=>crInfo(C.kind,i).r,srt=a=>a.slice().sort((p,q)=>rk(q)-rk(p)),row=(i,o)=>{const I=crInfo(C.kind,i);return'<div class="crrow'+(o?' own':'')+'"><i style="border-color:'+I.col+'">'+I.ic+'</i><div class="t"><b style="color:'+I.col+'">'+esc(I.nm)+'</b><span>'+esc(I.sub)+'</span></div><em>'+(o?'已擁有':(100/n).toFixed(2)+'%')+'</em></div>'};
   x=hd('','你的機率<small>Your Odds</small>')+'<div class="crgrp" id="crG"><span class="ar">▼</span><img src="'+crArt(id)+'" alt=""><div><b>'+C.name+' '+C.en+'</b><span>Lootbox 箱子 · '+crPrice(C)+' '+CURI[C.cur]+'</span></div></div><div class="crlist" id="crL">'+(n?'':'<div class="crq" style="font-size:16px">你已經擁有這個箱子的全部物品 🎉</div>')+srt(left).map(i=>row(i,0)).join('')+srt(all.filter(i=>!left.includes(i))).map(i=>row(i,1)).join('')+'</div>'+
    '<div class="crfoot">開箱不會開到你已經擁有的物品（不會重複）。每個還沒擁有的物品機率都一樣，所以機率會隨著你的收藏改變；已擁有的物品列在最下方。這個機率只屬於你，依照你目前擁有的包裝、死亡特效和皮膚計算。</div>'}
- else if(mode=='open')x=hd(vb,C.name+'<small>'+C.en+'</small>')+art(h)+'<div class="crq">要打開 '+C.name+' 嗎？</div><div class="crbtns"><button class="gbtn" id="crOk">打開</button><button id="crNo">取消</button></div><div class="crnote">還有 '+left.length+' / '+all.length+' 個物品可以開出 · 不會開到重複</div>';
+ else if(mode=='open')x=hd(vb,C.name+'<small>'+C.en+'</small>')+art(h)+'<div class="crq">要打開 '+C.name+' 嗎？</div><div class="crbtns"><button class="gbtn" id="crOk">打開 ×1</button>'+(h>=2?'<button class="gbtn" id="crOk3">打開 ×'+Math.min(3,h)+'</button>':'')+(h>3?'<button class="gbtn" id="crOkA">全部打開 ×'+h+'</button>':'')+'<button id="crNo">取消</button></div><div class="crnote">還有 '+left.length+' / '+all.length+' 個物品可以開出 · 不會開到重複</div>';
  else{const full=!left.length,enough=!full&&h>=left.length;x=hd(vb,C.name+'<small>'+C.en+'</small>')+art(1)+(full?'<button class="crbuy off" disabled>已全部擁有</button>':enough?'<button class="crbuy off" disabled>背包裡的箱子已足夠</button>':'<button class="crbuy" id="crB">'+crPrice(C)+' <span>'+CURI[C.cur]+'</span></button>')+
   '<div class="crmsg" id="crMsg">'+(full?'你已經擁有這個箱子的全部物品':enough?'背包裡已經有 '+h+' 個，足夠開出剩下的 '+left.length+' 個物品':'')+'</div><div class="crnote">你有 '+CURI[C.cur]+' '+PF[C.cur]+' '+CURN[C.cur]+' · 🎒 背包裡 ×'+h+(h?' · <button class="crlink" id="crPk">前往背包 ›</button>':'')+'<br>剩下 '+left.length+' / '+all.length+' 個物品 · 買了會先放進背包</div>'}
  if(C.id=='fpack')x=x.split('（所有武器）').join('（開到時隨機給你一把武器 · 不可共用）').replace('開箱不會開到你已經擁有的物品','死亡特效箱開出的特效只會套用在「隨機一把」你擁有的武器上，其他武器要再開才有機會拿到。開箱不會開到你已經擁有的物品');
  bx.innerHTML=x;bx.className='crbox'+(mode=='odds'?' odds':'');$('#crDlg').style.display='flex';const g=q=>bx.querySelector(q);
  g('#crX').onclick=()=>mode=='odds'?crDlg(id,back||'buy'):crDlgClose();if(g('#crV'))g('#crV').onclick=()=>crDlg(id,'odds',mode);
  if(g('#crB'))g('#crB').onclick=()=>crBuy(id);if(g('#crPk'))g('#crPk').onclick=()=>{crDlgClose();openPanel('Pack')};
- if(g('#crOk'))g('#crOk').onclick=()=>crOpen(id);if(g('#crNo'))g('#crNo').onclick=crDlgClose;
+ if(g('#crOk'))g('#crOk').onclick=()=>crOpenN(id,1);if(g('#crOk3'))g('#crOk3').onclick=()=>crOpenN(id,3);if(g('#crOkA'))g('#crOkA').onclick=()=>crOpenN(id,999);if(g('#crNo'))g('#crNo').onclick=crDlgClose;
  if(g('#crG'))g('#crG').onclick=()=>{const l=g('#crL'),o=l.style.display=='none';l.style.display=o?'':'none';g('#crG .ar').textContent=o?'▼':'▶'}}
 $('#crDlg').addEventListener('click',e=>{if(e.target.id=='crDlg')crDlgClose()});
 for(const ev of['mousedown','touchstart','wheel'])$('#crDlg').addEventListener(ev,e=>e.stopPropagation(),{passive:true});
@@ -5540,18 +5561,45 @@ function crOpen(cid){const C=CRBYID[cid];if(!C||!PF)return;if(st!=='lobby'||!P){
  if(cid==='scase'&&left.includes(lf)&&Math.random()<0.001)id=lf;
  else{const pool2=cid==='scase'?left.filter(x=>x!==lf):left;id=(pool2.length?pool2:left)[Math.floor(Math.random()*(pool2.length?pool2.length:left.length))]}
  let fwn='';if(cid==='fpack'){const L=finWLeft(id);fwn=L[Math.floor(Math.random()*L.length)];grantFinW(id,fwn)}else crGrant(C.kind,id);saveNow();renderLUI();crDlgClose();
- const again=!!CRO;if(again)croClean();else{closePanels();CRS={x:P.x,y:P.y,z:P.z,myaw:P.myaw,hub:!LB.inRange,c0:{p:cam.position.clone(),q:cam.quaternion.clone()}};keys={};mL=mR=false;if(document.pointerLockElement)document.exitPointerLock();
-  P.x=0;P.y=0;P.z=23.2;P.vx=P.vy=P.vz=0;P.sl=false;P.cr=false;P.dash=null;$('#leaveRange').style.display='none'}
- P.myaw=PI;if(P.tag)P.tag.visible=false;finPS();
- const I=crInfo(C.kind,id),_fw=fwn?(I.sub=I.sub.replace('（所有武器）','（僅限 '+fwn+'）')):0,rc=parseInt(I.col.slice(1),16),f=V(-Math.sin(P.myaw),0,-Math.cos(P.myaw)),root=new T.Group();sc.add(root);
- const O={C,kind:C.kind,id,I,rc,t:0,blend:!again,ev:{},f,sd:V(f.z,0,-f.x),L:V(P.x,0,P.z).addScaledVector(f,1.35).addScaledVector(V(f.z,0,-f.x),2.1),g:root,mats:[],tex:[],cr:mkCrate(C.kind)};
- root.add(O.cr.g);O.cr.g.scale.setScalar(.001);
- const spr=o=>{const m=new T.SpriteMaterial(Object.assign({map:ftex('glow'),transparent:true,depthWrite:false,blending:T.AdditiveBlending,opacity:0},o));O.mats.push(m);const s2=new T.Sprite(m);root.add(s2);return s2};
- O.glow=spr({color:rc});O.flash=spr({color:0xffffff});
- {const m=new T.MeshBasicMaterial({color:0,map:ftex('glow'),transparent:true,opacity:0,depthWrite:false});O.mats.push(m);O.sh=new T.Mesh(new T.PlaneGeometry(1,1),m);O.sh.rotation.x=-PI/2;root.add(O.sh)}
- {const rg=new T.Group(),bg=new T.PlaneGeometry(.3,2.6);bg.translate(0,1.3,0);const m=new T.MeshBasicMaterial({map:ftex('beam'),color:rc,transparent:true,opacity:0,blending:T.AdditiveBlending,depthWrite:false,side:T.DoubleSide});O.mats.push(m);for(let i=0;i<12;i++){const p=new T.Mesh(bg,m);p.rotation.z=i/12*PI*2;rg.add(p)}O.rays=rg;O.rayM=m;rg.visible=false;root.add(rg)}
- O.it=crItemObj(C.kind,id,I.col,O);O.it.visible=false;root.add(O.it);
- document.body.classList.add('crop');$('#crOv').style.display='block';$('#crBan').style.display='none';$('#crBtns').style.display='none';$('#crSkip').style.display='block';CRO=O}
+ wopSpawn(C,id,fwn);if(PANEL=='Pack')PRENDER.Pack();else if(PANEL)closePanels()}
+// ===== 開箱 2026.11 (from 月狼's notes): open ×1 / ×3 / all · the box jumps out of you onto the lobby floor, bounces twice,
+// opens in its own way (charm capsule pops its clasp, wrap box gets cut by a knife, finisher pack gets cut in half),
+// the reward card floats above it for 3 s, then flies into you and disappears with a "啵!". You can keep walking the whole time.
+const WOPC=['#9aa0a8','#4fc8ff','#a05cff','#ff3b3b'],WOPN=['普通 Common','稀有 Rare','史詩 Epic','傳說 Legendary'];var WOPS=[],WOPI=0;
+function wopImg(src,cb){if(!src)return;const im=new Image();im.onload=()=>cb(im);im.src=src}
+function wopCard(kind,id,wn){const I=crInfo(kind,id),r=Math.max(0,Math.min(3,I.r|0)),col=WOPC[r],cv=document.createElement('canvas');cv.width=256;cv.height=320;const x=cv.getContext('2d'),tx=new T.CanvasTexture(cv);
+ const draw=(img,wimg)=>{x.clearRect(0,0,256,320);rr(x,8,8,240,240,28);const g=x.createLinearGradient(0,0,256,256);g.addColorStop(0,col);g.addColorStop(1,'#141826');x.fillStyle=g;x.fill();x.lineWidth=8;x.strokeStyle=col;x.stroke();
+  // crosshatch like the sketch
+  x.save();rr(x,8,8,240,240,28);x.clip();x.globalAlpha=.12;x.strokeStyle='#fff';x.lineWidth=3;for(let i=-256;i<512;i+=26){x.beginPath();x.moveTo(i,0);x.lineTo(i+256,256);x.stroke();x.beginPath();x.moveTo(i+256,0);x.lineTo(i,256);x.stroke()}x.restore();
+  if(img)x.drawImage(img,40,40,176,176);else if(kind=='fin'){const X=FBYID[id];x.font='120px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(X.e,128,134)}
+  if(wimg){rr(x,170,14,72,72,14);x.fillStyle='#0b0e18dd';x.fill();x.lineWidth=3;x.strokeStyle='#fff8';x.stroke();x.drawImage(wimg,174,18,64,64)}
+  x.fillStyle='#0b0e18ee';rr(x,8,256,240,56,14);x.fill();x.fillStyle=col;x.font='900 22px '+FNT;x.textAlign='center';x.textBaseline='middle';const nm=I.nm.length>16?I.nm.slice(0,15)+'…':I.nm;x.fillText(nm,128,276);x.font='800 13px '+FNT;x.fillStyle='#fff9';x.fillText(WOPN[r]+(wn?' · '+wn:''),128,298);tx.needsUpdate=true};
+ let img=null,wimg=null;draw();
+ const src=kind=='wrap'?wrapSwatch(id):kind=='charm'?charmIcon(id):kind=='skin'?skinIcon(WBN(SKBYID[id].weapon),id):'';wopImg(src,im=>{img=im;draw(img,wimg)});
+ if(wn&&WBN(wn))wopImg(skinIcon(WBN(wn),''),im=>{wimg=im;draw(img,wimg)});
+ const m=new T.SpriteMaterial({map:tx,transparent:true,depthWrite:false});const s=new T.Sprite(m);s.scale.set(.8,1,1);s.userData.tx=tx;return s}
+function wopSpawn(C,id,wn){if(!P)return;const k=C.kind,root=new T.Group();sc.add(root);const cr=mkCrate(k);root.add(cr.g);const n=WOPI++,a=(P.myaw??P.yaw)+PI+(n%5-2)*.55+RR(-.15,.15),d=1.7+(n%3)*.45;
+ const O={k,id,C,t:0,root,cr,s0:V(P.x,P.y+1.1,P.z),L:V(P.x-Math.sin(a)*d,0,P.z-Math.cos(a)*d),ev:{},card:wopCard(k,id,wn)};O.L.y=Math.max(0,ground(O.L.x,O.L.z,P.y+1));O.card.visible=false;root.add(O.card);
+ if(k=='wrap'){const kn=new T.Group();B(kn,.03,.06,.22,0,0,0,0x1a1a1f);B(kn,.012,.07,.34,0,.0,-.27,0xd8dde5);kn.visible=false;root.add(kn);O.knife=kn}
+ if(k=='fin'||k=='skin'){O.cr.g.visible=false;const H=new T.Group();root.add(H);O.halves=[];for(const s of[-1,1]){const h=new T.Group();h.position.x=s*.2;B(h,.4,.55,.8,0,.275,0,k=='fin'?0x2a2d3a:0x6a3ad8);B(h,.41,.06,.81,0,.5,0,k=='fin'?0xff3b5c:0xffd23f);B(h,.06,.3,.3,s*.21,.28,0,0xffffff,{e:1});H.add(h);O.halves.push(h)}O.H=H}
+ WOPS.push(O);snd(520,.08,.05,'triangle')}
+function wopTick(dt){if(st!=='lobby'){wopClear();return}for(let i=WOPS.length-1;i>=0;i--){const O=WOPS[i];O.t+=dt;const t=O.t,ev=(k,at,fn)=>{if(!O.ev[k]&&t>=at){O.ev[k]=1;fn()}},g=O.H||O.cr.g;let px,py,pz,s=.7,sy=1;
+  if(t<.55){const q=t/.55;px=O.s0.x+(O.L.x-O.s0.x)*q;pz=O.s0.z+(O.L.z-O.s0.z)*q;py=O.s0.y*(1-q)+O.L.y*q+1.3*4*q*(1-q);s=.25+.45*q;g.rotation.x=-q*PI*2}
+  else{px=O.L.x;pz=O.L.z;py=O.L.y;g.rotation.x=0;const b=t-.55;if(b<.38){const q=b/.38;py+=.32*4*q*(1-q)}else if(b<.62){const q=(b-.38)/.24;py+=.1*4*q*(1-q)}
+   ev('l1',.55,()=>snd(160,.08,.08,'sine'));ev('l2',.93,()=>snd(200,.06,.06,'sine'));ev('l3',1.17,()=>snd(230,.05,.04,'sine'))}
+  g.position.set(px,py,pz);g.scale.set(s,s*sy,s);
+  // type-specific opening
+  const OP=1.3;if(O.k=='charm'){if(t>=OP)O.cr.open(t-OP);ev('op',OP,()=>{snd(900,.08,.06,'square');snd(1500,.06,.04,'triangle')})}
+  else if(O.k=='wrap'){const kn=O.knife;if(t>=OP-.1&&t<OP+.55){kn.visible=true;const q=Math.min(1,(t-OP+.1)/.5);kn.position.set(px+(q-.5)*.6,py+.45*s+.08,pz);kn.rotation.set(0,PI/2,-.3)}else kn.visible=false;
+   ev('cut',OP,()=>snd(2200,.18,.04,'sawtooth'));if(t>=OP+.5)O.cr.open(t-OP-.5);ev('op',OP+.5,()=>snd(700,.1,.05,'triangle'))}
+  else{const q=Math.max(0,Math.min(1,(t-OP)/.5));O.halves.forEach((h,j)=>{const sd=j?1:-1;h.position.x=sd*(.2+q*.35);h.rotation.z=-sd*q*.9;h.position.y=-q*.1});ev('cut',OP,()=>{snd(2400,.16,.04,'sawtooth');snd(300,.12,.06,'square')})}
+  // reward card: rises, floats 3 s, flies into the player, 啵!
+  const c=O.card,R0=OP+.55,FL=R0+3.2;if(t>=R0&&!O.ev.pop){c.visible=true;if(t<FL){const q=Math.min(1,(t-R0)/.45);c.position.set(px,py+.6+1.45*ez(q)+Math.sin(t*2.4)*.06,pz);c.scale.set(1.15*ez(q),1.45*ez(q),1);c.material.rotation=Math.sin(t*1.7)*.05;ev('rv',R0,()=>{[659,784,1047].forEach((f,j)=>setTimeout(()=>snd(f,.14,.04,'sine'),j*70))})}
+   else{const q=Math.min(1,(t-FL)/.45),tg=V(P.x,P.y+1.2,P.z);c.position.lerpVectors(V(px,py+2.05,pz),tg,ez(q));const k=1-.85*q;c.scale.set(1.15*k,1.45*k,1);if(q>=1)ev('pop',FL,()=>{c.visible=false;snd(1200,.05,.08,'sine');snd(600,.07,.06,'triangle');feed('啵！'+crInfo(O.k,O.id).nm)})}}
+  if(O.ev.pop){const q=Math.min(1,(t-FL-.45)/.5);g.scale.setScalar(Math.max(.001,s*(1-q)));if(q>=1){sc.remove(O.root);crDisp(O.root);if(c.userData.tx)c.userData.tx.dispose();c.material.dispose();WOPS.splice(i,1)}}}}
+function wopClear(){for(const O of WOPS){sc.remove(O.root);crDisp(O.root)}WOPS=[]}
+function crOpenN(cid,n){const C=CRBYID[cid];if(!C)return;n=Math.max(1,Math.min(n,crHeld(cid),crLeft(C).length||1));crDlgClose();for(let i=0;i<n;i++)setTimeout(()=>crOpen(cid),i*650)}
+
 function croSkip(){const O=CRO;if(!O||O.rev)return;O.skip=1;O.blend=false;O.t=Math.max(O.t,CRT.rev+.02)}
 function croClean(){const O=CRO;if(!O)return;sc.remove(O.g);crDisp(O.g);for(const m of O.mats)m.dispose();for(const x of O.tex)x.dispose();if(O.fin){finDispose(O.fin);FIN=FIN.filter(q=>q!==O.fin)}CRO=null}
 function croEnd(){croClean();document.body.classList.remove('crop');$('#crOv').style.display='none';$('#crBan').style.display='none';$('#crBtns').style.display='none';
