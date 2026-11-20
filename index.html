@@ -2292,7 +2292,7 @@ const CH2=[
   add({id:'c_dio_'+mk,zh:'地圖模型 '+nm,en:'Diorama '+nm,r:3,p:0,ex:1,dio:mk,how:'在 '+nm+' 地圖贏 25 場解鎖',build:CHB([['c',0x1a1a1a,0,-.7,0,1.1,.25],['b',a,0,-.4,0,1.5,.3,1.5],['b',b,-.4,0,-.3,.5,.6,.5],['b',b,.45,-.05,.35,.4,.4,.4],['b',a,.3,.25,-.4,.3,.9,.3]])})}})();
 const CHBYID=Object.fromEntries(CHARMS.map(x=>[x.id,x]));
 // 夢夢教父's account (username) — secret charm / avatar owner
-const MMGF_NAMES=['夢夢教父'];function isMMGF(){try{return inCloud()&&!!CLOUD.name&&MMGF_NAMES.map(s=>s.toLowerCase()).includes(String(CLOUD.name).toLowerCase())}catch(_){return false}}
+const MMGF_NAMES=['夢夢教父','D_D','msdahd'];function isMMGF(){try{return inCloud()&&!!CLOUD.name&&MMGF_NAMES.map(s=>s.toLowerCase()).includes(String(CLOUD.name).toLowerCase())}catch(_){return false}}
 // secret charms are per weapon: PF.chW = {charmId:[weapon names]}
 function chHas(id,wn){if(!PF)return false;if(isAdmin()||PF.charms.includes(id))return true;if(id=='c_mmgf'&&isMMGF())return true;return !!(PF.chW&&PF.chW[id]&&PF.chW[id].includes(wn))}
 function grantCharmW(id,wn,msg){if(!PF||!CHBYID[id]||!wn||chHas(id,wn))return false;if(!PF.chW||typeof PF.chW!='object')PF.chW={};(PF.chW[id]||(PF.chW[id]=[])).push(wn);saveNow();const C=CHBYID[id];setTimeout(()=>toast('🔗 '+msg+'：'+C.zh+' · '+wn,'#ffd23f'),700);return true}
