@@ -104,7 +104,7 @@ const Net = {
   async host(name) {
     this.leave();
     this.role = 'host'; this.name = name; this.code = QP.code || rid(5); this.me = 'H';
-    this.lobby = { players: [{ id: 'H', name, team: 0 }], diff: 'normal', size: curSize };
+    this.lobby = { players: [{ id: 'H', name, team: 0 }], diff: 'normal', size: curSize, variant: curVariant };
     const h = {
       open: () => { LobbyUI.show(); this.sync(); },
       msg: (cid, m) => this.hostMsg(cid, m),
@@ -201,6 +201,7 @@ const Net = {
     } else if (this.tr) this.tr.send({ t: 'team', team });
   },
   setDiff(d) { if (this.role === 'host') { this.lobby.diff = d; this.sync(); } },
+  setVariant(v) { if (this.role === 'host') { this.lobby.variant = v; this.sync(); } },
   setSize(n) {
     if (this.role !== 'host' || this.lobby.size === n) return;
     if (n === 1) {
@@ -229,10 +230,10 @@ const Net = {
       }
     }
     roster.forEach((r, i) => r.variant = i * 3 + 1);
-    const msg = { t: 'start', roster, diff: this.lobby.diff };
+    const msg = { t: 'start', roster, diff: this.lobby.diff, variant: this.lobby.variant || 'classic' };
     this.tr.all(msg);
     LobbyUI.hide();
-    startGame({ mode: 'host', roster, diff: this.lobby.diff, localId: 'H' });
+    startGame({ mode: 'host', roster, diff: this.lobby.diff, variant: msg.variant, localId: 'H' });
   },
   // ---- 客戶端 ----
   clientMsg(m) {
@@ -244,7 +245,7 @@ const Net = {
       case 'full': LobbyUI.error(m.why); this.leave(); return;
       case 'start': {
         LobbyUI.hide();
-        startGame({ mode: 'client', roster: m.roster, diff: m.diff, localId: this.me });
+        startGame({ mode: 'client', roster: m.roster, diff: m.diff, variant: m.variant || 'classic', localId: this.me });
         return;
       }
     }
@@ -287,6 +288,8 @@ const LobbyUI = {
     h += `</div><div class="hint2">點一下隊伍可以換隊（每隊最多 ${L.size || 2} 人，空位由電腦補上）</div>`;
     h += '<div class="row">';
     for (const [n, label] of [[2, '4 隊 × 2 人'], [1, '1v1v1v1']]) h += `<button class="${(L.size || 2) === n ? 'on' : ''}" ${host ? `onclick="Net.setSize(${n})"` : 'disabled'}>${label}</button>`;
+    h += '</div><div class="row">';
+    for (const [v, label] of [['classic', '經典床戰'], ['cotton', '綿花戰爭（有槍）']]) h += `<button class="${(L.variant || 'classic') === v ? 'on' : ''}" ${host ? `onclick="Net.setVariant('${v}')"` : 'disabled'}>${label}</button>`;
     h += '</div><div class="row">';
     for (const d of ['easy', 'normal', 'hard']) h += `<button class="${L.diff === d ? 'on' : ''}" ${host ? `onclick="Net.setDiff('${d}')"` : 'disabled'}>電腦${DIFF[d].label}</button>`;
     h += '</div>';

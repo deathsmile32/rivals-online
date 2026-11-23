@@ -25,6 +25,8 @@
   <div id="titles"><div id="bigTitle"></div><div id="subTitle"></div></div>
   <div id="respawn"></div>
   <div id="breakbar"><div id="breakfill"></div></div>
+  <div id="ammo"></div>
+  <div id="scope"><div class="sl h"></div><div class="sl v"></div></div>
   <div id="res"></div>
   <div id="bottom">
     <div id="itemName"></div>
@@ -39,7 +41,7 @@
 <div id="touch" class="hidden">
   <div id="joyBase"><div id="joyKnob"></div></div>
   <div id="ttop">
-    <button id="tShop">商店</button><button id="tMate">隊友</button><button id="tEat">金蘋果</button><button id="tPause">❚❚</button>
+    <button id="tShop">商店</button><button id="tMate">隊友</button><button id="tEat">金蘋果</button><button id="tReload">換彈</button><button id="tPause">❚❚</button>
   </div>
   <button id="tAtk" class="tb">⚔<span>攻擊</span></button>
   <button id="tUse" class="tb">▣<span>放置</span></button>
@@ -54,6 +56,11 @@
     <h1>床戰 <span>BED WARS</span></h1>
     <p class="sub">4 隊 × 2 人或 1v1v1v1・單機打電腦，或開房間和朋友連線</p>
     <label>玩家名稱 <input id="pname" maxlength="10" value="玩家"></label>
+    <div class="row">
+      <button class="mvar on" data-v="classic">經典床戰</button>
+      <button class="mvar" data-v="cotton">綿花戰爭（有槍）</button>
+    </div>
+    <div class="sub" id="varSub">經典床戰</div>
     <div class="row">
       <button class="msize on" data-s="2">4 隊 × 2 人</button>
       <button class="msize" data-s="1">1v1v1v1</button>
@@ -75,6 +82,7 @@
       <div style="grid-column:span 2"><b>基岩版搭橋</b>：拿著方塊對著前方空中按住右鍵往前走，方塊會自動放在腳下前方（白框預覽），不用蹲</div>
       <div><b>1–9 / 滾輪</b> 切換物品</div><div><b>E</b> 開商店（站在 NPC 旁）</div>
       <div><b>G</b> 切換隊友指令</div><div><b>F</b> 吃金蘋果</div>
+      <div style="grid-column:span 2"><b>綿花戰爭</b>：拿槍時左鍵射擊（步槍按住連發）、右鍵瞄準／狙擊開鏡、R 換彈</div>
       <div style="grid-column:span 2"><b>魚竿</b>：右鍵丟出，勾到敵人或 TNT 後再按一次就拉過來　<b>弓</b>：按住右鍵蓄力、放開射箭</div>
     </div>
     <p class="tip">規則：床還在就能重生。拆掉敵人的床，再把他們全部擊殺就能獲勝！</p>
@@ -127,6 +135,7 @@
 <script src="js/entities.js"></script>
 <script src="js/ai.js"></script>
 <script src="js/game.js"></script>
+<script src="js/guns.js"></script>
 <script src="js/net.js"></script>
 <script src="js/ui.js"></script>
 </body>

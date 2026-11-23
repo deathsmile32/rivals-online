@@ -162,3 +162,11 @@ button:disabled { opacity: .6; cursor: default; }
   .code b { font-size: 24px; } .teams { gap: 4px; } .tbox { padding: 3px 6px; font-size: 13px; } .slotp { padding: 1px 4px; }
   .ic { width: 26px; height: 26px; }
 }
+
+#ammo { position: absolute; right: 12px; bottom: 12px; background: rgba(0,0,0,.5); padding: 6px 12px; font-size: 18px; display: none; }
+#ammo b { color: #ffd84a; font-size: 14px; margin-right: 6px; }
+#scope { position: absolute; inset: 0; display: none; background: radial-gradient(circle at center, transparent 0, transparent 34vmin, rgba(0,0,0,.92) 34.5vmin); }
+#scope .sl { position: absolute; background: rgba(0,0,0,.85); }
+#scope .h { left: 15%; right: 15%; top: 50%; height: 2px; margin-top: -1px; }
+#scope .v { top: 10%; bottom: 10%; left: 50%; width: 2px; margin-left: -1px; }
+body.touch #ammo { right: auto; left: 50%; transform: translateX(-50%); bottom: 96px; font-size: 13px; padding: 3px 8px; }

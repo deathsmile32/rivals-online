@@ -134,6 +134,8 @@ class Game {
     this.ui = opts.menu ? new Proxy({}, { get: () => () => { } }) : UI;
     this.sfx = opts.menu ? { play() { } } : SFX;
     this.time = 0; this.over = false; this.paused = false;
+    this.variant = opts.variant || 'classic';   // 'classic' | 'cotton'（綿花戰爭）
+    this.cotton = this.variant === 'cotton';
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x8ec8ff);
     this.scene.fog = new THREE.Fog(0x8ec8ff, 45, 150);
@@ -253,7 +255,7 @@ class Game {
       return g;
     };
     for (const t of this.teams) {
-      t.genIron = mk('iron', t.gen, t, 1.1, 48);
+      t.genIron = mk('iron', t.gen, t, this.cotton ? 1.1 / 1.5 : 1.1, 48);
       t.genGold = mk('gold', t.gen, t, 5.5, 12);
       t.genEmer = mk('emerald', t.gen, t, Infinity, 2);
       t.genEmer.timer = Infinity;
@@ -384,6 +386,8 @@ class Game {
       case 'pot': this.drink(f, m.k); break;
       case 'plat': this.rescuePlatform(f); break;
       case 'mate': this.cycleMateCmd(f); break;
+      case 'fire': this.fireGun(f, !!m.ad); break;
+      case 'reload': { const h = f.held(); if (h && GUNS[h.id]) this.gunReload(f, h.id); break; }
     }
   }
   correct(f, x, y, z) {
@@ -391,7 +395,12 @@ class Game {
   }
 
   // ---------- 商店 ----------
+  shopCats() {
+    if (!this.cotton) return SHOP;
+    const c = SHOP.slice(); c.splice(2, 0, GUN_SHOP); return c;
+  }
   shopCost(f, key) {
+    if (GUNS[key]) return GUNS[key].cost || null;
     if (key === 'pick') return f.pick < 4 ? TOOL_COST[f.pick + 1] : null;
     if (key === 'axe') return f.axe < 4 ? TOOL_COST[f.axe + 1] : null;
     for (const c of SHOP) for (const it of c.items) if (it.key === key) return it.cost;
@@ -403,6 +412,7 @@ class Game {
     if (key.startsWith('sword') && f.sword >= +key[5]) return 'owned';
     if (key.startsWith('armor') && f.armor >= +key[5]) return 'owned';
     if (key === 'shears' && f.shears) return 'owned';
+    if (GUNS[key] && f.guns.includes(key)) return 'owned';
     if (SHOP_ONCE.includes(key) && f.count(key)) return 'owned';
     if (f.res[cost[1]] < cost[0]) return 'poor';
     return 'ok';
@@ -420,6 +430,10 @@ class Game {
     else if (key === 'pick') { pay(); f.pick++; f.giveTool('pick'); }
     else if (key === 'axe') { pay(); f.axe++; f.giveTool('axe'); }
     else if (key === 'shears') { pay(); f.shears = true; f.giveTool('shears'); }
+    else if (GUNS[key]) {
+      if (!f.hotbar.includes(null)) { this.tell(f, 'toast', '快捷欄滿了！'); return false; }
+      pay(); f.guns.push(key); f.giveTool(key); f.sel = f.hotbar.findIndex(s => s && s.id === key);
+    }
     this.tell(f, 'snd', 'buy');
     return true;
   }
@@ -443,7 +457,7 @@ class Game {
   }
   applyForge(t) {
     const mul = [1, 1.5, 2, 2][t.up.forge];
-    t.genIron.interval = 1.1 / mul; t.genGold.interval = 5.5 / mul;
+    t.genIron.interval = (this.cotton ? 1.1 / 1.5 : 1.1) / mul; t.genGold.interval = 5.5 / mul;
     if (t.up.forge >= 3 && t.genEmer.interval === Infinity) { t.genEmer.interval = 60; t.genEmer.timer = 60; }
   }
   setGenTier(type, tier) {
@@ -580,6 +594,8 @@ class Game {
     else if (cause === 'fall') msg = killer ? `${N(f)} 被 ${N(killer)} 打下去摔死了` : `${N(f)} 摔死了`;
     else if (cause === 'arrow') msg = `${N(f)} 被 ${killer ? N(killer) : '?'} 射死了`;
     else if (cause === 'left') msg = `${N(f)} 離開了遊戲`;
+    else if (cause === 'shot' || cause === 'headshot') msg = `${N(f)} 被 ${killer ? N(killer) : '?'} ${cause === 'headshot' ? '<b style="color:#ff5">爆頭</b>' : '射殺了'}`;
+    else if (cause === 'fire') msg = killer ? `${N(f)} 被 ${N(killer)} 燒死了` : `${N(f)} 燒死了`;
     else msg = killer ? `${N(f)} 被 ${N(killer)} 擊殺` : `${N(f)} 死了`;
     if (final && cause !== 'left') msg += ' <b style="color:#5ff">最終擊殺！</b>';
     this.feedAll(msg);
@@ -676,6 +692,13 @@ class Game {
   makeProjMesh(kind) {
     let m;
     if (kind === 'fireball') m = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 6), new THREE.MeshBasicMaterial({ color: 0xff7a1a }));
+    else if (kind === 'rocket') {
+      m = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.14, 0.6), new THREE.MeshBasicMaterial({ color: 0x5c6e38 }));
+      const tip = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.16), new THREE.MeshBasicMaterial({ color: 0xc83030 })); tip.position.z = -0.36;
+      const fire = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.1, 0.12), new THREE.MeshBasicMaterial({ color: 0xffb030 })); fire.position.z = 0.34;
+      m.add(body, tip, fire);
+    } else if (kind === 'grenade') m = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.2), new THREE.MeshLambertMaterial({ color: 0x3c4630 }));
     else if (kind === 'arrow') {
       m = new THREE.Group();
       const shaft = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.7), new THREE.MeshBasicMaterial({ color: 0x9a7040 }));
@@ -776,7 +799,7 @@ class Game {
   }
   explode(c, radius, owner, kind) {
     const w = this.world;
-    const maxBlast = kind === 'fireball' ? 1 : 2;
+    const [maxBlast, maxDmg, kbPow] = BLAST[kind] || BLAST.tnt;
     const r = Math.ceil(radius);
     for (let x = -r; x <= r; x++) for (let y = -r; y <= r; y++) for (let z = -r; z <= r; z++) {
       if (x * x + y * y + z * z > radius * radius) continue;
@@ -801,12 +824,11 @@ class Game {
       if (d > reach) continue;
       const s = 1 - d / reach;
       const dir = fc.sub(c).normalize();
-      const kbPow = kind === 'fireball' ? 15 : 18;
       f.vel.x += dir.x * kbPow * s; f.vel.z += dir.z * kbPow * s;
       f.vel.y = Math.max(f.vel.y, 4 + 9 * s); f.onGround = false;
       this.pushed(f);
       if (owner && f.team === owner.team && f !== owner) continue;
-      let dmg = (kind === 'fireball' ? 4 : 8) * s * (1 - f.reduction() * 0.5);
+      let dmg = maxDmg * s * (1 - f.reduction() * 0.5);
       if (f === owner) dmg *= 0.25;
       if (dmg > 0.3) { f.hurtT = 0; this.damage(f, dmg, f === owner ? null : owner, 'explode'); }
     }
@@ -863,12 +885,14 @@ class Game {
     if (!p.alive || this.over) return;
     if (btn === 0) {
       this.input.mouseL = true;
+      if (this.heldGun(p)) { this.localFire(); return; }
       p.swingT = 0.25;
       const tg = this.playerTarget();
       if (tg.ent && tg.ent.team !== p.team) { this.act({ a: 'atk', id: tg.ent.id }); this.breakState = null; }
     } else if (btn === 2) {
       this.input.mouseR = true;
       const h = p.held();
+      if (h && GUNS[h.id]) { this.aiming = true; return; }
       if (h && h.id === 'bow' && p.count('arrow')) { p.bowT = 0.001; return; }
       this.useItem(true);
       this.placeRepeat = 0.25;
@@ -878,7 +902,7 @@ class Game {
     const p = this.player;
     if (btn === 0) { this.input.mouseL = false; this.breakState = null; }
     if (btn === 2) {
-      this.input.mouseR = false;
+      this.input.mouseR = false; this.aiming = false;
       if (p.bowT > 0) {
         const c = Math.min(1, p.bowT / 1.0);
         if (p.alive && c > 0.1) this.act({ a: 'bow', c: +c.toFixed(2), yw: p.yaw, pt: p.pitch });
@@ -976,7 +1000,11 @@ class Game {
     const tg = this.playerTarget();
     this.curTarget = tg;
     // 挖方塊
-    if (this.input.mouseL && !tg.ent) {
+    // 槍：按住連發
+    const gun = this.heldGun(p);
+    if (!gun) this.aiming = false;
+    if (gun && this.input.mouseL && gun.auto) this.localFire();
+    if (this.input.mouseL && !tg.ent && !gun) {
       const b = tg.block;
       if (b) {
         const bs = this.breakState;
@@ -1051,6 +1079,7 @@ class Game {
     if (f.slowT > 0) f.slowT -= dt;
     if (f.swingT > 0) f.swingT -= dt;
     for (const k in f.fx) if (f.fx[k] > 0) f.fx[k] -= dt;
+    this.tickGuns(f, dt);
   }
   physics(f, dt) {
     const wasGround = f.onGround;
@@ -1164,6 +1193,8 @@ class Game {
         if (pr.hookT) { pr.vel.set(0, 0, 0); this.syncProjMesh(pr); this.tell(pr.owner, 'toast', '勾到 TNT 了！再按一次把它拉過來'); continue; }
       }
       let done = pr.life <= 0 || pr.pos.y < 0;
+      if (pr.life <= 0 && pr.kind === 'grenade' && pr.pos.y > 0) this.explode(pr.pos.clone(), 2.6, pr.owner, 'grenade');
+      if (pr.kind === 'rocket' && Math.random() < 0.7) this.burst(pr.pos.x, pr.pos.y, pr.pos.z, 0xbbbbbb, 1, true);
       if (hit || hitEnt) {
         const at = hitEnt ? pr.pos.clone().addScaledVector(dir, entT) : pr.pos.clone().addScaledVector(dir, Math.max(0, hit.dist - 0.05));
         done = this.projHit(pr, at, hit, hitEnt, dir);
@@ -1182,7 +1213,7 @@ class Game {
   }
   syncProjMesh(pr) {
     pr.mesh.position.copy(pr.pos);
-    if (pr.kind === 'arrow' && pr.vel.lengthSq() > 0.01) pr.mesh.lookAt(pr.pos.x - pr.vel.x, pr.pos.y - pr.vel.y, pr.pos.z - pr.vel.z);
+    if ((pr.kind === 'arrow' || pr.kind === 'rocket') && pr.vel.lengthSq() > 0.01) pr.mesh.lookAt(pr.pos.x - pr.vel.x, pr.pos.y - pr.vel.y, pr.pos.z - pr.vel.z);
   }
   projHit(pr, at, hit, f, dir) {
     const o = pr.owner;
@@ -1227,6 +1258,8 @@ class Game {
         pr.vel.set(0, 0, 0);
         return false;
       case 'egg': return true;
+      case 'rocket': this.explode(at, 3.2, o, 'rpg'); return true;
+      case 'grenade': this.explode(at, 2.6, o, 'grenade'); return true;
     }
     return true;
   }
@@ -1292,13 +1325,15 @@ class Game {
   updateEffects(dt) {
     for (let i = this.particles.length - 1; i >= 0; i--) {
       const p = this.particles[i];
-      p.life -= dt; p.v.y -= 18 * dt;
+      p.life -= dt; p.v.y -= (p.flame ? 3 : 18) * dt;
+      if (p.flame) { p.m.scale.setScalar(1 + (0.4 - p.life) * 4); p.m.material.opacity = Math.max(0, p.life * 2.2); }
       p.m.position.addScaledVector(p.v, dt);
       if (p.life <= 0) { this.scene.remove(p.m); p.m.material.dispose(); this.particles.splice(i, 1); }
     }
     for (let i = this.effects.length - 1; i >= 0; i--) {
       const e = this.effects[i];
       e.t += dt;
+      if (e.line) { e.mesh.material.opacity = Math.max(0, 1 - e.t / e.life); if (e.t >= e.life) { this.scene.remove(e.mesh); this.effects.splice(i, 1); } continue; }
       e.mesh.scale.setScalar(0.3 + e.grow * (e.t / e.life));
       e.mesh.material.opacity = 0.8 * (1 - e.t / e.life);
       if (e.t >= e.life) { this.scene.remove(e.mesh); this.effects.splice(i, 1); }
@@ -1341,6 +1376,7 @@ class Game {
     return {
       t: 'me', res: f.res, hb: f.hotbar.map(s => s ? [s.id, s.count] : 0), sw: f.sword, ar: f.armor, pk: f.pick, ax: f.axe, sh: f.shears ? 1 : 0,
       hp: Math.round(f.hp * 10) / 10, ab: Math.round(f.absorb * 10) / 10, al: f.alive ? 1 : 0, el: f.eliminated ? 1 : 0, rt: Math.round(f.respawnT * 10) / 10,
+      gn: f.guns, am: f.ammo || {},
       st: f.stats, fx: f.fx, sl: f.slowT, mc: (f.team.members.find(m => m !== f) || {}).cmd || null,
     };
   }
@@ -1455,6 +1491,8 @@ class Game {
         p.hotbar = m.hb.map(s => s ? { id: s[0], count: s[1] } : null);
         p.sword = m.sw; p.armor = m.ar; p.pick = m.pk; p.axe = m.ax; p.shears = !!m.sh;
         p.hp = m.hp; p.absorb = m.ab; p.respawnT = m.rt; p.stats = m.st; p.fx = m.fx; p.slowT = m.sl;
+        p.guns = m.gn || [];
+        if (m.am) { p.ammo = p.ammo || {}; for (const id in m.am) { const a = p.ammo[id] || (p.ammo[id] = { m: 0, r: 0 }); if (!(p.gunCd > 0) || a.r > 0 || m.am[id].r > 0) { a.m = m.am[id].m; a.r = m.am[id].r; } } }
         this.mateCmdNet = m.mc;
         if (p.alive && !m.al) { p.alive = false; this.onLocalDeath(!!m.el); }
         p.eliminated = !!m.el;
@@ -1474,6 +1512,8 @@ class Game {
           if (e[0] === 'b') this.burst(e[1], e[2], e[3], e[4], e[5]);
           else if (e[0] === 's') this.sfxAt(e[1], e[2], e[3], e[4]);
           else if (e[0] === 'e') this.explosionFx(e[1], e[2], e[3], e[4]);
+          else if (e[0] === 't') this.tracer(new THREE.Vector3(e[1], e[2], e[3]), new THREE.Vector3(e[4], e[5], e[6]), this.fighters[e[7]], e[8]);
+          else if (e[0] === 'f') this.flameFx(new THREE.Vector3(e[1], e[2], e[3]), new THREE.Vector3(e[4], e[5], e[6]));
         }
         break;
       }
@@ -1508,10 +1548,13 @@ class Game {
     } else if (p.alive) {
       cam.position.set(p.pos.x, p.pos.y + p.eyeH, p.pos.z);
       cam.rotation.set(p.pitch, p.yaw, p.hurtT > 0.3 ? (p.hurtT - 0.3) * 0.3 : 0);
-      this.vm.visible = true;
+      this.vm.visible = !this.scoped;
       let tf = p.sprint ? 82 : 75;
       if (p.fx.speed > 0) tf += 6;
       if (p.bowT > 0) tf -= Math.min(1, p.bowT) * 12;
+      const gun = this.heldGun(p);
+      if (gun && this.aiming) tf = gun.zoom || 60;
+      this.scoped = !!(gun && this.aiming && gun.zoom);
       cam.fov += (tf - cam.fov) * Math.min(1, dt * 8); cam.updateProjectionMatrix();
     } else {
       const t = p.team.spawn;
@@ -1527,7 +1570,8 @@ class Game {
       const h = p.held();
       if (h) {
         const m = makeItemMesh(h.id, p, true);
-        if (ITEMS[h.id].block || h.id === 'tnt') { m.scale.setScalar(0.5); m.position.set(0.06, -0.03, -0.05); m.rotation.set(0.1, 0.75, 0); }
+        if (GUNS[h.id]) { m.scale.setScalar(0.3); m.rotation.set(0, Math.PI / 2 + 0.05, 0); m.position.set(0.0, -0.04, 0.0); }
+        else if (ITEMS[h.id].block || h.id === 'tnt') { m.scale.setScalar(0.5); m.position.set(0.06, -0.03, -0.05); m.rotation.set(0.1, 0.75, 0); }
         else { m.scale.setScalar(0.32); m.rotation.set(0, -1.2, 0.35); m.position.set(0.02, -0.05, 0); }
         this.vmItem.add(m);
       }
@@ -1536,8 +1580,18 @@ class Game {
     const sw = p.swingT > 0 ? Math.sin((p.swingT / 0.25) * Math.PI) : 0;
     const bob = p.onGround ? Math.sin(this.time * (p.sprint ? 13 : 9)) * Math.min(1, Math.hypot(p.vel.x, p.vel.z) / 5) : 0;
     const draw = p.bowT > 0 ? Math.min(1, p.bowT) : 0;
-    this.vm.position.set(0.42 - sw * 0.15 - draw * 0.18, -0.4 + bob * 0.02 + sw * 0.05 + draw * 0.08, -0.62 - sw * 0.1 + draw * 0.08);
-    this.vm.rotation.set(-sw * 0.9, sw * 0.3 + draw * 0.3, 0);
+    if (this.heldGun(p)) {
+      // 槍：後座力，瞄準時移到畫面中間
+      this.gunKick = Math.max(0, (this.gunKick || 0) - dt * 9);
+      const ads = this.aiming ? 1 : 0;
+      this.adsT = (this.adsT || 0) + (ads - (this.adsT || 0)) * Math.min(1, dt * 14);
+      const k = this.gunKick, a = this.adsT;
+      this.vm.position.set(0.3 * (1 - a) + 0.0 * a, -0.24 * (1 - a) - 0.16 * a + bob * 0.02, -0.5 + k * 0.08);
+      this.vm.rotation.set(k * 0.18, 0, 0);
+    } else {
+      this.vm.position.set(0.42 - sw * 0.15 - draw * 0.18, -0.4 + bob * 0.02 + sw * 0.05 + draw * 0.08, -0.62 - sw * 0.1 + draw * 0.08);
+      this.vm.rotation.set(-sw * 0.9, sw * 0.3 + draw * 0.3, 0);
+    }
     // 方塊選取框與裂痕
     const tg = this.curTarget;
     if (p.alive && tg && tg.block && !tg.ent) {
@@ -1590,8 +1644,9 @@ class Game {
       m.legL.rotation.x = sw2; m.legR.rotation.x = -sw2;
       m.armL.rotation.x = -sw2 * 0.8;
       const swing = f.swingT > 0 ? Math.sin((f.swingT / 0.25) * Math.PI) * 1.4 : 0;
-      m.armR.rotation.x = f.bowT > 0.2 ? -1.5 : sw2 * 0.8 - swing - 0.25;
-      if (f.bowT > 0.2) m.armL.rotation.x = -1.5;
+      const hh = f.held(), aimGun = hh && GUNS[hh.id];
+      m.armR.rotation.x = f.bowT > 0.2 || aimGun ? 1.45 + f.pitch : sw2 * 0.8 + swing * 0.8 + 0.1;
+      if (f.bowT > 0.2 || aimGun) { m.armL.rotation.x = 1.35 + f.pitch; m.armL.rotation.z = -0.45; } else m.armL.rotation.z = 0;
       m.head.rotation.x = f.pitch;
       m.body.rotation.x = f.sneak ? 0.35 : 0;
       m.group.position.y = f.pos.y - (f.sneak ? 0.12 : 0);

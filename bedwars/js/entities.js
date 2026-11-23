@@ -54,7 +54,7 @@ class Fighter {
     this.fallStart = null; this.slowT = 0; this.regenT = 0;
     this.fx = { speed: 0, jump: 0, invis: 0 };
     this.stats = { kills: 0, finals: 0, beds: 0, deaths: 0 };
-    this.swingT = 0; this.walkPhase = 0; this.bowT = 0;
+    this.swingT = 0; this.walkPhase = 0; this.bowT = 0; this.gunCd = 0; this.burnT = 0;
     this.resetLoadout(true);
   }
   get eyeH() { return this.sneak ? 1.5 : EYE; }
@@ -69,6 +69,13 @@ class Fighter {
     else { if (this.pick > 1) this.pick--; if (this.axe > 1) this.axe--; }
     this.hotbar = new Array(9).fill(null);
     this.hotbar[0] = { id: 'sword', count: 1 };
+    // 綿花戰爭：一開始就有手槍，買過的槍永久保留
+    if (first) this.guns = [];
+    if (this.game && this.game.cotton) {
+      if (!this.guns.includes('pistol')) this.guns.unshift('pistol');
+      for (const g of this.guns) this.giveTool(g);
+      this.ammo = {};
+    }
     if (this.pick) this.giveTool('pick');
     if (this.axe) this.giveTool('axe');
     if (this.shears) this.giveTool('shears');
@@ -299,8 +306,9 @@ function makeItemMesh(id, f, basic) {
   const geo = extrudedGeometry(art, id + tier);
   const mat = basic ? new THREE.MeshBasicMaterial({ vertexColors: true }) : new THREE.MeshLambertMaterial({ vertexColors: true });
   const m = new THREE.Mesh(geo, mat);
-  m.position.set(0.4, 0.38, 0);
   m.scale.setScalar(0.85);
+  // 槍：握把在原點；其他物品：右下角在原點
+  if (ITEMS[id] && ITEMS[id].gun) m.position.set(0.16, 0.1, 0); else m.position.set(0.4, 0.38, 0);
   g.add(m);
   return g;
 }
@@ -315,7 +323,11 @@ function updateModelHeld(model, f) {
     const m = makeItemMesh(h.id, f);
     m.scale.setScalar(0.7);
     if (ITEMS[h.id].block || h.id === 'tnt') m.position.set(0, -0.05, -0.12);
-    else m.rotation.set(-Math.PI / 2, 0, -Math.PI / 4 * 3);
+    else if (ITEMS[h.id].gun) {
+      // 槍口朝手臂前方、槍身朝上（手臂舉平時槍會對準前面）
+      const mx = new THREE.Matrix4().makeBasis(new THREE.Vector3(0, -1, 0), new THREE.Vector3(0, 0, -1), new THREE.Vector3(1, 0, 0));
+      m.setRotationFromMatrix(mx); m.scale.setScalar(0.95);
+    } else m.rotation.set(-Math.PI / 2, 0, -Math.PI / 4 * 3);
     model.held.add(m);
   }
 }

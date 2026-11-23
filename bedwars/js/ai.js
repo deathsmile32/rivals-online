@@ -130,6 +130,20 @@ class Bot extends Fighter {
     if (this.onGround && d < 4 && Math.random() < dt * 1.2 * P.strafe) this.wantJump = true;
     // 攻擊
     this.attackCd -= dt;
+    // 綿花戰爭：遠距離用槍，近距離換劍
+    if (g.cotton) {
+      const pick = this.pickGun(d);
+      if (pick >= 0) {
+        this.sel = pick;
+        const G = GUNS[this.hotbar[pick].id];
+        if (this.gunCd <= 0 && err < 0.22 && g.world.lineClear(this.eye(), tp)) {
+          if (G.kind === 'grenade' || G.kind === 'rocket') this.pitch += G.kind === 'grenade' ? Math.min(0.5, d * 0.02) : 0;
+          g.fireGun(this, false);
+          if (!G.auto) this.gunCd += Math.random() * 0.4 / this.P.cps * 4;
+        }
+        if (d > 3.2) return;
+      } else this.sel = 0;
+    }
     const d3 = this.eye().distanceTo(tp);
     if (this.attackCd <= 0 && d3 <= 3.3) {
       this.attackCd = (1 / P.cps) * (0.75 + Math.random() * 0.5);
@@ -469,10 +483,36 @@ class Bot extends Fighter {
     if (this.lookYaw != null) this.turnTo(this.lookYaw, 0, dt);
   }
 
+  // 選擇要用的槍（回傳快捷欄位置，-1 = 用劍）
+  pickGun(d) {
+    if (d < 3.0) return -1;
+    const order = d > 16 ? ['sniper', 'rifle', 'revolver', 'pistol'] : d < 6 ? ['flamer', 'rifle', 'pistol', 'revolver'] : ['rifle', 'glauncher', 'revolver', 'pistol', 'sniper'];
+    for (const id of order) {
+      const i = this.hotbar.findIndex(s => s && s.id === id);
+      if (i < 0) continue;
+      const a = this.game.ammoOf(this, id);
+      if (a.r > 0 && id !== 'pistol') continue;
+      if (id === 'flamer' && d > 6) continue;
+      return i;
+    }
+    return -1;
+  }
   doShopping() {
     const g = this.game, P = this.P;
     const mode = this.cmd || this.role;
     const defendFirst = mode === 'defend' || (mode === 'solo' && !this.team.defenseDone);
+    if (g.cotton) {
+      // 綿花戰爭：先買槍
+      const gunRules = [
+        () => this.blockCount() < 16 && g.buy(this, 'wool'),
+        () => !this.guns.includes('revolver') && g.buy(this, 'revolver'),
+        () => !this.guns.includes('rifle') && this.res.iron >= 55 && g.buy(this, 'rifle'),
+        () => P.fireball && !this.guns.includes('sniper') && this.guns.includes('rifle') && this.res.iron >= 115 && g.buy(this, 'sniper'),
+        () => P.diamonds && !this.guns.includes('glauncher') && this.res.gold >= 50 && g.buy(this, 'glauncher'),
+        () => P.fireball && !this.guns.includes('flamer') && this.res.gold >= 55 && g.buy(this, 'flamer'),
+      ];
+      for (let k = 0; k < 6; k++) { let b = false; for (const r of gunRules) if (r()) { b = true; break; } if (!b) break; }
+    }
     const rules = defendFirst ? [
       () => this.blockCount() < 32 && g.buy(this, 'wool'),
       () => !this.team.defenseDone && this.count('endstone') < 12 && this.res.iron >= 28 && g.buy(this, 'endstone'),

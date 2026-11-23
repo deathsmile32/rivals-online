@@ -40,6 +40,13 @@ const SFX = {
       case 'bedlost': this.tone(300, 80, 0.9, 'sawtooth', 0.35); break;
       case 'alarm': for (let i = 0; i < 3; i++) setTimeout(() => this.tone(880, 660, 0.2, 'square', 0.2), i * 250); break;
       case 'respawn': this.tone(500, 800, 0.2, 'triangle', 0.2); break;
+      case 'gun': this.noise(0.09, 0.45 * v, 2600); this.tone(160, 60, 0.08, 'square', 0.18 * v); break;
+      case 'gun2': this.noise(0.14, 0.6 * v, 1800); this.tone(120, 40, 0.12, 'square', 0.25 * v); break;
+      case 'sniper': this.noise(0.35, 0.8 * v, 1400); this.tone(90, 30, 0.3, 'sawtooth', 0.3 * v); break;
+      case 'rocket': this.noise(0.5, 0.5 * v, 700); this.tone(200, 80, 0.4, 'sawtooth', 0.15 * v); break;
+      case 'flame': this.noise(0.12, 0.18 * v, 900); break;
+      case 'reload': this.tone(900, 700, 0.05, 'square', 0.12); setTimeout(() => this.tone(600, 900, 0.05, 'square', 0.12), 160); break;
+      case 'hitmark': this.tone(1400, 1200, 0.04, 'square', 0.12); break;
       case 'win': [523, 659, 784, 1046].forEach((f, i) => setTimeout(() => this.tone(f, f, 0.3, 'triangle', 0.3), i * 150)); break;
       case 'lose': [400, 300, 200].forEach((f, i) => setTimeout(() => this.tone(f, f * 0.9, 0.4, 'sawtooth', 0.2), i * 220)); break;
     }
@@ -117,6 +124,15 @@ const UI = {
     if (bs) $('breakfill').style.width = Math.min(100, bs.t / bs.need * 100) + '%';
     else if (bowC) $('breakfill').style.width = bowC * 100 + '%';
     $('breakfill').style.background = bowC && !bs ? (bowC >= 1 ? '#ffd84a' : '#ddd') : '#fff';
+    // 子彈數與狙擊鏡
+    const gun = g.heldGun(p);
+    if (gun && p.alive) {
+      const a = g.ammoOf(p, p.held().id);
+      $('ammo').style.display = 'block';
+      $('ammo').innerHTML = `<b>${gun.name}</b> ${a.r > 0 ? '<span style="color:#ffd84a">換彈中…</span>' : `<span style="color:${a.m ? '#fff' : '#f55'}">${a.m}</span> / ${gun.mag}`}`;
+    } else $('ammo').style.display = 'none';
+    $('scope').style.display = g.scoped && p.alive ? 'block' : 'none';
+    $('crosshair').style.display = g.scoped ? 'none' : '';
     // 重生倒數
     $('respawn').textContent = !p.alive && !p.eliminated ? `你死了！${Math.ceil(p.respawnT)} 秒後重生` : '';
     this.hudT -= dt;
@@ -141,7 +157,7 @@ const UI = {
     // 計分板
     const mm = s => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
     const ev = EVENTS[g.eventIdx];
-    let sb = `<div class="sbt">床戰 BED WARS</div><div class="sbs">${g.teamSize === 1 ? '1v1v1v1' : '4×2'}・電腦${DIFF[g.difficulty].label}　${mm(g.time)}</div>`;
+    let sb = `<div class="sbt">${g.cotton ? '綿花戰爭' : '床戰 BED WARS'}</div><div class="sbs">${g.teamSize === 1 ? '1v1v1v1' : '4×2'}・電腦${DIFF[g.difficulty].label}　${mm(g.time)}</div>`;
     if (ev) sb += `<div class="sbs">${ev.name}：${mm(Math.max(0, ev.t - g.time))}</div>`;
     sb += '<div class="sbl"></div>';
     for (const t of g.teams) {
@@ -177,9 +193,11 @@ const UI = {
     let html = '';
     if (this.shopKind === 'shop') {
       html += `<div class="shead"><b>道具商店</b><span>${resLine}</span><button class="x" onclick="UI.closeShop()">✕</button></div>`;
-      html += '<div class="tabs">' + SHOP.map((c, i) => `<button class="${i === this.shopTab ? 'on' : ''}" onclick="UI.shopTab=${i};UI.renderShop()">${c.cat}</button>`).join('') + '</div>';
+      const cats = g.shopCats();
+      if (this.shopTab >= cats.length) this.shopTab = 0;
+      html += '<div class="tabs">' + cats.map((c, i) => `<button class="${i === this.shopTab ? 'on' : ''}" onclick="UI.shopTab=${i};UI.renderShop()">${c.cat}</button>`).join('') + '</div>';
       html += '<div class="grid">';
-      for (const it of SHOP[this.shopTab].items) {
+      for (const it of cats[this.shopTab].items) {
         const st = g.shopState(p, it.key);
         const cost = g.shopCost(p, it.key);
         let name = it.name, tier = it.tier;
@@ -232,7 +250,7 @@ const UI = {
 };
 
 // ===================== 啟動與輸入 =====================
-let renderer = null, game = null, lastT = 0, sens = 0.0022, curDiff = 'normal', curSize = 2;
+let renderer = null, game = null, lastT = 0, sens = 0.0022, curDiff = 'normal', curSize = 2, curVariant = 'classic';
 // 觸控裝置偵測（手機、平板）
 const TOUCH = (window.matchMedia && matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
 if (TOUCH) document.body.classList.add('touch');
@@ -263,7 +281,8 @@ function startGame(opts) {
   if (game) game.scene.traverse(o => { if (o.geometry) o.geometry.dispose(); });
   const mode = opts.mode || 'solo';
   if (opts.size) curSize = opts.size;
-  game = new Game(renderer, { difficulty: curDiff, teamSize: curSize, playerName: name, testMode, mode, roster: opts.roster, localId: opts.localId, net: mode === 'solo' ? null : Net.gameIface() });
+  if (opts.variant) curVariant = opts.variant;
+  game = new Game(renderer, { difficulty: curDiff, teamSize: curSize, variant: curVariant, playerName: name, testMode, mode, roster: opts.roster, localId: opts.localId, net: mode === 'solo' ? null : Net.gameIface() });
   window.game = game;
   game.camera.aspect = innerWidth / innerHeight; game.camera.updateProjectionMatrix();
   UI.bind(game);
@@ -327,6 +346,7 @@ addEventListener('keydown', e => {
   game.input.keys[e.code] = true;
   if (e.code.startsWith('Digit')) { const n = +e.code.slice(5); if (n >= 1 && n <= 9) game.player.sel = n - 1; }
   if (e.code === 'KeyG') game.act({ a: 'mate' });
+  if (e.code === 'KeyR') { const h = game.player.held(); if (h && GUNS[h.id]) { game.act({ a: 'reload' }); if (game.mode === 'client') game.gunReload(game.player, h.id); } }
   if (e.code === 'KeyF') { const p = game.player; if (p.count('gapple')) game.act({ a: 'gap' }); }
 });
 addEventListener('keyup', e => { if (game) game.input.keys[e.code] = false; });
@@ -373,6 +393,11 @@ function renderMenuBg(dt) {
 }
 
 // 選單按鈕
+document.querySelectorAll('.mvar').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.mvar').forEach(x => x.classList.remove('on'));
+  b.classList.add('on'); curVariant = b.dataset.v;
+  $('varSub').textContent = curVariant === 'cotton' ? '綿花戰爭：有槍可以拿！一開始就有手槍，鐵產速 ×1.5' : '經典床戰';
+}));
 document.querySelectorAll('.msize').forEach(b => b.addEventListener('click', () => {
   document.querySelectorAll('.msize').forEach(x => x.classList.remove('on'));
   b.classList.add('on'); curSize = +b.dataset.s;
@@ -470,6 +495,7 @@ function setupTouch() {
   tap('tSneak', () => { game.touchSneak = !game.touchSneak; $('tSneak').classList.toggle('on', game.touchSneak); });
   tap('tShop', () => { if (game.player.alive && !game.interact()) UI.toast('走到商店或升級 NPC 旁邊再按'); });
   tap('tMate', () => game.act({ a: 'mate' }));
+  tap('tReload', () => { const h = game.player.held(); if (h && GUNS[h.id]) { game.act({ a: 'reload' }); if (game.mode === 'client') game.gunReload(game.player, h.id); } });
   tap('tEat', () => { const p = game.player; if (p.alive && p.count('gapple')) game.act({ a: 'gap' }); else UI.toast('沒有金蘋果'); });
   tap('tPause', () => { game.paused = true; $('pause').classList.remove('hidden'); resetTouch(); });
   // 點快捷欄切換物品
